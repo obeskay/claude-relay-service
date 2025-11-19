@@ -1,0 +1,51 @@
+# 🚀 Coolify Configuration
+# Configuración automática para deployment en Coolify
+
+# Puerto principal de la aplicación
+PORT=3011
+
+# Build configuration
+BUILD_COMMAND=docker-compose up -d
+BUILD_PACK=docker-compose
+
+# Health check configuration
+HEALTH_CHECK_ENABLED=true
+HEALTH_CHECK_PATH=/health
+HEALTH_CHECK_PORT=3011
+HEALTH_CHECK_INTERVAL=30
+HEALTH_CHECK_TIMEOUT=10
+HEALTH_CHECK_RETRIES=3
+
+# Deployment strategy
+DEPLOYMENT_TYPE=docker-compose
+COMPOSE_FILE=docker-compose.yml
+
+# Volumes (persistentes automáticamente)
+VOLUMES=./data:/app/data,./logs:/app/logs,./redis_data:/redis-data
+
+# Network
+NETWORK_MODE=bridge
+
+# Resource limits (opcionales)
+# MEMORY_LIMIT=2G
+# CPU_LIMIT=2
+
+# Restart policy
+RESTART_POLICY=unless-stopped
+
+# Auto-deploy en push a main
+AUTO_DEPLOY=true
+AUTO_DEPLOY_BRANCH=main
+
+# Environment variables (todas opcionales - hay valores por defecto)
+# Descomentar solo si necesitas personalizar
+
+# ADMIN_USERNAME=
+# ADMIN_PASSWORD=
+# REDIS_PASSWORD=
+# LOG_LEVEL=info
+# DEBUG=false
+# USER_MANAGEMENT_ENABLED=false
+# DEFAULT_TOKEN_LIMIT=1000000
+# METRICS_WINDOW=5
+# REQUEST_TIMEOUT=600000
