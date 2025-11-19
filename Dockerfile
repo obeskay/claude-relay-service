@@ -29,6 +29,7 @@ RUN apk add --no-cache \
     curl \
     dumb-init \
     sed \
+    netcat-openbsd \
     && rm -rf /var/cache/apk/*
 
 # 📁 设置工作目录
