@@ -68,7 +68,10 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
+
+const { t } = useI18n()
 
 // Props
 defineProps({
@@ -89,31 +92,31 @@ defineProps({
 const themeStore = useThemeStore()
 
 // 主题选项配置
-const themeOptions = [
+const themeOptions = computed(() => [
   {
     value: 'light',
-    label: '浅色模式',
-    shortLabel: '浅色',
+    label: t('theme.light'),
+    shortLabel: t('theme.light_short'),
     icon: 'fas fa-sun'
   },
   {
     value: 'dark',
-    label: '深色模式',
-    shortLabel: '深色',
+    label: t('theme.dark'),
+    shortLabel: t('theme.dark_short'),
     icon: 'fas fa-moon'
   },
   {
     value: 'auto',
-    label: '跟随系统',
-    shortLabel: '自动',
+    label: t('theme.follow_system'),
+    shortLabel: t('theme.auto_short'),
     icon: 'fas fa-circle-half-stroke'
   }
-]
+])
 
 // 计算属性
 const themeTooltip = computed(() => {
-  const current = themeOptions.find((opt) => opt.value === themeStore.themeMode)
-  return current ? `点击切换主题 - ${current.label}` : '切换主题'
+  const current = themeOptions.value.find((opt) => opt.value === themeStore.themeMode)
+  return current ? t('theme.toggle_tooltip', { mode: current.label }) : t('menu.toggle_theme')
 })
 
 // 方法

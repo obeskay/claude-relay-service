@@ -1,0 +1,44 @@
+{
+  "response.success": "Operación exitosa",
+  "response.created": "Recurso creado exitosamente",
+  "response.updated": "Recurso actualizado exitosamente",
+  "response.deleted": "Recurso eliminado exitosamente",
+  "response.not_found": "Recurso no encontrado",
+  "response.bad_request": "Solicitud incorrecta",
+  "response.unauthorized": "No autorizado",
+  "response.forbidden": "Prohibido",
+  "response.conflict": "Conflicto con el estado actual",
+  "response.internal_error": "Error interno del servidor",
+
+  "api_key.created": "API Key creada exitosamente",
+  "api_key.updated": "API Key actualizada exitosamente",
+  "api_key.deleted": "API Key eliminada exitosamente",
+  "api_key.revoked": "API Key revocada exitosamente",
+  "api_key.not_found": "API Key no encontrada",
+  "api_key.invalid": "API Key inválida",
+  "api_key.expired": "API Key expirada",
+
+  "account.created": "Cuenta creada exitosamente",
+  "account.updated": "Cuenta actualizada exitosamente",
+  "account.deleted": "Cuenta eliminada exitosamente",
+  "account.token_refreshed": "Token actualizado exitosamente",
+  "account.test_success": "Prueba de conexión exitosa",
+  "account.test_failed": "Prueba de conexión fallida",
+
+  "user.created": "Usuario creado exitosamente",
+  "user.updated": "Usuario actualizado exitosamente",
+  "user.deleted": "Usuario eliminado exitosamente",
+  "user.login_success": "Inicio de sesión exitoso",
+  "user.login_failed": "Error de inicio de sesión",
+  "user.logout_success": "Cierre de sesión exitoso",
+
+  "webhook.created": "Webhook creado exitosamente",
+  "webhook.updated": "Webhook actualizado exitosamente",
+  "webhook.deleted": "Webhook eliminado exitosamente",
+  "webhook.sent": "Webhook enviado exitosamente",
+  "webhook.failed": "Error al enviar webhook",
+
+  "system.healthy": "Sistema saludable",
+  "system.unhealthy": "Sistema no saludable",
+  "system.maintenance": "Sistema en mantenimiento"
+}

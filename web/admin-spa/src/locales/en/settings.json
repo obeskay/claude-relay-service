@@ -1,0 +1,216 @@
+{
+  "pageTitle": "System Settings",
+  "pageDescription": "Website customization and notification configuration",
+
+  "navigation": {
+    "branding": "Branding Settings",
+    "webhook": "Notification Settings"
+  },
+
+  "loading": {
+    "settings": "Loading settings...",
+    "saving": "Saving...",
+    "uploading": "Uploading..."
+  },
+
+  "branding": {
+    "siteName": {
+      "label": "Site Name",
+      "description": "Brand Identity",
+      "placeholder": "Claude Relay Service",
+      "helpText": "Will be displayed in browser title and page header",
+      "maxLength": "Maximum 100 characters"
+    },
+    "siteIcon": {
+      "label": "Site Icon",
+      "description": "Favicon",
+      "currentIcon": "Current Icon",
+      "uploadButton": "Upload Icon",
+      "deleteButton": "Delete",
+      "supportedFormats": "Supports .ico, .png, .jpg, .svg formats, maximum 350KB",
+      "preview": "Icon Preview"
+    },
+    "adminButton": {
+      "label": "Admin Entry",
+      "description": "Login Button Display",
+      "hideButton": "Hide Login Button",
+      "showButton": "Show Login Button",
+      "helpText": "Once hidden, users need to directly access /admin/login page to log in"
+    },
+    "actions": {
+      "save": "Save Settings",
+      "saving": "Saving...",
+      "reset": "Reset to Default",
+      "lastUpdated": "Last updated: {time}"
+    }
+  },
+
+  "webhook": {
+    "mainSwitch": {
+      "title": "Enable Notifications",
+      "description": "Once enabled, the system will send notifications to specified platforms according to configuration"
+    },
+    "notificationTypes": {
+      "title": "Notification Types",
+      "accountExpiring": {
+        "name": "Account Expiring",
+        "description": "Notify when an account is near its expiration date"
+      },
+      "accountExpired": {
+        "name": "Account Expired",
+        "description": "Notify when an account has expired"
+      },
+      "accountError": {
+        "name": "Account Error",
+        "description": "Notify when there is an account error"
+      },
+      "accountDisabled": {
+        "name": "Account Disabled",
+        "description": "Notify when an account is disabled"
+      },
+      "tokenRefreshFailed": {
+        "name": "Token Refresh Failed",
+        "description": "Notify when token refresh fails"
+      },
+      "rateLimitReached": {
+        "name": "Rate Limit Reached",
+        "description": "Notify when rate limit is reached"
+      },
+      "apiKeyExpiring": {
+        "name": "API Key Expiring",
+        "description": "Notify when an API key is near its expiration date"
+      },
+      "apiKeyExpired": {
+        "name": "API Key Expired",
+        "description": "Notify when an API key has expired"
+      },
+      "systemError": {
+        "name": "System Error",
+        "description": "Notify when a system error occurs"
+      },
+      "dailyReport": {
+        "name": "Daily Report",
+        "description": "Send daily usage report"
+      }
+    },
+    "platforms": {
+      "title": "Notification Platforms",
+      "addButton": "Add Platform",
+      "empty": "No platforms configured",
+      "emptyDescription": "Click the button above to add your first notification platform",
+      "types": {
+        "dingtalk": "DingTalk",
+        "wecom": "WeChat Work",
+        "feishu": "Feishu",
+        "webhook": "Custom Webhook",
+        "telegram": "Telegram",
+        "discord": "Discord",
+        "slack": "Slack",
+        "smtp": "Email (SMTP)"
+      },
+      "fields": {
+        "name": "Name",
+        "url": "Webhook URL",
+        "chatId": "Chat ID",
+        "botToken": "Bot Token",
+        "apiBaseUrl": "API Base URL",
+        "host": "SMTP Host",
+        "port": "Port",
+        "secure": "Use SSL/TLS",
+        "from": "From Address",
+        "to": "To Address",
+        "username": "Username",
+        "password": "Password"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "test": "Test Notification"
+      }
+    }
+  },
+
+  "modal": {
+    "addPlatform": {
+      "title": "Add Notification Platform",
+      "selectType": "Select platform type",
+      "confirm": "Add",
+      "cancel": "Cancel"
+    },
+    "editPlatform": {
+      "title": "Edit Notification Platform",
+      "confirm": "Save",
+      "cancel": "Cancel"
+    },
+    "deletePlatform": {
+      "title": "Confirm Deletion",
+      "message": "Are you sure you want to delete this notification platform?",
+      "warning": "This action cannot be undone.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  },
+
+  "messages": {
+    "success": {
+      "saved": "Settings saved successfully",
+      "reset": "Settings reset successfully",
+      "platformAdded": "Platform added successfully",
+      "platformUpdated": "Platform updated successfully",
+      "platformDeleted": "Platform deleted successfully",
+      "testSent": "Test notification sent successfully",
+      "iconUploaded": "Icon uploaded successfully",
+      "iconRemoved": "Icon removed successfully"
+    },
+    "error": {
+      "loadFailed": "Failed to load settings",
+      "saveFailed": "Failed to save settings",
+      "resetFailed": "Failed to reset settings",
+      "platformAddFailed": "Failed to add platform",
+      "platformUpdateFailed": "Failed to update platform",
+      "platformDeleteFailed": "Failed to delete platform",
+      "testFailed": "Failed to send test notification",
+      "uploadFailed": "Failed to upload icon",
+      "fileTooLarge": "File is too large (maximum 350KB)",
+      "invalidFormat": "Invalid file format",
+      "networkError": "Network error",
+      "unauthorized": "Unauthorized",
+      "serverError": "Server error"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "urlRequired": "URL is required",
+      "urlInvalid": "Invalid URL format",
+      "chatIdRequired": "Chat ID is required",
+      "botTokenRequired": "Bot token is required",
+      "hostRequired": "Host is required",
+      "portRequired": "Port is required",
+      "portInvalid": "Invalid port number",
+      "fromRequired": "From address is required",
+      "toRequired": "To address is required",
+      "emailInvalid": "Invalid email format"
+    }
+  },
+
+  "mobileView": {
+    "siteName": {
+      "title": "Site Name",
+      "description": "Customize your site's brand name"
+    },
+    "siteIcon": {
+      "title": "Site Icon",
+      "description": "Upload a custom icon or enter an icon URL"
+    },
+    "adminEntry": {
+      "title": "Admin Entry",
+      "description": "Control login button display on the home page"
+    }
+  },
+
+  "telegram": {
+    "tokenFormat": "Token: {masked}",
+    "apiUrl": "API: {url}",
+    "chatId": "Chat ID: {id}",
+    "notConfigured": "Not configured"
+  }
+}

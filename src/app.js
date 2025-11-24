@@ -172,6 +172,11 @@ class Application {
       this.app.use(express.urlencoded({ extended: true, limit: '10mb' }))
       this.app.use(securityMiddleware)
 
+      // 🌐 i18n middleware - Internacionalización
+      const { middleware: i18nMiddleware, i18next } = require('./services/i18nService')
+      this.app.use(i18nMiddleware.handle(i18next))
+      logger.info('🌐 i18n middleware initialized - Supporting: en, es-MX')
+
       // 🎯 信任代理
       if (config.server.trustProxy) {
         this.app.set('trust proxy', 1)

@@ -38,7 +38,10 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
+
+const { t } = useI18n()
 
 defineProps({
   activeTab: {
@@ -54,24 +57,49 @@ const authStore = useAuthStore()
 // 根据 LDAP 配置动态生成 tabs
 const tabs = computed(() => {
   const baseTabs = [
-    { key: 'dashboard', name: '仪表板', shortName: '仪表板', icon: 'fas fa-tachometer-alt' },
-    { key: 'apiKeys', name: 'API Keys', shortName: 'API', icon: 'fas fa-key' },
-    { key: 'accounts', name: '账户管理', shortName: '账户', icon: 'fas fa-user-circle' }
+    {
+      key: 'dashboard',
+      name: t('tab.dashboard'),
+      shortName: t('tab.dashboard_short'),
+      icon: 'fas fa-tachometer-alt'
+    },
+    {
+      key: 'apiKeys',
+      name: t('tab.api_keys'),
+      shortName: t('tab.api_keys_short'),
+      icon: 'fas fa-key'
+    },
+    {
+      key: 'accounts',
+      name: t('tab.accounts_management'),
+      shortName: t('tab.accounts_short'),
+      icon: 'fas fa-user-circle'
+    }
   ]
 
   // 只有在 LDAP 启用时才显示用户管理
   if (authStore.oemSettings?.ldapEnabled) {
     baseTabs.push({
       key: 'userManagement',
-      name: '用户管理',
-      shortName: '用户',
+      name: t('tab.user_management'),
+      shortName: t('tab.user_short'),
       icon: 'fas fa-users'
     })
   }
 
   baseTabs.push(
-    { key: 'tutorial', name: '使用教程', shortName: '教程', icon: 'fas fa-graduation-cap' },
-    { key: 'settings', name: '系统设置', shortName: '设置', icon: 'fas fa-cogs' }
+    {
+      key: 'tutorial',
+      name: t('tab.tutorial'),
+      shortName: t('tab.tutorial_short'),
+      icon: 'fas fa-graduation-cap'
+    },
+    {
+      key: 'settings',
+      name: t('tab.settings'),
+      shortName: t('tab.settings_short'),
+      icon: 'fas fa-cogs'
+    }
   )
 
   return baseTabs

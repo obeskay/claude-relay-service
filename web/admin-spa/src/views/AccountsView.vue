@@ -4,10 +4,10 @@
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
           <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-            账户管理
+            {{ t('accountsView.pageTitle') }}
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-            管理 Claude、Gemini、OpenAI 等账户与代理配置
+            {{ t('accountsView.pageDescription') }}
           </p>
         </div>
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -23,7 +23,7 @@
                 icon="fa-sort-amount-down"
                 icon-color="text-indigo-500"
                 :options="sortOptions"
-                placeholder="选择排序"
+                placeholder="t('accountsView.filters.selectSort')"
                 @change="sortAccounts()"
               />
             </div>
@@ -38,7 +38,7 @@
                 icon="fa-server"
                 icon-color="text-blue-500"
                 :options="platformOptions"
-                placeholder="选择平台"
+                :placeholder="t('accountsView.filters.selectPlatform')"
                 @change="filterByPlatform"
               />
             </div>
@@ -53,7 +53,7 @@
                 icon="fa-layer-group"
                 icon-color="text-purple-500"
                 :options="groupOptions"
-                placeholder="选择分组"
+                :placeholder="t('accountsView.filters.selectGroup')"
                 @change="filterByGroup"
               />
             </div>
@@ -67,7 +67,7 @@
                 <input
                   v-model="searchKeyword"
                   class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 pl-9 text-sm text-gray-700 placeholder-gray-400 shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 dark:hover:border-gray-500"
-                  placeholder="搜索账户名称..."
+                  :placeholder="t('accountsView.filters.searchPlaceholder')"
                   type="text"
                 />
                 <i class="fas fa-search absolute left-3 text-sm text-cyan-500" />
@@ -106,7 +106,7 @@
                       accountsLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                     ]"
                   />
-                  <span class="relative">刷新</span>
+                  <span class="relative">{{ t('accountsView.buttons.refresh') }}</span>
                 </button>
               </el-tooltip>
             </div>
@@ -117,7 +117,11 @@
               @click="toggleSelectionMode"
             >
               <i :class="showCheckboxes ? 'fas fa-times' : 'fas fa-check-square'"></i>
-              <span>{{ showCheckboxes ? '取消选择' : '选择' }}</span>
+              <span>{{
+                showCheckboxes
+                  ? t('accountsView.buttons.cancelSelect')
+                  : t('accountsView.buttons.select')
+              }}</span>
             </button>
 
             <!-- 批量删除按钮 -->
@@ -139,7 +143,7 @@
               @click.stop="openCreateAccountModal"
             >
               <i class="fas fa-plus"></i>
-              <span>添加账户</span>
+              <span>{{ t('accountsView.buttons.addAccount') }}</span>
             </button>
           </div>
         </div>
@@ -147,7 +151,7 @@
 
       <div v-if="accountsLoading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4" />
-        <p class="text-gray-500 dark:text-gray-400">正在加载账户...</p>
+        <p class="text-gray-500 dark:text-gray-400">{{ t('accountsView.loading.accounts') }}</p>
       </div>
 
       <div v-else-if="sortedAccounts.length === 0" class="py-12 text-center">
@@ -156,8 +160,10 @@
         >
           <i class="fas fa-user-circle text-xl text-gray-400" />
         </div>
-        <p class="text-lg text-gray-500 dark:text-gray-400">暂无账户</p>
-        <p class="mt-2 text-sm text-gray-400 dark:text-gray-500">点击上方按钮添加您的第一个账户</p>
+        <p class="text-lg text-gray-500 dark:text-gray-400">{{ t('accountsView.empty.title') }}</p>
+        <p class="mt-2 text-sm text-gray-400 dark:text-gray-500">
+          {{ t('accountsView.empty.description') }}
+        </p>
       </div>
 
       <!-- 桌面端表格视图 -->
@@ -265,7 +271,7 @@
                 class="w-[10%] min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
               >
                 <div class="flex items-center gap-2">
-                  <span>会话窗口</span>
+                  <span>{{ t('accountsView.table.headers.sessionWindow') }}</span>
                   <el-tooltip placement="top">
                     <template #content>
                       <div
@@ -1294,7 +1300,9 @@
           <!-- 使用统计 -->
           <div class="mb-3 grid grid-cols-2 gap-3">
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">今日使用</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ t('accountsView.table.headers.todayUsage') }}
+              </p>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-blue-500" />
@@ -1317,7 +1325,9 @@
               </div>
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">会话窗口</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ t('accountsView.table.headers.sessionWindow') }}
+              </p>
               <div v-if="account.usage && account.usage.sessionWindow" class="space-y-1">
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-purple-500" />
@@ -1453,7 +1463,9 @@
               >
                 <div class="flex items-center justify-between text-xs">
                   <div class="flex items-center gap-1">
-                    <span class="font-medium text-gray-600 dark:text-gray-300">会话窗口</span>
+                    <span class="font-medium text-gray-600 dark:text-gray-300">{{
+                      t('accountsView.table.headers.sessionWindow')
+                    }}</span>
                     <el-tooltip
                       content="会话窗口进度不代表使用量，仅表示距离下一个5小时窗口的剩余时间"
                       placement="top"
@@ -1568,7 +1580,9 @@
 
             <!-- 最后使用时间 -->
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500 dark:text-gray-400">最后使用</span>
+              <span class="text-gray-500 dark:text-gray-400">{{
+                t('accountsView.table.headers.lastUsed')
+              }}</span>
               <span class="text-gray-700 dark:text-gray-200">
                 {{ account.lastUsedAt ? formatRelativeTime(account.lastUsedAt) : '从未使用' }}
               </span>
@@ -1579,7 +1593,9 @@
               v-if="account.proxyConfig && account.proxyConfig.type !== 'none'"
               class="flex items-center justify-between text-xs"
             >
-              <span class="text-gray-500 dark:text-gray-400">代理</span>
+              <span class="text-gray-500 dark:text-gray-400">{{
+                t('accountsView.table.headers.proxy')
+              }}</span>
               <span class="text-gray-700 dark:text-gray-200">
                 {{ account.proxyConfig.type.toUpperCase() }}
               </span>
@@ -1587,7 +1603,9 @@
 
             <!-- 调度优先级 -->
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500 dark:text-gray-400">优先级</span>
+              <span class="text-gray-500 dark:text-gray-400">{{
+                t('accountsView.table.headers.priority')
+              }}</span>
               <span class="font-medium text-gray-700 dark:text-gray-200">
                 {{ account.priority || 50 }}
               </span>
@@ -1789,6 +1807,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { showToast } from '@/utils/toast'
 import { apiClient } from '@/config/api'
 import { useConfirm } from '@/composables/useConfirm'
@@ -1798,6 +1817,9 @@ import AccountUsageDetailModal from '@/components/accounts/AccountUsageDetailMod
 import AccountExpiryEditModal from '@/components/accounts/AccountExpiryEditModal.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import CustomDropdown from '@/components/common/CustomDropdown.vue'
+
+// i18n
+const { t } = useI18n()
 
 // 使用确认弹窗
 const { showConfirmModal, confirmOptions, showConfirm, handleConfirm, handleCancel } = useConfirm()

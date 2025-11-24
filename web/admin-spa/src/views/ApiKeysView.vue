@@ -4,10 +4,10 @@
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
           <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-            API Keys 管理
+            {{ t('apiKeys.page.title') }}
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-            管理和监控您的 API 密钥
+            {{ t('apiKeys.page.subtitle') }}
           </p>
         </div>
 
@@ -23,7 +23,7 @@
               ]"
               @click="activeTab = 'active'"
             >
-              活跃 API Keys
+              {{ t('apiKeys.tab.active') }}
               <span
                 v-if="apiKeys.length > 0"
                 class="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-100"
@@ -40,7 +40,7 @@
               ]"
               @click="loadDeletedApiKeys"
             >
-              已删除 API Keys
+              {{ t('apiKeys.tab.deleted') }}
               <span
                 v-if="deletedApiKeys.length > 0"
                 class="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-100"
@@ -68,7 +68,7 @@
                   icon="fa-calendar-alt"
                   icon-color="text-blue-500"
                   :options="timeRangeDropdownOptions"
-                  placeholder="选择时间范围"
+                  :placeholder="t('apiKeys.filter.time_range')"
                   @change="handleTimeRangeChange"
                 />
               </div>
@@ -80,12 +80,12 @@
                   :clearable="true"
                   :default-time="defaultTime"
                   :disabled-date="disabledDate"
-                  end-placeholder="结束日期"
+                  :end-placeholder="t('apiKeys.filter.end_date')"
                   format="YYYY-MM-DD HH:mm:ss"
                   :model-value="globalDateFilter.customRange"
-                  range-separator="至"
+                  :range-separator="t('apiKeys.filter.to')"
                   size="small"
-                  start-placeholder="开始日期"
+                  :start-placeholder="t('apiKeys.filter.start_date')"
                   style="width: 320px; height: 38px"
                   type="datetimerange"
                   :unlink-panels="false"
@@ -105,7 +105,7 @@
                     icon="fa-tags"
                     icon-color="text-purple-500"
                     :options="tagOptions"
-                    placeholder="所有标签"
+                    :placeholder="t('apiKeys.filter.all_tags')"
                     @change="currentPage = 1"
                   />
                   <span
@@ -125,7 +125,7 @@
                     icon="fa-filter"
                     icon-color="text-cyan-500"
                     :options="searchModeOptions"
-                    placeholder="选择搜索类型"
+                    :placeholder="t('apiKeys.filter.search_type')"
                     @change="currentPage = 1"
                   />
                 </div>
@@ -139,10 +139,10 @@
                       class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 pl-9 text-sm text-gray-700 placeholder-gray-400 shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 dark:hover:border-gray-500"
                       :placeholder="
                         searchMode === 'bindingAccount'
-                          ? '搜索所属账号...'
+                          ? t('apiKeys.filter.search_placeholder_account')
                           : isLdapEnabled
-                            ? '搜索名称或所有者...'
-                            : '搜索名称...'
+                            ? t('apiKeys.filter.search_placeholder_name_owner')
+                            : t('apiKeys.filter.search_placeholder_name')
                       "
                       type="text"
                       @input="currentPage = 1"
@@ -177,7 +177,7 @@
                     apiKeysLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                   ]"
                 />
-                <span class="relative">刷新</span>
+                <span class="relative">{{ t('apiKeys.action.refresh') }}</span>
               </button>
 
               <!-- 选择/取消选择按钮 -->
@@ -186,7 +186,9 @@
                 @click="toggleSelectionMode"
               >
                 <i :class="showCheckboxes ? 'fas fa-times' : 'fas fa-check-square'"></i>
-                <span>{{ showCheckboxes ? '取消选择' : '选择' }}</span>
+                <span>{{
+                  showCheckboxes ? t('apiKeys.action.deselect') : t('apiKeys.action.select')
+                }}</span>
               </button>
 
               <!-- 导出数据按钮 -->
@@ -198,7 +200,7 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-file-excel relative text-emerald-500" />
-                <span class="relative">导出数据</span>
+                <span class="relative">{{ t('apiKeys.action.export') }}</span>
               </button>
 
               <!-- 批量编辑按钮 - 移到刷新按钮旁边 -->
@@ -211,7 +213,9 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-edit relative text-blue-600 dark:text-blue-400" />
-                <span class="relative">编辑选中 ({{ selectedApiKeys.length }})</span>
+                <span class="relative">{{
+                  t('apiKeys.action.edit_selected', { count: selectedApiKeys.length })
+                }}</span>
               </button>
 
               <!-- 批量删除按钮 - 移到刷新按钮旁边 -->
@@ -224,7 +228,9 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-trash relative text-red-600 dark:text-red-400" />
-                <span class="relative">删除选中 ({{ selectedApiKeys.length }})</span>
+                <span class="relative">{{
+                  t('apiKeys.action.delete_selected', { count: selectedApiKeys.length })
+                }}</span>
               </button>
 
               <!-- 创建按钮 -->
@@ -233,14 +239,14 @@
                 @click.stop="openCreateApiKeyModal"
               >
                 <i class="fas fa-plus"></i>
-                <span>创建新 Key</span>
+                <span>{{ t('apiKeys.action.create_new') }}</span>
               </button>
             </div>
           </div>
 
           <div v-if="apiKeysLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400">正在加载 API Keys...</p>
+            <p class="text-gray-500 dark:text-gray-400">{{ t('apiKeys.loading.keys') }}</p>
           </div>
 
           <div v-else-if="apiKeys.length === 0" class="py-12 text-center">
@@ -249,8 +255,8 @@
             >
               <i class="fas fa-key text-xl text-gray-400" />
             </div>
-            <p class="text-lg text-gray-500 dark:text-gray-400">暂无 API Keys</p>
-            <p class="mt-2 text-sm text-gray-400">点击上方按钮创建您的第一个 API Key</p>
+            <p class="text-lg text-gray-500 dark:text-gray-400">{{ t('apiKeys.empty.no_keys') }}</p>
+            <p class="mt-2 text-sm text-gray-400">{{ t('apiKeys.empty.create_first') }}</p>
           </div>
 
           <!-- 桌面端表格视图 -->
@@ -276,7 +282,7 @@
                       class="w-[14%] min-w-[120px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('name')"
                     >
-                      名称
+                      {{ t('apiKeys.table.name') }}
                       <i
                         v-if="apiKeysSortBy === 'name'"
                         :class="[
@@ -290,18 +296,18 @@
                     <th
                       class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      所属账号
+                      {{ t('apiKeys.table.account') }}
                     </th>
                     <th
                       class="w-[10%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      标签
+                      {{ t('apiKeys.table.tags') }}
                     </th>
                     <th
                       class="w-[6%] min-w-[60px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('status')"
                     >
-                      状态
+                      {{ t('apiKeys.table.status') }}
                       <i
                         v-if="apiKeysSortBy === 'status'"
                         :class="[
@@ -316,7 +322,7 @@
                       class="w-[4%] min-w-[40px] cursor-pointer px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('periodCost')"
                     >
-                      费用
+                      {{ t('apiKeys.table.cost') }}
                       <i
                         v-if="apiKeysSortBy === 'periodCost'"
                         :class="[
@@ -330,13 +336,13 @@
                     <th
                       class="w-[14%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      限制
+                      {{ t('apiKeys.table.limit') }}
                     </th>
                     <th
                       class="w-[5%] min-w-[45px] cursor-pointer px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('periodTokens')"
                     >
-                      Token
+                      {{ t('apiKeys.table.tokens') }}
                       <i
                         v-if="apiKeysSortBy === 'periodTokens'"
                         :class="[
@@ -351,7 +357,7 @@
                       class="w-[5%] min-w-[45px] cursor-pointer px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('periodRequests')"
                     >
-                      请求数
+                      {{ t('apiKeys.table.requests') }}
                       <i
                         v-if="apiKeysSortBy === 'periodRequests'"
                         :class="[
@@ -366,7 +372,7 @@
                       class="w-[8%] min-w-[70px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('lastUsedAt')"
                     >
-                      最后使用
+                      {{ t('apiKeys.table.last_used') }}
                       <i
                         v-if="apiKeysSortBy === 'lastUsedAt'"
                         :class="[
@@ -381,7 +387,7 @@
                       class="w-[8%] min-w-[70px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('createdAt')"
                     >
-                      创建时间
+                      {{ t('apiKeys.table.created_at') }}
                       <i
                         v-if="apiKeysSortBy === 'createdAt'"
                         :class="[
@@ -396,7 +402,7 @@
                       class="w-[8%] min-w-[70px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('expiresAt')"
                     >
-                      过期时间
+                      {{ t('apiKeys.table.expires_at') }}
                       <i
                         v-if="apiKeysSortBy === 'expiresAt'"
                         :class="[
@@ -410,7 +416,7 @@
                     <th
                       class="operations-column sticky right-0 w-[23%] min-w-[200px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      操作
+                      {{ t('apiKeys.table.operations') }}
                     </th>
                   </tr>
                 </thead>
@@ -553,7 +559,7 @@
                           <span
                             v-if="!key.tags || key.tags.length === 0"
                             class="text-xs text-gray-400"
-                            >无标签</span
+                            >{{ t('apiKeys.tags.no_tags') }}</span
                           >
                         </div>
                       </td>
@@ -572,7 +578,9 @@
                               key.isActive ? 'bg-green-500' : 'bg-red-500'
                             ]"
                           />
-                          {{ key.isActive ? '活跃' : '禁用' }}
+                          {{
+                            key.isActive ? t('apiKeys.status.active') : t('apiKeys.status.disabled')
+                          }}
                         </span>
                       </td>
                       <!-- 费用 -->
@@ -591,7 +599,7 @@
                           <LimitProgressBar
                             v-if="key.dailyCostLimit > 0"
                             :current="key.dailyCost || 0"
-                            label="每日限制"
+                            :label="t('apiKeys.limit.daily')"
                             :limit="key.dailyCostLimit"
                             type="daily"
                             variant="compact"
@@ -601,7 +609,7 @@
                           <LimitProgressBar
                             v-else-if="key.totalCostLimit > 0"
                             :current="key.usage?.total?.cost || 0"
-                            label="总费用限制"
+                            :label="t('apiKeys.limit.total')"
                             :limit="key.totalCostLimit"
                             type="total"
                             variant="compact"
@@ -620,7 +628,7 @@
                             <!-- 费用进度条 -->
                             <LimitProgressBar
                               :current="key.currentWindowCost || 0"
-                              label="窗口费用"
+                              :label="t('apiKeys.limit.window_cost')"
                               :limit="key.rateLimitCost"
                               type="window"
                               variant="compact"
@@ -629,7 +637,9 @@
                             <div class="flex items-center justify-between text-[10px]">
                               <div class="flex items-center gap-1 text-sky-600 dark:text-sky-300">
                                 <i class="fas fa-clock text-[10px]" />
-                                <span class="font-medium">{{ key.rateLimitWindow }}分钟窗口</span>
+                                <span class="font-medium">{{
+                                  t('apiKeys.limit.window_time', { minutes: key.rateLimitWindow })
+                                }}</span>
                               </div>
                               <span
                                 class="font-bold"
@@ -642,7 +652,7 @@
                                 {{
                                   key.windowRemainingSeconds > 0
                                     ? formatWindowTime(key.windowRemainingSeconds)
-                                    : '未激活'
+                                    : t('apiKeys.limit.not_activated')
                                 }}
                               </span>
                             </div>
@@ -654,7 +664,9 @@
                             class="flex items-center justify-center gap-1.5 py-2 text-gray-500 dark:text-gray-400"
                           >
                             <i class="fas fa-infinity text-base" />
-                            <span class="text-xs font-medium">无限制</span>
+                            <span class="text-xs font-medium">{{
+                              t('apiKeys.limit.no_limit')
+                            }}</span>
                           </div>
                         </div>
                       </td>
@@ -695,7 +707,9 @@
                           >
                             {{ formatLastUsed(key.lastUsedAt) }}
                           </span>
-                          <span v-else class="text-gray-400" style="font-size: 13px">从未使用</span>
+                          <span v-else class="text-gray-400" style="font-size: 13px">{{
+                            t('apiKeys.time.never_used')
+                          }}</span>
                           <span
                             v-if="hasLastUsageAccount(key)"
                             class="mt-1 text-xs text-gray-500 dark:text-gray-400"
@@ -710,7 +724,7 @@
                             </span>
                           </span>
                           <span v-else class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                            暂无使用账号
+                            {{ t('apiKeys.account.no_usage') }}
                           </span>
                         </div>
                       </td>
@@ -732,9 +746,16 @@
                             style="font-size: 13px"
                           >
                             <i class="fas fa-pause-circle mr-1 text-xs" />
-                            未激活 (
-                            {{ key.activationDays || (key.activationUnit === 'hours' ? 24 : 30)
-                            }}{{ key.activationUnit === 'hours' ? '小时' : '天' }})
+                            {{
+                              t('apiKeys.status.activation_pending', {
+                                time:
+                                  key.activationDays || (key.activationUnit === 'hours' ? 24 : 30),
+                                unit:
+                                  key.activationUnit === 'hours'
+                                    ? t('apiKeys.time.hours')
+                                    : t('apiKeys.time.days')
+                              })
+                            }}
                           </span>
                           <!-- 已设置过期时间 -->
                           <span v-else-if="key.expiresAt">
@@ -784,16 +805,18 @@
                         <div class="flex gap-1">
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-purple-600 transition-colors hover:bg-purple-50 hover:text-purple-900 dark:hover:bg-purple-900/20"
-                            title="查看详细统计"
+                            :title="t('apiKeys.tooltip.stats')"
                             @click="showUsageDetails(key)"
                           >
                             <i class="fas fa-chart-line" />
-                            <span class="ml-1 hidden xl:inline">详情</span>
+                            <span class="ml-1 hidden xl:inline">{{
+                              t('apiKeys.action.view_stats')
+                            }}</span>
                           </button>
                           <button
                             v-if="key && key.id"
                             class="rounded px-2 py-1 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900 dark:hover:bg-indigo-900/20"
-                            title="模型使用分布"
+                            :title="t('apiKeys.tooltip.models')"
                             @click="toggleApiKeyModelStats(key.id)"
                           >
                             <i
@@ -806,11 +829,13 @@
                           </button>
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-900 dark:hover:bg-blue-900/20"
-                            title="编辑"
+                            :title="t('apiKeys.tooltip.edit')"
                             @click="openEditApiKeyModal(key)"
                           >
                             <i class="fas fa-edit" />
-                            <span class="ml-1 hidden xl:inline">编辑</span>
+                            <span class="ml-1 hidden xl:inline">{{
+                              t('apiKeys.action.edit')
+                            }}</span>
                           </button>
                           <button
                             v-if="
@@ -819,11 +844,13 @@
                                 isApiKeyExpiringSoon(key.expiresAt))
                             "
                             class="rounded px-2 py-1 text-xs font-medium text-green-600 transition-colors hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20"
-                            title="续期"
+                            :title="t('apiKeys.tooltip.renew')"
                             @click="openRenewApiKeyModal(key)"
                           >
                             <i class="fas fa-clock" />
-                            <span class="ml-1 hidden xl:inline">续期</span>
+                            <span class="ml-1 hidden xl:inline">{{
+                              t('apiKeys.action.renew')
+                            }}</span>
                           </button>
                           <button
                             :class="[
@@ -832,21 +859,29 @@
                                 : 'text-green-600 hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20',
                               'rounded px-2 py-1 text-xs font-medium transition-colors'
                             ]"
-                            :title="key.isActive ? '禁用' : '激活'"
+                            :title="
+                              key.isActive
+                                ? t('apiKeys.tooltip.disable')
+                                : t('apiKeys.tooltip.activate')
+                            "
                             @click="toggleApiKeyStatus(key)"
                           >
                             <i :class="['fas', key.isActive ? 'fa-ban' : 'fa-check-circle']" />
                             <span class="ml-1 hidden xl:inline">{{
-                              key.isActive ? '禁用' : '激活'
+                              key.isActive
+                                ? t('apiKeys.action.disable')
+                                : t('apiKeys.action.activate')
                             }}</span>
                           </button>
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900 dark:hover:bg-red-900/20"
-                            title="删除"
+                            :title="t('apiKeys.tooltip.delete')"
                             @click="deleteApiKey(key.id)"
                           >
                             <i class="fas fa-trash" />
-                            <span class="ml-1 hidden xl:inline">删除</span>
+                            <span class="ml-1 hidden xl:inline">{{
+                              t('apiKeys.action.delete')
+                            }}</span>
                           </button>
                         </div>
                       </td>
@@ -858,7 +893,7 @@
                         <div v-if="!apiKeyModelStats[key.id]" class="py-4 text-center">
                           <div class="loading-spinner mx-auto" />
                           <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                            加载模型统计...
+                            {{ t('apiKeys.loading.models') }}
                           </p>
                         </div>
                         <div class="space-y-4">
@@ -1361,7 +1396,7 @@
                         {{
                           key.windowRemainingSeconds > 0
                             ? formatWindowTime(key.windowRemainingSeconds)
-                            : '未激活'
+                            : t('apiKeys.limit.not_activated')
                         }}
                       </span>
                     </div>
@@ -1373,7 +1408,7 @@
                     class="flex items-center justify-center gap-1.5 py-2 text-gray-500 dark:text-gray-400"
                   >
                     <i class="fas fa-infinity text-base" />
-                    <span class="text-xs font-medium">无限制</span>
+                    <span class="text-xs font-medium">{{ t('apiKeys.limit.no_limit') }}</span>
                   </div>
                 </div>
               </div>
@@ -1396,7 +1431,7 @@
                     </span>
                     <button
                       class="inline-flex h-5 w-5 items-center justify-center rounded text-gray-300 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-900/20"
-                      title="编辑过期时间"
+                      :title="t('apiKeys.tooltip.renew')"
                       @click.stop="startEditExpiry(key)"
                     >
                       <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1460,7 +1495,7 @@
                   @click="toggleApiKeyStatus(key)"
                 >
                   <i :class="['fas', key.isActive ? 'fa-ban' : 'fa-check-circle', 'mr-1']" />
-                  {{ key.isActive ? '禁用' : '激活' }}
+                  {{ key.isActive ? t('apiKeys.action.disable') : t('apiKeys.action.activate') }}
                 </button>
                 <button
                   class="rounded-lg bg-red-50 px-3 py-1.5 text-xs text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50"
@@ -1568,7 +1603,7 @@
         <div v-else-if="activeTab === 'deleted'" class="tab-panel">
           <div v-if="deletedApiKeysLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400">正在加载已删除的 API Keys...</p>
+            <p class="text-gray-500 dark:text-gray-400">{{ t('apiKeys.loading.deleted') }}</p>
           </div>
 
           <div v-else-if="deletedApiKeys.length === 0" class="py-12 text-center">
@@ -1577,8 +1612,10 @@
             >
               <i class="fas fa-trash text-xl text-gray-400" />
             </div>
-            <p class="text-lg text-gray-500 dark:text-gray-400">暂无已删除的 API Keys</p>
-            <p class="mt-2 text-sm text-gray-400">已删除的 API Keys 会出现在这里</p>
+            <p class="text-lg text-gray-500 dark:text-gray-400">
+              {{ t('apiKeys.empty.no_deleted') }}
+            </p>
+            <p class="mt-2 text-sm text-gray-400">{{ t('apiKeys.empty.deleted_here') }}</p>
           </div>
 
           <!-- 已删除的 API Keys 表格 -->
@@ -1812,7 +1849,9 @@
                           >
                             {{ formatLastUsed(key.lastUsedAt) }}
                           </span>
-                          <span v-else class="text-gray-400" style="font-size: 13px">从未使用</span>
+                          <span v-else class="text-gray-400" style="font-size: 13px">{{
+                            t('apiKeys.time.never_used')
+                          }}</span>
                           <span
                             v-if="hasLastUsageAccount(key)"
                             class="mt-1 text-xs text-gray-500 dark:text-gray-400"
@@ -1827,7 +1866,7 @@
                             </span>
                           </span>
                           <span v-else class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                            暂无使用账号
+                            {{ t('apiKeys.account.no_usage') }}
                           </span>
                         </div>
                       </td>
@@ -1926,6 +1965,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { showToast } from '@/utils/toast'
 import { apiClient } from '@/config/api'
 import { useClientsStore } from '@/stores/clients'
@@ -1941,6 +1981,9 @@ import ExpiryEditModal from '@/components/apikeys/ExpiryEditModal.vue'
 import UsageDetailModal from '@/components/apikeys/UsageDetailModal.vue'
 import LimitProgressBar from '@/components/apikeys/LimitProgressBar.vue'
 import CustomDropdown from '@/components/common/CustomDropdown.vue'
+
+// i18n
+const { t } = useI18n()
 
 // 响应式数据
 const clientsStore = useClientsStore()
@@ -3354,15 +3397,15 @@ const toggleApiKeyStatus = async (key) => {
   if (key.isActive) {
     if (window.showConfirm) {
       confirmed = await window.showConfirm(
-        '禁用 API Key',
-        `确定要禁用 API Key "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`,
+        t('apiKeys.confirm.disable_title'),
+        `t('apiKeys.confirm.disable_message' "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`,
         '确定禁用',
         '取消'
       )
     } else {
       // 降级方案
       confirmed = confirm(
-        `确定要禁用 API Key "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`
+        `t('apiKeys.confirm.disable_message' "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`
       )
     }
   }
@@ -3375,7 +3418,10 @@ const toggleApiKeyStatus = async (key) => {
     })
 
     if (data.success) {
-      showToast(`API Key 已${key.isActive ? '禁用' : '激活'}`, 'success')
+      showToast(
+        `API Key 已${key.isActive ? t('apiKeys.action.disable') : t('apiKeys.action.activate')}`,
+        'success'
+      )
       // 更新本地数据
       const localKey = apiKeys.value.find((k) => k.id === key.id)
       if (localKey) {

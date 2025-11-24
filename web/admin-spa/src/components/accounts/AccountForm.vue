@@ -12,7 +12,7 @@
               <i class="fas fa-user-circle text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              {{ isEdit ? '编辑账户' : '添加账户' }}
+              {{ isEdit ? t('form.edit_account') : t('form.add_account') }}
             </h3>
           </div>
           <button
@@ -40,7 +40,7 @@
               </div>
               <span
                 class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >基本信息</span
+                >{{ t('form.basic_info') }}</span
               >
             </div>
             <div class="h-0.5 w-4 bg-gray-300 sm:w-8" />
@@ -55,7 +55,7 @@
               </div>
               <span
                 class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >授权认证</span
+                >{{ t('form.authorization') }}</span
               >
             </div>
           </div>
@@ -65,9 +65,9 @@
         <div v-if="oauthStep === 1 && !isEdit">
           <div class="space-y-6">
             <div v-if="!isEdit">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >选择平台</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.select_platform')
+              }}</label>
               <!-- 平台分组选择器 -->
               <div class="space-y-3">
                 <!-- 分组选择器 -->
@@ -139,7 +139,9 @@
                       <h4 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
                         OpenAI
                       </h4>
-                      <p class="text-xs text-gray-600 dark:text-gray-400">GPT 系列</p>
+                      <p class="text-xs text-gray-600 dark:text-gray-400">
+                        {{ t('form.gpt_series') }}
+                      </p>
                     </div>
                   </div>
 
@@ -212,7 +214,7 @@
                   class="animate-fadeIn rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
                 >
                   <p class="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
-                    选择具体平台类型：
+                    {{ t('form.select_specific_platform') }}
                   </p>
                   <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     <!-- Claude 子选项 -->
@@ -237,7 +239,9 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Claude Code</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                              t('form.official')
+                            }}</span>
                           </div>
                         </div>
                         <div
@@ -270,7 +274,9 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Claude Console</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">标准API</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                              t('form.standard_api')
+                            }}</span>
                           </div>
                         </div>
                         <div
@@ -367,7 +373,9 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Codex Cli</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                              t('form.official')
+                            }}</span>
                           </div>
                         </div>
                         <div
@@ -467,7 +475,9 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Gemini Cli</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                              t('form.official')
+                            }}</span>
                           </div>
                         </div>
                         <div
@@ -524,10 +534,13 @@
                         <div class="flex items-center gap-2">
                           <i class="fas fa-robot text-sm text-rose-600 dark:text-rose-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >Droid 专属</span
+                            <span
+                              class="block text-xs font-medium text-gray-900 dark:text-gray-100"
+                              >{{ t('form.droid_exclusive') }}</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                              t('form.official')
+                            }}</span>
                           </div>
                         </div>
                         <div
@@ -554,9 +567,9 @@
                 form.platform !== 'gemini-api'
               "
             >
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >添加方式</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.add_method')
+              }}</label>
               <div class="flex flex-wrap gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -566,8 +579,9 @@
                     value="oauth"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300">
-                    OAuth 授权<span v-if="form.platform === 'claude' || form.platform === 'openai'">
-                      (用量可视化)</span
+                    {{ t('form.oauth_auth')
+                    }}<span v-if="form.platform === 'claude' || form.platform === 'openai'">
+                      ({{ t('form.usage_visible') }})</span
                     >
                   </span>
                 </label>
@@ -578,7 +592,9 @@
                     type="radio"
                     value="setup-token"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Setup Token (效期长)</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                    t('form.setup_token')
+                  }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -587,9 +603,9 @@
                     type="radio"
                     value="manual"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300"
-                    >手动输入 Access Token</span
-                  >
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                    t('form.manual_token')
+                  }}</span>
                 </label>
                 <label v-if="form.platform === 'droid'" class="flex cursor-pointer items-center">
                   <input
@@ -598,22 +614,22 @@
                     type="radio"
                     value="apikey"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300"
-                    >使用 API Key (支持多个)</span
-                  >
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                    t('form.use_api_key')
+                  }}</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >账户名称</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.account_name')
+              }}</label>
               <input
                 v-model="form.name"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.name }"
-                placeholder="为账户设置一个易识别的名称"
+                placeholder="{{ t('form.account_name_placeholder') }}"
                 required
                 type="text"
               />
@@ -623,21 +639,21 @@
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >描述 (可选)</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.description_optional')
+              }}</label>
               <textarea
                 v-model="form.description"
                 class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="账户用途说明..."
+                :placeholder="t('form.description_placeholder')"
                 rows="3"
               />
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >账户类型</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.account_type')
+              }}</label>
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -646,7 +662,9 @@
                     type="radio"
                     value="shared"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">共享账户</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                    t('form.shared_account')
+                  }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -655,7 +673,9 @@
                     type="radio"
                     value="dedicated"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">专属账户</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                    t('form.dedicated_account')
+                  }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -664,20 +684,22 @@
                     type="radio"
                     value="group"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">分组调度</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                    t('form.group_scheduling')
+                  }}</span>
                 </label>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                共享账户：供所有API Key使用；专属账户：仅供特定API
-                Key使用；分组调度：加入分组供分组内调度
+                {{ t('form.account_type_help').split(';')[0] }}
+                {{ t('form.account_type_help').split(';').slice(1).join(';') }}
               </p>
             </div>
 
             <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗，Gemini API 不需要 -->
             <div v-if="!isEdit && form.platform !== 'gemini-api'">
-              <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >到期时间 (可选)</label
-              >
+              <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.expiry_date')
+              }}</label>
               <div
                 class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800"
               >
@@ -686,12 +708,12 @@
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   @change="updateAccountExpireAt"
                 >
-                  <option value="">永不过期</option>
-                  <option value="30d">30 天</option>
-                  <option value="90d">90 天</option>
-                  <option value="180d">180 天</option>
-                  <option value="365d">365 天</option>
-                  <option value="custom">自定义日期</option>
+                  <option value="">{{ t('form.never_expire') }}</option>
+                  <option value="30d">{{ t('form.30_days') }}</option>
+                  <option value="90d">{{ t('form.90_days') }}</option>
+                  <option value="180d">{{ t('form.180_days') }}</option>
+                  <option value="365d">{{ t('form.365_days') }}</option>
+                  <option value="custom">{{ t('form.custom_date') }}</option>
                 </select>
                 <div v-if="form.expireDuration === 'custom'" class="mt-3">
                   <input
@@ -704,23 +726,23 @@
                 </div>
                 <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-calendar-alt mr-1" />
-                  将于 {{ formatExpireDate(form.expiresAt) }} 过期
+                  {{ t('form.expires_on', { date: formatExpireDate(form.expiresAt) }) }}
                 </p>
                 <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-infinity mr-1" />
-                  账户永不过期
+                  {{ t('form.account_never_expires') }}
                 </p>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                设置 Claude Max/Pro 订阅的到期时间，到期后将停止调度此账户
+                {{ t('form.expiry_help') }}
               </p>
             </div>
 
             <!-- 分组选择器 -->
             <div v-if="form.accountType === 'group'">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >选择分组 *</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.select_group')
+              }}</label>
               <div class="flex gap-2">
                 <div class="flex-1">
                   <!-- 多选分组界面 -->
@@ -731,7 +753,7 @@
                       v-if="filteredGroups.length === 0"
                       class="text-sm text-gray-500 dark:text-gray-400"
                     >
-                      暂无可用分组
+                      {{ t('form.no_groups_available') }}
                     </div>
                     <label
                       v-for="group in filteredGroups"
@@ -745,10 +767,12 @@
                         :value="group.id"
                       />
                       <span class="text-sm text-gray-700 dark:text-gray-200">
-                        {{ group.name }} ({{ group.memberCount || 0 }} 个成员)
+                        {{ group.name }} ({{
+                          t('form.members_count', { count: group.memberCount || 0 })
+                        }})
                       </span>
                     </label>
-                    <!-- 新建分组选项 -->
+                    <!-- {{ t('form.create_new_group') }}选项 -->
                     <div class="border-t pt-2 dark:border-gray-600">
                       <button
                         class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
@@ -756,7 +780,7 @@
                         @click="handleNewGroup"
                       >
                         <i class="fas fa-plus" />
-                        新建分组
+                        {{ t('form.create_new_group') }}
                       </button>
                     </div>
                   </div>
@@ -773,13 +797,13 @@
 
             <!-- Gemini 项目 ID 字段 -->
             <div v-if="form.platform === 'gemini'">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >项目 ID (可选)</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.gemini_project_id')
+              }}</label>
               <input
                 v-model="form.projectId"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="例如：verdant-wares-464411-k9"
+                :placeholder="t('form.gemini_project_id_placeholder')"
                 type="text"
               />
               <div class="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
@@ -1727,23 +1751,23 @@
 
             <!-- 所有平台的优先级设置 -->
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >调度优先级 (1-100)</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                t('form.scheduling_priority')
+              }}</label>
               <input
                 v-model.number="form.priority"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 max="100"
                 min="1"
-                placeholder="数字越小优先级越高，默认50"
+                :placeholder="t('form.scheduling_priority_placeholder')"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                数字越小优先级越高，建议范围：1-100
+                {{ t('form.scheduling_priority_help') }}
               </p>
             </div>
 
-            <!-- 手动输入 Token 字段 -->
+            <!-- {{ t('form.manual_token_input') }} 字段 -->
             <div
               v-if="
                 form.addType === 'manual' &&
@@ -1763,7 +1787,7 @@
                 </div>
                 <div>
                   <h5 class="mb-2 font-semibold text-blue-900 dark:text-blue-300">
-                    手动输入 Token
+                    {{ t('form.manual_token_input') }}
                   </h5>
                   <p
                     v-if="form.platform === 'claude'"
@@ -1985,7 +2009,7 @@
                 type="button"
                 @click="$emit('close')"
               >
-                取消
+                {{ t('form.cancel') }}
               </button>
               <button
                 v-if="
@@ -2002,7 +2026,7 @@
                 type="button"
                 @click="nextStep"
               >
-                下一步
+                {{ t('form.next_step') }}
               </button>
               <button
                 v-else
@@ -2012,7 +2036,7 @@
                 @click="createAccount"
               >
                 <div v-if="loading" class="loading-spinner mr-2" />
-                {{ loading ? '创建中...' : '创建' }}
+                {{ loading ? t('form.creating') : t('form.create') }}
               </button>
             </div>
           </div>
@@ -2083,7 +2107,7 @@
                               />
                               <button
                                 class="rounded-lg bg-gray-100 px-3 py-2 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                title="复制链接"
+                                title="{{ t('form.copy') }}"
                                 @click="copySetupTokenAuthUrl"
                               >
                                 <i
@@ -2203,34 +2227,34 @@
         <div v-if="isEdit" class="space-y-6">
           <!-- 基本信息 -->
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >账户名称</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.account_name')
+            }}</label>
             <input
               v-model="form.name"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="为账户设置一个易识别的名称"
+              placeholder="{{ t('form.account_name_placeholder') }}"
               required
               type="text"
             />
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >描述 (可选)</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.description_optional')
+            }}</label>
             <textarea
               v-model="form.description"
               class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="账户用途说明..."
+              :placeholder="t('form.description_placeholder')"
               rows="3"
             />
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >账户类型</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.account_type')
+            }}</label>
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
                 <input
@@ -2239,7 +2263,9 @@
                   type="radio"
                   value="shared"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">共享账户</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                  t('form.shared_account')
+                }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
@@ -2248,7 +2274,9 @@
                   type="radio"
                   value="dedicated"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">专属账户</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                  t('form.dedicated_account')
+                }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
@@ -2257,20 +2285,22 @@
                   type="radio"
                   value="group"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">分组调度</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                  t('form.group_scheduling')
+                }}</span>
               </label>
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              共享账户：供所有API Key使用；专属账户：仅供特定API
-              Key使用；分组调度：加入分组供分组内调度
+              {{ t('form.account_type_help').split(';')[0] }}
+              {{ t('form.account_type_help').split(';').slice(1).join(';') }}
             </p>
           </div>
 
           <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗 -->
           <div v-if="!isEdit">
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >到期时间 (可选)</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.expiry_date')
+            }}</label>
             <div
               class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800"
             >
@@ -2279,12 +2309,12 @@
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 @change="updateAccountExpireAt"
               >
-                <option value="">永不过期</option>
-                <option value="30d">30 天</option>
-                <option value="90d">90 天</option>
-                <option value="180d">180 天</option>
-                <option value="365d">365 天</option>
-                <option value="custom">自定义日期</option>
+                <option value="">{{ t('form.never_expire') }}</option>
+                <option value="30d">{{ t('form.30_days') }}</option>
+                <option value="90d">{{ t('form.90_days') }}</option>
+                <option value="180d">{{ t('form.180_days') }}</option>
+                <option value="365d">{{ t('form.365_days') }}</option>
+                <option value="custom">{{ t('form.custom_date') }}</option>
               </select>
               <div v-if="form.expireDuration === 'custom'" class="mt-3">
                 <input
@@ -2297,23 +2327,23 @@
               </div>
               <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <i class="fas fa-calendar-alt mr-1" />
-                将于 {{ formatExpireDate(form.expiresAt) }} 过期
+                {{ t('form.expires_on', { date: formatExpireDate(form.expiresAt) }) }}
               </p>
               <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <i class="fas fa-infinity mr-1" />
-                账户永不过期
+                {{ t('form.account_never_expires') }}
               </p>
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              设置 Claude Max/Pro 订阅的到期时间，到期后将停止调度此账户
+              {{ t('form.expiry_help') }}
             </p>
           </div>
 
           <!-- 分组选择器 -->
           <div v-if="form.accountType === 'group'">
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择分组 *</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.select_group')
+            }}</label>
             <div class="flex gap-2">
               <div class="flex-1">
                 <!-- 多选分组界面 -->
@@ -2324,7 +2354,7 @@
                     v-if="filteredGroups.length === 0"
                     class="text-sm text-gray-500 dark:text-gray-400"
                   >
-                    暂无可用分组
+                    {{ t('form.no_groups_available') }}
                   </div>
                   <label
                     v-for="group in filteredGroups"
@@ -2338,10 +2368,12 @@
                       :value="group.id"
                     />
                     <span class="text-sm text-gray-700 dark:text-gray-200">
-                      {{ group.name }} ({{ group.memberCount || 0 }} 个成员)
+                      {{ group.name }} ({{
+                        t('form.members_count', { count: group.memberCount || 0 })
+                      }})
                     </span>
                   </label>
-                  <!-- 新建分组选项 -->
+                  <!-- {{ t('form.create_new_group') }}选项 -->
                   <div class="border-t pt-2 dark:border-gray-600">
                     <button
                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
@@ -2349,7 +2381,7 @@
                       @click="handleNewGroup"
                     >
                       <i class="fas fa-plus" />
-                      新建分组
+                      {{ t('form.create_new_group') }}
                     </button>
                   </div>
                 </div>
@@ -2366,13 +2398,13 @@
 
           <!-- Gemini 项目 ID 字段 -->
           <div v-if="form.platform === 'gemini'">
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >项目 ID (可选)</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.gemini_project_id')
+            }}</label>
             <input
               v-model="form.projectId"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="例如：verdant-wares-464411-k9"
+              :placeholder="t('form.gemini_project_id_placeholder')"
               type="text"
             />
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
@@ -2535,19 +2567,19 @@
 
           <!-- 所有平台的优先级设置（编辑模式） -->
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >调度优先级 (1-100)</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              t('form.scheduling_priority')
+            }}</label>
             <input
               v-model.number="form.priority"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               max="100"
               min="1"
-              placeholder="数字越小优先级越高"
+              :placeholder="t('form.scheduling_priority_placeholder')"
               type="number"
             />
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              数字越小优先级越高，建议范围：1-100
+              {{ t('form.scheduling_priority_help') }}
             </p>
           </div>
 
@@ -3449,7 +3481,7 @@
               type="button"
               @click="$emit('close')"
             >
-              取消
+              {{ t('form.cancel') }}
             </button>
             <button
               class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -3496,6 +3528,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { showToast } from '@/utils/toast'
 import { apiClient } from '@/config/api'
 import { useAccountsStore } from '@/stores/accounts'
@@ -3505,6 +3538,8 @@ import OAuthFlow from './OAuthFlow.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import GroupManagementModal from './GroupManagementModal.vue'
 import ApiKeyManagementModal from './ApiKeyManagementModal.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
   account: {
@@ -3908,7 +3943,7 @@ const errors = ref({
   deploymentName: ''
 })
 
-// 计算是否可以进入下一步
+// 计算是否可以进入{{ t('form.next_step') }}
 const canProceed = computed(() => {
   return form.value.name?.trim() && form.value.platform
 })
@@ -4029,7 +4064,7 @@ const selectPlatformGroup = (group) => {
   }
 }
 
-// 下一步
+// {{ t('form.next_step') }}
 const nextStep = async () => {
   // 清除之前的错误
   errors.value.name = ''
@@ -5190,7 +5225,7 @@ const refreshGroups = async () => {
   showToast('分组列表已刷新', 'success')
 }
 
-// 处理新建分组
+// 处理{{ t('form.create_new_group') }}
 const handleNewGroup = () => {
   showGroupManagement.value = true
 }

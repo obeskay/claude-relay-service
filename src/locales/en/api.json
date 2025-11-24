@@ -1,0 +1,44 @@
+{
+  "response.success": "Operation successful",
+  "response.created": "Resource created successfully",
+  "response.updated": "Resource updated successfully",
+  "response.deleted": "Resource deleted successfully",
+  "response.not_found": "Resource not found",
+  "response.bad_request": "Bad request",
+  "response.unauthorized": "Unauthorized",
+  "response.forbidden": "Forbidden",
+  "response.conflict": "Conflict with current state",
+  "response.internal_error": "Internal server error",
+
+  "api_key.created": "API Key created successfully",
+  "api_key.updated": "API Key updated successfully",
+  "api_key.deleted": "API Key deleted successfully",
+  "api_key.revoked": "API Key revoked successfully",
+  "api_key.not_found": "API Key not found",
+  "api_key.invalid": "Invalid API Key",
+  "api_key.expired": "API Key expired",
+
+  "account.created": "Account created successfully",
+  "account.updated": "Account updated successfully",
+  "account.deleted": "Account deleted successfully",
+  "account.token_refreshed": "Token refreshed successfully",
+  "account.test_success": "Connection test successful",
+  "account.test_failed": "Connection test failed",
+
+  "user.created": "User created successfully",
+  "user.updated": "User updated successfully",
+  "user.deleted": "User deleted successfully",
+  "user.login_success": "Login successful",
+  "user.login_failed": "Login failed",
+  "user.logout_success": "Logout successful",
+
+  "webhook.created": "Webhook created successfully",
+  "webhook.updated": "Webhook updated successfully",
+  "webhook.deleted": "Webhook deleted successfully",
+  "webhook.sent": "Webhook sent successfully",
+  "webhook.failed": "Failed to send webhook",
+
+  "system.healthy": "System healthy",
+  "system.unhealthy": "System unhealthy",
+  "system.maintenance": "System under maintenance"
+}

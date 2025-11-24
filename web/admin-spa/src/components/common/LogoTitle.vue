@@ -7,12 +7,16 @@
       <template v-if="!loading">
         <img
           v-if="logoSrc"
-          alt="Logo"
+          :alt="t('logo.alt')"
           class="h-8 w-8 object-contain"
           :src="logoSrc"
           @error="handleLogoError"
         />
-        <i v-else class="fas fa-cloud text-xl text-gray-700 dark:text-gray-300" />
+        <i
+          v-else
+          class="fas fa-cloud text-xl text-gray-700 dark:text-gray-300"
+          :title="t('logo.fallback_icon')"
+        />
       </template>
       <div v-else class="h-8 w-8 animate-pulse rounded bg-gray-300/50 dark:bg-gray-600/50" />
     </div>
@@ -40,6 +44,10 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
   loading: {
     type: Boolean,

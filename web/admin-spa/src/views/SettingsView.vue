@@ -6,7 +6,9 @@
         <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
           系统设置
         </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">网站定制和通知配置</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
+          {{ t('settings.pageDescription') }}
+        </p>
       </div>
 
       <!-- 设置分类导航 -->
@@ -42,7 +44,7 @@
       <!-- 加载状态 -->
       <div v-if="loading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4"></div>
-        <p class="text-gray-500 dark:text-gray-400">正在加载设置...</p>
+        <p class="text-gray-500 dark:text-gray-400">{{ t('settings.loading.settings') }}</p>
       </div>
 
       <!-- 内容区域 -->
@@ -66,7 +68,9 @@
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           网站名称
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">品牌标识</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          {{ t('settings.branding.siteName.description') }}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -79,7 +83,7 @@
                       type="text"
                     />
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      将显示在浏览器标题和页面头部
+                      {{ t('settings.branding.siteName.helpText') }}
                     </p>
                   </td>
                 </tr>
@@ -109,12 +113,14 @@
                         class="inline-flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700"
                       >
                         <img
-                          alt="图标预览"
+                          :alt="t('settings.branding.siteIcon.preview')"
                           class="h-8 w-8"
                           :src="oemSettings.siteIconData || oemSettings.siteIcon"
                           @error="handleIconError"
                         />
-                        <span class="text-sm text-gray-600 dark:text-gray-400">当前图标</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                          t('settings.branding.siteIcon.currentIcon')
+                        }}</span>
                         <button
                           class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                           @click="removeIcon"
@@ -139,9 +145,9 @@
                           <i class="fas fa-upload mr-2" />
                           上传图标
                         </button>
-                        <span class="ml-3 text-xs text-gray-500 dark:text-gray-400"
-                          >支持 .ico, .png, .jpg, .svg 格式，最大 350KB</span
-                        >
+                        <span class="ml-3 text-xs text-gray-500 dark:text-gray-400">{{
+                          t('settings.branding.siteIcon.supportedFormats')
+                        }}</span>
                       </div>
                     </div>
                   </td>
@@ -160,7 +166,9 @@
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           管理入口
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">登录按钮显示</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          {{ t('settings.branding.adminButton.description') }}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -177,7 +185,7 @@
                       </label>
                     </div>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      隐藏后，用户需要直接访问 /admin/login 页面登录
+                      {{ t('settings.branding.adminButton.helpText') }}
                     </p>
                   </td>
                 </tr>
@@ -195,7 +203,11 @@
                         >
                           <div v-if="saving" class="loading-spinner mr-2"></div>
                           <i v-else class="fas fa-save mr-2" />
-                          {{ saving ? '保存中...' : '保存设置' }}
+                          {{
+                            saving
+                              ? t('settings.branding.actions.saving')
+                              : t('settings.branding.actions.save')
+                          }}
                         </button>
 
                         <button
@@ -233,8 +245,12 @@
                   <i class="fas fa-tag"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">站点名称</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">自定义您的站点品牌名称</p>
+                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                    {{ t('settings.mobileView.siteName.title') }}
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ t('settings.mobileView.siteName.description') }}
+                  </p>
                 </div>
               </div>
               <input
@@ -255,9 +271,11 @@
                   <i class="fas fa-image"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">站点图标</h3>
+                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                    {{ t('settings.mobileView.siteIcon.title') }}
+                  </h3>
                   <p class="text-sm text-gray-500 dark:text-gray-400">
-                    上传自定义图标或输入图标URL
+                    {{ t('settings.mobileView.siteIcon.description') }}
                   </p>
                 </div>
               </div>
@@ -268,12 +286,14 @@
                   class="inline-flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700"
                 >
                   <img
-                    alt="图标预览"
+                    :alt="t('settings.branding.siteIcon.preview')"
                     class="h-8 w-8"
                     :src="oemSettings.siteIconData || oemSettings.siteIcon"
                     @error="handleIconError"
                   />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">当前图标</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                    t('settings.branding.siteIcon.currentIcon')
+                  }}</span>
                   <button
                     class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                     @click="removeIcon"
@@ -299,7 +319,7 @@
                     上传图标
                   </button>
                   <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    支持 .ico, .png, .jpg, .svg 格式，最大 350KB
+                    {{ t('settings.branding.siteIcon.supportedFormats') }}
                   </p>
                 </div>
               </div>
@@ -314,8 +334,12 @@
                   <i class="fas fa-eye-slash"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">管理入口</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">控制登录按钮在首页的显示</p>
+                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                    {{ t('settings.branding.adminButton.label') }}
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ t('settings.mobileView.adminEntry.description') }}
+                  </p>
                 </div>
               </div>
               <div class="space-y-2">
@@ -329,7 +353,7 @@
                   }}</span>
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  隐藏后，用户需要直接访问 /admin/login 页面登录
+                  {{ t('settings.branding.adminButton.helpText') }}
                 </p>
               </div>
             </div>
@@ -345,7 +369,11 @@
                 >
                   <div v-if="saving" class="loading-spinner mr-2"></div>
                   <i v-else class="fas fa-save mr-2" />
-                  {{ saving ? '保存中...' : '保存设置' }}
+                  {{
+                    saving
+                      ? t('settings.branding.actions.saving')
+                      : t('settings.branding.actions.save')
+                  }}
                 </button>
 
                 <button
@@ -377,9 +405,11 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">启用通知</h2>
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  {{ t('settings.webhook.mainSwitch.title') }}
+                </h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                  开启后，系统将按配置发送通知到指定平台
+                  {{ t('settings.webhook.mainSwitch.description') }}
                 </p>
               </div>
               <label class="relative inline-flex cursor-pointer items-center">
@@ -400,7 +430,9 @@
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
-            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">通知类型</h2>
+            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+              {{ t('settings.webhook.notificationTypes.title') }}
+            </h2>
             <div class="space-y-3">
               <div
                 v-for="(enabled, type) in webhookConfig.notificationTypes"
@@ -435,7 +467,9 @@
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
             <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">通知平台</h2>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                {{ t('settings.webhook.platforms.title') }}
+              </h2>
               <button
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 @click="showAddPlatformModal = true"
@@ -1212,6 +1246,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { showToast } from '@/utils/toast'
 import { useSettingsStore } from '@/stores/settings'
@@ -1221,6 +1256,9 @@ import { apiClient } from '@/config/api'
 defineOptions({
   name: 'SettingsView'
 })
+
+// i18n
+const { t } = useI18n()
 
 // 使用settings store
 const settingsStore = useSettingsStore()

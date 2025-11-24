@@ -4,6 +4,7 @@ import checker from 'vite-plugin-checker'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig(({ mode }) => {
@@ -38,6 +39,9 @@ export default defineConfig(({ mode }) => {
     base: basePath,
     plugins: [
       vue(),
+      VueI18nPlugin({
+        include: [fileURLToPath(new URL('./src/locales/**', import.meta.url))]
+      }),
       checker({
         eslint: {
           lintCommand: 'eslint "./src/**/*.{js,vue}" --cache=false',
