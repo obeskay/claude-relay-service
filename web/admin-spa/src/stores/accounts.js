@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { apiClient } from '@/config/api'
 
 export const useAccountsStore = defineStore('accounts', () => {
+  const { t } = useI18n()
   // 状态
   const claudeAccounts = ref([])
   const claudeConsoleAccounts = ref([])
@@ -28,7 +30,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         claudeAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取Claude账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_claude_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -47,7 +49,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         claudeConsoleAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取Claude Console账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_console_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -66,7 +68,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         bedrockAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取Bedrock账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_bedrock_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -85,7 +87,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         geminiAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取Gemini账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_gemini_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -104,7 +106,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         openaiAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取OpenAI账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_openai_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -123,7 +125,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         azureOpenaiAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取Azure OpenAI账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_azure_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -142,7 +144,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         openaiResponsesAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取OpenAI-Responses账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_responses_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -161,7 +163,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         droidAccounts.value = response.data || []
       } else {
-        throw new Error(response.message || '获取Droid账户失败')
+        throw new Error(response.message || t('messages.accounts.fetch_droid_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -204,7 +206,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchClaudeAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Claude账户失败')
+        throw new Error(response.message || t('messages.accounts.create_claude_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -224,7 +226,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchClaudeConsoleAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Claude Console账户失败')
+        throw new Error(response.message || t('messages.accounts.create_console_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -244,7 +246,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchBedrockAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Bedrock账户失败')
+        throw new Error(response.message || t('messages.accounts.create_bedrock_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -264,7 +266,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchGeminiAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Gemini账户失败')
+        throw new Error(response.message || t('messages.accounts.create_gemini_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -284,7 +286,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchOpenAIAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建OpenAI账户失败')
+        throw new Error(response.message || t('messages.accounts.create_openai_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -304,7 +306,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchDroidAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Droid账户失败')
+        throw new Error(response.message || t('messages.accounts.create_droid_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -344,7 +346,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchAzureOpenAIAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Azure OpenAI账户失败')
+        throw new Error(response.message || t('messages.accounts.create_azure_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -364,7 +366,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchOpenAIResponsesAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建OpenAI-Responses账户失败')
+        throw new Error(response.message || t('messages.accounts.create_responses_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -384,7 +386,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchGeminiAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '创建Gemini API账户失败')
+        throw new Error(response.message || t('messages.accounts.create_gemini_api_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -404,7 +406,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchClaudeAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新Claude账户失败')
+        throw new Error(response.message || t('messages.accounts.update_claude_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -424,7 +426,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchClaudeConsoleAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新Claude Console账户失败')
+        throw new Error(response.message || t('messages.accounts.update_console_failed'))
       }
     } catch (err) {
       error.value = err.message
@@ -444,7 +446,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchBedrockAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新Bedrock账户失败')
+        throw new Error(response.message || t('messages.accounts.update_bedrock_failed'))
       }
     } catch (err) {
       error.value = err.message

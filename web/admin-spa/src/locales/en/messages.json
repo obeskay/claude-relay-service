@@ -101,5 +101,26 @@
   "stats.all_keys_invalid": "All API Keys are invalid",
   "stats.batch_query_failed": "Batch query failed",
   "stats.batch_query_data_failed": "Failed to query batch statistics data",
-  "stats.load_batch_model_failed": "Failed to load batch model statistics"
+  "stats.load_batch_model_failed": "Failed to load batch model statistics",
+
+  "accounts.fetch_claude_failed": "Failed to fetch Claude accounts",
+  "accounts.fetch_console_failed": "Failed to fetch Claude Console accounts",
+  "accounts.fetch_bedrock_failed": "Failed to fetch Bedrock accounts",
+  "accounts.fetch_gemini_failed": "Failed to fetch Gemini accounts",
+  "accounts.fetch_openai_failed": "Failed to fetch OpenAI accounts",
+  "accounts.fetch_azure_failed": "Failed to fetch Azure OpenAI accounts",
+  "accounts.fetch_responses_failed": "Failed to fetch OpenAI Responses accounts",
+  "accounts.fetch_droid_failed": "Failed to fetch Droid accounts",
+  "accounts.create_claude_failed": "Failed to create Claude account",
+  "accounts.create_console_failed": "Failed to create Claude Console account",
+  "accounts.create_bedrock_failed": "Failed to create Bedrock account",
+  "accounts.create_gemini_failed": "Failed to create Gemini account",
+  "accounts.create_openai_failed": "Failed to create OpenAI account",
+  "accounts.create_droid_failed": "Failed to create Droid account",
+  "accounts.create_azure_failed": "Failed to create Azure OpenAI account",
+  "accounts.create_responses_failed": "Failed to create OpenAI Responses account",
+  "accounts.create_gemini_api_failed": "Failed to create Gemini API account",
+  "accounts.update_claude_failed": "Failed to update Claude account",
+  "accounts.update_console_failed": "Failed to update Claude Console account",
+  "accounts.update_bedrock_failed": "Failed to update Bedrock account"
 }

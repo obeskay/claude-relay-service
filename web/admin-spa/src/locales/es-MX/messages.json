@@ -120,5 +120,26 @@
   "stats.all_keys_invalid": "Todas las API Keys son inválidas",
   "stats.batch_query_failed": "La consulta en lote falló",
   "stats.batch_query_data_failed": "Error al consultar datos de estadísticas en lote",
-  "stats.load_batch_model_failed": "Error al cargar estadísticas del modelo en lote"
+  "stats.load_batch_model_failed": "Error al cargar estadísticas del modelo en lote",
+
+  "accounts.fetch_claude_failed": "Error al obtener cuentas Claude",
+  "accounts.fetch_console_failed": "Error al obtener cuentas Claude Console",
+  "accounts.fetch_bedrock_failed": "Error al obtener cuentas Bedrock",
+  "accounts.fetch_gemini_failed": "Error al obtener cuentas Gemini",
+  "accounts.fetch_openai_failed": "Error al obtener cuentas OpenAI",
+  "accounts.fetch_azure_failed": "Error al obtener cuentas Azure OpenAI",
+  "accounts.fetch_responses_failed": "Error al obtener cuentas OpenAI Responses",
+  "accounts.fetch_droid_failed": "Error al obtener cuentas Droid",
+  "accounts.create_claude_failed": "Error al crear cuenta Claude",
+  "accounts.create_console_failed": "Error al crear cuenta Claude Console",
+  "accounts.create_bedrock_failed": "Error al crear cuenta Bedrock",
+  "accounts.create_gemini_failed": "Error al crear cuenta Gemini",
+  "accounts.create_openai_failed": "Error al crear cuenta OpenAI",
+  "accounts.create_droid_failed": "Error al crear cuenta Droid",
+  "accounts.create_azure_failed": "Error al crear cuenta Azure OpenAI",
+  "accounts.create_responses_failed": "Error al crear cuenta OpenAI Responses",
+  "accounts.create_gemini_api_failed": "Error al crear cuenta Gemini API",
+  "accounts.update_claude_failed": "Error al actualizar cuenta Claude",
+  "accounts.update_console_failed": "Error al actualizar cuenta Claude Console",
+  "accounts.update_bedrock_failed": "Error al actualizar cuenta Bedrock"
 }
