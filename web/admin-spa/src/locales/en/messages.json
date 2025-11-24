@@ -122,5 +122,11 @@
   "accounts.create_gemini_api_failed": "Failed to create Gemini API account",
   "accounts.update_claude_failed": "Failed to update Claude account",
   "accounts.update_console_failed": "Failed to update Claude Console account",
-  "accounts.update_bedrock_failed": "Failed to update Bedrock account"
+  "accounts.update_bedrock_failed": "Failed to update Bedrock account",
+
+  "dashboard.load_data_failed": "Failed to load dashboard data",
+  "dashboard.load_trends_failed": "Failed to load usage trends",
+  "dashboard.load_model_stats_failed": "Failed to load model statistics",
+  "dashboard.load_api_keys_trends_failed": "Failed to load API Keys trends",
+  "dashboard.load_account_usage_trends_failed": "Failed to load account usage trends"
 }

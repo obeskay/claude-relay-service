@@ -141,5 +141,11 @@
   "accounts.create_gemini_api_failed": "Error al crear cuenta Gemini API",
   "accounts.update_claude_failed": "Error al actualizar cuenta Claude",
   "accounts.update_console_failed": "Error al actualizar cuenta Claude Console",
-  "accounts.update_bedrock_failed": "Error al actualizar cuenta Bedrock"
+  "accounts.update_bedrock_failed": "Error al actualizar cuenta Bedrock",
+
+  "dashboard.load_data_failed": "Error al cargar datos del panel",
+  "dashboard.load_trends_failed": "Error al cargar tendencias de uso",
+  "dashboard.load_model_stats_failed": "Error al cargar estadísticas del modelo",
+  "dashboard.load_api_keys_trends_failed": "Error al cargar tendencias de API Keys",
+  "dashboard.load_account_usage_trends_failed": "Error al cargar tendencias de uso de cuentas"
 }

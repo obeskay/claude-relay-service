@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { apiClient } from '@/config/api'
 import { showToast } from '@/utils/toast'
 
 export const useDashboardStore = defineStore('dashboard', () => {
+  const { t } = useI18n()
+
   // 状态
   const loading = ref(false)
   const dashboardData = ref({
@@ -226,7 +229,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         }
       }
     } catch (error) {
-      console.error('加载仪表板数据失败:', error)
+      console.error(t('messages.dashboard.load_data_failed') + ':', error)
     } finally {
       loading.value = false
     }
@@ -314,7 +317,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         trendData.value = response.data
       }
     } catch (error) {
-      console.error('加载使用趋势失败:', error)
+      console.error(t('messages.dashboard.load_trends_failed') + ':', error)
     }
   }
 
@@ -405,7 +408,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         dashboardModelStats.value = response.data
       }
     } catch (error) {
-      console.error('加载模型统计失败:', error)
+      console.error(t('messages.dashboard.load_model_stats_failed') + ':', error)
     }
   }
 
@@ -507,7 +510,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         }
       }
     } catch (error) {
-      console.error('加载API Keys趋势失败:', error)
+      console.error(t('messages.dashboard.load_api_keys_trends_failed') + ':', error)
     }
   }
 
@@ -598,7 +601,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         }
       }
     } catch (error) {
-      console.error('加载账号使用趋势失败:', error)
+      console.error(t('messages.dashboard.load_account_usage_trends_failed') + ':', error)
     }
   }
 
