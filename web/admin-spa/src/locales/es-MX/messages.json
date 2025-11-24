@@ -108,5 +108,17 @@
   "pagination.first": "Primera",
   "pagination.last": "�ltima",
   "pagination.next": "Siguiente",
-  "pagination.previous": "Anterior"
+  "pagination.previous": "Anterior",
+
+  "stats.enter_api_key": "Por favor ingresa tu API Key",
+  "stats.invalid_key_format": "Formato de API Key inválido: la longitud debe estar entre 10-512 caracteres",
+  "stats.query_failed": "La consulta falló",
+  "stats.get_key_id_failed": "Error al obtener el ID de API Key",
+  "stats.query_failed_check": "Error al consultar datos de estadísticas, por favor verifica que tu API Key sea correcta",
+  "stats.load_model_failed": "Error al cargar estadísticas del modelo",
+  "stats.enter_valid_keys": "Por favor ingresa al menos una API Key válida",
+  "stats.all_keys_invalid": "Todas las API Keys son inválidas",
+  "stats.batch_query_failed": "La consulta en lote falló",
+  "stats.batch_query_data_failed": "Error al consultar datos de estadísticas en lote",
+  "stats.load_batch_model_failed": "Error al cargar estadísticas del modelo en lote"
 }

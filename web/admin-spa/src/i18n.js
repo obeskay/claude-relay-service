@@ -29,8 +29,8 @@ const messages = {
     messages: enMessages,
     accounts: enAccounts,
     dashboard: enDashboard,
-    apiKeys: enApiKeys,
-    accountsView: enAccountsView,
+    'api-keys': enApiKeys,
+    'accounts-view': enAccountsView,
     settings: enSettings
   },
   'es-MX': {
@@ -40,8 +40,8 @@ const messages = {
     messages: esMXMessages,
     accounts: esMXAccounts,
     dashboard: esMXDashboard,
-    apiKeys: esMXApiKeys,
-    accountsView: esMXAccountsView,
+    'api-keys': esMXApiKeys,
+    'accounts-view': esMXAccountsView,
     settings: esMXSettings
   }
 }

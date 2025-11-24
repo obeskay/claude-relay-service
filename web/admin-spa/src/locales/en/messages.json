@@ -89,5 +89,17 @@
   "pagination.first": "First",
   "pagination.last": "Last",
   "pagination.next": "Next",
-  "pagination.previous": "Previous"
+  "pagination.previous": "Previous",
+
+  "stats.enter_api_key": "Please enter API Key",
+  "stats.invalid_key_format": "Invalid API Key format: length should be between 10-512 characters",
+  "stats.query_failed": "Query failed",
+  "stats.get_key_id_failed": "Failed to get API Key ID",
+  "stats.query_failed_check": "Failed to query statistics data, please check if your API Key is correct",
+  "stats.load_model_failed": "Failed to load model statistics",
+  "stats.enter_valid_keys": "Please enter at least one valid API Key",
+  "stats.all_keys_invalid": "All API Keys are invalid",
+  "stats.batch_query_failed": "Batch query failed",
+  "stats.batch_query_data_failed": "Failed to query batch statistics data",
+  "stats.load_batch_model_failed": "Failed to load batch model statistics"
 }
