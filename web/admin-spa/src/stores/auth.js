@@ -39,10 +39,10 @@ export const useAuthStore = defineStore('auth', () => {
 
         await router.push('/dashboard')
       } else {
-        loginError.value = result.message || '登录失败'
+        loginError.value = result.message || 'Login failed'
       }
     } catch (error) {
-      loginError.value = error.message || '登录失败，请检查用户名和密码'
+      loginError.value = error.message || 'Login failed, please check username and password'
     } finally {
       loginLoading.value = false
     }
@@ -102,11 +102,11 @@ export const useAuthStore = defineStore('auth', () => {
 
         // 设置页面标题
         if (result.data.siteName) {
-          document.title = `${result.data.siteName} - 管理后台`
+          document.title = `${result.data.siteName} - Admin`
         }
       }
     } catch (error) {
-      console.error('加载OEM设置失败:', error)
+      console.error('Failed to load OEM settings:', error)
     } finally {
       oemLoading.value = false
     }

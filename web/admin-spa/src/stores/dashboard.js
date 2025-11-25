@@ -44,7 +44,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     realtimeTPM: 0,
     metricsWindow: 5,
     isHistoricalMetrics: false,
-    systemStatus: '正常',
+    systemStatus: 'Normal',
     uptime: 0,
     systemTimezone: 8 // 默认 UTC+8
   })
@@ -67,7 +67,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     topAccounts: [],
     totalAccounts: 0,
     group: 'claude',
-    groupLabel: 'Claude账户'
+    groupLabel: 'Claude Accounts'
   })
 
   // 日期筛选
@@ -78,9 +78,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
     customEnd: '',
     customRange: null,
     presetOptions: [
-      { value: 'today', label: '今日', days: 1 },
-      { value: '7days', label: '7天', days: 7 },
-      { value: '30days', label: '30天', days: 30 }
+      { value: 'today', label: 'Today', days: 1 },
+      { value: '7days', label: '7 Days', days: 7 },
+      { value: '30days', label: '30 Days', days: 30 }
     ]
   })
 
@@ -100,11 +100,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
     const minutes = Math.floor((seconds % 3600) / 60)
 
     if (days > 0) {
-      return `${days}天 ${hours}小时`
+      return `${days}d ${hours}h`
     } else if (hours > 0) {
-      return `${hours}小时 ${minutes}分钟`
+      return `${hours}h ${minutes}m`
     } else {
-      return `${minutes}分钟`
+      return `${minutes}m`
     }
   })
 
@@ -209,7 +209,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
           realtimeTPM: realtimeMetrics.tpm || 0,
           metricsWindow: realtimeMetrics.windowMinutes || 5,
           isHistoricalMetrics: realtimeMetrics.isHistorical || false,
-          systemStatus: systemHealth.redisConnected ? '正常' : '异常',
+          systemStatus: systemHealth.redisConnected ? 'Normal' : 'Error',
           uptime: systemHealth.uptime || 0,
           systemTimezone: dashboardResponse.data.systemTimezone || 8
         }
@@ -738,14 +738,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
         // 小时粒度：限制 24 小时
         const hoursDiff = (end - start) / (1000 * 60 * 60)
         if (hoursDiff > 24) {
-          showToast('小时粒度下日期范围不能超过24小时', 'warning')
+          showToast('Date range cannot exceed 24 hours in hourly granularity', 'warning')
           return
         }
       } else {
         // 天粒度：限制 31 天
         const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
         if (daysDiff > 31) {
-          showToast('日期范围不能超过 31 天', 'warning')
+          showToast('Date range cannot exceed 31 days', 'warning')
           return
         }
       }
@@ -764,9 +764,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
     // 根据粒度更新预设选项
     if (granularity === 'hour') {
       dateFilter.value.presetOptions = [
-        { value: 'last24h', label: '近24小时', hours: 24 },
-        { value: 'yesterday', label: '昨天', hours: 24 },
-        { value: 'dayBefore', label: '前天', hours: 24 }
+        { value: 'last24h', label: 'Last 24h', hours: 24 },
+        { value: 'yesterday', label: 'Yesterday', hours: 24 },
+        { value: 'dayBefore', label: 'Day Before', hours: 24 }
       ]
 
       // 检查当前自定义日期范围是否超过24小时
@@ -779,7 +779,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         const end = new Date(dateFilter.value.customRange[1])
         const hoursDiff = (end - start) / (1000 * 60 * 60)
         if (hoursDiff > 24) {
-          showToast('小时粒度下日期范围不能超过24小时，已切换到近24小时', 'warning')
+          showToast('Hourly granularity cannot exceed 24h, switched to Last 24h', 'warning')
           setDateFilterPreset('last24h')
           return
         }
@@ -793,9 +793,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
     } else {
       // 天粒度
       dateFilter.value.presetOptions = [
-        { value: 'today', label: '今日', days: 1 },
-        { value: '7days', label: '7天', days: 7 },
-        { value: '30days', label: '30天', days: 30 }
+        { value: 'today', label: 'Today', days: 1 },
+        { value: '7days', label: '7 Days', days: 7 },
+        { value: '30days', label: '30 Days', days: 30 }
       ]
 
       // 如果当前是小时粒度的预设，切换到天粒度的默认预设

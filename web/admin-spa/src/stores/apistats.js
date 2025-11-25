@@ -283,11 +283,11 @@ export const useApiStatsStore = defineStore('apistats', () => {
         // 清除错误信息
         error.value = ''
       } else {
-        throw new Error(result.message || '查询失败')
+        throw new Error(result.message || 'Query failed')
       }
     } catch (err) {
       console.error('Load stats with apiId error:', err)
-      error.value = err.message || '查询统计数据失败'
+      error.value = err.message || 'Failed to query statistics'
       statsData.value = null
       modelStats.value = []
     } finally {
@@ -347,7 +347,7 @@ export const useApiStatsStore = defineStore('apistats', () => {
   async function queryBatchStats() {
     const keys = parseApiKeys()
     if (keys.length === 0) {
-      error.value = '请输入至少一个有效的 API Key'
+      error.value = 'Please enter at least one valid API Key'
       return
     }
 

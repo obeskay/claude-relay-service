@@ -326,7 +326,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchDroidAccounts()
         return response.data
       } else {
-        throw new Error(response.message || '更新Droid账户失败')
+        throw new Error(response.message || 'Failed to update Droid account')
       }
     } catch (err) {
       error.value = err.message
@@ -466,7 +466,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchGeminiAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新Gemini账户失败')
+        throw new Error(response.message || 'Failed to update Gemini account')
       }
     } catch (err) {
       error.value = err.message
@@ -486,7 +486,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchOpenAIAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新OpenAI账户失败')
+        throw new Error(response.message || 'Failed to update OpenAI account')
       }
     } catch (err) {
       error.value = err.message
@@ -506,7 +506,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchAzureOpenAIAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新Azure OpenAI账户失败')
+        throw new Error(response.message || 'Failed to update Azure OpenAI account')
       }
     } catch (err) {
       error.value = err.message
@@ -526,7 +526,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchOpenAIResponsesAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新OpenAI-Responses账户失败')
+        throw new Error(response.message || 'Failed to update OpenAI-Responses account')
       }
     } catch (err) {
       error.value = err.message
@@ -546,7 +546,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchGeminiAccounts()
         return response
       } else {
-        throw new Error(response.message || '更新Gemini API账户失败')
+        throw new Error(response.message || 'Failed to update Gemini API account')
       }
     } catch (err) {
       error.value = err.message
@@ -601,7 +601,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         }
         return response
       } else {
-        throw new Error(response.message || '切换状态失败')
+        throw new Error(response.message || 'Failed to toggle status')
       }
     } catch (err) {
       error.value = err.message
@@ -656,7 +656,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         }
         return response
       } else {
-        throw new Error(response.message || '删除失败')
+        throw new Error(response.message || 'Failed to delete')
       }
     } catch (err) {
       error.value = err.message
@@ -676,7 +676,7 @@ export const useAccountsStore = defineStore('accounts', () => {
         await fetchClaudeAccounts()
         return response
       } else {
-        throw new Error(response.message || 'Token刷新失败')
+        throw new Error(response.message || 'Token refresh failed')
       }
     } catch (err) {
       error.value = err.message
@@ -693,7 +693,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data // 返回整个对象，包含authUrl和sessionId
       } else {
-        throw new Error(response.message || '生成授权URL失败')
+        throw new Error(response.message || 'Failed to generate auth URL')
       }
     } catch (err) {
       error.value = err.message
@@ -708,7 +708,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data
       } else {
-        throw new Error(response.message || '交换授权码失败')
+        throw new Error(response.message || 'Failed to exchange auth code')
       }
     } catch (err) {
       error.value = err.message
@@ -726,7 +726,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data // 返回整个对象，包含authUrl和sessionId
       } else {
-        throw new Error(response.message || '生成Setup Token URL失败')
+        throw new Error(response.message || 'Failed to generate Setup Token URL')
       }
     } catch (err) {
       error.value = err.message
@@ -744,7 +744,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data
       } else {
-        throw new Error(response.message || '交换Setup Token授权码失败')
+        throw new Error(response.message || 'Failed to exchange Setup Token code')
       }
     } catch (err) {
       error.value = err.message
@@ -759,7 +759,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data // 返回整个对象，包含authUrl和sessionId
       } else {
-        throw new Error(response.message || '生成授权URL失败')
+        throw new Error(response.message || 'Failed to generate auth URL')
       }
     } catch (err) {
       error.value = err.message
@@ -774,7 +774,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data
       } else {
-        throw new Error(response.message || '交换授权码失败')
+        throw new Error(response.message || 'Failed to exchange auth code')
       }
     } catch (err) {
       error.value = err.message
@@ -789,7 +789,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data // 返回整个对象，包含authUrl和sessionId
       } else {
-        throw new Error(response.message || '生成授权URL失败')
+        throw new Error(response.message || 'Failed to generate auth URL')
       }
     } catch (err) {
       error.value = err.message
@@ -805,7 +805,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data
       } else {
-        throw new Error(response.message || '生成授权URL失败')
+        throw new Error(response.message || 'Failed to generate auth URL')
       }
     } catch (err) {
       error.value = err.message
@@ -820,7 +820,7 @@ export const useAccountsStore = defineStore('accounts', () => {
       if (response.success) {
         return response.data
       } else {
-        throw new Error(response.message || '交换授权码失败')
+        throw new Error(response.message || 'Failed to exchange auth code')
       }
     } catch (err) {
       error.value = err.message

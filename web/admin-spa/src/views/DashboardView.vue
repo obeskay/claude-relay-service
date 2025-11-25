@@ -229,13 +229,13 @@
                     formatNumber(dashboardData.todayOutputTokens || 0)
                   }}</span></span
                 >
-                <span v-if="(dashboardData.todayCacheCreateTokens || 0) > 0" class="text-purple-600"
+                <span v-if="(dashboardData.todayCacheCreateTokens || 0) > 0" class="text-cyan-600"
                   >{{ t('dashboard.tokens.cache_create') }}:
                   <span class="font-medium">{{
                     formatNumber(dashboardData.todayCacheCreateTokens || 0)
                   }}</span></span
                 >
-                <span v-if="(dashboardData.todayCacheReadTokens || 0) > 0" class="text-purple-600"
+                <span v-if="(dashboardData.todayCacheReadTokens || 0) > 0" class="text-cyan-600"
                   >{{ t('dashboard.tokens.cache_read') }}:
                   <span class="font-medium">{{
                     formatNumber(dashboardData.todayCacheReadTokens || 0)
@@ -285,13 +285,13 @@
                     formatNumber(dashboardData.totalOutputTokens || 0)
                   }}</span></span
                 >
-                <span v-if="(dashboardData.totalCacheCreateTokens || 0) > 0" class="text-purple-600"
+                <span v-if="(dashboardData.totalCacheCreateTokens || 0) > 0" class="text-cyan-600"
                   >{{ t('dashboard.tokens.cache_create') }}:
                   <span class="font-medium">{{
                     formatNumber(dashboardData.totalCacheCreateTokens || 0)
                   }}</span></span
                 >
-                <span v-if="(dashboardData.totalCacheReadTokens || 0) > 0" class="text-purple-600"
+                <span v-if="(dashboardData.totalCacheReadTokens || 0) > 0" class="text-cyan-600"
                   >{{ t('dashboard.tokens.cache_read') }}:
                   <span class="font-medium">{{
                     formatNumber(dashboardData.totalCacheReadTokens || 0)
