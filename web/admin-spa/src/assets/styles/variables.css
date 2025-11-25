@@ -1,13 +1,315 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHADCN-STYLE DESIGN SYSTEM WITH COLOR LAYERING & DEPTH
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
+  /* ─────────────────────────────────────────────────────────────────────────
+     BASE SEMANTIC COLORS (HSL format for Tailwind)
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Primary colors - Blue */
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 40% 98%;
+
+  /* Secondary colors - Cyan */
+  --secondary: 199 89% 48%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Accent colors - Teal */
+  --accent: 187 85% 43%;
+  --accent-foreground: 210 40% 98%;
+
+  /* Semantic colors */
+  --success: 158 64% 52%;
+  --success-foreground: 210 40% 98%;
+
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 5%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --error: 0 84% 60%;
+  --error-foreground: 210 40% 98%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     COLOR LAYERING SYSTEM (4 Shades for Depth)
+     Shade 1 = Darkest (Page BG) → Shade 4 = Lightest (Active/Hover)
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Background Shades - Light Mode */
+  --background-shade-1: 220 14% 96%;  /* Page background - deepest */
+  --background-shade-2: 220 13% 98%;  /* Card/container background */
+  --background-shade-3: 0 0% 100%;    /* Interactive elements */
+  --background-shade-4: 210 40% 98%;  /* Active/hover states - pops forward */
+
+  /* Foreground Shades - Text hierarchy */
+  --foreground-shade-1: 222 47% 11%;  /* Primary text - darkest */
+  --foreground-shade-2: 215 25% 27%;  /* Secondary text */
+  --foreground-shade-3: 215 16% 47%;  /* Muted text */
+  --foreground-shade-4: 215 14% 63%;  /* Subtle text - lightest */
+
+  /* Background & Foreground main values */
+  --background: 220 14% 96%;
+  --foreground: 222 47% 11%;
+
+  /* Muted colors */
+  --muted: 220 13% 91%;
+  --muted-foreground: 215 16% 47%;
+
+  /* Card colors - Shade 2 */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  /* Popover colors */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Border & input */
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 217 91% 60%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     TWO-LAYER SHADOW SYSTEM
+     Top = Light highlight | Bottom = Dark shadow
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Shadow Colors */
+  --shadow-highlight: 255, 255, 255;
+  --shadow-dark: 0, 0, 0;
+
+  /* Small Shadow - Subtle depth (nav items, tabs, small cards) */
+  --shadow-sm-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.08);
+  --shadow-sm-bottom: 0 1px 2px rgba(var(--shadow-dark), 0.05);
+  --shadow-sm: var(--shadow-sm-top), var(--shadow-sm-bottom);
+
+  /* Medium Shadow - Standard depth (cards, dropdowns, modals) */
+  --shadow-md-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.1);
+  --shadow-md-bottom: 0 4px 6px -1px rgba(var(--shadow-dark), 0.07), 0 2px 4px -1px rgba(var(--shadow-dark), 0.04);
+  --shadow-md: var(--shadow-md-top), var(--shadow-md-bottom);
+
+  /* Large Shadow - Prominent depth (hover states, focused elements) */
+  --shadow-lg-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.12);
+  --shadow-lg-bottom: 0 10px 15px -3px rgba(var(--shadow-dark), 0.08), 0 4px 6px -2px rgba(var(--shadow-dark), 0.04);
+  --shadow-lg: var(--shadow-lg-top), var(--shadow-lg-bottom);
+
+  /* XL Shadow - Maximum depth (important modals, popovers) */
+  --shadow-xl-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.15);
+  --shadow-xl-bottom: 0 20px 25px -5px rgba(var(--shadow-dark), 0.08), 0 10px 10px -5px rgba(var(--shadow-dark), 0.03);
+  --shadow-xl: var(--shadow-xl-top), var(--shadow-xl-bottom);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     GRADIENT SYSTEM (Premium Shiny Effect)
+     Light hitting from top effect
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Subtle gradient for cards/containers */
+  --gradient-surface: linear-gradient(to bottom,
+    hsl(0 0% 100%) 0%,
+    hsl(220 14% 98%) 100%
+  );
+
+  /* Interactive element gradient */
+  --gradient-interactive: linear-gradient(to bottom,
+    hsl(220 14% 99%) 0%,
+    hsl(220 14% 96%) 100%
+  );
+
+  /* Button gradients with shiny top */
+  --gradient-primary: linear-gradient(to bottom,
+    hsl(217 91% 65%) 0%,
+    hsl(217 91% 55%) 100%
+  );
+
+  --gradient-success: linear-gradient(to bottom,
+    hsl(158 64% 57%) 0%,
+    hsl(158 64% 47%) 100%
+  );
+
+  --gradient-destructive: linear-gradient(to bottom,
+    hsl(0 84% 65%) 0%,
+    hsl(0 84% 55%) 100%
+  );
+
+  --gradient-warning: linear-gradient(to bottom,
+    hsl(38 92% 55%) 0%,
+    hsl(38 92% 45%) 100%
+  );
+
+  /* Chart colors */
+  --chart-1: 217 91% 60%;
+  --chart-2: 199 89% 48%;
+  --chart-3: 187 85% 43%;
+  --chart-4: 158 64% 52%;
+  --chart-5: 38 92% 50%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     LEGACY SUPPORT (hex values for gradients in components.css)
+     ───────────────────────────────────────────────────────────────────────── */
   --primary-color: #3b82f6;
   --secondary-color: #0ea5e9;
   --accent-color: #06b6d4;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
-  --surface-color: rgba(255, 255, 255, 0.95);
-  --glass-color: rgba(255, 255, 255, 0.1);
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border-color: rgba(255, 255, 255, 0.2);
+  --surface-color: rgba(255, 255, 255, 0.98);
+  --glass-color: rgba(255, 255, 255, 0.85);
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: rgba(226, 232, 240, 0.8);
+
+  /* Radius */
+  --radius: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dark {
+  /* ─────────────────────────────────────────────────────────────────────────
+     BASE SEMANTIC COLORS - Dark Mode
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Primary colors - Blue (slightly brighter for dark mode) */
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 11%;
+
+  /* Secondary colors */
+  --secondary: 199 89% 48%;
+  --secondary-foreground: 222 47% 11%;
+
+  /* Accent colors */
+  --accent: 187 85% 43%;
+  --accent-foreground: 222 47% 11%;
+
+  /* Semantic colors */
+  --success: 158 64% 52%;
+  --success-foreground: 222 47% 11%;
+
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 5%;
+
+  --destructive: 0 62% 55%;
+  --destructive-foreground: 210 40% 98%;
+
+  --error: 0 62% 55%;
+  --error-foreground: 210 40% 98%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     COLOR LAYERING SYSTEM - Dark Mode (Inverted logic)
+     Shade 1 = Darkest (Page BG) → Shade 4 = Lightest (Active/Hover)
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Background Shades - Dark Mode */
+  --background-shade-1: 222 47% 8%;   /* Page background - deepest */
+  --background-shade-2: 222 47% 11%;  /* Card/container background */
+  --background-shade-3: 217 33% 15%;  /* Interactive elements */
+  --background-shade-4: 217 33% 19%;  /* Active/hover states - pops forward */
+
+  /* Foreground Shades - Text hierarchy */
+  --foreground-shade-1: 210 40% 98%;  /* Primary text - brightest */
+  --foreground-shade-2: 215 20% 85%;  /* Secondary text */
+  --foreground-shade-3: 215 20% 65%;  /* Muted text */
+  --foreground-shade-4: 215 15% 50%;  /* Subtle text - dimmest */
+
+  /* Background & Foreground */
+  --background: 222 47% 8%;
+  --foreground: 210 40% 98%;
+
+  /* Muted colors */
+  --muted: 217 33% 15%;
+  --muted-foreground: 215 20% 65%;
+
+  /* Card colors */
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 98%;
+
+  /* Popover colors */
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Border & input */
+  --border: 217 33% 20%;
+  --input: 217 33% 17%;
+  --ring: 217 91% 60%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     TWO-LAYER SHADOW SYSTEM - Dark Mode
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Shadow Colors - Dark Mode (subtle highlights, deeper shadows) */
+  --shadow-highlight: 255, 255, 255;
+  --shadow-dark: 0, 0, 0;
+
+  /* Small Shadow */
+  --shadow-sm-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.04);
+  --shadow-sm-bottom: 0 1px 3px rgba(var(--shadow-dark), 0.3);
+  --shadow-sm: var(--shadow-sm-top), var(--shadow-sm-bottom);
+
+  /* Medium Shadow */
+  --shadow-md-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.06);
+  --shadow-md-bottom: 0 4px 6px -1px rgba(var(--shadow-dark), 0.4), 0 2px 4px -1px rgba(var(--shadow-dark), 0.2);
+  --shadow-md: var(--shadow-md-top), var(--shadow-md-bottom);
+
+  /* Large Shadow */
+  --shadow-lg-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.08);
+  --shadow-lg-bottom: 0 10px 15px -3px rgba(var(--shadow-dark), 0.5), 0 4px 6px -2px rgba(var(--shadow-dark), 0.25);
+  --shadow-lg: var(--shadow-lg-top), var(--shadow-lg-bottom);
+
+  /* XL Shadow */
+  --shadow-xl-top: inset 0 1px 0 rgba(var(--shadow-highlight), 0.1);
+  --shadow-xl-bottom: 0 20px 25px -5px rgba(var(--shadow-dark), 0.6), 0 10px 10px -5px rgba(var(--shadow-dark), 0.3);
+  --shadow-xl: var(--shadow-xl-top), var(--shadow-xl-bottom);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     GRADIENT SYSTEM - Dark Mode
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Subtle gradient for cards/containers */
+  --gradient-surface: linear-gradient(to bottom,
+    hsl(222 47% 13%) 0%,
+    hsl(222 47% 10%) 100%
+  );
+
+  /* Interactive element gradient */
+  --gradient-interactive: linear-gradient(to bottom,
+    hsl(217 33% 18%) 0%,
+    hsl(217 33% 14%) 100%
+  );
+
+  /* Button gradients with shiny top */
+  --gradient-primary: linear-gradient(to bottom,
+    hsl(217 91% 62%) 0%,
+    hsl(217 91% 52%) 100%
+  );
+
+  --gradient-success: linear-gradient(to bottom,
+    hsl(158 64% 54%) 0%,
+    hsl(158 64% 44%) 100%
+  );
+
+  --gradient-destructive: linear-gradient(to bottom,
+    hsl(0 62% 58%) 0%,
+    hsl(0 62% 48%) 100%
+  );
+
+  --gradient-warning: linear-gradient(to bottom,
+    hsl(38 92% 52%) 0%,
+    hsl(38 92% 42%) 100%
+  );
+
+  /* Legacy support (hex values) */
+  --primary-color: #3b82f6;
+  --secondary-color: #0ea5e9;
+  --accent-color: #06b6d4;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --surface-color: rgba(30, 41, 59, 0.98);
+  --glass-color: rgba(30, 41, 59, 0.85);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(51, 65, 85, 0.8);
 }

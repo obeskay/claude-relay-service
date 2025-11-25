@@ -3,10 +3,8 @@
     <div class="card p-4 sm:p-6">
       <!-- 页面标题 -->
       <div class="mb-4 sm:mb-6">
-        <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-          系统设置
-        </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
+        <h3 class="mb-1 text-lg font-bold text-foreground sm:mb-2 sm:text-xl">系统设置</h3>
+        <p class="text-sm text-muted-foreground sm:text-base">
           {{ t('settings.pageDescription') }}
         </p>
       </div>
@@ -18,7 +16,7 @@
             :class="[
               'border-b-2 pb-2 text-sm font-medium transition-colors',
               activeSection === 'branding'
-                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                ? 'border-primary text-primary dark:border-primary dark:text-blue-400'
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
             ]"
             @click="activeSection = 'branding'"
@@ -30,7 +28,7 @@
             :class="[
               'border-b-2 pb-2 text-sm font-medium transition-colors',
               activeSection === 'webhook'
-                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                ? 'border-primary text-primary dark:border-primary dark:text-blue-400'
                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
             ]"
             @click="activeSection = 'webhook'"
@@ -44,7 +42,7 @@
       <!-- 加载状态 -->
       <div v-if="loading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4"></div>
-        <p class="text-gray-500 dark:text-gray-400">{{ t('settings.loading.settings') }}</p>
+        <p class="text-muted-foreground">{{ t('settings.loading.settings') }}</p>
       </div>
 
       <!-- 内容区域 -->
@@ -65,10 +63,8 @@
                         <i class="fas fa-font text-xs text-white" />
                       </div>
                       <div>
-                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          网站名称
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <div class="text-sm font-semibold text-foreground">网站名称</div>
+                        <div class="text-xs text-muted-foreground">
                           {{ t('settings.branding.siteName.description') }}
                         </div>
                       </div>
@@ -82,7 +78,7 @@
                       placeholder="Claude Relay Service"
                       type="text"
                     />
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 text-xs text-muted-foreground">
                       {{ t('settings.branding.siteName.helpText') }}
                     </p>
                   </td>
@@ -98,10 +94,8 @@
                         <i class="fas fa-image text-xs text-white" />
                       </div>
                       <div>
-                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          网站图标
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">Favicon</div>
+                        <div class="text-sm font-semibold text-foreground">网站图标</div>
+                        <div class="text-xs text-muted-foreground">Favicon</div>
                       </div>
                     </div>
                   </td>
@@ -118,11 +112,11 @@
                           :src="oemSettings.siteIconData || oemSettings.siteIcon"
                           @error="handleIconError"
                         />
-                        <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                        <span class="text-sm text-muted-foreground">{{
                           t('settings.branding.siteIcon.currentIcon')
                         }}</span>
                         <button
-                          class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
+                          class="rounded-lg px-3 py-1 font-medium text-destructive transition-colors hover:bg-red-50 hover:text-red-900"
                           @click="removeIcon"
                         >
                           <i class="fas fa-trash mr-1" />删除
@@ -145,7 +139,7 @@
                           <i class="fas fa-upload mr-2" />
                           上传图标
                         </button>
-                        <span class="ml-3 text-xs text-gray-500 dark:text-gray-400">{{
+                        <span class="ml-3 text-xs text-muted-foreground">{{
                           t('settings.branding.siteIcon.supportedFormats')
                         }}</span>
                       </div>
@@ -163,10 +157,8 @@
                         <i class="fas fa-eye-slash text-xs text-white" />
                       </div>
                       <div>
-                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          管理入口
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <div class="text-sm font-semibold text-foreground">管理入口</div>
+                        <div class="text-xs text-muted-foreground">
                           {{ t('settings.branding.adminButton.description') }}
                         </div>
                       </div>
@@ -177,14 +169,14 @@
                       <label class="inline-flex cursor-pointer items-center">
                         <input v-model="hideAdminButton" class="peer sr-only" type="checkbox" />
                         <div
-                          class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                          class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                         ></div>
                         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{
                           hideAdminButton ? '隐藏登录按钮' : '显示登录按钮'
                         }}</span>
                       </label>
                     </div>
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p class="mt-1 text-xs text-muted-foreground">
                       {{ t('settings.branding.adminButton.helpText') }}
                     </p>
                   </td>
@@ -220,10 +212,7 @@
                         </button>
                       </div>
 
-                      <div
-                        v-if="oemSettings.updatedAt"
-                        class="text-sm text-gray-500 dark:text-gray-400"
-                      >
+                      <div v-if="oemSettings.updatedAt" class="text-sm text-muted-foreground">
                         <i class="fas fa-clock mr-1" />
                         最后更新：{{ formatDateTime(oemSettings.updatedAt) }}
                       </div>
@@ -245,10 +234,10 @@
                   <i class="fas fa-tag"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 class="text-base font-semibold text-foreground">
                     {{ t('settings.mobileView.siteName.title') }}
                   </h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <p class="text-sm text-muted-foreground">
                     {{ t('settings.mobileView.siteName.description') }}
                   </p>
                 </div>
@@ -271,10 +260,10 @@
                   <i class="fas fa-image"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 class="text-base font-semibold text-foreground">
                     {{ t('settings.mobileView.siteIcon.title') }}
                   </h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <p class="text-sm text-muted-foreground">
                     {{ t('settings.mobileView.siteIcon.description') }}
                   </p>
                 </div>
@@ -291,11 +280,11 @@
                     :src="oemSettings.siteIconData || oemSettings.siteIcon"
                     @error="handleIconError"
                   />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                  <span class="text-sm text-muted-foreground">{{
                     t('settings.branding.siteIcon.currentIcon')
                   }}</span>
                   <button
-                    class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
+                    class="rounded-lg px-3 py-1 font-medium text-destructive transition-colors hover:bg-red-50 hover:text-red-900"
                     @click="removeIcon"
                   >
                     删除
@@ -318,7 +307,7 @@
                     <i class="fas fa-upload mr-2" />
                     上传图标
                   </button>
-                  <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-2 text-xs text-muted-foreground">
                     {{ t('settings.branding.siteIcon.supportedFormats') }}
                   </p>
                 </div>
@@ -334,10 +323,10 @@
                   <i class="fas fa-eye-slash"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 class="text-base font-semibold text-foreground">
                     {{ t('settings.branding.adminButton.label') }}
                   </h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <p class="text-sm text-muted-foreground">
                     {{ t('settings.mobileView.adminEntry.description') }}
                   </p>
                 </div>
@@ -346,13 +335,13 @@
                 <label class="inline-flex cursor-pointer items-center">
                   <input v-model="hideAdminButton" class="peer sr-only" type="checkbox" />
                   <div
-                    class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                    class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                   ></div>
                   <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{
                     hideAdminButton ? '隐藏登录按钮' : '显示登录按钮'
                   }}</span>
                 </label>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-muted-foreground">
                   {{ t('settings.branding.adminButton.helpText') }}
                 </p>
               </div>
@@ -385,10 +374,7 @@
                   重置为默认
                 </button>
 
-                <div
-                  v-if="oemSettings.updatedAt"
-                  class="text-center text-sm text-gray-500 dark:text-gray-400"
-                >
+                <div v-if="oemSettings.updatedAt" class="text-center text-sm text-muted-foreground">
                   <i class="fas fa-clock mr-1" />
                   上次更新: {{ formatDateTime(oemSettings.updatedAt) }}
                 </div>
@@ -405,10 +391,10 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                <h2 class="text-lg font-semibold text-foreground">
                   {{ t('settings.webhook.mainSwitch.title') }}
                 </h2>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p class="mt-1 text-sm text-muted-foreground">
                   {{ t('settings.webhook.mainSwitch.description') }}
                 </p>
               </div>
@@ -420,7 +406,7 @@
                   @change="saveWebhookConfig"
                 />
                 <div
-                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                 ></div>
               </label>
             </div>
@@ -430,7 +416,7 @@
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
-            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+            <h2 class="mb-4 text-lg font-semibold text-foreground">
               {{ t('settings.webhook.notificationTypes.title') }}
             </h2>
             <div class="space-y-3">
@@ -440,10 +426,10 @@
                 class="flex items-center justify-between"
               >
                 <div>
-                  <span class="font-medium text-gray-700 dark:text-gray-300">
+                  <span class="font-medium text-foreground">
                     {{ getNotificationTypeName(type) }}
                   </span>
-                  <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span class="ml-2 text-sm text-muted-foreground">
                     {{ getNotificationTypeDescription(type) }}
                   </span>
                 </div>
@@ -467,7 +453,7 @@
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
             <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              <h2 class="text-lg font-semibold text-foreground">
                 {{ t('settings.webhook.platforms.title') }}
               </h2>
               <button
@@ -494,10 +480,10 @@
                     <div class="flex items-center">
                       <i class="mr-3 text-xl" :class="getPlatformIcon(platform.type)"></i>
                       <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200">
+                        <h3 class="font-semibold text-foreground">
                           {{ platform.name || getPlatformName(platform.type) }}
                         </h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <p class="text-sm text-muted-foreground">
                           {{ getPlatformName(platform.type) }}
                         </p>
                       </div>
@@ -505,21 +491,21 @@
                     <div class="mt-3 space-y-1 text-sm">
                       <div
                         v-if="platform.type !== 'smtp' && platform.type !== 'telegram'"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-link mr-2"></i>
                         <span class="truncate">{{ platform.url }}</span>
                       </div>
                       <div
                         v-if="platform.type === 'telegram'"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-comments mr-2"></i>
                         <span class="truncate">Chat ID: {{ platform.chatId || '未配置' }}</span>
                       </div>
                       <div
                         v-if="platform.type === 'telegram' && platform.botToken"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-key mr-2"></i>
                         <span class="truncate"
@@ -528,21 +514,21 @@
                       </div>
                       <div
                         v-if="platform.type === 'telegram' && platform.apiBaseUrl"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-globe mr-2"></i>
                         <span class="truncate">API: {{ platform.apiBaseUrl }}</span>
                       </div>
                       <div
                         v-if="platform.type === 'telegram' && platform.proxyUrl"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-route mr-2"></i>
                         <span class="truncate">代理: {{ platform.proxyUrl }}</span>
                       </div>
                       <div
                         v-if="platform.type === 'smtp' && platform.to"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-envelope mr-2"></i>
                         <span class="truncate">{{
@@ -551,7 +537,7 @@
                       </div>
                       <div
                         v-if="platform.enableSign"
-                        class="flex items-center text-gray-600 dark:text-gray-400"
+                        class="flex items-center text-muted-foreground"
                       >
                         <i class="fas fa-shield-alt mr-2"></i>
                         <span>已启用签名验证</span>
@@ -573,7 +559,7 @@
                     </label>
                     <!-- 测试按钮 -->
                     <button
-                      class="rounded-lg bg-blue-100 p-2 text-blue-600 transition-colors hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800"
+                      class="rounded-lg bg-blue-100 p-2 text-primary transition-colors hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800"
                       title="测试连接"
                       @click="testPlatform(platform)"
                     >
@@ -589,7 +575,7 @@
                     </button>
                     <!-- 删除按钮 -->
                     <button
-                      class="rounded-lg bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800"
+                      class="rounded-lg bg-red-100 p-2 text-destructive transition-colors hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800"
                       title="删除"
                       @click="deletePlatform(platform.id)"
                     >
@@ -599,22 +585,20 @@
                 </div>
               </div>
             </div>
-            <div v-else class="py-8 text-center text-gray-500 dark:text-gray-400">
+            <div v-else class="py-8 text-center text-muted-foreground">
               暂无配置的通知平台，请点击"添加平台"按钮添加
             </div>
           </div>
 
           <!-- 高级设置 -->
           <div class="rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80">
-            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">高级设置</h2>
+            <h2 class="mb-4 text-lg font-semibold text-foreground">高级设置</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  最大重试次数
-                </label>
+                <label class="block text-sm font-medium text-foreground"> 最大重试次数 </label>
                 <input
                   v-model.number="webhookConfig.retrySettings.maxRetries"
-                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
                   max="10"
                   min="0"
                   type="number"
@@ -622,12 +606,10 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  重试延迟 (毫秒)
-                </label>
+                <label class="block text-sm font-medium text-foreground"> 重试延迟 (毫秒) </label>
                 <input
                   v-model.number="webhookConfig.retrySettings.retryDelay"
-                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
                   max="10000"
                   min="100"
                   step="100"
@@ -636,12 +618,10 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  超时时间 (毫秒)
-                </label>
+                <label class="block text-sm font-medium text-foreground"> 超时时间 (毫秒) </label>
                 <input
                   v-model.number="webhookConfig.retrySettings.timeout"
-                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
                   max="30000"
                   min="1000"
                   step="1000"
@@ -692,7 +672,7 @@
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                 {{ editingPlatform ? '编辑' : '添加' }}通知平台
               </h3>
-              <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
+              <p class="mt-0.5 text-sm text-muted-foreground">
                 配置{{ editingPlatform ? '并更新' : '新的' }}Webhook通知渠道
               </p>
             </div>
@@ -711,16 +691,14 @@
         <div class="space-y-5">
           <!-- 平台类型选择 -->
           <div>
-            <label
-              class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label class="mb-2 flex items-center text-sm font-medium text-foreground">
               <i class="fas fa-layer-group mr-2 text-gray-400"></i>
               平台类型
             </label>
             <div class="relative">
               <select
                 v-model="platformForm.type"
-                class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 :disabled="editingPlatform"
               >
                 <option value="wechat_work">🟢 企业微信</option>
@@ -737,7 +715,7 @@
                 <i class="fas fa-chevron-down text-gray-400"></i>
               </div>
             </div>
-            <p v-if="editingPlatform" class="mt-1 text-xs text-amber-600 dark:text-amber-400">
+            <p v-if="editingPlatform" class="mt-1 text-xs text-warning dark:text-amber-400">
               <i class="fas fa-info-circle mr-1"></i>
               编辑模式下不能更改平台类型
             </p>
@@ -745,16 +723,14 @@
 
           <!-- 平台名称 -->
           <div>
-            <label
-              class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label class="mb-2 flex items-center text-sm font-medium text-foreground">
               <i class="fas fa-tag mr-2 text-gray-400"></i>
               名称
               <span class="ml-2 text-xs text-gray-500">(可选)</span>
             </label>
             <input
               v-model="platformForm.name"
-              class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+              class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
               placeholder="例如：运维群通知、开发测试群"
               type="text"
             />
@@ -768,17 +744,15 @@
               platformForm.type !== 'telegram'
             "
           >
-            <label
-              class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
+            <label class="mb-2 flex items-center text-sm font-medium text-foreground">
               <i class="fas fa-link mr-2 text-gray-400"></i>
               Webhook URL
-              <span class="ml-1 text-xs text-red-500">*</span>
+              <span class="ml-1 text-xs text-destructive">*</span>
             </label>
             <div class="relative">
               <input
                 v-model="platformForm.url"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 :class="{
                   'border-red-500 focus:border-red-500 focus:ring-red-500/20': urlError,
                   'border-green-500 focus:border-green-500 focus:ring-green-500/20': urlValid
@@ -789,18 +763,18 @@
                 @input="validateUrl"
               />
               <div v-if="urlValid" class="absolute inset-y-0 right-0 flex items-center pr-3">
-                <i class="fas fa-check-circle text-green-500"></i>
+                <i class="fas fa-check-circle text-success"></i>
               </div>
               <div v-if="urlError" class="absolute inset-y-0 right-0 flex items-center pr-3">
-                <i class="fas fa-exclamation-circle text-red-500"></i>
+                <i class="fas fa-exclamation-circle text-destructive"></i>
               </div>
             </div>
             <div
               v-if="getWebhookHint(platformForm.type)"
               class="mt-2 flex items-start rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20"
             >
-              <i class="fas fa-info-circle mr-2 mt-0.5 text-blue-600 dark:text-blue-400"></i>
-              <p class="text-sm text-blue-700 dark:text-blue-300">
+              <i class="fas fa-info-circle mr-2 mt-0.5 text-primary dark:text-blue-400"></i>
+              <p class="text-sm text-primary dark:text-blue-300">
                 {{ getWebhookHint(platformForm.type) }}
               </p>
             </div>
@@ -809,85 +783,77 @@
           <!-- Telegram 平台特有字段 -->
           <div v-if="platformForm.type === 'telegram'" class="space-y-5">
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-robot mr-2 text-gray-400"></i>
                 Bot Token
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.botToken"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="例如：123456789:ABCDEFghijk-xyz"
                 required
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 在 Telegram 的 @BotFather 中创建机器人后获得的 Token
               </p>
             </div>
 
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-comments mr-2 text-gray-400"></i>
                 Chat ID
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.chatId"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="例如：123456789 或 -1001234567890"
                 required
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 可使用 @userinfobot、@RawDataBot 或 API 获取聊天/频道的 Chat ID
               </p>
             </div>
 
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-globe mr-2 text-gray-400"></i>
                 API 基础地址
                 <span class="ml-2 text-xs text-gray-500">(可选)</span>
               </label>
               <input
                 v-model="platformForm.apiBaseUrl"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="默认: https://api.telegram.org"
                 type="url"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 使用自建 Bot API 时可覆盖默认域名，需以 http 或 https 开头
               </p>
             </div>
 
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-route mr-2 text-gray-400"></i>
                 代理地址
                 <span class="ml-2 text-xs text-gray-500">(可选)</span>
               </label>
               <input
                 v-model="platformForm.proxyUrl"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="例如：socks5://user:pass@127.0.0.1:1080"
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 支持 http、https、socks4/4a/5 代理，留空则直接连接 Telegram 官方 API
               </p>
             </div>
 
             <div
-              class="flex items-start rounded-lg bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+              class="flex items-start rounded-lg bg-blue-50 p-3 text-sm text-primary dark:bg-blue-900/20 dark:text-blue-300"
             >
               <i class="fas fa-info-circle mr-2 mt-0.5"></i>
               <div>机器人需先加入对应群组或频道并授予发送消息权限，通知会以纯文本方式发送。</div>
@@ -898,37 +864,31 @@
           <div v-if="platformForm.type === 'bark'" class="space-y-5">
             <!-- 设备密钥 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-key mr-2 text-gray-400"></i>
                 设备密钥 (Device Key)
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.deviceKey"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="例如：aBcDeFgHiJkLmNoPqRsTuVwX"
                 required
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                在Bark App中查看您的推送密钥
-              </p>
+              <p class="mt-1 text-xs text-muted-foreground">在Bark App中查看您的推送密钥</p>
             </div>
 
             <!-- 服务器URL（可选） -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-server mr-2 text-gray-400"></i>
                 服务器地址
                 <span class="ml-2 text-xs text-gray-500">(可选)</span>
               </label>
               <input
                 v-model="platformForm.serverUrl"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="默认: https://api.day.app/push"
                 type="url"
               />
@@ -936,15 +896,13 @@
 
             <!-- 通知级别 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-flag mr-2 text-gray-400"></i>
                 通知级别
               </label>
               <select
                 v-model="platformForm.level"
-                class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">自动（根据通知类型）</option>
                 <option value="passive">被动</option>
@@ -956,15 +914,13 @@
 
             <!-- 通知声音 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-volume-up mr-2 text-gray-400"></i>
                 通知声音
               </label>
               <select
                 v-model="platformForm.sound"
-                class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">自动（根据通知类型）</option>
                 <option value="default">默认</option>
@@ -980,16 +936,14 @@
 
             <!-- 分组 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-folder mr-2 text-gray-400"></i>
                 通知分组
                 <span class="ml-2 text-xs text-gray-500">(可选)</span>
               </label>
               <input
                 v-model="platformForm.group"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="默认: claude-relay"
                 type="text"
               />
@@ -997,8 +951,8 @@
 
             <!-- 提示信息 -->
             <div class="mt-2 flex items-start rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
-              <i class="fas fa-info-circle mr-2 mt-0.5 text-blue-600 dark:text-blue-400"></i>
-              <div class="text-sm text-blue-700 dark:text-blue-300">
+              <i class="fas fa-info-circle mr-2 mt-0.5 text-primary dark:text-blue-400"></i>
+              <div class="text-sm text-primary dark:text-blue-300">
                 <p>1. 在iPhone上安装Bark App</p>
                 <p>2. 打开App获取您的设备密钥</p>
                 <p>3. 将密钥粘贴到上方输入框</p>
@@ -1010,16 +964,14 @@
           <div v-if="platformForm.type === 'smtp'" class="space-y-5">
             <!-- SMTP 主机 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-server mr-2 text-gray-400"></i>
                 SMTP 服务器
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.host"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="例如: smtp.gmail.com"
                 required
                 type="text"
@@ -1029,35 +981,29 @@
             <!-- SMTP 端口和安全设置 -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label
-                  class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                   <i class="fas fa-plug mr-2 text-gray-400"></i>
                   端口
                 </label>
                 <input
                   v-model.number="platformForm.port"
-                  class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   max="65535"
                   min="1"
                   placeholder="587"
                   type="number"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  默认: 587 (TLS) 或 465 (SSL)
-                </p>
+                <p class="mt-1 text-xs text-muted-foreground">默认: 587 (TLS) 或 465 (SSL)</p>
               </div>
 
               <div>
-                <label
-                  class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                   <i class="fas fa-shield-alt mr-2 text-gray-400"></i>
                   加密方式
                 </label>
                 <select
                   v-model="platformForm.secure"
-                  class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
                   <option :value="false">STARTTLS (端口587)</option>
                   <option :value="true">SSL/TLS (端口465)</option>
@@ -1067,16 +1013,14 @@
 
             <!-- 用户名 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-user mr-2 text-gray-400"></i>
                 用户名
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.user"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="user@example.com"
                 required
                 type="email"
@@ -1085,37 +1029,33 @@
 
             <!-- 密码 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-lock mr-2 text-gray-400"></i>
                 密码 / 应用密码
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.pass"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="邮箱密码或应用专用密码"
                 required
                 type="password"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 建议使用应用专用密码，而非邮箱登录密码
               </p>
             </div>
 
             <!-- 发件人邮箱 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-paper-plane mr-2 text-gray-400"></i>
                 发件人邮箱
                 <span class="ml-2 text-xs text-gray-500">(可选)</span>
               </label>
               <input
                 v-model="platformForm.from"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="默认使用用户名邮箱"
                 type="email"
               />
@@ -1123,21 +1063,19 @@
 
             <!-- 收件人邮箱 -->
             <div>
-              <label
-                class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
+              <label class="mb-2 flex items-center text-sm font-medium text-foreground">
                 <i class="fas fa-envelope mr-2 text-gray-400"></i>
                 收件人邮箱
-                <span class="ml-1 text-xs text-red-500">*</span>
+                <span class="ml-1 text-xs text-destructive">*</span>
               </label>
               <input
                 v-model="platformForm.to"
-                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
+                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
                 placeholder="admin@example.com"
                 required
                 type="email"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">接收通知的邮箱地址</p>
+              <p class="mt-1 text-xs text-muted-foreground">接收通知的邮箱地址</p>
             </div>
           </div>
 
@@ -1152,12 +1090,10 @@
                   <input
                     id="enableSign"
                     v-model="platformForm.enableSign"
-                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                    class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-ring focus:ring-offset-0"
                     type="checkbox"
                   />
-                  <span
-                    class="ml-3 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
+                  <span class="ml-3 flex items-center text-sm font-medium text-foreground">
                     <i class="fas fa-shield-alt mr-2 text-gray-400"></i>
                     启用签名验证
                   </span>
@@ -1178,12 +1114,10 @@
                 leave-to-class="opacity-0 -translate-y-2"
               >
                 <div v-if="platformForm.enableSign">
-                  <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    签名密钥
-                  </label>
+                  <label class="mb-2 block text-sm font-medium text-foreground"> 签名密钥 </label>
                   <input
                     v-model="platformForm.secret"
-                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
+                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500"
                     placeholder="SEC..."
                     type="text"
                   />
@@ -1199,8 +1133,8 @@
         class="border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900/50"
       >
         <div class="flex items-center justify-between">
-          <div class="text-xs text-gray-500 dark:text-gray-400">
-            <i class="fas fa-asterisk mr-1 text-red-500"></i>
+          <div class="text-xs text-muted-foreground">
+            <i class="fas fa-asterisk mr-1 text-destructive"></i>
             必填项
           </div>
           <div class="flex space-x-3">
@@ -1212,7 +1146,7 @@
               取消
             </button>
             <button
-              class="group flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-medium text-blue-700 shadow-sm transition-all hover:bg-blue-100 hover:shadow-md dark:border-blue-800 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900/70"
+              class="group flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-medium text-primary shadow-sm transition-all hover:bg-blue-100 hover:shadow-md dark:border-blue-800 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900/70"
               :disabled="testingConnection"
               @click="testPlatformForm"
             >
@@ -1947,14 +1881,14 @@ const getPlatformName = (type) => {
 
 const getPlatformIcon = (type) => {
   const icons = {
-    wechat_work: 'fab fa-weixin text-green-600',
-    dingtalk: 'fas fa-comment-dots text-blue-500',
-    feishu: 'fas fa-dove text-blue-600',
+    wechat_work: 'fab fa-weixin text-success',
+    dingtalk: 'fas fa-comment-dots text-primary',
+    feishu: 'fas fa-dove text-primary',
     slack: 'fab fa-slack text-purple-600',
     discord: 'fab fa-discord text-indigo-600',
     telegram: 'fab fa-telegram-plane text-sky-500',
     bark: 'fas fa-bell text-orange-500',
-    smtp: 'fas fa-envelope text-blue-600',
+    smtp: 'fas fa-envelope text-primary',
     custom: 'fas fa-webhook text-gray-600'
   }
   return icons[type] || 'fas fa-bell'
@@ -2121,7 +2055,7 @@ const formatDateTime = settingsStore.formatDateTime
 }
 
 .form-input {
-  @apply w-full rounded-lg border border-gray-300 px-4 py-2 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500;
+  @apply w-full rounded-lg border border-gray-300 px-4 py-2 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-ring;
 }
 
 .btn {
@@ -2129,7 +2063,7 @@ const formatDateTime = settingsStore.formatDateTime
 }
 
 .btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-ring;
 }
 
 .btn-success {

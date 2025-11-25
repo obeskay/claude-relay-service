@@ -440,14 +440,14 @@ const selectTheme = (mode) => {
   @apply inline-flex;
   @apply bg-gray-100 dark:bg-gray-800;
   @apply rounded-full p-1;
-  @apply border border-gray-200 dark:border-gray-700;
+  @apply border border-border;
   @apply shadow-sm;
 }
 
 .theme-segment {
   @apply px-3 py-1.5;
   @apply text-xs font-medium;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-muted-foreground;
   @apply transition-all duration-200;
   @apply rounded-full;
   @apply flex items-center gap-1;
@@ -456,7 +456,7 @@ const selectTheme = (mode) => {
 }
 
 .theme-segment:hover {
-  @apply text-gray-700 dark:text-gray-300;
+  @apply text-foreground;
   @apply bg-white/30 dark:bg-gray-600/30;
   transform: scale(1.02);
 }

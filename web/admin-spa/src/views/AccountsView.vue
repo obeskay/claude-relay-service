@@ -3,10 +3,10 @@
     <div class="card p-4 sm:p-6">
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
-          <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
+          <h3 class="mb-1 text-lg font-bold text-foreground sm:mb-2 sm:text-xl">
             {{ t('accountsView.pageTitle') }}
           </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
+          <p class="text-sm text-muted-foreground sm:text-base">
             {{ t('accountsView.pageDescription') }}
           </p>
         </div>
@@ -36,7 +36,7 @@
               <CustomDropdown
                 v-model="platformFilter"
                 icon="fa-server"
-                icon-color="text-blue-500"
+                icon-color="text-primary"
                 :options="platformOptions"
                 :placeholder="t('accountsView.filters.selectPlatform')"
                 @change="filterByPlatform"
@@ -102,7 +102,7 @@
                   ></div>
                   <i
                     :class="[
-                      'fas relative text-green-500',
+                      'fas relative text-success',
                       accountsLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                     ]"
                   />
@@ -133,7 +133,7 @@
               <div
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
               ></div>
-              <i class="fas fa-trash relative text-red-600 dark:text-red-400" />
+              <i class="fas fa-trash relative text-destructive dark:text-red-400" />
               <span class="relative">删除选中 ({{ selectedAccounts.length }})</span>
             </button>
 
@@ -151,16 +151,14 @@
 
       <div v-if="accountsLoading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4" />
-        <p class="text-gray-500 dark:text-gray-400">{{ t('accountsView.loading.accounts') }}</p>
+        <p class="text-muted-foreground">{{ t('accountsView.loading.accounts') }}</p>
       </div>
 
       <div v-else-if="sortedAccounts.length === 0" class="py-12 text-center">
-        <div
-          class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700"
-        >
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
           <i class="fas fa-user-circle text-xl text-gray-400" />
         </div>
-        <p class="text-lg text-gray-500 dark:text-gray-400">{{ t('accountsView.empty.title') }}</p>
+        <p class="text-lg text-muted-foreground">{{ t('accountsView.empty.title') }}</p>
         <p class="mt-2 text-sm text-gray-400 dark:text-gray-500">
           {{ t('accountsView.empty.description') }}
         </p>
@@ -175,7 +173,7 @@
                 <div class="flex items-center">
                   <input
                     v-model="selectAllChecked"
-                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-ring"
                     :indeterminate="isIndeterminate"
                     type="checkbox"
                     @change="handleSelectAll"
@@ -258,17 +256,17 @@
                 <i v-else class="fas fa-sort ml-1 text-gray-400" />
               </th>
               <th
-                class="w-[10%] min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                class="w-[10%] min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
               >
                 代理
               </th>
               <th
-                class="w-[10%] min-w-[90px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                class="w-[10%] min-w-[90px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
               >
                 今日使用
               </th>
               <th
-                class="w-[10%] min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                class="w-[10%] min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
               >
                 <div class="flex items-center gap-2">
                   <span>{{ t('accountsView.table.headers.sessionWindow') }}</span>
@@ -321,7 +319,7 @@
                           </div>
                           <div class="space-y-1 text-gray-200 dark:text-gray-600">
                             <div class="flex items-start gap-2">
-                              <i class="fas fa-clock mt-[2px] text-[10px] text-blue-500"></i>
+                              <i class="fas fa-clock mt-[2px] text-[10px] text-primary"></i>
                               <span class="font-medium text-white dark:text-gray-900"
                                 >5h 窗口：5小时使用量进度，到达重置时间后会自动归零。</span
                               >
@@ -372,7 +370,7 @@
                               >
                             </div>
                             <div class="flex items-start gap-2">
-                              <i class="fas fa-sync-alt mt-[2px] text-[10px] text-blue-500"></i>
+                              <i class="fas fa-sync-alt mt-[2px] text-[10px] text-primary"></i>
                               <span class="font-medium text-white dark:text-gray-900"
                                 >到达重置时间后自动归零。</span
                               >
@@ -388,12 +386,12 @@
                 </div>
               </th>
               <th
-                class="w-[8%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                class="w-[8%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
               >
                 最后使用
               </th>
               <th
-                class="w-[15%] min-w-[180px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                class="w-[15%] min-w-[180px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
               >
                 操作
               </th>
@@ -405,7 +403,7 @@
                 <div class="flex items-center">
                   <input
                     v-model="selectedAccounts"
-                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-ring"
                     type="checkbox"
                     :value="account.id"
                     @change="updateSelectAllState"
@@ -422,7 +420,7 @@
                   <div class="min-w-0">
                     <div class="flex items-center gap-2">
                       <div
-                        class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
+                        class="truncate text-sm font-semibold text-foreground"
                         :title="account.name"
                       >
                         {{ account.name }}
@@ -460,10 +458,7 @@
                         <i class="fas fa-folder mr-1" />{{ group.name }}
                       </span>
                     </div>
-                    <div
-                      class="truncate text-xs text-gray-500 dark:text-gray-400"
-                      :title="account.id"
-                    >
+                    <div class="truncate text-xs text-muted-foreground" :title="account.id">
                       {{ account.id }}
                     </div>
                   </div>
@@ -514,14 +509,12 @@
                     v-else-if="account.platform === 'azure_openai'"
                     class="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-gradient-to-r from-blue-100 to-cyan-100 px-2.5 py-1 dark:border-blue-700 dark:from-blue-900/20 dark:to-cyan-900/20"
                   >
-                    <i class="fab fa-microsoft text-xs text-blue-700 dark:text-blue-400" />
+                    <i class="fab fa-microsoft text-xs text-primary dark:text-blue-400" />
                     <span class="text-xs font-semibold text-blue-800 dark:text-blue-300"
                       >Azure OpenAI</span
                     >
                     <span class="mx-1 h-4 w-px bg-blue-300 dark:bg-blue-600" />
-                    <span class="text-xs font-medium text-blue-700 dark:text-blue-400"
-                      >API Key</span
-                    >
+                    <span class="text-xs font-medium text-primary dark:text-blue-400">API Key</span>
                   </div>
                   <div
                     v-else-if="account.platform === 'openai-responses'"
@@ -606,7 +599,7 @@
                   <span v-if="account.expiresAt">
                     <span
                       v-if="isExpired(account.expiresAt)"
-                      class="inline-flex cursor-pointer items-center text-red-600 hover:underline"
+                      class="inline-flex cursor-pointer items-center text-destructive hover:underline"
                       style="font-size: 13px"
                       @click.stop="startEditAccountExpiry(account)"
                     >
@@ -720,14 +713,14 @@
                   </span>
                   <span
                     v-if="account.status === 'blocked' && account.errorMessage"
-                    class="mt-1 max-w-xs truncate text-xs text-gray-500 dark:text-gray-400"
+                    class="mt-1 max-w-xs truncate text-xs text-muted-foreground"
                     :title="account.errorMessage"
                   >
                     {{ account.errorMessage }}
                   </span>
                   <span
                     v-if="account.accountType === 'dedicated'"
-                    class="text-xs text-gray-500 dark:text-gray-400"
+                    class="text-xs text-muted-foreground"
                   >
                     绑定: {{ account.boundApiKeysCount || 0 }} 个API Key
                   </span>
@@ -777,7 +770,7 @@
                 <div v-if="account.usage && account.usage.daily" class="space-y-1">
                   <div class="flex items-center gap-2">
                     <div class="h-2 w-2 rounded-full bg-blue-500" />
-                    <span class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    <span class="text-sm font-medium text-foreground"
                       >{{ account.usage.daily.requests || 0 }} 次</span
                     >
                   </div>
@@ -795,7 +788,7 @@
                   </div>
                   <div
                     v-if="account.usage.averages && account.usage.averages.rpm > 0"
-                    class="text-xs text-gray-500 dark:text-gray-400"
+                    class="text-xs text-muted-foreground"
                   >
                     平均 {{ account.usage.averages.rpm.toFixed(2) }} RPM
                   </div>
@@ -835,7 +828,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                      <div class="mt-1 text-[11px] text-muted-foreground">
                         重置剩余 {{ formatClaudeRemaining(account.claudeUsage.fiveHour) }}
                       </div>
                     </div>
@@ -868,7 +861,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                      <div class="mt-1 text-[11px] text-muted-foreground">
                         重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDay) }}
                       </div>
                     </div>
@@ -901,7 +894,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                      <div class="mt-1 text-[11px] text-muted-foreground">
                         重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDayOpus) }}
                       </div>
                     </div>
@@ -922,13 +915,13 @@
                     >
                       <div class="flex items-center gap-1">
                         <div class="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                        <span class="font-medium text-gray-900 dark:text-gray-100">
+                        <span class="font-medium text-foreground">
                           {{ formatNumber(account.usage.sessionWindow.totalTokens) }}M
                         </span>
                       </div>
                       <div class="flex items-center gap-1">
                         <div class="h-1.5 w-1.5 rounded-full bg-green-500" />
-                        <span class="font-medium text-gray-900 dark:text-gray-100">
+                        <span class="font-medium text-foreground">
                           ${{ formatCost(account.usage.sessionWindow.totalCost) }}
                         </span>
                       </div>
@@ -956,7 +949,7 @@
                     </div>
 
                     <!-- 时间信息 -->
-                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                    <div class="text-xs text-muted-foreground">
                       <div>
                         {{
                           formatSessionWindow(
@@ -1003,7 +996,7 @@
                           }}
                         </span>
                       </div>
-                      <div class="text-xs text-gray-600 dark:text-gray-400">
+                      <div class="text-xs text-muted-foreground">
                         剩余 ${{ formatRemainingQuota(account) }}
                         <span class="ml-2 text-gray-400"
                           >重置 {{ account.quotaResetTime || '00:00' }}</span
@@ -1090,14 +1083,14 @@
                           </div>
                         </div>
                       </div>
-                      <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                      <div class="mt-1 text-[11px] text-muted-foreground">
                         重置剩余 {{ formatCodexRemaining(account.codexUsage.primary) }}
                       </div>
                     </div>
                     <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                       <div class="flex items-center gap-2">
                         <span
-                          class="inline-flex min-w-[32px] justify-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-300"
+                          class="inline-flex min-w-[32px] justify-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-primary dark:bg-blue-500/20 dark:text-blue-300"
                         >
                           {{ getCodexWindowLabel('secondary') }}
                         </span>
@@ -1122,7 +1115,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                      <div class="mt-1 text-[11px] text-muted-foreground">
                         重置剩余 {{ formatCodexRemaining(account.codexUsage.secondary) }}
                       </div>
                     </div>
@@ -1194,7 +1187,7 @@
                     <span class="ml-1">详情</span>
                   </button>
                   <button
-                    class="rounded bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200"
+                    class="rounded bg-blue-100 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-blue-200"
                     :title="'编辑账户'"
                     @click="editAccount(account)"
                   >
@@ -1229,7 +1222,7 @@
               <input
                 v-if="shouldShowCheckboxes"
                 v-model="selectedAccounts"
-                class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-ring"
                 type="checkbox"
                 :value="account.id"
                 @change="updateSelectAllState"
@@ -1276,11 +1269,9 @@
                   {{ account.name || account.email }}
                 </h4>
                 <div class="mt-0.5 flex items-center gap-2">
-                  <span class="text-xs text-gray-500 dark:text-gray-400">{{
-                    account.platform
-                  }}</span>
+                  <span class="text-xs text-muted-foreground">{{ account.platform }}</span>
                   <span class="text-xs text-gray-400">|</span>
-                  <span class="text-xs text-gray-500 dark:text-gray-400">{{ account.type }}</span>
+                  <span class="text-xs text-muted-foreground">{{ account.type }}</span>
                 </div>
               </div>
             </div>
@@ -1300,44 +1291,42 @@
           <!-- 使用统计 -->
           <div class="mb-3 grid grid-cols-2 gap-3">
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 {{ t('accountsView.table.headers.todayUsage') }}
               </p>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                  <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <p class="text-sm font-semibold text-foreground">
                     {{ account.usage?.daily?.requests || 0 }} 次
                   </p>
                 </div>
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                  <p class="text-xs text-gray-600 dark:text-gray-400">
+                  <p class="text-xs text-muted-foreground">
                     {{ formatNumber(account.usage?.daily?.allTokens || 0) }}M
                   </p>
                 </div>
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-green-500" />
-                  <p class="text-xs text-gray-600 dark:text-gray-400">
-                    ${{ calculateDailyCost(account) }}
-                  </p>
+                  <p class="text-xs text-muted-foreground">${{ calculateDailyCost(account) }}</p>
                 </div>
               </div>
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 {{ t('accountsView.table.headers.sessionWindow') }}
               </p>
               <div v-if="account.usage && account.usage.sessionWindow" class="space-y-1">
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                  <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <p class="text-sm font-semibold text-foreground">
                     {{ formatNumber(account.usage.sessionWindow.totalTokens) }}M
                   </p>
                 </div>
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-green-500" />
-                  <p class="text-xs text-gray-600 dark:text-gray-400">
+                  <p class="text-xs text-muted-foreground">
                     ${{ formatCost(account.usage.sessionWindow.totalCost) }}
                   </p>
                 </div>
@@ -1381,7 +1370,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                  <div class="mt-1 text-[11px] text-muted-foreground">
                     重置剩余 {{ formatClaudeRemaining(account.claudeUsage.fiveHour) }}
                   </div>
                 </div>
@@ -1414,7 +1403,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                  <div class="mt-1 text-[11px] text-muted-foreground">
                     重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDay) }}
                   </div>
                 </div>
@@ -1447,7 +1436,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                  <div class="mt-1 text-[11px] text-muted-foreground">
                     重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDayOpus) }}
                   </div>
                 </div>
@@ -1489,7 +1478,7 @@
                   />
                 </div>
                 <div class="flex items-center justify-between text-xs">
-                  <span class="text-gray-500 dark:text-gray-400">
+                  <span class="text-muted-foreground">
                     {{
                       formatSessionWindow(
                         account.sessionWindow.windowStart,
@@ -1538,14 +1527,14 @@
                       </div>
                     </div>
                   </div>
-                  <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                  <div class="mt-1 text-[11px] text-muted-foreground">
                     重置剩余 {{ formatCodexRemaining(account.codexUsage.primary) }}
                   </div>
                 </div>
                 <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700">
                   <div class="flex items-center gap-2">
                     <span
-                      class="inline-flex min-w-[32px] justify-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-300"
+                      class="inline-flex min-w-[32px] justify-center rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-primary dark:bg-blue-500/20 dark:text-blue-300"
                     >
                       {{ getCodexWindowLabel('secondary') }}
                     </span>
@@ -1570,7 +1559,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                  <div class="mt-1 text-[11px] text-muted-foreground">
                     重置剩余 {{ formatCodexRemaining(account.codexUsage.secondary) }}
                   </div>
                 </div>
@@ -1580,7 +1569,7 @@
 
             <!-- 最后使用时间 -->
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500 dark:text-gray-400">{{
+              <span class="text-muted-foreground">{{
                 t('accountsView.table.headers.lastUsed')
               }}</span>
               <span class="text-gray-700 dark:text-gray-200">
@@ -1593,9 +1582,7 @@
               v-if="account.proxyConfig && account.proxyConfig.type !== 'none'"
               class="flex items-center justify-between text-xs"
             >
-              <span class="text-gray-500 dark:text-gray-400">{{
-                t('accountsView.table.headers.proxy')
-              }}</span>
+              <span class="text-muted-foreground">{{ t('accountsView.table.headers.proxy') }}</span>
               <span class="text-gray-700 dark:text-gray-200">
                 {{ account.proxyConfig.type.toUpperCase() }}
               </span>
@@ -1603,7 +1590,7 @@
 
             <!-- 调度优先级 -->
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500 dark:text-gray-400">{{
+              <span class="text-muted-foreground">{{
                 t('accountsView.table.headers.priority')
               }}</span>
               <span class="font-medium text-gray-700 dark:text-gray-200">
@@ -1619,7 +1606,7 @@
               :class="
                 account.schedulable
                   ? 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                  : 'bg-green-50 text-green-600 hover:bg-green-100'
+                  : 'bg-green-50 text-success hover:bg-green-100'
               "
               :disabled="account.isTogglingSchedulable"
               @click="toggleSchedulable(account)"
@@ -1646,7 +1633,7 @@
             </button>
 
             <button
-              class="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600 transition-colors hover:bg-red-100"
+              class="rounded-lg bg-red-50 px-3 py-2 text-xs text-destructive transition-colors hover:bg-red-100"
               @click="deleteAccount(account)"
             >
               <i class="fas fa-trash" />
@@ -1661,21 +1648,21 @@
       class="mt-4 flex flex-col items-center justify-between gap-4 sm:mt-6 sm:flex-row"
     >
       <div class="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
-        <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
+        <span class="text-xs text-muted-foreground sm:text-sm">
           共 {{ sortedAccounts.length }} 条记录
         </span>
         <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">每页显示</span>
+          <span class="text-xs text-muted-foreground sm:text-sm">每页显示</span>
           <select
             v-model="pageSize"
-            class="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:text-sm"
+            class="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:text-sm"
             @change="currentPage = 1"
           >
             <option v-for="size in pageSizeOptions" :key="size" :value="size">
               {{ size }}
             </option>
           </select>
-          <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">条</span>
+          <span class="text-xs text-muted-foreground sm:text-sm">条</span>
         </div>
       </div>
 
@@ -1699,7 +1686,7 @@
 
           <span
             v-if="showLeadingEllipsis"
-            class="hidden px-2 text-sm text-gray-500 dark:text-gray-400 sm:block"
+            class="hidden px-2 text-sm text-muted-foreground sm:block"
           >
             ...
           </span>
@@ -1710,7 +1697,7 @@
             :class="[
               'rounded-md border px-3 py-1 text-xs font-medium transition-colors sm:text-sm',
               page === currentPage
-                ? 'border-blue-500 bg-blue-50 text-blue-600 dark:border-blue-400 dark:bg-blue-500/10 dark:text-blue-300'
+                ? 'border-primary bg-blue-50 text-primary dark:border-primary dark:bg-blue-500/10 dark:text-blue-300'
                 : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
             ]"
             @click="currentPage = page"
@@ -1720,7 +1707,7 @@
 
           <span
             v-if="showTrailingEllipsis"
-            class="hidden px-2 text-sm text-gray-500 dark:text-gray-400 sm:block"
+            class="hidden px-2 text-sm text-muted-foreground sm:block"
           >
             ...
           </span>
@@ -3777,10 +3764,10 @@ const getConcurrencyBarClass = (percent) => {
 // 并发标签颜色（Claude Console）
 const getConcurrencyLabelClass = (account) => {
   const max = Number(account?.maxConcurrentTasks || 0)
-  if (!max || max <= 0) return 'text-gray-500 dark:text-gray-400'
+  if (!max || max <= 0) return 'text-muted-foreground'
   const active = Number(account?.activeTaskCount || 0)
   if (active >= max) {
-    return 'text-red-600 dark:text-red-400'
+    return 'text-destructive dark:text-red-400'
   }
   if (active >= max * 0.8) {
     return 'text-yellow-600 dark:text-yellow-400'

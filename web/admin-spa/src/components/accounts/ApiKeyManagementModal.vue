@@ -12,10 +12,8 @@
               <i class="fas fa-key text-sm text-white sm:text-base" />
             </div>
             <div>
-              <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-                API Key 管理
-              </h3>
-              <p class="text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
+              <h3 class="text-lg font-bold text-foreground sm:text-xl">API Key 管理</h3>
+              <p class="text-xs text-muted-foreground sm:text-sm">
                 {{ accountName }}
               </p>
             </div>
@@ -47,7 +45,7 @@
         <!-- 加载状态 -->
         <div v-if="loading" class="py-8 text-center">
           <div class="loading-spinner-lg mx-auto mb-4" />
-          <p class="text-gray-500 dark:text-gray-400">加载中...</p>
+          <p class="text-muted-foreground">加载中...</p>
         </div>
 
         <!-- 空状态：没有加载且没有 API Key -->
@@ -56,7 +54,7 @@
           class="rounded-lg bg-gray-50 py-8 text-center dark:bg-gray-800"
         >
           <i class="fas fa-key mb-4 text-4xl text-gray-300 dark:text-gray-600" />
-          <p class="text-gray-500 dark:text-gray-400">暂无 API Key</p>
+          <p class="text-muted-foreground">暂无 API Key</p>
         </div>
 
         <!-- 有 API Key 时显示菜单和列表 -->
@@ -72,7 +70,7 @@
                 <!-- 左侧：状态筛选 -->
                 <div class="flex items-center gap-2">
                   <i class="fas fa-filter text-gray-400 dark:text-gray-500" />
-                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">筛选：</span>
+                  <span class="text-sm font-medium text-foreground">筛选：</span>
                   <div class="flex gap-1">
                     <button
                       :class="[
@@ -157,15 +155,13 @@
               </div>
 
               <!-- 分隔线 -->
-              <div class="my-3 border-t border-gray-200 dark:border-gray-700"></div>
+              <div class="my-3 border-t border-border"></div>
 
               <!-- 第二行：批量操作 -->
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <!-- 左侧：操作按钮 -->
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="text-xs font-medium text-gray-500 dark:text-gray-400"
-                    >批量操作：</span
-                  >
+                  <span class="text-xs font-medium text-muted-foreground">批量操作：</span>
                   <button
                     class="group rounded-md bg-gradient-to-r from-red-500 to-red-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:from-red-600 hover:to-red-700 hover:shadow disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-sm"
                     :disabled="errorKeysCount === 0 || batchDeleting"
@@ -248,7 +244,7 @@
                 <!-- API Key 信息 -->
                 <div class="flex items-start justify-between gap-2">
                   <span
-                    class="flex-1 break-all font-mono text-xs font-medium text-gray-900 dark:text-gray-100"
+                    class="flex-1 break-all font-mono text-xs font-medium text-foreground"
                     :title="apiKey.key"
                   >
                     {{ maskApiKey(apiKey.key) }}
@@ -267,7 +263,7 @@
                       :class="[
                         apiKey.status === 'error'
                           ? 'text-orange-500 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300'
-                          : 'text-yellow-500 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300'
+                          : 'text-warning hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300'
                       ]"
                       :disabled="resetting === apiKey.key"
                       title="重置状态"
@@ -277,7 +273,7 @@
                       <i v-else class="fas fa-redo"></i>
                     </button>
                     <button
-                      class="text-xs text-red-500 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:text-red-600"
+                      class="text-xs text-destructive transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:text-destructive"
                       :disabled="deleting === apiKey.key"
                       @click="deleteApiKey(apiKey)"
                     >
@@ -288,16 +284,14 @@
                 </div>
 
                 <!-- 统计信息（一行显示） -->
-                <div
-                  class="flex flex-wrap items-center gap-3 text-xs text-gray-600 dark:text-gray-400"
-                >
+                <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                   <div>
                     <span
                       :class="[
                         apiKey.status === 'active'
-                          ? 'text-green-600 dark:text-green-400'
+                          ? 'text-success dark:text-green-400'
                           : apiKey.status === 'error'
-                            ? 'text-red-600 dark:text-red-400'
+                            ? 'text-destructive dark:text-red-400'
                             : 'text-yellow-600 dark:text-yellow-400'
                       ]"
                     >
@@ -338,7 +332,7 @@
 
           <!-- 分页控制（底部） -->
           <div v-if="totalPages > 1" class="mt-4 flex items-center justify-between">
-            <div class="text-sm text-gray-600 dark:text-gray-400">
+            <div class="text-sm text-muted-foreground">
               显示 {{ (currentPage - 1) * pageSize + 1 }}-{{
                 Math.min(currentPage * pageSize, totalItems)
               }}
@@ -359,7 +353,7 @@
               >
                 <i class="fas fa-angle-left" />
               </button>
-              <span class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span class="px-3 py-1.5 text-sm font-medium text-foreground">
                 {{ currentPage }} / {{ totalPages }}
               </span>
               <button

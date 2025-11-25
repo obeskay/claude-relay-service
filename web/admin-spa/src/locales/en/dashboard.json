@@ -143,5 +143,18 @@
 
   "error.load_failed": "Failed to load dashboard data",
   "error.chart_failed": "Failed to create chart",
-  "error.refresh_failed": "Failed to refresh data"
+  "error.refresh_failed": "Failed to refresh data",
+  "trend.title": "Usage Trend",
+  "trend.by_day": "By Day",
+  "trend.by_hour": "By Hour",
+  "trend.last_n_days": "Last {days} days",
+  "trend.24_hours": "24 hours",
+  "trend.7_days": "7 days",
+  "trend.30_days": "30 days",
+  "model.title": "Model Usage Distribution",
+  "model.daily": "Today",
+  "model.total": "Cumulative",
+  "model.no_data": "No model usage data available",
+  "model.requests_label": "requests",
+  "model.tokens_label": "tokens"
 }

@@ -20,12 +20,12 @@
             </div>
             <div class="space-y-1">
               <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 sm:text-xl">
+                <h3 class="text-lg font-semibold text-foreground sm:text-xl">
                   {{ account?.name || account?.email || '账号使用详情' }}
                 </h3>
                 <span
                   v-if="account?.platform"
-                  class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-300"
+                  class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-primary dark:bg-blue-500/10 dark:text-blue-300"
                 >
                   <i class="fas fa-layer-group mr-1" />{{ platformLabel }}
                 </span>
@@ -36,7 +36,7 @@
                   <i class="fas fa-user-tag mr-1" />{{ accountTypeLabel }}
                 </span>
               </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
+              <p class="text-xs text-muted-foreground sm:text-sm">
                 近 {{ summary?.days || 30 }} 天内的费用与请求趋势
                 <span v-if="summary?.actualDaysUsed && summary?.actualDaysUsed < summary?.days">
                   (日均基于实际使用 {{ summary.actualDaysUsed }} 天)
@@ -55,7 +55,7 @@
         <!-- 内容区域 -->
         <div class="flex-1 overflow-y-auto px-5 py-4 sm:px-6">
           <div v-if="loading" class="flex h-[50vh] items-center justify-center">
-            <div class="loading-spinner h-12 w-12 border-4 border-blue-500" />
+            <div class="loading-spinner h-12 w-12 border-4 border-primary" />
           </div>
           <template v-else>
             <!-- 关键指标 -->
@@ -67,12 +67,10 @@
               >
                 <div class="flex items-start justify-between">
                   <div>
-                    <p
-                      class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                    >
+                    <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       {{ metric.label }}
                     </p>
-                    <p class="mt-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    <p class="mt-2 text-xl font-semibold text-foreground">
                       {{ metric.value }}
                     </p>
                     <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">
@@ -91,32 +89,30 @@
             <!-- 今日与峰值 -->
             <div class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
               <div
-                class="space-y-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 dark:border-blue-500/20 dark:bg-blue-900/20"
+                class="space-y-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 dark:border-primary/20 dark:bg-blue-900/20"
               >
                 <div
-                  class="flex items-center gap-2 text-sm font-semibold text-blue-700 dark:text-blue-300"
+                  class="flex items-center gap-2 text-sm font-semibold text-primary dark:text-blue-300"
                 >
                   <i class="fas fa-sun" />
                   今日概览
                 </div>
                 <div
-                  class="rounded-xl bg-white/80 p-3 text-sm text-gray-600 shadow-sm ring-1 ring-blue-100 dark:bg-gray-900/80 dark:text-gray-300 dark:ring-blue-500/20"
+                  class="rounded-xl bg-white/80 p-3 text-sm text-gray-600 shadow-sm ring-1 ring-blue-100 dark:bg-gray-900/80 dark:text-gray-300 dark:ring-ring/20"
                 >
                   <div class="flex items-center justify-between">
                     <span>费用</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       summary?.today?.costFormatted || '$0.000000'
                     }}</span>
                   </div>
                   <div class="mt-2 flex items-center justify-between">
                     <span>请求</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatNumber(summary?.today?.requests || 0)
                     }}</span>
                   </div>
-                  <div
-                    class="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                  >
+                  <div class="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                     <span>Tokens</span>
                     <span>{{ formatNumber(summary?.today?.tokens || 0) }}</span>
                   </div>
@@ -137,19 +133,17 @@
                 >
                   <div class="flex items-center justify-between">
                     <span>日期</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatDate(summary?.highestCostDay?.date)
                     }}</span>
                   </div>
                   <div class="mt-2 flex items-center justify-between">
                     <span>费用</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       summary?.highestCostDay?.formattedCost || '$0.000000'
                     }}</span>
                   </div>
-                  <div
-                    class="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                  >
+                  <div class="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                     <span>请求</span>
                     <span>{{
                       formatNumber(findHistoryValue(summary?.highestCostDay?.date, 'requests'))
@@ -172,19 +166,17 @@
                 >
                   <div class="flex items-center justify-between">
                     <span>日期</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatDate(summary?.highestRequestDay?.date)
                     }}</span>
                   </div>
                   <div class="mt-2 flex items-center justify-between">
                     <span>请求</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatNumber(summary?.highestRequestDay?.requests || 0)
                     }}</span>
                   </div>
-                  <div
-                    class="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                  >
+                  <div class="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                     <span>费用</span>
                     <span>{{
                       formatCost(findHistoryValue(summary?.highestRequestDay?.date, 'cost'))
@@ -199,27 +191,23 @@
               <div
                 class="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/70"
               >
-                <h4
-                  class="mb-3 flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
+                <h4 class="mb-3 flex items-center text-sm font-semibold text-foreground">
                   <i class="fas fa-database mr-2 text-indigo-500" /> 累计 Token
                 </h4>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div class="flex items-center justify-between">
                     <span>30天总计</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatNumber(totalTokens)
                     }}</span>
                   </div>
                   <div class="flex items-center justify-between">
                     <span>日均 Token</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatNumber(Math.round(summary?.avgDailyTokens || 0))
                     }}</span>
                   </div>
-                  <div
-                    class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                  >
+                  <div class="flex items-center justify-between text-xs text-muted-foreground">
                     <span>输入 / 输出</span>
                     <span
                       >{{ formatNumber(overviewInputTokens) }} /
@@ -231,27 +219,23 @@
               <div
                 class="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/70"
               >
-                <h4
-                  class="mb-3 flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
+                <h4 class="mb-3 flex items-center text-sm font-semibold text-foreground">
                   <i class="fas fa-tachometer-alt mr-2 text-purple-500" /> 平均速率
                 </h4>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div class="flex items-center justify-between">
                     <span>RPM</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       overview?.averages?.rpm ?? 0
                     }}</span>
                   </div>
                   <div class="flex items-center justify-between">
                     <span>TPM</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       overview?.averages?.tpm ?? 0
                     }}</span>
                   </div>
-                  <div
-                    class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                  >
+                  <div class="flex items-center justify-between text-xs text-muted-foreground">
                     <span>日均请求 / Token</span>
                     <span
                       >{{
@@ -270,27 +254,23 @@
               <div
                 class="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/70"
               >
-                <h4
-                  class="mb-3 flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
+                <h4 class="mb-3 flex items-center text-sm font-semibold text-foreground">
                   <i class="fas fa-layer-group mr-2 text-teal-500" /> 最近统计
                 </h4>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div class="flex items-center justify-between">
                     <span>今日请求</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatNumber(overview?.daily?.requests || 0)
                     }}</span>
                   </div>
                   <div class="flex items-center justify-between">
                     <span>今日 Token</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    <span class="font-semibold text-foreground">{{
                       formatNumber(overview?.daily?.allTokens || 0)
                     }}</span>
                   </div>
-                  <div
-                    class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                  >
+                  <div class="flex items-center justify-between text-xs text-muted-foreground">
                     <span>今日费用</span>
                     <span>{{ formatCost(overview?.daily?.cost || 0) }}</span>
                   </div>
@@ -303,10 +283,8 @@
               class="mb-6 rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/70"
             >
               <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <h4
-                  class="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
-                  <i class="fas fa-chart-line mr-2 text-blue-500" /> 30天费用与请求趋势
+                <h4 class="flex items-center text-sm font-semibold text-foreground">
+                  <i class="fas fa-chart-line mr-2 text-primary" /> 30天费用与请求趋势
                 </h4>
                 <span class="text-xs text-gray-400 dark:text-gray-500">
                   最新更新时间：{{ formatDateTime(generatedAtDisplay) }}
@@ -442,7 +420,7 @@ const primaryMetrics = computed(() => [
     value: formatNumber(props.summary?.totalRequests || 0),
     subtitle: '调用次数',
     icon: 'fa-paper-plane',
-    iconClass: 'text-blue-500'
+    iconClass: 'text-primary'
   },
   {
     key: 'avgCost',

@@ -3,22 +3,22 @@
     <div class="card p-4 sm:p-6">
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
-          <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
+          <h3 class="mb-1 text-lg font-bold text-foreground sm:mb-2 sm:text-xl">
             {{ t('apiKeys.page.title') }}
           </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
+          <p class="text-sm text-muted-foreground sm:text-base">
             {{ t('apiKeys.page.subtitle') }}
           </p>
         </div>
 
         <!-- Tab Navigation -->
-        <div class="border-b border-gray-200 dark:border-gray-700">
+        <div class="border-b border-border">
           <nav aria-label="Tabs" class="-mb-px flex space-x-8">
             <button
               :class="[
                 'whitespace-nowrap border-b-2 px-1 py-2 text-sm font-medium',
                 activeTab === 'active'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-primary text-primary'
                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-300'
               ]"
               @click="activeTab = 'active'"
@@ -35,7 +35,7 @@
               :class="[
                 'whitespace-nowrap border-b-2 px-1 py-2 text-sm font-medium',
                 activeTab === 'deleted'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-primary text-primary'
                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-300'
               ]"
               @click="loadDeletedApiKeys"
@@ -66,7 +66,7 @@
                 <CustomDropdown
                   v-model="globalDateFilter.preset"
                   icon="fa-calendar-alt"
-                  icon-color="text-blue-500"
+                  icon-color="text-primary"
                   :options="timeRangeDropdownOptions"
                   :placeholder="t('apiKeys.filter.time_range')"
                   @change="handleTimeRangeChange"
@@ -173,7 +173,7 @@
                 ></div>
                 <i
                   :class="[
-                    'fas relative text-green-500',
+                    'fas relative text-success',
                     apiKeysLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                   ]"
                 />
@@ -206,13 +206,13 @@
               <!-- 批量编辑按钮 - 移到刷新按钮旁边 -->
               <button
                 v-if="selectedApiKeys.length > 0"
-                class="group relative flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow-sm transition-all duration-200 hover:border-blue-300 hover:bg-blue-100 hover:shadow-md dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 sm:w-auto"
+                class="group relative flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-primary shadow-sm transition-all duration-200 hover:border-blue-300 hover:bg-blue-100 hover:shadow-md dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 sm:w-auto"
                 @click="openBatchEditModal()"
               >
                 <div
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
-                <i class="fas fa-edit relative text-blue-600 dark:text-blue-400" />
+                <i class="fas fa-edit relative text-primary dark:text-blue-400" />
                 <span class="relative">{{
                   t('apiKeys.action.edit_selected', { count: selectedApiKeys.length })
                 }}</span>
@@ -227,7 +227,7 @@
                 <div
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
-                <i class="fas fa-trash relative text-red-600 dark:text-red-400" />
+                <i class="fas fa-trash relative text-destructive dark:text-red-400" />
                 <span class="relative">{{
                   t('apiKeys.action.delete_selected', { count: selectedApiKeys.length })
                 }}</span>
@@ -246,16 +246,16 @@
 
           <div v-if="apiKeysLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400">{{ t('apiKeys.loading.keys') }}</p>
+            <p class="text-muted-foreground">{{ t('apiKeys.loading.keys') }}</p>
           </div>
 
           <div v-else-if="apiKeys.length === 0" class="py-12 text-center">
             <div
-              class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700"
+              class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted"
             >
               <i class="fas fa-key text-xl text-gray-400" />
             </div>
-            <p class="text-lg text-gray-500 dark:text-gray-400">{{ t('apiKeys.empty.no_keys') }}</p>
+            <p class="text-lg text-muted-foreground">{{ t('apiKeys.empty.no_keys') }}</p>
             <p class="mt-2 text-sm text-gray-400">{{ t('apiKeys.empty.create_first') }}</p>
           </div>
 
@@ -271,7 +271,7 @@
                       <div class="flex items-center">
                         <input
                           v-model="selectAllChecked"
-                          class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-ring"
                           :indeterminate="isIndeterminate"
                           type="checkbox"
                           @change="handleSelectAll"
@@ -294,12 +294,12 @@
                       <i v-else class="fas fa-sort ml-1 text-gray-400" />
                     </th>
                     <th
-                      class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                      class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                     >
                       {{ t('apiKeys.table.account') }}
                     </th>
                     <th
-                      class="w-[10%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                      class="w-[10%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                     >
                       {{ t('apiKeys.table.tags') }}
                     </th>
@@ -334,7 +334,7 @@
                       <i v-else class="fas fa-sort ml-1 text-gray-400" />
                     </th>
                     <th
-                      class="w-[14%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                      class="w-[14%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                     >
                       {{ t('apiKeys.table.limit') }}
                     </th>
@@ -414,7 +414,7 @@
                       <i v-else class="fas fa-sort ml-1 text-gray-400" />
                     </th>
                     <th
-                      class="operations-column sticky right-0 w-[23%] min-w-[200px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                      class="operations-column sticky right-0 w-[23%] min-w-[200px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                     >
                       {{ t('apiKeys.table.operations') }}
                     </th>
@@ -426,9 +426,7 @@
                     <tr
                       :class="[
                         'table-row transition-all duration-150',
-                        index % 2 === 0
-                          ? 'bg-white dark:bg-gray-800/40'
-                          : 'bg-gray-50/70 dark:bg-gray-700/30',
+                        index % 2 === 0 ? 'bg-card/40' : 'bg-gray-50/70 dark:bg-gray-700/30',
                         'border-b-2 border-gray-200/80 dark:border-gray-700/50',
                         'hover:bg-blue-50/60 hover:shadow-sm dark:hover:bg-blue-900/20'
                       ]"
@@ -437,7 +435,7 @@
                         <div class="flex items-center">
                           <input
                             v-model="selectedApiKeys"
-                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-ring"
                             type="checkbox"
                             :value="key.id"
                             @change="updateSelectAllState"
@@ -448,7 +446,7 @@
                         <div class="min-w-0">
                           <!-- 名称 -->
                           <div
-                            class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            class="truncate text-sm font-semibold text-foreground"
                             :title="key.name"
                           >
                             {{ key.name }}
@@ -456,7 +454,7 @@
                           <!-- 显示所有者信息 -->
                           <div
                             v-if="isLdapEnabled && key.ownerDisplayName"
-                            class="mt-1 text-xs text-red-600"
+                            class="mt-1 text-xs text-destructive"
                           >
                             <i class="fas fa-user mr-1" />
                             {{ key.ownerDisplayName }}
@@ -477,7 +475,7 @@
                               <i class="fas fa-brain mr-1 text-[10px]" />
                               Claude
                             </span>
-                            <span class="truncate text-gray-600 dark:text-gray-400">
+                            <span class="truncate text-muted-foreground">
                               {{ getClaudeBindingInfo(key) }}
                             </span>
                           </div>
@@ -489,7 +487,7 @@
                               <i class="fas fa-robot mr-1 text-[10px]" />
                               Gemini
                             </span>
-                            <span class="truncate text-gray-600 dark:text-gray-400">
+                            <span class="truncate text-muted-foreground">
                               {{ getGeminiBindingInfo(key) }}
                             </span>
                           </div>
@@ -501,7 +499,7 @@
                               <i class="fa-openai mr-1 text-[10px]" />
                               OpenAI
                             </span>
-                            <span class="truncate text-gray-600 dark:text-gray-400">
+                            <span class="truncate text-muted-foreground">
                               {{ getOpenAIBindingInfo(key) }}
                             </span>
                           </div>
@@ -513,7 +511,7 @@
                               <i class="fas fa-cloud mr-1 text-[10px]" />
                               Bedrock
                             </span>
-                            <span class="truncate text-gray-600 dark:text-gray-400">
+                            <span class="truncate text-muted-foreground">
                               {{ getBedrockBindingInfo(key) }}
                             </span>
                           </div>
@@ -525,7 +523,7 @@
                               <i class="fas fa-robot mr-1 text-[10px]" />
                               Droid
                             </span>
-                            <span class="truncate text-gray-600 dark:text-gray-400">
+                            <span class="truncate text-muted-foreground">
                               {{ getDroidBindingInfo(key) }}
                             </span>
                           </div>
@@ -539,7 +537,7 @@
                               !key.bedrockAccountId &&
                               !key.droidAccountId
                             "
-                            class="text-xs text-gray-500 dark:text-gray-400"
+                            class="text-xs text-muted-foreground"
                           >
                             <i class="fas fa-share-alt mr-1" />
                             共享池
@@ -586,7 +584,7 @@
                       <!-- 费用 -->
                       <td class="whitespace-nowrap px-3 py-3 text-right" style="font-size: 13px">
                         <span
-                          class="font-semibold text-blue-600 dark:text-blue-400"
+                          class="font-semibold text-primary dark:text-blue-400"
                           style="font-size: 14px"
                         >
                           ${{ getPeriodCost(key).toFixed(2) }}
@@ -661,7 +659,7 @@
                           <!-- 如果没有任何限制 -->
                           <div
                             v-else
-                            class="flex items-center justify-center gap-1.5 py-2 text-gray-500 dark:text-gray-400"
+                            class="flex items-center justify-center gap-1.5 py-2 text-muted-foreground"
                           >
                             <i class="fas fa-infinity text-base" />
                             <span class="text-xs font-medium">{{
@@ -684,10 +682,7 @@
                       <!-- 请求数 -->
                       <td class="whitespace-nowrap px-3 py-3 text-right" style="font-size: 13px">
                         <div class="flex items-center justify-end gap-1">
-                          <span
-                            class="font-medium text-gray-900 dark:text-gray-100"
-                            style="font-size: 13px"
-                          >
+                          <span class="font-medium text-foreground" style="font-size: 13px">
                             {{ formatNumber(getPeriodRequests(key)) }}
                           </span>
                           <span class="text-xs text-gray-500">次</span>
@@ -695,7 +690,7 @@
                       </td>
                       <!-- 最后使用 -->
                       <td
-                        class="whitespace-nowrap px-3 py-3 text-gray-700 dark:text-gray-300"
+                        class="whitespace-nowrap px-3 py-3 text-foreground"
                         style="font-size: 13px"
                       >
                         <div class="flex flex-col leading-tight">
@@ -712,7 +707,7 @@
                           }}</span>
                           <span
                             v-if="hasLastUsageAccount(key)"
-                            class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                            class="mt-1 text-xs text-muted-foreground"
                             :title="getLastUsageFullName(key)"
                           >
                             {{ getLastUsageDisplayName(key) }}
@@ -730,19 +725,17 @@
                       </td>
                       <!-- 创建时间 -->
                       <td
-                        class="whitespace-nowrap px-3 py-3 text-gray-700 dark:text-gray-300"
+                        class="whitespace-nowrap px-3 py-3 text-foreground"
                         style="font-size: 13px"
                       >
                         {{ new Date(key.createdAt).toLocaleDateString() }}
                       </td>
-                      <td
-                        class="whitespace-nowrap px-3 py-3 text-sm text-gray-700 dark:text-gray-300"
-                      >
+                      <td class="whitespace-nowrap px-3 py-3 text-sm text-foreground">
                         <div class="inline-flex items-center gap-1.5">
                           <!-- 未激活状态 -->
                           <span
                             v-if="key.expirationMode === 'activation' && !key.isActivated"
-                            class="inline-flex items-center text-blue-600 dark:text-blue-400"
+                            class="inline-flex items-center text-primary dark:text-blue-400"
                             style="font-size: 13px"
                           >
                             <i class="fas fa-pause-circle mr-1 text-xs" />
@@ -761,7 +754,7 @@
                           <span v-else-if="key.expiresAt">
                             <span
                               v-if="isApiKeyExpired(key.expiresAt)"
-                              class="inline-flex cursor-pointer items-center text-red-600 hover:underline"
+                              class="inline-flex cursor-pointer items-center text-destructive hover:underline"
                               style="font-size: 13px"
                               @click.stop="startEditExpiry(key)"
                             >
@@ -828,7 +821,7 @@
                             <span class="ml-1 hidden xl:inline">模型</span>
                           </button>
                           <button
-                            class="rounded px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-900 dark:hover:bg-blue-900/20"
+                            class="rounded px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-blue-50 hover:text-blue-900 dark:hover:bg-blue-900/20"
                             :title="t('apiKeys.tooltip.edit')"
                             @click="openEditApiKeyModal(key)"
                           >
@@ -843,7 +836,7 @@
                               (isApiKeyExpired(key.expiresAt) ||
                                 isApiKeyExpiringSoon(key.expiresAt))
                             "
-                            class="rounded px-2 py-1 text-xs font-medium text-green-600 transition-colors hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20"
+                            class="rounded px-2 py-1 text-xs font-medium text-success transition-colors hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20"
                             :title="t('apiKeys.tooltip.renew')"
                             @click="openRenewApiKeyModal(key)"
                           >
@@ -856,7 +849,7 @@
                             :class="[
                               key.isActive
                                 ? 'text-orange-600 hover:bg-orange-50 hover:text-orange-900 dark:hover:bg-orange-900/20'
-                                : 'text-green-600 hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20',
+                                : 'text-success hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20',
                               'rounded px-2 py-1 text-xs font-medium transition-colors'
                             ]"
                             :title="
@@ -874,7 +867,7 @@
                             }}</span>
                           </button>
                           <button
-                            class="rounded px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900 dark:hover:bg-red-900/20"
+                            class="rounded px-2 py-1 text-xs font-medium text-destructive transition-colors hover:bg-red-50 hover:text-red-900 dark:hover:bg-red-900/20"
                             :title="t('apiKeys.tooltip.delete')"
                             @click="deleteApiKey(key.id)"
                           >
@@ -892,16 +885,14 @@
                       <td class="bg-gray-50 px-3 py-3 dark:bg-gray-700" colspan="13">
                         <div v-if="!apiKeyModelStats[key.id]" class="py-4 text-center">
                           <div class="loading-spinner mx-auto" />
-                          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                          <p class="mt-2 text-sm text-muted-foreground">
                             {{ t('apiKeys.loading.models') }}
                           </p>
                         </div>
                         <div class="space-y-4">
                           <!-- 通用的标题和时间筛选器，无论是否有数据都显示 -->
                           <div class="mb-4 flex items-center justify-between">
-                            <h5
-                              class="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
-                            >
+                            <h5 class="flex items-center text-sm font-semibold text-foreground">
                               <i class="fas fa-chart-pie mr-2 text-indigo-500" />
                               模型使用分布
                             </h5>
@@ -926,7 +917,7 @@
                                       'rounded px-2 py-1 text-xs font-medium transition-colors',
                                       getApiKeyDateFilter(key.id).preset === option.value &&
                                       getApiKeyDateFilter(key.id).type === 'preset'
-                                        ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-800'
+                                        ? 'bg-white text-primary shadow-sm dark:bg-gray-800'
                                         : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
                                     ]"
                                     @click="setApiKeyDateFilterPreset(option.value, key.id)"
@@ -966,11 +957,9 @@
                           >
                             <div class="mb-3 flex items-center justify-center gap-2">
                               <i class="fas fa-chart-line text-lg text-gray-400" />
-                              <p class="text-sm text-gray-500 dark:text-gray-400">
-                                暂无模型使用数据
-                              </p>
+                              <p class="text-sm text-muted-foreground">暂无模型使用数据</p>
                               <button
-                                class="ml-2 flex items-center gap-1 text-sm text-blue-500 transition-colors hover:text-blue-700"
+                                class="ml-2 flex items-center gap-1 text-sm text-primary transition-colors hover:text-primary"
                                 title="重置筛选条件并刷新"
                                 @click="resetApiKeyDateFilter(key.id)"
                               >
@@ -995,10 +984,9 @@
                             >
                               <div class="mb-3 flex items-start justify-between">
                                 <div class="flex-1">
-                                  <span
-                                    class="mb-1 block text-sm font-semibold text-gray-800 dark:text-gray-200"
-                                    >{{ stat.model }}</span
-                                  >
+                                  <span class="mb-1 block text-sm font-semibold text-foreground">{{
+                                    stat.model
+                                  }}</span>
                                   <span
                                     class="rounded-full bg-blue-50 px-2 py-1 text-xs text-gray-500 dark:bg-blue-900/30 dark:text-gray-400"
                                     >{{ stat.requests }} 次请求</span
@@ -1008,20 +996,20 @@
 
                               <div class="mb-3 space-y-2">
                                 <div class="flex items-center justify-between text-sm">
-                                  <span class="flex items-center text-gray-600 dark:text-gray-400">
-                                    <i class="fas fa-coins mr-1 text-xs text-yellow-500" />
+                                  <span class="flex items-center text-muted-foreground">
+                                    <i class="fas fa-coins mr-1 text-xs text-warning" />
                                     总Token:
                                   </span>
-                                  <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                                  <span class="font-semibold text-foreground">{{
                                     formatTokenCount(stat.allTokens)
                                   }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
-                                  <span class="flex items-center text-gray-600 dark:text-gray-400">
-                                    <i class="fas fa-dollar-sign mr-1 text-xs text-green-500" />
+                                  <span class="flex items-center text-muted-foreground">
+                                    <i class="fas fa-dollar-sign mr-1 text-xs text-success" />
                                     费用:
                                   </span>
-                                  <span class="font-semibold text-green-600">{{
+                                  <span class="font-semibold text-success">{{
                                     calculateModelCost(stat)
                                   }}</span>
                                 </div>
@@ -1029,10 +1017,10 @@
                                   class="mt-2 border-t border-gray-100 pt-2 dark:border-gray-600"
                                 >
                                   <div
-                                    class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
+                                    class="flex items-center justify-between text-xs text-muted-foreground"
                                   >
                                     <span class="flex items-center">
-                                      <i class="fas fa-arrow-down mr-1 text-green-500" />
+                                      <i class="fas fa-arrow-down mr-1 text-success" />
                                       输入:
                                     </span>
                                     <span class="font-medium">{{
@@ -1040,10 +1028,10 @@
                                     }}</span>
                                   </div>
                                   <div
-                                    class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
+                                    class="flex items-center justify-between text-xs text-muted-foreground"
                                   >
                                     <span class="flex items-center">
-                                      <i class="fas fa-arrow-up mr-1 text-blue-500" />
+                                      <i class="fas fa-arrow-up mr-1 text-primary" />
                                       输出:
                                     </span>
                                     <span class="font-medium">{{
@@ -1111,25 +1099,23 @@
                             class="mt-4 rounded-lg border border-indigo-100 bg-gradient-to-r from-indigo-50 to-purple-50 p-3 dark:border-indigo-700 dark:from-indigo-900/20 dark:to-purple-900/20"
                           >
                             <div class="flex items-center justify-between text-sm">
-                              <span
-                                class="flex items-center font-semibold text-gray-700 dark:text-gray-300"
-                              >
+                              <span class="flex items-center font-semibold text-foreground">
                                 <i class="fas fa-calculator mr-2 text-indigo-500" />
                                 总计统计
                               </span>
                               <div class="flex gap-4 text-xs">
-                                <span class="text-gray-600 dark:text-gray-400">
+                                <span class="text-muted-foreground">
                                   总请求:
-                                  <span class="font-semibold text-gray-800 dark:text-gray-200">{{
+                                  <span class="font-semibold text-foreground">{{
                                     apiKeyModelStats[key.id].reduce(
                                       (sum, stat) => sum + stat.requests,
                                       0
                                     )
                                   }}</span>
                                 </span>
-                                <span class="text-gray-600 dark:text-gray-400">
+                                <span class="text-muted-foreground">
                                   总Token:
-                                  <span class="font-semibold text-gray-800 dark:text-gray-200">{{
+                                  <span class="font-semibold text-foreground">{{
                                     formatTokenCount(
                                       apiKeyModelStats[key.id].reduce(
                                         (sum, stat) => sum + stat.allTokens,
@@ -1163,16 +1149,16 @@
                   <input
                     v-if="shouldShowCheckboxes"
                     v-model="selectedApiKeys"
-                    class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-ring"
                     type="checkbox"
                     :value="key.id"
                     @change="updateSelectAllState"
                   />
                   <div>
-                    <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    <h4 class="text-sm font-semibold text-foreground">
                       {{ key.name }}
                     </h4>
-                    <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                    <p class="mt-0.5 text-xs text-muted-foreground">
                       {{ key.id }}
                     </p>
                   </div>
@@ -1208,7 +1194,7 @@
                     <i class="fas fa-brain mr-1" />
                     Claude
                   </span>
-                  <span class="text-gray-600 dark:text-gray-400">
+                  <span class="text-muted-foreground">
                     {{ getClaudeBindingInfo(key) }}
                   </span>
                 </div>
@@ -1220,7 +1206,7 @@
                     <i class="fas fa-robot mr-1" />
                     Gemini
                   </span>
-                  <span class="text-gray-600 dark:text-gray-400">
+                  <span class="text-muted-foreground">
                     {{ getGeminiBindingInfo(key) }}
                   </span>
                 </div>
@@ -1232,7 +1218,7 @@
                     <i class="fa-openai mr-1" />
                     OpenAI
                   </span>
-                  <span class="text-gray-600 dark:text-gray-400">
+                  <span class="text-muted-foreground">
                     {{ getOpenAIBindingInfo(key) }}
                   </span>
                 </div>
@@ -1244,7 +1230,7 @@
                     <i class="fas fa-cloud mr-1" />
                     Bedrock
                   </span>
-                  <span class="text-gray-600 dark:text-gray-400">
+                  <span class="text-muted-foreground">
                     {{ getBedrockBindingInfo(key) }}
                   </span>
                 </div>
@@ -1256,7 +1242,7 @@
                     <i class="fas fa-robot mr-1" />
                     Droid
                   </span>
-                  <span class="text-gray-600 dark:text-gray-400">
+                  <span class="text-muted-foreground">
                     {{ getDroidBindingInfo(key) }}
                   </span>
                 </div>
@@ -1270,13 +1256,13 @@
                     !key.bedrockAccountId &&
                     !key.droidAccountId
                   "
-                  class="text-xs text-gray-500 dark:text-gray-400"
+                  class="text-xs text-muted-foreground"
                 >
                   <i class="fas fa-share-alt mr-1" />
                   使用共享池
                 </div>
                 <!-- 显示所有者信息 -->
-                <div v-if="isLdapEnabled && key.ownerDisplayName" class="text-xs text-red-600">
+                <div v-if="isLdapEnabled && key.ownerDisplayName" class="text-xs text-destructive">
                   <i class="fas fa-user mr-1" />
                   {{ key.ownerDisplayName }}
                 </div>
@@ -1287,11 +1273,11 @@
                 <!-- 今日使用 -->
                 <div class="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
                   <div class="mb-2 flex items-center justify-between">
-                    <span class="text-xs text-gray-600 dark:text-gray-400">{{
+                    <span class="text-xs text-muted-foreground">{{
                       globalDateFilter.type === 'custom' ? '累计统计' : '今日使用'
                     }}</span>
                     <button
-                      class="text-xs text-blue-600 hover:text-blue-800"
+                      class="text-xs text-primary hover:text-blue-800"
                       @click="showUsageDetails(key)"
                     >
                       <i class="fas fa-chart-line mr-1" />详情
@@ -1299,22 +1285,22 @@
                   </div>
                   <div class="grid grid-cols-2 gap-3">
                     <div>
-                      <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <p class="text-sm font-semibold text-foreground">
                         {{ formatNumber(key.usage?.daily?.requests || 0) }} 次
                       </p>
-                      <p class="text-xs text-gray-500 dark:text-gray-400">请求</p>
+                      <p class="text-xs text-muted-foreground">请求</p>
                     </div>
                     <div>
-                      <p class="text-sm font-semibold text-green-600">
+                      <p class="text-sm font-semibold text-success">
                         ${{ (key.dailyCost || 0).toFixed(2) }}
                       </p>
-                      <p class="text-xs text-gray-500 dark:text-gray-400">费用</p>
+                      <p class="text-xs text-muted-foreground">费用</p>
                     </div>
                   </div>
-                  <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                  <div class="mt-2 text-xs text-muted-foreground">
                     <div class="flex items-center justify-between">
                       <span>最后使用</span>
-                      <span class="font-medium text-gray-700 dark:text-gray-300">
+                      <span class="font-medium text-foreground">
                         {{ key.lastUsedAt ? formatLastUsed(key.lastUsedAt) : '从未使用' }}
                       </span>
                     </div>
@@ -1322,7 +1308,7 @@
                       <span>账号</span>
                       <span
                         v-if="hasLastUsageAccount(key)"
-                        class="truncate text-gray-500 dark:text-gray-400"
+                        class="truncate text-muted-foreground"
                         style="max-width: 180px"
                         :title="getLastUsageFullName(key)"
                       >
@@ -1405,7 +1391,7 @@
                   <!-- 无限制显示 -->
                   <div
                     v-else
-                    class="flex items-center justify-center gap-1.5 py-2 text-gray-500 dark:text-gray-400"
+                    class="flex items-center justify-center gap-1.5 py-2 text-muted-foreground"
                   >
                     <i class="fas fa-infinity text-base" />
                     <span class="text-xs font-medium">{{ t('apiKeys.limit.no_limit') }}</span>
@@ -1414,7 +1400,7 @@
               </div>
 
               <!-- 时间信息 -->
-              <div class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+              <div class="mb-3 text-xs text-muted-foreground">
                 <div class="mb-1 flex justify-between">
                   <span>创建时间</span>
                   <span>{{ formatDate(key.createdAt) }}</span>
@@ -1430,7 +1416,7 @@
                       {{ key.expiresAt ? formatDate(key.expiresAt) : '永不过期' }}
                     </span>
                     <button
-                      class="inline-flex h-5 w-5 items-center justify-center rounded text-gray-300 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-900/20"
+                      class="inline-flex h-5 w-5 items-center justify-center rounded text-gray-300 transition-all duration-200 hover:bg-blue-50 hover:text-primary dark:hover:bg-blue-900/20"
                       :title="t('apiKeys.tooltip.renew')"
                       @click.stop="startEditExpiry(key)"
                     >
@@ -1461,14 +1447,14 @@
               <!-- 操作按钮 -->
               <div class="mt-3 flex gap-2 border-t border-gray-100 pt-3 dark:border-gray-600">
                 <button
-                  class="flex flex-1 items-center justify-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+                  class="flex flex-1 items-center justify-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs text-primary transition-colors hover:bg-primary/10 dark:bg-primary/20 dark:hover:bg-blue-900/50"
                   @click="showUsageDetails(key)"
                 >
                   <i class="fas fa-chart-line" />
                   查看详情
                 </button>
                 <button
-                  class="flex-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs text-gray-600 transition-colors hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  class="flex-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs text-gray-600 transition-colors hover:bg-muted dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="openEditApiKeyModal(key)"
                 >
                   <i class="fas fa-edit mr-1" />
@@ -1489,7 +1475,7 @@
                   :class="[
                     key.isActive
                       ? 'bg-orange-50 text-orange-600 hover:bg-orange-100 dark:bg-orange-900/30 dark:hover:bg-orange-900/50'
-                      : 'bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-900/50',
+                      : 'bg-green-50 text-success hover:bg-success/10 dark:bg-success/20 dark:hover:bg-green-900/50',
                     'rounded-lg px-3 py-1.5 text-xs transition-colors'
                   ]"
                   @click="toggleApiKeyStatus(key)"
@@ -1498,7 +1484,7 @@
                   {{ key.isActive ? t('apiKeys.action.disable') : t('apiKeys.action.activate') }}
                 </button>
                 <button
-                  class="rounded-lg bg-red-50 px-3 py-1.5 text-xs text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50"
+                  class="rounded-lg bg-red-50 px-3 py-1.5 text-xs text-destructive transition-colors hover:bg-destructive/10 dark:bg-destructive/20 dark:hover:bg-red-900/50"
                   @click="deleteApiKey(key.id)"
                 >
                   <i class="fas fa-trash" />
@@ -1513,21 +1499,21 @@
             class="mt-4 flex flex-col items-center justify-between gap-4 sm:mt-6 sm:flex-row"
           >
             <div class="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
-              <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
+              <span class="text-xs text-muted-foreground sm:text-sm">
                 共 {{ sortedApiKeys.length }} 条记录
               </span>
               <div class="flex items-center gap-2">
-                <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">每页显示</span>
+                <span class="text-xs text-muted-foreground sm:text-sm">每页显示</span>
                 <select
                   v-model="pageSize"
-                  class="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:text-sm"
+                  class="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:text-sm"
                   @change="currentPage = 1"
                 >
                   <option v-for="size in pageSizeOptions" :key="size" :value="size">
                     {{ size }}
                   </option>
                 </select>
-                <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">条</span>
+                <span class="text-xs text-muted-foreground sm:text-sm">条</span>
               </div>
             </div>
 
@@ -1551,9 +1537,7 @@
                 >
                   1
                 </button>
-                <span
-                  v-if="showLeadingEllipsis"
-                  class="hidden px-2 text-gray-500 dark:text-gray-400 sm:inline"
+                <span v-if="showLeadingEllipsis" class="hidden px-2 text-muted-foreground sm:inline"
                   >...</span
                 >
 
@@ -1575,7 +1559,7 @@
                 <!-- 最后一页 -->
                 <span
                   v-if="showTrailingEllipsis"
-                  class="hidden px-2 text-gray-500 dark:text-gray-400 sm:inline"
+                  class="hidden px-2 text-muted-foreground sm:inline"
                   >...</span
                 >
                 <button
@@ -1603,16 +1587,16 @@
         <div v-else-if="activeTab === 'deleted'" class="tab-panel">
           <div v-if="deletedApiKeysLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400">{{ t('apiKeys.loading.deleted') }}</p>
+            <p class="text-muted-foreground">{{ t('apiKeys.loading.deleted') }}</p>
           </div>
 
           <div v-else-if="deletedApiKeys.length === 0" class="py-12 text-center">
             <div
-              class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700"
+              class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted"
             >
               <i class="fas fa-trash text-xl text-gray-400" />
             </div>
-            <p class="text-lg text-gray-500 dark:text-gray-400">
+            <p class="text-lg text-muted-foreground">
               {{ t('apiKeys.empty.no_deleted') }}
             </p>
             <p class="mt-2 text-sm text-gray-400">{{ t('apiKeys.empty.deleted_here') }}</p>
@@ -1638,58 +1622,58 @@
                   <thead class="bg-gray-50/80 backdrop-blur-sm dark:bg-gray-700/80">
                     <tr>
                       <th
-                        class="w-[14%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[14%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         名称
                       </th>
                       <th
-                        class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         所属账号
                       </th>
                       <th
                         v-if="isLdapEnabled"
-                        class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         创建者
                       </th>
                       <th
-                        class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[15%] min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         创建时间
                       </th>
                       <th
-                        class="w-[10%] min-w-[90px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[10%] min-w-[90px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         删除者
                       </th>
                       <th
-                        class="w-[10%] min-w-[90px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[10%] min-w-[90px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         删除时间
                       </th>
                       <th
-                        class="w-[8%] min-w-[60px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[8%] min-w-[60px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         费用
                       </th>
                       <th
-                        class="w-[8%] min-w-[60px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[8%] min-w-[60px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         Token
                       </th>
                       <th
-                        class="w-[8%] min-w-[60px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[8%] min-w-[60px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         请求数
                       </th>
                       <th
-                        class="w-[9%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="w-[9%] min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         最后使用
                       </th>
                       <th
-                        class="operations-column sticky right-0 w-[15%] min-w-[160px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
+                        class="operations-column sticky right-0 w-[15%] min-w-[160px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-foreground"
                       >
                         操作
                       </th>
@@ -1706,7 +1690,7 @@
                           </div>
                           <div class="min-w-0">
                             <div
-                              class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
+                              class="truncate text-sm font-semibold text-foreground"
                               :title="key.name"
                             >
                               {{ key.name }}
@@ -1720,7 +1704,7 @@
                           <!-- Claude OAuth 绑定 -->
                           <div v-if="key.claudeAccountId" class="flex items-center gap-1 text-xs">
                             <span
-                              class="inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                              class="inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 text-primary dark:bg-blue-900/30 dark:text-blue-300"
                             >
                               <i class="fas fa-robot mr-1 text-[10px]" />
                               Claude OAuth
@@ -1751,7 +1735,7 @@
                             </span>
                           </div>
                           <!-- 共享池 -->
-                          <div v-else class="text-xs text-gray-500 dark:text-gray-400">
+                          <div v-else class="text-xs text-muted-foreground">
                             <i class="fas fa-share-alt mr-1" />
                             共享池
                           </div>
@@ -1760,15 +1744,15 @@
                       <!-- 创建者 -->
                       <td v-if="isLdapEnabled" class="px-3 py-3">
                         <div class="text-xs">
-                          <span v-if="key.createdBy === 'admin'" class="text-blue-600">
+                          <span v-if="key.createdBy === 'admin'" class="text-primary">
                             <i class="fas fa-user-shield mr-1 text-xs" />
                             管理员
                           </span>
-                          <span v-else-if="key.userUsername" class="text-green-600">
+                          <span v-else-if="key.userUsername" class="text-success">
                             <i class="fas fa-user mr-1 text-xs" />
                             {{ key.userUsername }}
                           </span>
-                          <span v-else class="text-gray-500 dark:text-gray-400">
+                          <span v-else class="text-muted-foreground">
                             <i class="fas fa-question-circle mr-1 text-xs" />
                             未知
                           </span>
@@ -1776,7 +1760,7 @@
                       </td>
                       <!-- 创建时间 -->
                       <td
-                        class="whitespace-nowrap px-3 py-3 text-gray-700 dark:text-gray-300"
+                        class="whitespace-nowrap px-3 py-3 text-foreground"
                         style="font-size: 13px"
                       >
                         {{ formatDate(key.createdAt) }}
@@ -1784,15 +1768,15 @@
                       <!-- 删除者 -->
                       <td class="px-3 py-3">
                         <div class="text-xs">
-                          <span v-if="key.deletedByType === 'admin'" class="text-blue-600">
+                          <span v-if="key.deletedByType === 'admin'" class="text-primary">
                             <i class="fas fa-user-shield mr-1 text-xs" />
                             {{ key.deletedBy }}
                           </span>
-                          <span v-else-if="key.deletedByType === 'user'" class="text-green-600">
+                          <span v-else-if="key.deletedByType === 'user'" class="text-success">
                             <i class="fas fa-user mr-1 text-xs" />
                             {{ key.deletedBy }}
                           </span>
-                          <span v-else class="text-gray-500 dark:text-gray-400">
+                          <span v-else class="text-muted-foreground">
                             <i class="fas fa-cog mr-1 text-xs" />
                             {{ key.deletedBy }}
                           </span>
@@ -1800,7 +1784,7 @@
                       </td>
                       <!-- 删除时间 -->
                       <td
-                        class="whitespace-nowrap px-3 py-3 text-gray-700 dark:text-gray-300"
+                        class="whitespace-nowrap px-3 py-3 text-foreground"
                         style="font-size: 13px"
                       >
                         {{ formatDate(key.deletedAt) }}
@@ -1808,7 +1792,7 @@
                       <!-- 费用 -->
                       <td class="whitespace-nowrap px-3 py-3 text-right" style="font-size: 13px">
                         <span
-                          class="font-medium text-blue-600 dark:text-blue-400"
+                          class="font-medium text-primary dark:text-blue-400"
                           style="font-size: 13px"
                         >
                           ${{ (key.usage?.total?.cost || 0).toFixed(2) }}
@@ -1826,10 +1810,7 @@
                       <!-- 请求数 -->
                       <td class="whitespace-nowrap px-3 py-3 text-right" style="font-size: 13px">
                         <div class="flex items-center justify-end gap-1">
-                          <span
-                            class="font-medium text-gray-900 dark:text-gray-100"
-                            style="font-size: 13px"
-                          >
+                          <span class="font-medium text-foreground" style="font-size: 13px">
                             {{ formatNumber(key.usage?.total?.requests || 0) }}
                           </span>
                           <span class="text-xs text-gray-500">次</span>
@@ -1837,7 +1818,7 @@
                       </td>
                       <!-- 最后使用 -->
                       <td
-                        class="whitespace-nowrap px-3 py-3 text-gray-700 dark:text-gray-300"
+                        class="whitespace-nowrap px-3 py-3 text-foreground"
                         style="font-size: 13px"
                       >
                         <div class="flex flex-col leading-tight">
@@ -1854,7 +1835,7 @@
                           }}</span>
                           <span
                             v-if="hasLastUsageAccount(key)"
-                            class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                            class="mt-1 text-xs text-muted-foreground"
                             :title="getLastUsageFullName(key)"
                           >
                             {{ getLastUsageDisplayName(key) }}
@@ -1874,7 +1855,7 @@
                         <div class="flex items-center gap-2">
                           <button
                             v-if="key.canRestore"
-                            class="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-green-600 transition-colors hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50"
+                            class="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-success transition-colors hover:bg-success/10 dark:bg-success/20 dark:text-green-400 dark:hover:bg-green-900/50"
                             title="恢复 API Key"
                             @click="restoreApiKey(key.id)"
                           >
@@ -1882,7 +1863,7 @@
                             恢复
                           </button>
                           <button
-                            class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+                            class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10 dark:bg-destructive/20 dark:text-red-400 dark:hover:bg-red-900/50"
                             title="彻底删除 API Key"
                             @click="permanentDeleteApiKey(key.id)"
                           >
@@ -4384,7 +4365,7 @@ onMounted(async () => {
 }
 
 .api-key-date-picker :deep(.el-input__inner) {
-  @apply border-gray-300 bg-white focus:border-blue-500 focus:ring-blue-500;
+  @apply border-gray-300 bg-white focus:border-primary focus:ring-ring;
 }
 
 .api-key-date-picker :deep(.el-range-separator) {

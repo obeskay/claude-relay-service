@@ -55,11 +55,11 @@
                           title="复制链接"
                           @click="copyAuthUrl"
                         >
-                          <i :class="copied ? 'fas fa-check text-green-500' : 'fas fa-copy'" />
+                          <i :class="copied ? 'fas fa-check text-success' : 'fas fa-copy'" />
                         </button>
                       </div>
                       <button
-                        class="text-xs text-blue-600 hover:text-blue-700"
+                        class="text-xs text-primary hover:text-primary"
                         @click="regenerateAuthUrl"
                       >
                         <i class="fas fa-sync-alt mr-1" />重新生成
@@ -83,7 +83,7 @@
                     <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
                       在浏览器中打开链接并完成授权
                     </p>
-                    <p class="mb-2 text-sm text-blue-700 dark:text-blue-300">
+                    <p class="mb-2 text-sm text-primary dark:text-blue-300">
                       请在新标签页中打开授权链接，登录您的 Claude 账户并授权。
                     </p>
                     <div
@@ -113,16 +113,14 @@
                     <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
                       输入 Authorization Code
                     </p>
-                    <p class="mb-3 text-sm text-blue-700 dark:text-blue-300">
+                    <p class="mb-3 text-sm text-primary dark:text-blue-300">
                       授权完成后，页面会显示一个
                       <strong>Authorization Code</strong>，请将其复制并粘贴到下方输入框：
                     </p>
                     <div class="space-y-3">
                       <div>
-                        <label
-                          class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          <i class="fas fa-key mr-2 text-blue-500" />Authorization Code
+                        <label class="mb-2 block text-sm font-semibold text-foreground">
+                          <i class="fas fa-key mr-2 text-primary" />Authorization Code
                         </label>
                         <textarea
                           v-model="authCode"
@@ -131,7 +129,7 @@
                           rows="3"
                         />
                       </div>
-                      <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      <p class="mt-2 text-xs text-muted-foreground">
                         <i class="fas fa-info-circle mr-1" />
                         请粘贴从Claude页面复制的Authorization Code
                       </p>
@@ -200,11 +198,11 @@
                           title="复制链接"
                           @click="copyAuthUrl"
                         >
-                          <i :class="copied ? 'fas fa-check text-green-500' : 'fas fa-copy'" />
+                          <i :class="copied ? 'fas fa-check text-success' : 'fas fa-copy'" />
                         </button>
                       </div>
                       <button
-                        class="text-xs text-green-600 hover:text-green-700"
+                        class="text-xs text-success hover:text-green-700"
                         @click="regenerateAuthUrl"
                       >
                         <i class="fas fa-sync-alt mr-1" />重新生成
@@ -263,10 +261,8 @@
                     </p>
                     <div class="space-y-3">
                       <div>
-                        <label
-                          class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          <i class="fas fa-key mr-2 text-green-500" />Authorization Code
+                        <label class="mb-2 block text-sm font-semibold text-foreground">
+                          <i class="fas fa-key mr-2 text-success" />Authorization Code
                         </label>
                         <textarea
                           v-model="authCode"
@@ -276,8 +272,8 @@
                         />
                       </div>
                       <div class="mt-2 space-y-1">
-                        <p class="text-xs text-gray-600 dark:text-gray-400">
-                          <i class="fas fa-check-circle mr-1 text-green-500" />
+                        <p class="text-xs text-muted-foreground">
+                          <i class="fas fa-check-circle mr-1 text-success" />
                           请粘贴从Gemini页面复制的Authorization Code
                         </p>
                       </div>
@@ -346,7 +342,7 @@
                           title="复制链接"
                           @click="copyAuthUrl"
                         >
-                          <i :class="copied ? 'fas fa-check text-green-500' : 'fas fa-copy'" />
+                          <i :class="copied ? 'fas fa-check text-success' : 'fas fa-copy'" />
                         </button>
                       </div>
                       <button
@@ -423,9 +419,7 @@
                     </p>
                     <div class="space-y-3">
                       <div>
-                        <label
-                          class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                        >
+                        <label class="mb-2 block text-sm font-semibold text-foreground">
                           <i class="fas fa-link mr-2 text-orange-500" />授权链接或 Code
                         </label>
                         <textarea
@@ -438,17 +432,17 @@
                       <div
                         class="rounded border border-blue-300 bg-blue-50 p-2 dark:border-blue-700 dark:bg-blue-900/30"
                       >
-                        <p class="text-xs text-blue-700 dark:text-blue-300">
+                        <p class="text-xs text-primary dark:text-blue-300">
                           <i class="fas fa-lightbulb mr-1" />
                           <strong>提示：</strong>您可以直接复制整个链接或仅复制 code
                           参数值，系统会自动识别。
                         </p>
-                        <p class="mt-1 text-xs text-blue-600 dark:text-blue-400">
+                        <p class="mt-1 text-xs text-primary dark:text-blue-400">
                           • 完整链接示例：<span class="font-mono"
                             >http://localhost:1455/auth/callback?code=ac_4hm8...</span
                           >
                         </p>
-                        <p class="text-xs text-blue-600">
+                        <p class="text-xs text-primary">
                           • 仅 Code 示例：<span class="font-mono"
                             >ac_4hm8iqmx9A2fzMy_cwye7U3W7...</span
                           >
@@ -526,18 +520,18 @@
                               title="复制链接"
                               @click="copyAuthUrl"
                             >
-                              <i :class="copied ? 'fas fa-check text-green-500' : 'fas fa-copy'" />
+                              <i :class="copied ? 'fas fa-check text-success' : 'fas fa-copy'" />
                             </button>
                           </div>
                           <div class="flex flex-wrap items-center gap-2">
                             <button
-                              class="inline-flex items-center gap-1 rounded-md border border-cyan-200 bg-white px-3 py-1.5 text-xs font-medium text-cyan-600 shadow-sm transition-colors hover:border-cyan-300 hover:bg-cyan-50 dark:border-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-200 dark:hover:border-cyan-500 dark:hover:bg-cyan-900/60"
+                              class="inline-flex items-center gap-1 rounded-md border border-cyan-200 bg-white px-3 py-1.5 text-xs font-medium text-secondary shadow-sm transition-colors hover:border-cyan-300 hover:bg-cyan-50 dark:border-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-200 dark:hover:border-cyan-500 dark:hover:bg-cyan-900/60"
                               @click="openVerificationPage"
                             >
                               <i class="fas fa-external-link-alt text-xs" /> 在新标签中打开
                             </button>
                             <button
-                              class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-cyan-600 transition-colors hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200"
+                              class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-secondary transition-colors hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200"
                               @click="regenerateAuthUrl"
                             >
                               <i class="fas fa-sync-alt text-xs" />重新生成
@@ -558,16 +552,14 @@
                             {{ userCode || '------' }}
                           </span>
                           <button
-                            class="rounded-lg bg-white px-3 py-1 text-sm text-cyan-600 transition-colors hover:bg-cyan-100 dark:bg-cyan-800 dark:text-cyan-200 dark:hover:bg-cyan-700"
+                            class="rounded-lg bg-white px-3 py-1 text-sm text-secondary transition-colors hover:bg-cyan-100 dark:bg-cyan-800 dark:text-cyan-200 dark:hover:bg-cyan-700"
                             @click="copyUserCode"
                           >
                             <i class="fas fa-copy mr-1" />复制
                           </button>
                         </div>
                       </div>
-                      <div
-                        class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-                      >
+                      <div class="flex items-center justify-between text-xs text-muted-foreground">
                         <span>
                           <i class="fas fa-hourglass-half mr-1 text-cyan-500" />
                           剩余有效期：{{ formattedCountdown }}
@@ -616,7 +608,7 @@
                     <p class="mb-2 font-medium text-cyan-900 dark:text-cyan-200">
                       完成授权后点击下方“完成授权”按钮，系统会自动获取访问令牌。
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                    <p class="text-xs text-muted-foreground">
                       若提示授权仍在等待确认，请稍候片刻后系统会自动重试。
                     </p>
                   </div>

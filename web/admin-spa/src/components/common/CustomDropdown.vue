@@ -4,14 +4,14 @@
     <div
       ref="triggerRef"
       class="relative flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm transition-all duration-200 hover:shadow-md dark:border-gray-600 dark:bg-gray-800"
-      :class="[isOpen && 'border-blue-400 shadow-md']"
+      :class="[isOpen && 'border-primary shadow-md']"
       @click="toggleDropdown"
     >
       <i v-if="icon" :class="['fas', icon, 'text-sm', iconColor]"></i>
       <span
         class="select-none whitespace-nowrap text-sm font-medium text-gray-700 dark:text-gray-200"
       >
-        {{ selectedLabel || placeholder }}
+        {{ selectedLabel || placeholder || t('placeholder.select') }}
       </span>
       <i
         :class="[
@@ -44,7 +44,7 @@
               class="flex cursor-pointer items-center gap-2 whitespace-nowrap px-3 py-2 text-sm transition-colors duration-150"
               :class="[
                 option.value === modelValue
-                  ? 'bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  ? 'bg-blue-50 font-medium text-primary dark:bg-blue-900/30 dark:text-blue-400'
                   : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
               ]"
               @click="selectOption(option)"
@@ -53,7 +53,7 @@
               <span>{{ option.label }}</span>
               <i
                 v-if="option.value === modelValue"
-                class="fas fa-check ml-auto pl-3 text-xs text-blue-600"
+                class="fas fa-check ml-auto pl-3 text-xs text-primary"
               ></i>
             </div>
           </div>
@@ -65,6 +65,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: {
@@ -77,7 +80,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '请选择'
+    default: ''
   },
   icon: {
     type: String,

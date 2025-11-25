@@ -69,7 +69,7 @@
                 <label class="flex items-center">
                   <input
                     v-model="selectedRole"
-                    class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="h-4 w-4 border-gray-300 text-primary focus:ring-ring"
                     :disabled="loading"
                     type="radio"
                     value="user"
@@ -82,7 +82,7 @@
                 <label class="flex items-center">
                   <input
                     v-model="selectedRole"
-                    class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                    class="h-4 w-4 border-gray-300 text-primary focus:ring-ring"
                     :disabled="loading"
                     type="radio"
                     value="admin"
@@ -145,7 +145,7 @@
 
             <div class="flex justify-end space-x-3 pt-4">
               <button
-                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50"
                 :disabled="loading"
                 type="button"
                 @click="$emit('close')"
@@ -153,7 +153,7 @@
                 Cancel
               </button>
               <button
-                class="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                class="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="loading || selectedRole === user.role"
                 type="submit"
               >

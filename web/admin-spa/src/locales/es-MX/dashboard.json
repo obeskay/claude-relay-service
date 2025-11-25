@@ -143,5 +143,18 @@
 
   "error.load_failed": "Error al cargar datos del panel",
   "error.chart_failed": "Error al crear gráfico",
-  "error.refresh_failed": "Error al actualizar datos"
+  "error.refresh_failed": "Error al actualizar datos",
+  "trend.title": "Tendencia de Uso",
+  "trend.by_day": "Por día",
+  "trend.by_hour": "Por hora",
+  "trend.last_n_days": "Últimos {days} días",
+  "trend.24_hours": "24 horas",
+  "trend.7_days": "7 días",
+  "trend.30_days": "30 días",
+  "model.title": "Distribución de Uso por Modelo",
+  "model.daily": "Hoy",
+  "model.total": "Acumulado",
+  "model.no_data": "No hay datos de uso de modelo disponibles",
+  "model.requests_label": "solicitudes",
+  "model.tokens_label": "tokens"
 }

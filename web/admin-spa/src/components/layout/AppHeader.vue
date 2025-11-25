@@ -82,19 +82,15 @@
             <!-- 版本信息 -->
             <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
               <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-500 dark:text-gray-400">{{
-                  t('info.current_version')
-                }}</span>
-                <span class="font-mono text-gray-700 dark:text-gray-300"
-                  >v{{ versionInfo.current || '...' }}</span
-                >
+                <span class="text-muted-foreground">{{ t('info.current_version') }}</span>
+                <span class="font-mono text-foreground">v{{ versionInfo.current || '...' }}</span>
               </div>
               <div v-if="versionInfo.hasUpdate" class="mt-2">
                 <div class="mb-2 flex items-center justify-between text-sm">
-                  <span class="font-medium text-green-600 dark:text-green-400">
+                  <span class="font-medium text-success dark:text-green-400">
                     <i class="fas fa-arrow-up mr-1" />{{ t('info.new_version_available') }}
                   </span>
-                  <span class="font-mono text-green-600 dark:text-green-400"
+                  <span class="font-mono text-success dark:text-green-400"
                     >v{{ versionInfo.latest }}</span
                   >
                 </div>
@@ -108,7 +104,7 @@
               </div>
               <div
                 v-else-if="versionInfo.checkingUpdate"
-                class="mt-2 text-center text-xs text-gray-500 dark:text-gray-400"
+                class="mt-2 text-center text-xs text-muted-foreground"
               >
                 <i class="fas fa-spinner fa-spin mr-1" />{{ t('info.checking_updates') }}
               </div>
@@ -127,7 +123,7 @@
                   <button
                     v-else
                     key="button"
-                    class="text-xs text-blue-500 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    class="text-xs text-primary transition-colors hover:text-primary dark:text-blue-400 dark:hover:text-blue-300"
                     @click="checkForUpdates()"
                   >
                     <i class="fas fa-sync-alt mr-1" />{{ t('info.check_updates') }}
@@ -140,17 +136,17 @@
               class="flex w-full items-center gap-3 px-4 py-3 text-left text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
               @click="openChangePasswordModal"
             >
-              <i class="fas fa-key text-blue-500" />
+              <i class="fas fa-key text-primary" />
               <span>{{ t('confirm.change_account') }}</span>
             </button>
 
-            <hr class="my-2 border-gray-200 dark:border-gray-700" />
+            <hr class="my-2 border-border" />
 
             <button
               class="flex w-full items-center gap-3 px-4 py-3 text-left text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
               @click="logout"
             >
-              <i class="fas fa-sign-out-alt text-red-500" />
+              <i class="fas fa-sign-out-alt text-destructive" />
               <span>{{ t('nav.menu.logout') }}</span>
             </button>
           </div>
@@ -172,7 +168,7 @@
           >
             <i class="fas fa-key text-white" />
           </div>
-          <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h3 class="text-xl font-bold text-foreground">
             {{ t('confirm.change_account') }}
           </h3>
         </div>
@@ -189,22 +185,22 @@
         @submit.prevent="changePassword"
       >
         <div>
-          <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+          <label class="mb-3 block text-sm font-semibold text-foreground">{{
             t('confirm.current_username')
           }}</label>
           <input
-            class="form-input w-full cursor-not-allowed bg-gray-100 dark:bg-gray-700 dark:text-gray-300"
+            class="form-input w-full cursor-not-allowed bg-muted dark:text-gray-300"
             disabled
             type="text"
             :value="currentUser.username || 'Admin'"
           />
-          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            {{ t('confirm.current_username') }}, {{ t('placeholder.enter_new_username') }}
+          <p class="mt-2 text-xs text-muted-foreground">
+            {{ t('placeholder.enter_new_username', 'Enter new username if you want to change it') }}
           </p>
         </div>
 
         <div>
-          <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+          <label class="mb-3 block text-sm font-semibold text-foreground">{{
             t('confirm.new_username')
           }}</label>
           <input
@@ -213,48 +209,48 @@
             :placeholder="t('placeholder.new_username_optional')"
             type="text"
           />
-          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            {{ t('help.username_optional') }}
+          <p class="mt-2 text-xs text-muted-foreground">
+            {{ t('help.username_optional', 'Leave blank to keep current username') }}
           </p>
         </div>
 
         <div>
-          <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+          <label class="mb-3 block text-sm font-semibold text-foreground">{{
             t('confirm.current_password')
           }}</label>
           <input
             v-model="changePasswordForm.currentPassword"
             class="form-input w-full"
-            :placeholder="t('placeholder.current_password')"
+            :placeholder="t('placeholder.current_password', 'Enter your current password')"
             required
             type="password"
           />
         </div>
 
         <div>
-          <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+          <label class="mb-3 block text-sm font-semibold text-foreground">{{
             t('confirm.new_password')
           }}</label>
           <input
             v-model="changePasswordForm.newPassword"
             class="form-input w-full"
-            :placeholder="t('placeholder.new_password')"
+            :placeholder="t('placeholder.new_password', 'Enter new password')"
             required
             type="password"
           />
-          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            {{ t('help.password_length') }}
+          <p class="mt-2 text-xs text-muted-foreground">
+            {{ t('help.password_length', 'Password must be at least 8 characters') }}
           </p>
         </div>
 
         <div>
-          <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+          <label class="mb-3 block text-sm font-semibold text-foreground">{{
             t('confirm.confirm_password')
           }}</label>
           <input
             v-model="changePasswordForm.confirmPassword"
             class="form-input w-full"
-            :placeholder="t('placeholder.confirm_new_password')"
+            :placeholder="t('placeholder.confirm_new_password', 'Confirm new password')"
             required
             type="password"
           />

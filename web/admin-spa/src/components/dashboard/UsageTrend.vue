@@ -1,15 +1,15 @@
 <template>
   <div class="glass-strong mb-8 rounded-3xl p-6">
     <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-      <h2 class="flex items-center text-xl font-bold text-gray-800">
-        <i class="fas fa-chart-area mr-2 text-blue-500" />
-        使用趋势
+      <h2 class="flex items-center text-xl font-bold text-gray-800 dark:text-gray-100">
+        <i class="fas fa-chart-area mr-2 text-primary" />
+        {{ t('dashboard.trend.title') }}
       </h2>
 
       <div class="flex items-center gap-3">
         <el-radio-group v-model="granularity" size="small" @change="handleGranularityChange">
-          <el-radio-button label="day"> 按天 </el-radio-button>
-          <el-radio-button label="hour"> 按小时 </el-radio-button>
+          <el-radio-button label="day">{{ t('dashboard.trend.by_day') }}</el-radio-button>
+          <el-radio-button label="hour">{{ t('dashboard.trend.by_hour') }}</el-radio-button>
         </el-radio-group>
 
         <el-select
@@ -21,7 +21,7 @@
           <el-option
             v-for="period in periodOptions"
             :key="period.days"
-            :label="`最近${period.days}天`"
+            :label="period.label"
             :value="period.days"
           />
         </el-select>
@@ -35,11 +35,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Chart } from 'chart.js/auto'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useChartConfig } from '@/composables/useChartConfig'
 
+const { t } = useI18n()
 const dashboardStore = useDashboardStore()
 const chartCanvas = ref(null)
 let chart = null
@@ -47,11 +49,11 @@ let chart = null
 const trendPeriod = ref(7)
 const granularity = ref('day')
 
-const periodOptions = [
-  { days: 1, label: '24小时' },
-  { days: 7, label: '7天' },
-  { days: 30, label: '30天' }
-]
+const periodOptions = computed(() => [
+  { days: 1, label: t('dashboard.trend.last_n_days', { days: 1 }) },
+  { days: 7, label: t('dashboard.trend.last_n_days', { days: 7 }) },
+  { days: 30, label: t('dashboard.trend.last_n_days', { days: 30 }) }
+])
 
 const createChart = () => {
   if (!chartCanvas.value || !dashboardStore.trendData.length) return

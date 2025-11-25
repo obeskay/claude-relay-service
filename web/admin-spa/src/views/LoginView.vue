@@ -34,41 +34,39 @@
           v-else-if="oemLoading"
           class="mx-auto mb-2 h-8 w-48 animate-pulse rounded bg-gray-300/50 sm:h-9 sm:w-64"
         />
-        <p class="text-base text-gray-600 dark:text-gray-400 sm:text-lg">管理后台</p>
+        <p class="text-base text-muted-foreground sm:text-lg">
+          {{ t('common.login.admin_panel') }}
+        </p>
       </div>
 
       <form class="space-y-4 sm:space-y-6" @submit.prevent="handleLogin">
         <div>
-          <label
-            class="mb-2 block text-sm font-semibold text-gray-900 dark:text-gray-100 sm:mb-3"
-            for="username"
-            >用户名</label
-          >
+          <label class="mb-2 block text-sm font-semibold text-foreground sm:mb-3" for="username">{{
+            t('common.login.username')
+          }}</label>
           <input
             id="username"
             v-model="loginForm.username"
             autocomplete="username"
             class="form-input w-full"
             name="username"
-            placeholder="请输入用户名"
+            :placeholder="t('common.login.username_placeholder')"
             required
             type="text"
           />
         </div>
 
         <div>
-          <label
-            class="mb-2 block text-sm font-semibold text-gray-900 dark:text-gray-100 sm:mb-3"
-            for="password"
-            >密码</label
-          >
+          <label class="mb-2 block text-sm font-semibold text-foreground sm:mb-3" for="password">{{
+            t('common.login.password')
+          }}</label>
           <input
             id="password"
             v-model="loginForm.password"
             autocomplete="current-password"
             class="form-input w-full"
             name="password"
-            placeholder="请输入密码"
+            :placeholder="t('common.login.password_placeholder')"
             required
             type="password"
           />
@@ -81,7 +79,7 @@
         >
           <i v-if="!authStore.loginLoading" class="fas fa-sign-in-alt mr-2" />
           <div v-if="authStore.loginLoading" class="loading-spinner mr-2" />
-          {{ authStore.loginLoading ? '登录中...' : '登录' }}
+          {{ authStore.loginLoading ? t('common.login.loading') : t('common.login.button') }}
         </button>
       </form>
 
@@ -97,10 +95,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import ThemeToggle from '@/components/common/ThemeToggle.vue'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
 const oemLoading = computed(() => authStore.oemLoading)

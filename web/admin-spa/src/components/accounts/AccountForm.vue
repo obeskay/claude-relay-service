@@ -11,7 +11,7 @@
             >
               <i class="fas fa-user-circle text-sm text-white sm:text-base" />
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
+            <h3 class="text-lg font-bold text-foreground sm:text-xl">
               {{ isEdit ? t('form.edit_account') : t('form.add_account') }}
             </h3>
           </div>
@@ -38,10 +38,9 @@
               >
                 1
               </div>
-              <span
-                class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >{{ t('form.basic_info') }}</span
-              >
+              <span class="ml-1.5 text-xs font-medium text-foreground sm:ml-2 sm:text-sm">{{
+                t('form.basic_info')
+              }}</span>
             </div>
             <div class="h-0.5 w-4 bg-gray-300 sm:w-8" />
             <div class="flex items-center">
@@ -53,10 +52,9 @@
               >
                 2
               </div>
-              <span
-                class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >{{ t('form.authorization') }}</span
-              >
+              <span class="ml-1.5 text-xs font-medium text-foreground sm:ml-2 sm:text-sm">{{
+                t('form.authorization')
+              }}</span>
             </div>
           </div>
         </div>
@@ -65,7 +63,7 @@
         <div v-if="oauthStep === 1 && !isEdit">
           <div class="space-y-6">
             <div v-if="!isEdit">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.select_platform')
               }}</label>
               <!-- 平台分组选择器 -->
@@ -96,10 +94,8 @@
                           <i class="fas fa-check text-xs text-white"></i>
                         </div>
                       </div>
-                      <h4 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Claude
-                      </h4>
-                      <p class="text-xs text-gray-600 dark:text-gray-400">Anthropic</p>
+                      <h4 class="mt-2 text-sm font-semibold text-foreground">Claude</h4>
+                      <p class="text-xs text-muted-foreground">Anthropic</p>
                     </div>
                   </div>
 
@@ -136,10 +132,8 @@
                           <i class="fas fa-check text-xs text-white"></i>
                         </div>
                       </div>
-                      <h4 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        OpenAI
-                      </h4>
-                      <p class="text-xs text-gray-600 dark:text-gray-400">
+                      <h4 class="mt-2 text-sm font-semibold text-foreground">OpenAI</h4>
+                      <p class="text-xs text-muted-foreground">
                         {{ t('form.gpt_series') }}
                       </p>
                     </div>
@@ -169,10 +163,8 @@
                           <i class="fas fa-check text-xs text-white"></i>
                         </div>
                       </div>
-                      <h4 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Gemini
-                      </h4>
-                      <p class="text-xs text-gray-600 dark:text-gray-400">Google AI</p>
+                      <h4 class="mt-2 text-sm font-semibold text-foreground">Gemini</h4>
+                      <p class="text-xs text-muted-foreground">Google AI</p>
                     </div>
                   </div>
 
@@ -200,10 +192,8 @@
                           <i class="fas fa-check text-xs text-white"></i>
                         </div>
                       </div>
-                      <h4 class="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Droid
-                      </h4>
-                      <p class="text-xs text-gray-600 dark:text-gray-400">Claude Droid</p>
+                      <h4 class="mt-2 text-sm font-semibold text-foreground">Droid</h4>
+                      <p class="text-xs text-muted-foreground">Claude Droid</p>
                     </div>
                   </div>
                 </div>
@@ -213,7 +203,7 @@
                   v-if="platformGroup"
                   class="animate-fadeIn rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
                 >
-                  <p class="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                  <p class="mb-2 text-xs font-medium text-foreground">
                     {{ t('form.select_specific_platform') }}
                   </p>
                   <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -236,10 +226,10 @@
                         <div class="flex items-center gap-2">
                           <i class="fas fa-brain text-sm text-indigo-600 dark:text-indigo-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
+                            <span class="block text-xs font-medium text-foreground"
                               >Claude Code</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                            <span class="text-xs text-muted-foreground">{{
                               t('form.official')
                             }}</span>
                           </div>
@@ -271,10 +261,10 @@
                             class="fas fa-terminal text-sm text-purple-600 dark:text-purple-400"
                           ></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
+                            <span class="block text-xs font-medium text-foreground"
                               >Claude Console</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                            <span class="text-xs text-muted-foreground">{{
                               t('form.standard_api')
                             }}</span>
                           </div>
@@ -304,10 +294,8 @@
                         <div class="flex items-center gap-2">
                           <i class="fab fa-aws text-sm text-orange-600 dark:text-orange-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >Bedrock</span
-                            >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">AWS</span>
+                            <span class="block text-xs font-medium text-foreground">Bedrock</span>
+                            <span class="text-xs text-muted-foreground">AWS</span>
                           </div>
                         </div>
                         <div
@@ -329,15 +317,11 @@
                         <input v-model="form.platform" class="sr-only" type="radio" value="ccr" />
                         <div class="flex items-center gap-2">
                           <i
-                            class="fas fa-code-branch text-sm text-cyan-600 dark:text-cyan-400"
+                            class="fas fa-code-branch text-sm text-secondary dark:text-cyan-400"
                           ></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >CCR</span
-                            >
-                            <span class="text-xs text-gray-500 dark:text-gray-400"
-                              >Claude Code Router</span
-                            >
+                            <span class="block text-xs font-medium text-foreground">CCR</span>
+                            <span class="text-xs text-muted-foreground">Claude Code Router</span>
                           </div>
                         </div>
                         <div
@@ -370,10 +354,8 @@
                             class="fas fa-robot text-sm text-emerald-600 dark:text-emerald-400"
                           ></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >Codex Cli</span
-                            >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                            <span class="block text-xs font-medium text-foreground">Codex Cli</span>
+                            <span class="text-xs text-muted-foreground">{{
                               t('form.official')
                             }}</span>
                           </div>
@@ -403,12 +385,8 @@
                         <div class="flex items-center gap-2">
                           <i class="fas fa-server text-sm text-teal-600 dark:text-teal-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >Responses</span
-                            >
-                            <span class="text-xs text-gray-500 dark:text-gray-400"
-                              >Openai-Responses</span
-                            >
+                            <span class="block text-xs font-medium text-foreground">Responses</span>
+                            <span class="text-xs text-muted-foreground">Openai-Responses</span>
                           </div>
                         </div>
                         <div
@@ -423,8 +401,8 @@
                         class="group relative flex cursor-pointer items-center rounded-md border p-2 transition-all"
                         :class="[
                           form.platform === 'azure_openai'
-                            ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
-                            : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50/50 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-blue-500 dark:hover:bg-blue-900/20'
+                            ? 'border-primary bg-blue-50 dark:border-primary dark:bg-blue-900/30'
+                            : 'border-gray-300 bg-white hover:border-primary hover:bg-blue-50/50 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-primary dark:hover:bg-blue-900/20'
                         ]"
                       >
                         <input
@@ -434,14 +412,10 @@
                           value="azure_openai"
                         />
                         <div class="flex items-center gap-2">
-                          <i class="fab fa-microsoft text-sm text-blue-600 dark:text-blue-400"></i>
+                          <i class="fab fa-microsoft text-sm text-primary dark:text-blue-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >Azure</span
-                            >
-                            <span class="text-xs text-gray-500 dark:text-gray-400"
-                              >Azure Openai</span
-                            >
+                            <span class="block text-xs font-medium text-foreground">Azure</span>
+                            <span class="text-xs text-muted-foreground">Azure Openai</span>
                           </div>
                         </div>
                         <div
@@ -459,8 +433,8 @@
                         class="group relative flex cursor-pointer items-center rounded-md border p-2 transition-all"
                         :class="[
                           form.platform === 'gemini'
-                            ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
-                            : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50/50 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-blue-500 dark:hover:bg-blue-900/20'
+                            ? 'border-primary bg-blue-50 dark:border-primary dark:bg-blue-900/30'
+                            : 'border-gray-300 bg-white hover:border-primary hover:bg-blue-50/50 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-primary dark:hover:bg-blue-900/20'
                         ]"
                       >
                         <input
@@ -470,12 +444,12 @@
                           value="gemini"
                         />
                         <div class="flex items-center gap-2">
-                          <i class="fab fa-google text-sm text-blue-600 dark:text-blue-400"></i>
+                          <i class="fab fa-google text-sm text-primary dark:text-blue-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
+                            <span class="block text-xs font-medium text-foreground"
                               >Gemini Cli</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                            <span class="text-xs text-muted-foreground">{{
                               t('form.official')
                             }}</span>
                           </div>
@@ -503,12 +477,12 @@
                           value="gemini-api"
                         />
                         <div class="flex items-center gap-2">
-                          <i class="fas fa-key text-sm text-amber-600 dark:text-amber-400"></i>
+                          <i class="fas fa-key text-sm text-warning dark:text-amber-400"></i>
                           <div>
-                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
+                            <span class="block text-xs font-medium text-foreground"
                               >Gemini API</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">API Key</span>
+                            <span class="text-xs text-muted-foreground">API Key</span>
                           </div>
                         </div>
                         <div
@@ -534,11 +508,10 @@
                         <div class="flex items-center gap-2">
                           <i class="fas fa-robot text-sm text-rose-600 dark:text-rose-400"></i>
                           <div>
-                            <span
-                              class="block text-xs font-medium text-gray-900 dark:text-gray-100"
-                              >{{ t('form.droid_exclusive') }}</span
-                            >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                            <span class="block text-xs font-medium text-foreground">{{
+                              t('form.droid_exclusive')
+                            }}</span>
+                            <span class="text-xs text-muted-foreground">{{
                               t('form.official')
                             }}</span>
                           </div>
@@ -567,18 +540,18 @@
                 form.platform !== 'gemini-api'
               "
             >
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.add_method')
               }}</label>
               <div class="flex flex-wrap gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.addType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="oauth"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">
+                  <span class="text-sm text-foreground">
                     {{ t('form.oauth_auth')
                     }}<span v-if="form.platform === 'claude' || form.platform === 'openai'">
                       ({{ t('form.usage_visible') }})</span
@@ -588,108 +561,96 @@
                 <label v-if="form.platform === 'claude'" class="flex cursor-pointer items-center">
                   <input
                     v-model="form.addType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="setup-token"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                    t('form.setup_token')
-                  }}</span>
+                  <span class="text-sm text-foreground">{{ t('form.setup_token') }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.addType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="manual"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                    t('form.manual_token')
-                  }}</span>
+                  <span class="text-sm text-foreground">{{ t('form.manual_token') }}</span>
                 </label>
                 <label v-if="form.platform === 'droid'" class="flex cursor-pointer items-center">
                   <input
                     v-model="form.addType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="apikey"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                    t('form.use_api_key')
-                  }}</span>
+                  <span class="text-sm text-foreground">{{ t('form.use_api_key') }}</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.account_name')
               }}</label>
               <input
                 v-model="form.name"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.name }"
                 placeholder="{{ t('form.account_name_placeholder') }}"
                 required
                 type="text"
               />
-              <p v-if="errors.name" class="mt-1 text-xs text-red-500">
+              <p v-if="errors.name" class="mt-1 text-xs text-destructive">
                 {{ errors.name }}
               </p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.description_optional')
               }}</label>
               <textarea
                 v-model="form.description"
-                class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full resize-none border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :placeholder="t('form.description_placeholder')"
                 rows="3"
               />
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.account_type')
               }}</label>
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.accountType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="shared"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                    t('form.shared_account')
-                  }}</span>
+                  <span class="text-sm text-foreground">{{ t('form.shared_account') }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.accountType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="dedicated"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                    t('form.dedicated_account')
-                  }}</span>
+                  <span class="text-sm text-foreground">{{ t('form.dedicated_account') }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.accountType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="group"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                    t('form.group_scheduling')
-                  }}</span>
+                  <span class="text-sm text-foreground">{{ t('form.group_scheduling') }}</span>
                 </label>
               </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-2 text-xs text-muted-foreground">
                 {{ t('form.account_type_help').split(';')[0] }}
                 {{ t('form.account_type_help').split(';').slice(1).join(';') }}
               </p>
@@ -697,7 +658,7 @@
 
             <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗，Gemini API 不需要 -->
             <div v-if="!isEdit && form.platform !== 'gemini-api'">
-              <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-2 block text-sm font-semibold text-foreground">{{
                 t('form.expiry_date')
               }}</label>
               <div
@@ -705,7 +666,7 @@
               >
                 <select
                   v-model="form.expireDuration"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   @change="updateAccountExpireAt"
                 >
                   <option value="">{{ t('form.never_expire') }}</option>
@@ -718,29 +679,29 @@
                 <div v-if="form.expireDuration === 'custom'" class="mt-3">
                   <input
                     v-model="form.customExpireDate"
-                    class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                    class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                     :min="minDateTime"
                     type="datetime-local"
                     @change="updateAccountCustomExpireAt"
                   />
                 </div>
-                <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p v-if="form.expiresAt" class="mt-2 text-xs text-muted-foreground">
                   <i class="fas fa-calendar-alt mr-1" />
                   {{ t('form.expires_on', { date: formatExpireDate(form.expiresAt) }) }}
                 </p>
-                <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p v-else class="mt-2 text-xs text-muted-foreground">
                   <i class="fas fa-infinity mr-1" />
                   {{ t('form.account_never_expires') }}
                 </p>
               </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-2 text-xs text-muted-foreground">
                 {{ t('form.expiry_help') }}
               </p>
             </div>
 
             <!-- 分组选择器 -->
             <div v-if="form.accountType === 'group'">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.select_group')
               }}</label>
               <div class="flex gap-2">
@@ -749,10 +710,7 @@
                   <div
                     class="max-h-48 space-y-2 overflow-y-auto rounded-md border p-3 dark:border-gray-600 dark:bg-gray-700"
                   >
-                    <div
-                      v-if="filteredGroups.length === 0"
-                      class="text-sm text-gray-500 dark:text-gray-400"
-                    >
+                    <div v-if="filteredGroups.length === 0" class="text-sm text-muted-foreground">
                       {{ t('form.no_groups_available') }}
                     </div>
                     <label
@@ -762,7 +720,7 @@
                     >
                       <input
                         v-model="form.groupIds"
-                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                        class="rounded border-gray-300 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                         type="checkbox"
                         :value="group.id"
                       />
@@ -775,7 +733,7 @@
                     <!-- {{ t('form.create_new_group') }}选项 -->
                     <div class="border-t pt-2 dark:border-gray-600">
                       <button
-                        class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                        class="flex items-center gap-2 text-sm text-primary hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                         type="button"
                         @click="handleNewGroup"
                       >
@@ -786,7 +744,7 @@
                   </div>
                 </div>
                 <button
-                  class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                  class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   type="button"
                   @click="refreshGroups"
                 >
@@ -797,12 +755,12 @@
 
             <!-- Gemini 项目 ID 字段 -->
             <div v-if="form.platform === 'gemini'">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.gemini_project_id')
               }}</label>
               <input
                 v-model="form.projectId"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :placeholder="t('form.gemini_project_id_placeholder')"
                 type="text"
               />
@@ -821,17 +779,18 @@
                         <li>
                           访问
                           <a
-                            class="font-medium text-blue-600 hover:underline"
+                            class="font-medium text-primary hover:underline"
                             href="https://console.cloud.google.com/welcome"
                             target="_blank"
                             >Google Cloud Console</a
                           >
                         </li>
                         <li>
-                          复制<span class="font-semibold text-red-600">项目 ID（Project ID）</span
+                          复制<span class="font-semibold text-destructive"
+                            >项目 ID（Project ID）</span
                           >，通常是字符串格式
                         </li>
-                        <li class="text-red-600">
+                        <li class="text-destructive">
                           ⚠️ 注意：要复制项目 ID（Project ID），不要复制项目编号（Project Number）！
                         </li>
                       </ol>
@@ -848,58 +807,56 @@
             <!-- Bedrock 特定字段 -->
             <div v-if="form.platform === 'bedrock' && !isEdit" class="space-y-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >AWS 访问密钥 ID *</label
                 >
                 <input
                   v-model="form.accessKeyId"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.accessKeyId }"
                   placeholder="请输入 AWS Access Key ID"
                   required
                   type="text"
                 />
-                <p v-if="errors.accessKeyId" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.accessKeyId" class="mt-1 text-xs text-destructive">
                   {{ errors.accessKeyId }}
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >AWS 秘密访问密钥 *</label
                 >
                 <input
                   v-model="form.secretAccessKey"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.secretAccessKey }"
                   placeholder="请输入 AWS Secret Access Key"
                   required
                   type="password"
                 />
-                <p v-if="errors.secretAccessKey" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.secretAccessKey" class="mt-1 text-xs text-destructive">
                   {{ errors.secretAccessKey }}
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >AWS 区域 *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">AWS 区域 *</label>
                 <input
                   v-model="form.region"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.region }"
                   placeholder="例如：us-east-1"
                   required
                   type="text"
                 />
-                <p v-if="errors.region" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.region" class="mt-1 text-xs text-destructive">
                   {{ errors.region }}
                 </p>
                 <div class="mt-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
                   <div class="flex items-start gap-2">
-                    <i class="fas fa-info-circle mt-0.5 text-blue-600" />
-                    <div class="text-xs text-blue-700">
+                    <i class="fas fa-info-circle mt-0.5 text-primary" />
+                    <div class="text-xs text-primary">
                       <p class="mb-1 font-medium">常用 AWS 区域参考：</p>
                       <div class="grid grid-cols-2 gap-1 text-xs">
                         <span>• us-east-1 (美国东部)</span>
@@ -909,43 +866,41 @@
                         <span>• ap-northeast-1 (东京)</span>
                         <span>• eu-central-1 (法兰克福)</span>
                       </div>
-                      <p class="mt-2 text-blue-600">💡 请输入完整的区域代码，如 us-east-1</p>
+                      <p class="mt-2 text-primary">💡 请输入完整的区域代码，如 us-east-1</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >会话令牌 (可选)</label
                 >
                 <input
                   v-model="form.sessionToken"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="如果使用临时凭证，请输入会话令牌"
                   type="password"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  仅在使用临时 AWS 凭证时需要填写
-                </p>
+                <p class="mt-1 text-xs text-muted-foreground">仅在使用临时 AWS 凭证时需要填写</p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >默认主模型 (可选)</label
                 >
                 <input
                   v-model="form.defaultModel"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="例如：us.anthropic.claude-sonnet-4-20250514-v1:0"
                   type="text"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   留空将使用系统默认模型。支持 inference profile ID 或 ARN
                 </p>
                 <div class="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
                   <div class="flex items-start gap-2">
-                    <i class="fas fa-info-circle mt-0.5 text-amber-600" />
+                    <i class="fas fa-info-circle mt-0.5 text-warning" />
                     <div class="text-xs text-amber-700">
                       <p class="mb-1 font-medium">Bedrock 模型配置说明：</p>
                       <ul class="list-inside list-disc space-y-1 text-xs">
@@ -960,16 +915,16 @@
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >小快速模型 (可选)</label
                 >
                 <input
                   v-model="form.smallFastModel"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="例如：us.anthropic.claude-3-5-haiku-20241022-v1:0"
                   type="text"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   用于快速响应的轻量级模型，留空将使用系统默认
                 </p>
               </div>
@@ -978,84 +933,74 @@
             <!-- Azure OpenAI 特定字段 -->
             <div v-if="form.platform === 'azure_openai' && !isEdit" class="space-y-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >Azure Endpoint *</label
                 >
                 <input
                   v-model="form.azureEndpoint"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.azureEndpoint }"
                   placeholder="https://your-resource.openai.azure.com"
                   required
                   type="url"
                 />
-                <p v-if="errors.azureEndpoint" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.azureEndpoint" class="mt-1 text-xs text-destructive">
                   {{ errors.azureEndpoint }}
                 </p>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   Azure OpenAI 资源的终结点 URL，格式：https://your-resource.openai.azure.com
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 版本</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">API 版本</label>
                 <input
                   v-model="form.apiVersion"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="2024-02-01"
                   type="text"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   Azure OpenAI API 版本，默认使用最新稳定版本 2024-02-01
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >部署名称 *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">部署名称 *</label>
                 <input
                   v-model="form.deploymentName"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.deploymentName }"
                   placeholder="gpt-4"
                   required
                   type="text"
                 />
-                <p v-if="errors.deploymentName" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.deploymentName" class="mt-1 text-xs text-destructive">
                   {{ errors.deploymentName }}
                 </p>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   在 Azure OpenAI Studio 中创建的部署名称
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API Key *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">API Key *</label>
                 <input
                   v-model="form.apiKey"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKey }"
                   placeholder="请输入 Azure OpenAI API Key"
                   required
                   type="password"
                 />
-                <p v-if="errors.apiKey" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.apiKey" class="mt-1 text-xs text-destructive">
                   {{ errors.apiKey }}
                 </p>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  从 Azure 门户获取的 API 密钥
-                </p>
+                <p class="mt-1 text-xs text-muted-foreground">从 Azure 门户获取的 API 密钥</p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >支持的模型</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">支持的模型</label>
                 <div class="flex flex-wrap gap-2">
                   <label
                     v-for="model in [
@@ -1074,50 +1019,46 @@
                   >
                     <input
                       v-model="form.supportedModels"
-                      class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                      class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                       :value="model"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ model }}</span>
+                    <span class="text-sm text-foreground">{{ model }}</span>
                   </label>
                 </div>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  选择此部署支持的模型类型
-                </p>
+                <p class="mt-1 text-xs text-muted-foreground">选择此部署支持的模型类型</p>
               </div>
             </div>
 
             <div v-if="form.platform === 'bedrock' && !isEdit">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >限流机制</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">限流机制</label>
                 <div class="mb-3">
                   <label class="inline-flex cursor-pointer items-center">
                     <input
                       v-model="form.enableRateLimit"
-                      class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
+                      class="mr-2 rounded border-gray-300 text-primary focus:border-primary focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">启用限流机制</span>
+                    <span class="text-sm text-foreground">启用限流机制</span>
                   </label>
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-1 text-xs text-muted-foreground">
                     启用后，当账号返回429错误时将暂停调度一段时间
                   </p>
                 </div>
 
                 <div v-if="form.enableRateLimit">
-                  <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  <label class="mb-3 block text-sm font-semibold text-foreground"
                     >限流时间 (分钟)</label
                   >
                   <input
                     v-model.number="form.rateLimitDuration"
-                    class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                    class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="1"
                     placeholder="默认60分钟"
                     type="number"
                   />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-1 text-xs text-muted-foreground">
                     账号被限流后暂停调度的时间（分钟）
                   </p>
                 </div>
@@ -1130,35 +1071,31 @@
               class="space-y-4"
             >
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API URL *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">API URL *</label>
                 <input
                   v-model="form.apiUrl"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiUrl }"
                   placeholder="例如：https://api.example.com"
                   required
                   type="text"
                 />
-                <p v-if="errors.apiUrl" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.apiUrl" class="mt-1 text-xs text-destructive">
                   {{ errors.apiUrl }}
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API Key *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">API Key *</label>
                 <input
                   v-model="form.apiKey"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKey }"
                   placeholder="请输入API Key"
                   required
                   type="password"
                 />
-                <p v-if="errors.apiKey" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.apiKey" class="mt-1 text-xs text-destructive">
                   {{ errors.apiKey }}
                 </p>
               </div>
@@ -1166,57 +1103,53 @@
               <!-- 额度管理字段 -->
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <label class="mb-3 block text-sm font-semibold text-foreground">
                     每日额度限制 ($)
                   </label>
                   <input
                     v-model.number="form.dailyQuota"
-                    class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                    class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                     min="0"
                     placeholder="0 表示不限制"
                     step="0.01"
                     type="number"
                   />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    设置每日使用额度，0 表示不限制
-                  </p>
+                  <p class="mt-1 text-xs text-muted-foreground">设置每日使用额度，0 表示不限制</p>
                 </div>
 
                 <div>
-                  <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <label class="mb-3 block text-sm font-semibold text-foreground">
                     额度重置时间
                   </label>
                   <input
                     v-model="form.quotaResetTime"
-                    class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                    class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                     placeholder="00:00"
                     type="time"
                   />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    每日自动重置额度的时间
-                  </p>
+                  <p class="mt-1 text-xs text-muted-foreground">每日自动重置额度的时间</p>
                 </div>
               </div>
 
               <!-- 并发控制字段 -->
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label class="mb-3 block text-sm font-semibold text-foreground">
                   最大并发任务数
                 </label>
                 <input
                   v-model.number="form.maxConcurrentTasks"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   min="0"
                   placeholder="0 表示不限制"
                   type="number"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   限制该账户的并发请求数量，0 表示不限制
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >模型限制 (可选)</label
                 >
 
@@ -1227,7 +1160,7 @@
                     :class="
                       modelRestrictionMode === 'whitelist'
                         ? 'bg-blue-500 text-white shadow-md'
-                        : 'border border-gray-300 text-gray-600 hover:border-blue-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-blue-500'
+                        : 'border border-gray-300 text-gray-600 hover:border-blue-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-primary'
                     "
                     type="button"
                     @click="modelRestrictionMode = 'whitelist'"
@@ -1253,7 +1186,7 @@
                 <!-- 白名单模式 -->
                 <div v-if="modelRestrictionMode === 'whitelist'">
                   <div class="mb-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/30">
-                    <p class="text-xs text-blue-700 dark:text-blue-400">
+                    <p class="text-xs text-primary dark:text-blue-400">
                       <i class="fas fa-info-circle mr-1" />
                       选择允许使用此账户的模型。留空表示支持所有模型。
                     </p>
@@ -1267,23 +1200,21 @@
                       class="flex cursor-pointer items-center rounded-lg border p-3 transition-all hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
                       :class="
                         allowedModels.includes(model.value)
-                          ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
+                          ? 'border-primary bg-blue-50 dark:border-primary dark:bg-blue-900/30'
                           : 'border-gray-300'
                       "
                     >
                       <input
                         v-model="allowedModels"
-                        class="mr-2 text-blue-600 focus:ring-blue-500"
+                        class="mr-2 text-primary focus:ring-ring"
                         type="checkbox"
                         :value="model.value"
                       />
-                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
-                        model.label
-                      }}</span>
+                      <span class="text-sm font-medium text-foreground">{{ model.label }}</span>
                     </label>
                   </div>
 
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                  <p class="text-xs text-muted-foreground">
                     已选择 {{ allowedModels.length }} 个模型
                     <span v-if="allowedModels.length === 0">（支持所有模型）</span>
                   </p>
@@ -1307,19 +1238,19 @@
                     >
                       <input
                         v-model="mapping.from"
-                        class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                        class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                         placeholder="原始模型名称"
                         type="text"
                       />
                       <i class="fas fa-arrow-right text-gray-400 dark:text-gray-500" />
                       <input
                         v-model="mapping.to"
-                        class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                        class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                         placeholder="映射后的模型名称"
                         type="text"
                       />
                       <button
-                        class="rounded-lg p-2 text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
+                        class="rounded-lg p-2 text-destructive transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
                         type="button"
                         @click="removeModelMapping(index)"
                       >
@@ -1341,7 +1272,7 @@
                   <!-- 快捷添加按钮 -->
                   <div class="mt-3 flex flex-wrap gap-2">
                     <button
-                      class="rounded-lg bg-blue-100 px-3 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                      class="rounded-lg bg-blue-100 px-3 py-1 text-xs text-primary transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
                       type="button"
                       @click="
                         addPresetMapping('claude-sonnet-4-20250514', 'claude-sonnet-4-20250514')
@@ -1427,50 +1358,48 @@
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >自定义 User-Agent (可选)</label
                 >
                 <input
                   v-model="form.userAgent"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="留空则透传客户端 User-Agent"
                   type="text"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   留空时将自动使用客户端的 User-Agent，仅在需要固定特定 UA 时填写
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >限流机制</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">限流机制</label>
                 <div class="mb-3">
                   <label class="inline-flex cursor-pointer items-center">
                     <input
                       v-model="form.enableRateLimit"
-                      class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
+                      class="mr-2 rounded border-gray-300 text-primary focus:border-primary focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">启用限流机制</span>
+                    <span class="text-sm text-foreground">启用限流机制</span>
                   </label>
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-1 text-xs text-muted-foreground">
                     启用后，当账号返回429错误时将暂停调度一段时间
                   </p>
                 </div>
 
                 <div v-if="form.enableRateLimit">
-                  <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  <label class="mb-3 block text-sm font-semibold text-foreground"
                     >限流时间 (分钟)</label
                   >
                   <input
                     v-model.number="form.rateLimitDuration"
-                    class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                    class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="1"
                     placeholder="默认60分钟"
                     type="number"
                   />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-1 text-xs text-muted-foreground">
                     账号被限流后暂停调度的时间（分钟）
                   </p>
                 </div>
@@ -1480,25 +1409,23 @@
             <!-- OpenAI-Responses 特定字段 -->
             <div v-if="form.platform === 'openai-responses' && !isEdit" class="space-y-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >API 基础地址 *</label
                 >
                 <input
                   v-model="form.baseApi"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="https://api.example.com/v1"
                   required
                   type="url"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   第三方 OpenAI 兼容 API 的基础地址，不要包含具体路径
                 </p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 密钥 *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">API 密钥 *</label>
                 <div class="relative">
                   <input
                     v-model="form.apiKey"
@@ -1515,22 +1442,20 @@
                     <i :class="showApiKey ? 'fas fa-eye-slash' : 'fas fa-eye'" />
                   </button>
                 </div>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  第三方服务提供的 API 密钥
-                </p>
+                <p class="mt-1 text-xs text-muted-foreground">第三方服务提供的 API 密钥</p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >自定义 User-Agent (可选)</label
                 >
                 <input
                   v-model="form.userAgent"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="留空则透传原始请求的 User-Agent"
                   type="text"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   可选项。如果设置，所有请求将使用此 User-Agent；否则透传客户端的 User-Agent
                 </p>
               </div>
@@ -1542,17 +1467,17 @@
             <!-- Gemini API 配置 -->
             <div v-if="form.platform === 'gemini-api' && !isEdit" class="space-y-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >API 基础地址 *</label
                 >
                 <input
                   v-model="form.baseUrl"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   placeholder="https://generativelanguage.googleapis.com"
                   required
                   type="url"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   填写 API 基础地址（可包含路径前缀），系统会自动拼接
                   <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                     >/v1beta/models/{model}:generateContent</code
@@ -1571,9 +1496,7 @@
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 密钥 *</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-foreground">API 密钥 *</label>
                 <div class="relative">
                   <input
                     v-model="form.apiKey"
@@ -1590,7 +1513,7 @@
                     <i :class="showApiKey ? 'fas fa-eye-slash' : 'fas fa-eye'" />
                   </button>
                 </div>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   从 Google AI Studio 获取的 API 密钥
                 </p>
               </div>
@@ -1598,30 +1521,28 @@
 
             <!-- Claude 订阅类型选择 -->
             <div v-if="form.platform === 'claude'">
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >订阅类型</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">订阅类型</label>
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.subscriptionType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="claude_max"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Claude Max</span>
+                  <span class="text-sm text-foreground">Claude Max</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.subscriptionType"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="claude_pro"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Claude Pro</span>
+                  <span class="text-sm text-foreground">Claude Pro</span>
                 </label>
               </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-2 text-xs text-muted-foreground">
                 <i class="fas fa-info-circle mr-1" />
                 Pro 账号不支持 Claude Opus 4 模型
               </p>
@@ -1632,14 +1553,14 @@
               <label class="flex items-start">
                 <input
                   v-model="form.autoStopOnWarning"
-                  class="mt-1 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mt-1 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="checkbox"
                 />
                 <div class="ml-3">
-                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span class="text-sm font-medium text-foreground">
                     5小时使用量接近限制时自动停止调度
                   </span>
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-1 text-xs text-muted-foreground">
                     当系统检测到账户接近5小时使用限制时，自动暂停调度该账户。进入新的时间窗口后会自动恢复调度。
                   </p>
                 </div>
@@ -1651,23 +1572,23 @@
               <label class="flex items-start">
                 <input
                   v-model="form.useUnifiedUserAgent"
-                  class="mt-1 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mt-1 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="checkbox"
                 />
                 <div class="ml-3">
-                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span class="text-sm font-medium text-foreground">
                     使用统一 Claude Code 版本
                   </span>
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="mt-1 text-xs text-muted-foreground">
                     开启后将使用从真实 Claude Code 客户端捕获的统一 User-Agent，提高兼容性
                   </p>
                   <div v-if="unifiedUserAgent" class="mt-1">
                     <div class="flex items-center justify-between">
-                      <p class="text-xs text-green-600 dark:text-green-400">
+                      <p class="text-xs text-success dark:text-green-400">
                         💡 当前统一版本：{{ unifiedUserAgent }}
                       </p>
                       <button
-                        class="ml-2 text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                        class="ml-2 text-xs text-destructive hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         :disabled="clearingCache"
                         type="button"
                         @click="clearUnifiedCache"
@@ -1679,7 +1600,7 @@
                     </div>
                   </div>
                   <div v-else class="mt-1">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                    <p class="text-xs text-muted-foreground">
                       ⏳ 等待从 Claude Code 客户端捕获 User-Agent
                     </p>
                     <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">
@@ -1696,15 +1617,13 @@
               <label class="flex items-start">
                 <input
                   v-model="form.useUnifiedClientId"
-                  class="mt-1 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mt-1 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="checkbox"
                   @change="handleUnifiedClientIdChange"
                 />
                 <div class="ml-3 flex-1">
-                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    使用统一的客户端标识
-                  </span>
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="text-sm font-medium text-foreground"> 使用统一的客户端标识 </span>
+                  <p class="mt-1 text-xs text-muted-foreground">
                     开启后将使用固定的客户端标识，使所有请求看起来来自同一个客户端，减少特征
                   </p>
                   <div v-if="form.useUnifiedClientId" class="mt-3">
@@ -1712,11 +1631,9 @@
                       class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
                     >
                       <div class="mb-2 flex items-center justify-between">
-                        <span class="text-xs font-medium text-gray-600 dark:text-gray-400"
-                          >客户端标识 ID</span
-                        >
+                        <span class="text-xs font-medium text-muted-foreground">客户端标识 ID</span>
                         <button
-                          class="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                          class="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
                           type="button"
                           @click="regenerateClientId"
                         >
@@ -1728,19 +1645,19 @@
                         <code
                           class="block w-full select-all break-all rounded bg-gray-100 px-3 py-2 font-mono text-xs text-gray-700 dark:bg-gray-900 dark:text-gray-300"
                         >
-                          <span class="text-blue-600 dark:text-blue-400">{{
+                          <span class="text-primary dark:text-blue-400">{{
                             form.unifiedClientId.substring(0, 8)
                           }}</span
                           ><span class="text-gray-500 dark:text-gray-500">{{
                             form.unifiedClientId.substring(8, 56)
                           }}</span
-                          ><span class="text-blue-600 dark:text-blue-400">{{
+                          ><span class="text-primary dark:text-blue-400">{{
                             form.unifiedClientId.substring(56)
                           }}</span>
                         </code>
                       </div>
-                      <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        <i class="fas fa-info-circle mr-1 text-blue-500" />
+                      <p class="mt-2 text-xs text-muted-foreground">
+                        <i class="fas fa-info-circle mr-1 text-primary" />
                         此ID将替换请求中的user_id客户端部分，保留session部分用于粘性会话
                       </p>
                     </div>
@@ -1751,18 +1668,18 @@
 
             <!-- 所有平台的优先级设置 -->
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="mb-3 block text-sm font-semibold text-foreground">{{
                 t('form.scheduling_priority')
               }}</label>
               <input
                 v-model.number="form.priority"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 max="100"
                 min="1"
                 :placeholder="t('form.scheduling_priority_placeholder')"
                 type="number"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 {{ t('form.scheduling_priority_help') }}
               </p>
             </div>
@@ -1860,18 +1777,18 @@
                   </div>
                   <p
                     v-if="form.platform !== 'droid'"
-                    class="text-xs text-blue-600 dark:text-blue-400"
+                    class="text-xs text-primary dark:text-blue-400"
                   >
                     💡 如果未填写 Refresh Token，Token 过期后需要手动更新。
                   </p>
-                  <p v-else class="text-xs text-red-600 dark:text-red-400">
+                  <p v-else class="text-xs text-destructive dark:text-red-400">
                     ⚠️ Droid 账户必须填写 Refresh Token，缺失将导致无法自动刷新 Access Token。
                   </p>
                 </div>
               </div>
 
               <div v-if="form.platform === 'openai'">
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >Access Token (可选)</label
                 >
                 <textarea
@@ -1880,14 +1797,14 @@
                   placeholder="可选：如果不填写，系统会自动通过 Refresh Token 获取..."
                   rows="4"
                 />
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-2 text-xs text-muted-foreground">
                   <i class="fas fa-info-circle mr-1" />
                   Access Token 可选填。如果不提供，系统会通过 Refresh Token 自动获取。
                 </p>
               </div>
 
               <div v-else>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >Access Token *</label
                 >
                 <textarea
@@ -1898,13 +1815,13 @@
                   required
                   rows="4"
                 />
-                <p v-if="errors.accessToken" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.accessToken" class="mt-1 text-xs text-destructive">
                   {{ errors.accessToken }}
                 </p>
               </div>
 
               <div v-if="form.platform === 'openai' || form.platform === 'droid'">
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >Refresh Token *</label
                 >
                 <textarea
@@ -1915,10 +1832,10 @@
                   required
                   rows="4"
                 />
-                <p v-if="errors.refreshToken" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.refreshToken" class="mt-1 text-xs text-destructive">
                   {{ errors.refreshToken }}
                 </p>
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-2 text-xs text-muted-foreground">
                   <i class="fas fa-info-circle mr-1" />
                   <template v-if="form.platform === 'openai'">
                     系统将使用 Refresh Token 自动获取 Access Token 和用户信息
@@ -1930,7 +1847,7 @@
               </div>
 
               <div v-else>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >Refresh Token (可选)</label
                 >
                 <textarea
@@ -1965,7 +1882,7 @@
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >API Key 列表 *</label
                 >
                 <textarea
@@ -1976,10 +1893,10 @@
                   required
                   rows="6"
                 />
-                <p v-if="errors.apiKeys" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.apiKeys" class="mt-1 text-xs text-destructive">
                   {{ errors.apiKeys }}
                 </p>
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-2 text-xs text-muted-foreground">
                   <i class="fas fa-info-circle mr-1" />
                   建议为每条 Key 提供独立额度；系统会自动去重并忽略空白行。
                 </p>
@@ -2112,13 +2029,13 @@
                               >
                                 <i
                                   :class="
-                                    setupTokenCopied ? 'fas fa-check text-green-500' : 'fas fa-copy'
+                                    setupTokenCopied ? 'fas fa-check text-success' : 'fas fa-copy'
                                   "
                                 />
                               </button>
                             </div>
                             <button
-                              class="text-xs text-blue-600 hover:text-blue-700"
+                              class="text-xs text-primary hover:text-primary"
                               @click="regenerateSetupTokenAuthUrl"
                             >
                               <i class="fas fa-sync-alt mr-1" />重新生成
@@ -2142,7 +2059,7 @@
                           <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
                             在浏览器中打开链接并完成授权
                           </p>
-                          <p class="mb-2 text-sm text-blue-700 dark:text-blue-300">
+                          <p class="mb-2 text-sm text-primary dark:text-blue-300">
                             请在新标签页中打开授权链接，登录您的 Claude 账户并授权 Claude Code。
                           </p>
                           <div
@@ -2172,15 +2089,13 @@
                           <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
                             输入 Authorization Code
                           </p>
-                          <p class="mb-3 text-sm text-blue-700 dark:text-blue-300">
+                          <p class="mb-3 text-sm text-primary dark:text-blue-300">
                             授权完成后，从返回页面复制 Authorization Code，并粘贴到下方输入框：
                           </p>
                           <div class="space-y-3">
                             <div>
-                              <label
-                                class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                              >
-                                <i class="fas fa-key mr-2 text-blue-500" />Authorization Code
+                              <label class="mb-2 block text-sm font-semibold text-foreground">
+                                <i class="fas fa-key mr-2 text-primary" />Authorization Code
                               </label>
                               <textarea
                                 v-model="setupTokenAuthCode"
@@ -2189,7 +2104,7 @@
                                 rows="3"
                               />
                             </div>
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            <p class="mt-2 text-xs text-muted-foreground">
                               <i class="fas fa-info-circle mr-1" />
                               请粘贴从Claude Code授权页面复制的Authorization Code
                             </p>
@@ -2227,12 +2142,12 @@
         <div v-if="isEdit" class="space-y-6">
           <!-- 基本信息 -->
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('form.account_name')
             }}</label>
             <input
               v-model="form.name"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               placeholder="{{ t('form.account_name_placeholder') }}"
               required
               type="text"
@@ -2240,57 +2155,51 @@
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('form.description_optional')
             }}</label>
             <textarea
               v-model="form.description"
-              class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              class="form-input w-full resize-none border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               :placeholder="t('form.description_placeholder')"
               rows="3"
             />
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('form.account_type')
             }}</label>
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.accountType"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="shared"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                  t('form.shared_account')
-                }}</span>
+                <span class="text-sm text-foreground">{{ t('form.shared_account') }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.accountType"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="dedicated"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                  t('form.dedicated_account')
-                }}</span>
+                <span class="text-sm text-foreground">{{ t('form.dedicated_account') }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.accountType"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="group"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
-                  t('form.group_scheduling')
-                }}</span>
+                <span class="text-sm text-foreground">{{ t('form.group_scheduling') }}</span>
               </label>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               {{ t('form.account_type_help').split(';')[0] }}
               {{ t('form.account_type_help').split(';').slice(1).join(';') }}
             </p>
@@ -2298,7 +2207,7 @@
 
           <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗 -->
           <div v-if="!isEdit">
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-2 block text-sm font-semibold text-foreground">{{
               t('form.expiry_date')
             }}</label>
             <div
@@ -2306,7 +2215,7 @@
             >
               <select
                 v-model="form.expireDuration"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                 @change="updateAccountExpireAt"
               >
                 <option value="">{{ t('form.never_expire') }}</option>
@@ -2319,29 +2228,29 @@
               <div v-if="form.expireDuration === 'custom'" class="mt-3">
                 <input
                   v-model="form.customExpireDate"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   :min="minDateTime"
                   type="datetime-local"
                   @change="updateAccountCustomExpireAt"
                 />
               </div>
-              <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p v-if="form.expiresAt" class="mt-2 text-xs text-muted-foreground">
                 <i class="fas fa-calendar-alt mr-1" />
                 {{ t('form.expires_on', { date: formatExpireDate(form.expiresAt) }) }}
               </p>
-              <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p v-else class="mt-2 text-xs text-muted-foreground">
                 <i class="fas fa-infinity mr-1" />
                 {{ t('form.account_never_expires') }}
               </p>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               {{ t('form.expiry_help') }}
             </p>
           </div>
 
           <!-- 分组选择器 -->
           <div v-if="form.accountType === 'group'">
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('form.select_group')
             }}</label>
             <div class="flex gap-2">
@@ -2350,10 +2259,7 @@
                 <div
                   class="max-h-48 space-y-2 overflow-y-auto rounded-md border p-3 dark:border-gray-600 dark:bg-gray-700"
                 >
-                  <div
-                    v-if="filteredGroups.length === 0"
-                    class="text-sm text-gray-500 dark:text-gray-400"
-                  >
+                  <div v-if="filteredGroups.length === 0" class="text-sm text-muted-foreground">
                     {{ t('form.no_groups_available') }}
                   </div>
                   <label
@@ -2363,7 +2269,7 @@
                   >
                     <input
                       v-model="form.groupIds"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                      class="rounded border-gray-300 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                       :value="group.id"
                     />
@@ -2376,7 +2282,7 @@
                   <!-- {{ t('form.create_new_group') }}选项 -->
                   <div class="border-t pt-2 dark:border-gray-600">
                     <button
-                      class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      class="flex items-center gap-2 text-sm text-primary hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                       type="button"
                       @click="handleNewGroup"
                     >
@@ -2387,7 +2293,7 @@
                 </div>
               </div>
               <button
-                class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 type="button"
                 @click="refreshGroups"
               >
@@ -2398,46 +2304,44 @@
 
           <!-- Gemini 项目 ID 字段 -->
           <div v-if="form.platform === 'gemini'">
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('form.gemini_project_id')
             }}</label>
             <input
               v-model="form.projectId"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               :placeholder="t('form.gemini_project_id_placeholder')"
               type="text"
             />
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               Google Cloud/Workspace 账号可能需要提供项目 ID
             </p>
           </div>
 
           <!-- Claude 订阅类型选择（编辑模式） -->
           <div v-if="form.platform === 'claude'">
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >订阅类型</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-foreground">订阅类型</label>
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.subscriptionType"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="claude_max"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">Claude Max</span>
+                <span class="text-sm text-foreground">Claude Max</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.subscriptionType"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="claude_pro"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">Claude Pro</span>
+                <span class="text-sm text-foreground">Claude Pro</span>
               </label>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               <i class="fas fa-info-circle mr-1" />
               Pro 账号不支持 Claude Opus 4 模型
             </p>
@@ -2448,14 +2352,14 @@
             <label class="flex items-start">
               <input
                 v-model="form.autoStopOnWarning"
-                class="mt-1 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                class="mt-1 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                 type="checkbox"
               />
               <div class="ml-3">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span class="text-sm font-medium text-foreground">
                   5小时使用量接近限制时自动停止调度
                 </span>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-xs text-muted-foreground">
                   当系统检测到账户接近5小时使用限制时，自动暂停调度该账户。进入新的时间窗口后会自动恢复调度。
                 </p>
               </div>
@@ -2467,23 +2371,21 @@
             <label class="flex items-start">
               <input
                 v-model="form.useUnifiedUserAgent"
-                class="mt-1 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                class="mt-1 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                 type="checkbox"
               />
               <div class="ml-3">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  使用统一 Claude Code 版本
-                </span>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span class="text-sm font-medium text-foreground"> 使用统一 Claude Code 版本 </span>
+                <p class="mt-1 text-xs text-muted-foreground">
                   开启后将使用从真实 Claude Code 客户端捕获的统一 User-Agent，提高兼容性
                 </p>
                 <div v-if="unifiedUserAgent" class="mt-1">
                   <div class="flex items-center justify-between">
-                    <p class="text-xs text-green-600 dark:text-green-400">
+                    <p class="text-xs text-success dark:text-green-400">
                       💡 当前统一版本：{{ unifiedUserAgent }}
                     </p>
                     <button
-                      class="ml-2 text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                      class="ml-2 text-xs text-destructive hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       :disabled="clearingCache"
                       type="button"
                       @click="clearUnifiedCache"
@@ -2495,7 +2397,7 @@
                   </div>
                 </div>
                 <div v-else class="mt-1">
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                  <p class="text-xs text-muted-foreground">
                     ⏳ 等待从 Claude Code 客户端捕获 User-Agent
                   </p>
                   <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">
@@ -2512,15 +2414,13 @@
             <label class="flex items-start">
               <input
                 v-model="form.useUnifiedClientId"
-                class="mt-1 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                class="mt-1 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                 type="checkbox"
                 @change="handleUnifiedClientIdChange"
               />
               <div class="ml-3 flex-1">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  使用统一的客户端标识
-                </span>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <span class="text-sm font-medium text-foreground"> 使用统一的客户端标识 </span>
+                <p class="mt-1 text-xs text-muted-foreground">
                   开启后将使用固定的客户端标识，使所有请求看起来来自同一个客户端，减少特征
                 </p>
                 <div v-if="form.useUnifiedClientId" class="mt-3">
@@ -2528,11 +2428,9 @@
                     class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
                   >
                     <div class="mb-2 flex items-center justify-between">
-                      <span class="text-xs font-medium text-gray-600 dark:text-gray-400"
-                        >客户端标识 ID</span
-                      >
+                      <span class="text-xs font-medium text-muted-foreground">客户端标识 ID</span>
                       <button
-                        class="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                        class="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
                         type="button"
                         @click="regenerateClientId"
                       >
@@ -2544,19 +2442,19 @@
                       <code
                         class="block w-full select-all break-all rounded bg-gray-100 px-3 py-2 font-mono text-xs text-gray-700 dark:bg-gray-900 dark:text-gray-300"
                       >
-                        <span class="text-blue-600 dark:text-blue-400">{{
+                        <span class="text-primary dark:text-blue-400">{{
                           form.unifiedClientId.substring(0, 8)
                         }}</span
                         ><span class="text-gray-500 dark:text-gray-500">{{
                           form.unifiedClientId.substring(8, 56)
                         }}</span
-                        ><span class="text-blue-600 dark:text-blue-400">{{
+                        ><span class="text-primary dark:text-blue-400">{{
                           form.unifiedClientId.substring(56)
                         }}</span>
                       </code>
                     </div>
-                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                      <i class="fas fa-info-circle mr-1 text-blue-500" />
+                    <p class="mt-2 text-xs text-muted-foreground">
+                      <i class="fas fa-info-circle mr-1 text-primary" />
                       此ID将替换请求中的user_id客户端部分，保留session部分用于粘性会话
                     </p>
                   </div>
@@ -2567,18 +2465,18 @@
 
           <!-- 所有平台的优先级设置（编辑模式） -->
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('form.scheduling_priority')
             }}</label>
             <input
               v-model.number="form.priority"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               max="100"
               min="1"
               :placeholder="t('form.scheduling_priority_placeholder')"
               type="number"
             />
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-1 text-xs text-muted-foreground">
               {{ t('form.scheduling_priority_help') }}
             </p>
           </div>
@@ -2613,33 +2511,31 @@
             <!-- 额度管理字段 -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label class="mb-3 block text-sm font-semibold text-foreground">
                   每日额度限制 ($)
                 </label>
                 <input
                   v-model.number="form.dailyQuota"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   min="0"
                   placeholder="0 表示不限制"
                   step="0.01"
                   type="number"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  设置每日使用额度，0 表示不限制
-                </p>
+                <p class="mt-1 text-xs text-muted-foreground">设置每日使用额度，0 表示不限制</p>
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label class="mb-3 block text-sm font-semibold text-foreground">
                   额度重置时间
                 </label>
                 <input
                   v-model="form.quotaResetTime"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   placeholder="00:00"
                   type="time"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">每日自动重置额度的时间</p>
+                <p class="mt-1 text-xs text-muted-foreground">每日自动重置额度的时间</p>
               </div>
             </div>
 
@@ -2649,10 +2545,8 @@
               class="rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
             >
               <div class="mb-2 flex items-center justify-between">
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  今日使用情况
-                </span>
-                <span class="text-sm text-gray-500 dark:text-gray-400">
+                <span class="text-sm font-semibold text-foreground"> 今日使用情况 </span>
+                <span class="text-sm text-muted-foreground">
                   ${{ calculateCurrentUsage().toFixed(4) }} / ${{ form.dailyQuota.toFixed(2) }}
                 </span>
               </div>
@@ -2670,10 +2564,10 @@
                 />
               </div>
               <div class="mt-2 flex items-center justify-between text-xs">
-                <span class="text-gray-500 dark:text-gray-400">
+                <span class="text-muted-foreground">
                   剩余: ${{ Math.max(0, form.dailyQuota - calculateCurrentUsage()).toFixed(2) }}
                 </span>
-                <span class="text-gray-500 dark:text-gray-400">
+                <span class="text-muted-foreground">
                   {{ usagePercentage.toFixed(1) }}% 已使用
                 </span>
               </div>
@@ -2681,23 +2575,23 @@
 
             <!-- 并发控制字段（编辑模式）-->
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label class="mb-3 block text-sm font-semibold text-foreground">
                 最大并发任务数
               </label>
               <input
                 v-model.number="form.maxConcurrentTasks"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                 min="0"
                 placeholder="0 表示不限制"
                 type="number"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 限制该账户的并发请求数量，0 表示不限制
               </p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+              <label class="mb-3 block text-sm font-semibold text-foreground"
                 >模型限制 (可选)</label
               >
 
@@ -2708,7 +2602,7 @@
                   :class="
                     modelRestrictionMode === 'whitelist'
                       ? 'bg-blue-500 text-white shadow-md'
-                      : 'border border-gray-300 text-gray-600 hover:border-blue-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-blue-500'
+                      : 'border border-gray-300 text-gray-600 hover:border-blue-300 dark:border-gray-600 dark:text-gray-400 dark:hover:border-primary'
                   "
                   type="button"
                   @click="modelRestrictionMode = 'whitelist'"
@@ -2734,7 +2628,7 @@
               <!-- 白名单模式 -->
               <div v-if="modelRestrictionMode === 'whitelist'">
                 <div class="mb-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/30">
-                  <p class="text-xs text-blue-700 dark:text-blue-400">
+                  <p class="text-xs text-primary dark:text-blue-400">
                     <i class="fas fa-info-circle mr-1" />
                     选择允许使用此账户的模型。留空表示支持所有模型。
                   </p>
@@ -2748,23 +2642,21 @@
                     class="flex cursor-pointer items-center rounded-lg border p-3 transition-all hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
                     :class="
                       allowedModels.includes(model.value)
-                        ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
+                        ? 'border-primary bg-blue-50 dark:border-primary dark:bg-blue-900/30'
                         : 'border-gray-300'
                     "
                   >
                     <input
                       v-model="allowedModels"
-                      class="mr-2 text-blue-600 focus:ring-blue-500"
+                      class="mr-2 text-primary focus:ring-ring"
                       type="checkbox"
                       :value="model.value"
                     />
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
-                      model.label
-                    }}</span>
+                    <span class="text-sm font-medium text-foreground">{{ model.label }}</span>
                   </label>
                 </div>
 
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-muted-foreground">
                   已选择 {{ allowedModels.length }} 个模型
                   <span v-if="allowedModels.length === 0">（支持所有模型）</span>
                 </p>
@@ -2788,19 +2680,19 @@
                   >
                     <input
                       v-model="mapping.from"
-                      class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                      class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200"
                       placeholder="原始模型名称"
                       type="text"
                     />
                     <i class="fas fa-arrow-right text-gray-400 dark:text-gray-500" />
                     <input
                       v-model="mapping.to"
-                      class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                      class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200"
                       placeholder="映射后的模型名称"
                       type="text"
                     />
                     <button
-                      class="rounded-lg p-2 text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
+                      class="rounded-lg p-2 text-destructive transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
                       type="button"
                       @click="removeModelMapping(index)"
                     >
@@ -2822,7 +2714,7 @@
                 <!-- 快捷添加按钮 -->
                 <div class="mt-3 flex flex-wrap gap-2">
                   <button
-                    class="rounded-lg bg-blue-100 px-3 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                    class="rounded-lg bg-blue-100 px-3 py-1 text-xs text-primary transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
                     type="button"
                     @click="
                       addPresetMapping('claude-sonnet-4-20250514', 'claude-sonnet-4-20250514')
@@ -2928,7 +2820,7 @@
                 <label class="inline-flex cursor-pointer items-center">
                   <input
                     v-model="form.enableRateLimit"
-                    class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    class="mr-2 rounded border-gray-300 text-primary focus:border-primary focus:ring focus:ring-blue-200"
                     type="checkbox"
                   />
                   <span class="text-sm text-gray-700">启用限流机制</span>
@@ -3006,12 +2898,12 @@
             <!-- 额度管理字段 -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label class="mb-3 block text-sm font-semibold text-foreground">
                   每日额度限制 ($)
                 </label>
                 <input
                   v-model.number="form.dailyQuota"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   min="0"
                   placeholder="0 表示不限制"
                   step="0.01"
@@ -3019,12 +2911,12 @@
                 />
               </div>
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <label class="mb-3 block text-sm font-semibold text-foreground">
                   额度重置时间
                 </label>
                 <input
                   v-model="form.quotaResetTime"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   type="time"
                 />
               </div>
@@ -3032,17 +2924,17 @@
 
             <!-- 并发控制字段 -->
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label class="mb-3 block text-sm font-semibold text-foreground">
                 最大并发任务数
               </label>
               <input
                 v-model.number="form.maxConcurrentTasks"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                 min="0"
                 placeholder="0 表示不限制"
                 type="number"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 限制该账户的并发请求数量，0 表示不限制
               </p>
             </div>
@@ -3051,16 +2943,14 @@
           <!-- Gemini API 特定字段（编辑模式）-->
           <div v-if="form.platform === 'gemini-api'" class="space-y-4">
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >API 基础地址</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">API 基础地址</label>
               <input
                 v-model="form.baseUrl"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                 placeholder="https://generativelanguage.googleapis.com"
                 type="url"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 填写 API 基础地址（可包含路径前缀），系统会自动拼接
                 <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                   >/v1beta/models/{model}:generateContent</code
@@ -3079,9 +2969,7 @@
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >API 密钥</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">API 密钥</label>
               <div class="relative">
                 <input
                   v-model="form.apiKey"
@@ -3097,7 +2985,7 @@
                   <i :class="showApiKey ? 'fas fa-eye-slash' : 'fas fa-eye'" />
                 </button>
               </div>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">留空表示不更新 API Key</p>
+              <p class="mt-1 text-xs text-muted-foreground">留空表示不更新 API Key</p>
             </div>
           </div>
 
@@ -3135,8 +3023,8 @@
               />
               <div class="mt-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
                 <div class="flex items-start gap-2">
-                  <i class="fas fa-info-circle mt-0.5 text-blue-600" />
-                  <div class="text-xs text-blue-700">
+                  <i class="fas fa-info-circle mt-0.5 text-primary" />
+                  <div class="text-xs text-primary">
                     <p class="mb-1 font-medium">常用 AWS 区域参考：</p>
                     <div class="grid grid-cols-2 gap-1 text-xs">
                       <span>• us-east-1 (美国东部)</span>
@@ -3177,7 +3065,7 @@
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+              <label class="mb-3 block text-sm font-semibold text-foreground"
                 >小快速模型 (可选)</label
               >
               <input
@@ -3195,7 +3083,7 @@
                 <label class="inline-flex cursor-pointer items-center">
                   <input
                     v-model="form.enableRateLimit"
-                    class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                    class="mr-2 rounded border-gray-300 text-primary focus:border-primary focus:ring focus:ring-blue-200"
                     type="checkbox"
                   />
                   <span class="text-sm text-gray-700">启用限流机制</span>
@@ -3223,73 +3111,63 @@
           <!-- Azure OpenAI 特定字段（编辑模式）-->
           <div v-if="form.platform === 'azure_openai'" class="space-y-4">
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >Azure Endpoint</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">Azure Endpoint</label>
               <input
                 v-model="form.azureEndpoint"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.azureEndpoint }"
                 placeholder="https://your-resource.openai.azure.com"
                 type="url"
               />
-              <p v-if="errors.azureEndpoint" class="mt-1 text-xs text-red-500">
+              <p v-if="errors.azureEndpoint" class="mt-1 text-xs text-destructive">
                 {{ errors.azureEndpoint }}
               </p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >API 版本</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">API 版本</label>
               <input
                 v-model="form.apiVersion"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 placeholder="2024-02-01"
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-muted-foreground">
                 Azure OpenAI API 版本，默认使用最新稳定版本 2024-02-01
               </p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >部署名称</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">部署名称</label>
               <input
                 v-model="form.deploymentName"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.deploymentName }"
                 placeholder="gpt-4"
                 type="text"
               />
-              <p v-if="errors.deploymentName" class="mt-1 text-xs text-red-500">
+              <p v-if="errors.deploymentName" class="mt-1 text-xs text-destructive">
                 {{ errors.deploymentName }}
               </p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >API Key</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">API Key</label>
               <input
                 v-model="form.apiKey"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.apiKey }"
                 placeholder="留空表示不更新"
                 type="password"
               />
-              <p v-if="errors.apiKey" class="mt-1 text-xs text-red-500">
+              <p v-if="errors.apiKey" class="mt-1 text-xs text-destructive">
                 {{ errors.apiKey }}
               </p>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">留空表示不更新 API Key</p>
+              <p class="mt-1 text-xs text-muted-foreground">留空表示不更新 API Key</p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >支持的模型</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-foreground">支持的模型</label>
               <div class="flex flex-wrap gap-2">
                 <label
                   v-for="model in [
@@ -3308,14 +3186,14 @@
                 >
                   <input
                     v-model="form.supportedModels"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="checkbox"
                     :value="model"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ model }}</span>
+                  <span class="text-sm text-foreground">{{ model }}</span>
                 </label>
               </div>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">选择此部署支持的模型类型</p>
+              <p class="mt-1 text-xs text-muted-foreground">选择此部署支持的模型类型</p>
             </div>
           </div>
 
@@ -3354,7 +3232,7 @@
 
             <div class="space-y-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >新的 API Key 列表</label
                 >
                 <textarea
@@ -3364,7 +3242,7 @@
                   placeholder="根据模式填写；每行一个 API Key"
                   rows="6"
                 />
-                <p v-if="errors.apiKeys" class="mt-1 text-xs text-red-500">
+                <p v-if="errors.apiKeys" class="mt-1 text-xs text-destructive">
                   {{ errors.apiKeys }}
                 </p>
               </div>
@@ -3441,13 +3319,13 @@
                 <p class="mb-2 text-sm text-amber-800 dark:text-amber-300">
                   可以更新 Access Token 和 Refresh Token。为了安全起见，不会显示当前的 Token 值。
                 </p>
-                <p class="text-xs text-amber-600 dark:text-amber-400">💡 留空表示不更新该字段。</p>
+                <p class="text-xs text-warning dark:text-amber-400">💡 留空表示不更新该字段。</p>
               </div>
             </div>
 
             <div class="space-y-4">
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >新的 Access Token</label
                 >
                 <textarea
@@ -3459,7 +3337,7 @@
               </div>
 
               <div>
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                <label class="mb-3 block text-sm font-semibold text-foreground"
                   >新的 Refresh Token</label
                 >
                 <textarea

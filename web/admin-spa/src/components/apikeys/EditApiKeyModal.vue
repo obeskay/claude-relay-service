@@ -11,7 +11,7 @@
             >
               <i class="fas fa-edit text-sm text-white sm:text-base" />
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
+            <h3 class="text-lg font-bold text-foreground sm:text-xl">
               {{ t('api-keys.edit.title') }}
             </h3>
           </div>
@@ -28,10 +28,9 @@
           @submit.prevent="updateApiKey"
         >
           <div>
-            <label
-              class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-sm"
-              >{{ t('api-keys.edit.name.label') }}</label
-            >
+            <label class="mb-1.5 block text-xs font-semibold text-foreground sm:mb-3 sm:text-sm">{{
+              t('api-keys.edit.name.label')
+            }}</label>
             <div>
               <input
                 v-model="form.name"
@@ -42,20 +41,19 @@
                 type="text"
               />
             </div>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 sm:mt-2">
+            <p class="mt-1 text-xs text-muted-foreground sm:mt-2">
               {{ t('api-keys.edit.name.help') }}
             </p>
           </div>
 
           <!-- Owner selection -->
           <div>
-            <label
-              class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-sm"
-              >{{ t('api-keys.edit.owner.label') }}</label
-            >
+            <label class="mb-1.5 block text-xs font-semibold text-foreground sm:mb-3 sm:text-sm">{{
+              t('api-keys.edit.owner.label')
+            }}</label>
             <select
               v-model="form.ownerId"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
             >
               <option v-for="user in availableUsers" :key="user.id" :value="user.id">
                 {{ user.displayName }} ({{ user.username }})
@@ -64,21 +62,20 @@
                 }}</span>
               </option>
             </select>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 sm:mt-2">
+            <p class="mt-1 text-xs text-muted-foreground sm:mt-2">
               {{ t('api-keys.edit.owner.help') }}
             </p>
           </div>
 
           <!-- Tags -->
           <div>
-            <label
-              class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-sm"
-              >{{ t('api-keys.edit.tags.label') }}</label
-            >
+            <label class="mb-1.5 block text-xs font-semibold text-foreground sm:mb-3 sm:text-sm">{{
+              t('api-keys.edit.tags.label')
+            }}</label>
             <div class="space-y-4">
               <!-- Selected tags -->
               <div v-if="form.tags.length > 0">
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
+                <div class="mb-2 text-xs font-medium text-muted-foreground">
                   {{ t('api-keys.edit.tags.selected') }}
                 </div>
                 <div class="flex flex-wrap gap-2">
@@ -101,18 +98,18 @@
 
               <!-- Available tags -->
               <div v-if="unselectedTags.length > 0">
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
+                <div class="mb-2 text-xs font-medium text-muted-foreground">
                   {{ t('api-keys.edit.tags.available') }}
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button
                     v-for="tag in unselectedTags"
                     :key="'available-' + tag"
-                    class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-colors hover:bg-blue-100 hover:text-blue-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
+                    class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-colors hover:bg-blue-100 hover:text-primary dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
                     type="button"
                     @click="selectTag(tag)"
                   >
-                    <i class="fas fa-tag text-xs text-gray-500 dark:text-gray-400" />
+                    <i class="fas fa-tag text-xs text-muted-foreground" />
                     {{ tag }}
                   </button>
                 </div>
@@ -120,13 +117,13 @@
 
               <!-- Create new tag -->
               <div>
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
+                <div class="mb-2 text-xs font-medium text-muted-foreground">
                   {{ t('api-keys.edit.tags.create') }}
                 </div>
                 <div class="flex gap-2">
                   <input
                     v-model="newTag"
-                    class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                    class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     :placeholder="t('api-keys.edit.tags.input_placeholder')"
                     type="text"
                     @keypress.enter.prevent="addTag"
@@ -141,7 +138,7 @@
                 </div>
               </div>
 
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 {{ t('api-keys.edit.tags.help') }}
               </p>
             </div>
@@ -157,7 +154,7 @@
               >
                 <i class="fas fa-tachometer-alt text-xs text-white" />
               </div>
-              <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              <h4 class="text-sm font-semibold text-foreground">
                 {{ t('api-keys.edit.rate_limit.title') }}
               </h4>
             </div>
@@ -165,7 +162,7 @@
             <div class="space-y-2">
               <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">{{
+                  <label class="mb-1 block text-xs font-medium text-foreground">{{
                     t('api-keys.edit.rate_limit.window.label')
                   }}</label>
                   <input
@@ -175,13 +172,13 @@
                     :placeholder="t('api-keys.edit.rate_limit.window.placeholder')"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="ml-2 mt-0.5 text-xs text-muted-foreground">
                     {{ t('api-keys.edit.rate_limit.window.help') }}
                   </p>
                 </div>
 
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">{{
+                  <label class="mb-1 block text-xs font-medium text-foreground">{{
                     t('api-keys.edit.rate_limit.requests.label')
                   }}</label>
                   <input
@@ -191,13 +188,13 @@
                     :placeholder="t('api-keys.edit.rate_limit.requests.placeholder')"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="ml-2 mt-0.5 text-xs text-muted-foreground">
                     {{ t('api-keys.edit.rate_limit.requests.help') }}
                   </p>
                 </div>
 
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">{{
+                  <label class="mb-1 block text-xs font-medium text-foreground">{{
                     t('api-keys.edit.rate_limit.cost.label')
                   }}</label>
                   <input
@@ -208,7 +205,7 @@
                     step="0.01"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  <p class="ml-2 mt-0.5 text-xs text-muted-foreground">
                     {{ t('api-keys.edit.rate_limit.cost.help') }}
                   </p>
                 </div>
@@ -219,7 +216,7 @@
                 <h5 class="mb-1 text-xs font-semibold text-blue-800 dark:text-blue-400">
                   {{ t('api-keys.edit.rate_limit.examples.title') }}
                 </h5>
-                <div class="space-y-0.5 text-xs text-blue-700 dark:text-blue-300">
+                <div class="space-y-0.5 text-xs text-primary dark:text-blue-300">
                   <div>{{ t('api-keys.edit.rate_limit.example1') }}</div>
                   <div>{{ t('api-keys.edit.rate_limit.example2') }}</div>
                   <div>{{ t('api-keys.edit.rate_limit.example3') }}</div>
@@ -229,7 +226,7 @@
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('api-keys.edit.daily_cost_limit.label')
             }}</label>
             <div class="space-y-3">
@@ -265,20 +262,20 @@
               </div>
               <input
                 v-model="form.dailyCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
                 :placeholder="t('api-keys.edit.rate_limit.window.placeholder')"
                 step="0.01"
                 type="number"
               />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 {{ t('api-keys.edit.daily_cost_limit.help') }}
               </p>
             </div>
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('api-keys.edit.total_cost_limit.label')
             }}</label>
             <div class="space-y-3">
@@ -314,20 +311,20 @@
               </div>
               <input
                 v-model="form.totalCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
                 :placeholder="t('api-keys.edit.rate_limit.window.placeholder')"
                 step="0.01"
                 type="number"
               />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 {{ t('api-keys.edit.total_cost_limit.help') }}
               </p>
             </div>
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('api-keys.edit.weekly_opus_cost_limit.label')
             }}</label>
             <div class="space-y-3">
@@ -363,30 +360,30 @@
               </div>
               <input
                 v-model="form.weeklyOpusCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
                 :placeholder="t('api-keys.edit.rate_limit.window.placeholder')"
                 step="0.01"
                 type="number"
               />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 {{ t('api-keys.edit.weekly_opus_cost_limit.help') }}
               </p>
             </div>
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('api-keys.edit.concurrency_limit.label')
             }}</label>
             <input
               v-model="form.concurrencyLimit"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               min="0"
               :placeholder="t('api-keys.edit.concurrency_limit.placeholder')"
               type="number"
             />
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               {{ t('api-keys.edit.concurrency_limit.help') }}
             </p>
           </div>
@@ -397,94 +394,94 @@
               <input
                 id="editIsActive"
                 v-model="form.isActive"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                 type="checkbox"
               />
               <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
+                class="ml-2 cursor-pointer text-sm font-semibold text-foreground"
                 for="editIsActive"
               >
                 {{ t('api-keys.edit.is_active.label') }}
               </label>
             </div>
-            <p class="mb-4 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mb-4 text-xs text-muted-foreground">
               {{ t('api-keys.edit.is_active.help') }}
             </p>
           </div>
 
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+            <label class="mb-3 block text-sm font-semibold text-foreground">{{
               t('api-keys.edit.permissions.label')
             }}</label>
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="all"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                <span class="text-sm text-foreground">{{
                   t('api-keys.edit.permissions.all')
                 }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="claude"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                <span class="text-sm text-foreground">{{
                   t('api-keys.edit.permissions.claude_only')
                 }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="gemini"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                <span class="text-sm text-foreground">{{
                   t('api-keys.edit.permissions.gemini_only')
                 }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="openai"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                <span class="text-sm text-foreground">{{
                   t('api-keys.edit.permissions.openai_only')
                 }}</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="droid"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                <span class="text-sm text-foreground">{{
                   t('api-keys.edit.permissions.droid_only')
                 }}</span>
               </label>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               {{ t('api-keys.edit.permissions.help') }}
             </p>
           </div>
 
           <div>
             <div class="mb-3 flex items-center justify-between">
-              <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              <label class="text-sm font-semibold text-foreground">{{
                 t('api-keys.edit.dedicated_accounts.title')
               }}</label>
               <button
-                class="flex items-center gap-1 text-sm text-blue-600 transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
+                class="flex items-center gap-1 text-sm text-primary transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
                 :disabled="accountsLoading"
                 :title="t('api-keys.edit.dedicated_accounts.refresh')"
                 type="button"
@@ -506,7 +503,7 @@
             </div>
             <div class="grid grid-cols-1 gap-3">
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-1 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.dedicated_accounts.claude')
                 }}</label>
                 <AccountSelector
@@ -520,7 +517,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-1 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.dedicated_accounts.gemini')
                 }}</label>
                 <AccountSelector
@@ -534,7 +531,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-1 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.dedicated_accounts.openai')
                 }}</label>
                 <AccountSelector
@@ -548,7 +545,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-1 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.dedicated_accounts.bedrock')
                 }}</label>
                 <AccountSelector
@@ -562,7 +559,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-1 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.dedicated_accounts.droid')
                 }}</label>
                 <AccountSelector
@@ -576,7 +573,7 @@
                 />
               </div>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               {{ t('api-keys.edit.dedicated_accounts.help') }}
             </p>
           </div>
@@ -586,11 +583,11 @@
               <input
                 id="editEnableModelRestriction"
                 v-model="form.enableModelRestriction"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                 type="checkbox"
               />
               <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
+                class="ml-2 cursor-pointer text-sm font-semibold text-foreground"
                 for="editEnableModelRestriction"
               >
                 {{ t('api-keys.edit.model_restriction.enable') }}
@@ -599,7 +596,7 @@
 
             <div v-if="form.enableModelRestriction" class="space-y-3">
               <div>
-                <label class="mb-2 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-2 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.model_restriction.list.label')
                 }}</label>
                 <div
@@ -612,7 +609,7 @@
                   >
                     {{ model }}
                     <button
-                      class="ml-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                      class="ml-2 text-destructive hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                       type="button"
                       @click="removeRestrictedModel(index)"
                     >
@@ -650,7 +647,7 @@
                   <div class="flex gap-2">
                     <input
                       v-model="form.modelInput"
-                      class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                      class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                       :placeholder="t('api-keys.edit.model_restriction.list.placeholder')"
                       type="text"
                       @keydown.enter.prevent="addRestrictedModel"
@@ -664,7 +661,7 @@
                     </button>
                   </div>
                 </div>
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mt-2 text-xs text-muted-foreground">
                   {{ t('api-keys.edit.model_restriction.list.help') }}
                 </p>
               </div>
@@ -677,11 +674,11 @@
               <input
                 id="editEnableClientRestriction"
                 v-model="form.enableClientRestriction"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                 type="checkbox"
               />
               <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
+                class="ml-2 cursor-pointer text-sm font-semibold text-foreground"
                 for="editEnableClientRestriction"
               >
                 {{ t('api-keys.edit.client_restriction.enable') }}
@@ -690,10 +687,10 @@
 
             <div v-if="form.enableClientRestriction" class="space-y-3">
               <div>
-                <label class="mb-2 block text-sm font-medium text-gray-600 dark:text-gray-400">{{
+                <label class="mb-2 block text-sm font-medium text-muted-foreground">{{
                   t('api-keys.edit.client_restriction.label')
                 }}</label>
-                <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+                <p class="mb-3 text-xs text-muted-foreground">
                   {{ t('api-keys.edit.client_restriction.help') }}
                 </p>
                 <div class="space-y-2">
@@ -701,15 +698,13 @@
                     <input
                       :id="`edit_client_${client.id}`"
                       v-model="form.allowedClients"
-                      class="mt-0.5 h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
+                      class="mt-0.5 h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring"
                       type="checkbox"
                       :value="client.id"
                     />
                     <label class="ml-2 flex-1 cursor-pointer" :for="`edit_client_${client.id}`">
-                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
-                        client.name
-                      }}</span>
-                      <span class="block text-xs text-gray-500 dark:text-gray-400">{{
+                      <span class="text-sm font-medium text-foreground">{{ client.name }}</span>
+                      <span class="block text-xs text-muted-foreground">{{
                         client.description
                       }}</span>
                     </label>

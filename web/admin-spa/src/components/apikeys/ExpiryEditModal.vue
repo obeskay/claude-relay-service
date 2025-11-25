@@ -18,8 +18,8 @@
               <i class="fas fa-clock text-white" />
             </div>
             <div>
-              <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">修改过期时间</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
+              <h3 class="text-xl font-bold text-foreground">修改过期时间</h3>
+              <p class="text-sm text-muted-foreground">
                 为 "{{ apiKey.name || 'API Key' }}" 设置新的过期时间
               </p>
             </div>
@@ -39,11 +39,11 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="mb-1 text-xs font-medium text-gray-600 dark:text-gray-400">当前状态</p>
-                <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                <p class="mb-1 text-xs font-medium text-muted-foreground">当前状态</p>
+                <p class="text-sm font-semibold text-foreground">
                   <!-- 未激活状态 -->
                   <template v-if="apiKey.expirationMode === 'activation' && !apiKey.isActivated">
-                    <i class="fas fa-pause-circle mr-1 text-blue-500" />
+                    <i class="fas fa-pause-circle mr-1 text-primary" />
                     未激活
                     <span class="ml-2 text-xs font-normal text-gray-600">
                       (激活后
@@ -76,7 +76,7 @@
                   :class="[
                     'fas fa-hourglass-half text-lg',
                     apiKey.expiresAt && isExpired(apiKey.expiresAt)
-                      ? 'text-red-500'
+                      ? 'text-destructive'
                       : 'text-gray-400'
                   ]"
                 />
@@ -95,7 +95,7 @@
               {{ apiKey.activationDays || (apiKey.activationUnit === 'hours' ? 24 : 30) }}
               {{ apiKey.activationUnit === 'hours' ? '小时' : '天' }}过期)
             </button>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               <i class="fas fa-info-circle mr-1" />
               点击立即激活此 API Key，激活后将在
               {{ apiKey.activationDays || (apiKey.activationUnit === 'hours' ? 24 : 30) }}
@@ -105,9 +105,7 @@
 
           <!-- 快捷选项 -->
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择新的期限</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-foreground">选择新的期限</label>
             <div class="mb-3 grid grid-cols-3 gap-2">
               <button
                 v-for="option in quickOptions"
@@ -139,19 +137,15 @@
 
           <!-- 自定义日期选择 -->
           <div v-if="localForm.expireDuration === 'custom'" class="animate-fadeIn">
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择日期和时间</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-foreground">选择日期和时间</label>
             <input
               v-model="localForm.customExpireDate"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
               :min="minDateTime"
               type="datetime-local"
               @change="updateCustomExpiryPreview"
             />
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              选择一个未来的日期和时间作为过期时间
-            </p>
+            <p class="mt-2 text-xs text-muted-foreground">选择一个未来的日期和时间作为过期时间</p>
           </div>
 
           <!-- 预览新的过期时间 -->
@@ -161,7 +155,7 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="mb-1 text-xs font-medium text-blue-700 dark:text-blue-400">
+                <p class="mb-1 text-xs font-medium text-primary dark:text-blue-400">
                   <i class="fas fa-arrow-right mr-1" />
                   新的过期时间
                 </p>
@@ -185,7 +179,7 @@
               <div
                 class="flex h-12 w-12 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-gray-700"
               >
-                <i class="fas fa-check text-lg text-green-500" />
+                <i class="fas fa-check text-lg text-success" />
               </div>
             </div>
           </div>
@@ -370,7 +364,7 @@ const getExpiryStatus = (expiresAt) => {
   if (diffMs < 0) {
     return {
       text: '已过期',
-      class: 'text-red-600'
+      class: 'text-destructive'
     }
   } else if (diffDays <= 7) {
     return {
@@ -385,7 +379,7 @@ const getExpiryStatus = (expiresAt) => {
   } else {
     return {
       text: `${Math.ceil(diffDays / 30)} 个月后过期`,
-      class: 'text-green-600'
+      class: 'text-success'
     }
   }
 }

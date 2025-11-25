@@ -12,11 +12,7 @@
           :src="logoSrc"
           @error="handleLogoError"
         />
-        <i
-          v-else
-          class="fas fa-cloud text-xl text-gray-700 dark:text-gray-300"
-          :title="t('logo.fallback_icon')"
-        />
+        <i v-else class="fas fa-cloud text-xl text-foreground" :title="t('logo.fallback_icon')" />
       </template>
       <div v-else class="h-8 w-8 animate-pulse rounded bg-gray-300/50 dark:bg-gray-600/50" />
     </div>
@@ -36,7 +32,7 @@
         <!-- 插槽用于版本信息等额外内容 -->
         <slot name="after-title" />
       </div>
-      <p v-if="subtitle" class="mt-0.5 text-sm leading-tight text-gray-600 dark:text-gray-400">
+      <p v-if="subtitle" class="mt-0.5 text-sm leading-tight text-muted-foreground">
         {{ subtitle }}
       </p>
     </div>

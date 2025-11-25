@@ -9,9 +9,7 @@
             >
               <i class="fas fa-key text-sm text-white sm:text-base" />
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              创建新的 API Key
-            </h3>
+            <h3 class="text-lg font-bold text-foreground sm:text-xl">创建新的 API Key</h3>
           </div>
           <button
             class="p-1 text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
@@ -36,20 +34,18 @@
               ]"
             >
               <label
-                class="flex h-full items-center text-xs font-semibold text-gray-700 dark:text-gray-300 sm:text-sm"
+                class="flex h-full items-center text-xs font-semibold text-foreground sm:text-sm"
                 >创建类型</label
               >
               <div class="flex items-center gap-3 sm:gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.createType"
-                    class="mr-1.5 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 sm:mr-2"
+                    class="mr-1.5 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 sm:mr-2"
                     type="radio"
                     value="single"
                   />
-                  <span
-                    class="flex items-center text-xs text-gray-700 dark:text-gray-300 sm:text-sm"
-                  >
+                  <span class="flex items-center text-xs text-foreground sm:text-sm">
                     <i class="fas fa-key mr-1 text-xs" />
                     单个创建
                   </span>
@@ -57,13 +53,11 @@
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.createType"
-                    class="mr-1.5 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 sm:mr-2"
+                    class="mr-1.5 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 sm:mr-2"
                     type="radio"
                     value="batch"
                   />
-                  <span
-                    class="flex items-center text-xs text-gray-700 dark:text-gray-300 sm:text-sm"
-                  >
+                  <span class="flex items-center text-xs text-foreground sm:text-sm">
                     <i class="fas fa-layer-group mr-1 text-xs" />
                     批量创建
                   </span>
@@ -75,7 +69,7 @@
             <div v-if="form.createType === 'batch'" class="mt-3">
               <div class="flex items-center gap-4">
                 <div class="flex-1">
-                  <label class="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                  <label class="mb-1 block text-xs font-medium text-muted-foreground"
                     >创建数量</label
                   >
                   <div class="flex items-center gap-2">
@@ -88,13 +82,13 @@
                       required
                       type="number"
                     />
-                    <div class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+                    <div class="whitespace-nowrap text-xs text-muted-foreground">
                       最大支持 500 个
                     </div>
                   </div>
                 </div>
               </div>
-              <p class="mt-2 flex items-start text-xs text-amber-600 dark:text-amber-400">
+              <p class="mt-2 flex items-start text-xs text-warning dark:text-amber-400">
                 <i class="fas fa-info-circle mr-1 mt-0.5 flex-shrink-0" />
                 <span
                   >批量创建时，每个 Key 的名称会自动添加序号后缀，例如：{{
@@ -106,9 +100,8 @@
           </div>
 
           <div>
-            <label
-              class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-2 sm:text-sm"
-              >名称 <span class="text-red-500">*</span></label
+            <label class="mb-1.5 block text-xs font-semibold text-foreground sm:mb-2 sm:text-sm"
+              >名称 <span class="text-destructive">*</span></label
             >
             <div>
               <input
@@ -125,22 +118,18 @@
                 @input="errors.name = ''"
               />
             </div>
-            <p v-if="errors.name" class="mt-1 text-xs text-red-500 dark:text-red-400">
+            <p v-if="errors.name" class="mt-1 text-xs text-destructive dark:text-red-400">
               {{ errors.name }}
             </p>
           </div>
 
           <!-- 标签 -->
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >标签</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-foreground">标签</label>
             <div class="space-y-4">
               <!-- 已选择的标签 -->
               <div v-if="form.tags.length > 0">
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  已选择的标签:
-                </div>
+                <div class="mb-2 text-xs font-medium text-muted-foreground">已选择的标签:</div>
                 <div class="flex flex-wrap gap-2">
                   <span
                     v-for="(tag, index) in form.tags"
@@ -161,18 +150,16 @@
 
               <!-- 可选择的已有标签 -->
               <div v-if="unselectedTags.length > 0">
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  点击选择已有标签:
-                </div>
+                <div class="mb-2 text-xs font-medium text-muted-foreground">点击选择已有标签:</div>
                 <div class="flex flex-wrap gap-2">
                   <button
                     v-for="tag in unselectedTags"
                     :key="'available-' + tag"
-                    class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-colors hover:bg-blue-100 hover:text-blue-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
+                    class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-colors hover:bg-blue-100 hover:text-primary dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
                     type="button"
                     @click="selectTag(tag)"
                   >
-                    <i class="fas fa-tag text-xs text-gray-500 dark:text-gray-400" />
+                    <i class="fas fa-tag text-xs text-muted-foreground" />
                     {{ tag }}
                   </button>
                 </div>
@@ -180,13 +167,11 @@
 
               <!-- 创建新标签 -->
               <div>
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  创建新标签:
-                </div>
+                <div class="mb-2 text-xs font-medium text-muted-foreground">创建新标签:</div>
                 <div class="flex gap-2">
                   <input
                     v-model="newTag"
-                    class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                    class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     placeholder="输入新标签名称"
                     type="text"
                     @keypress.enter.prevent="addTag"
@@ -201,9 +186,7 @@
                 </div>
               </div>
 
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                用于标记不同团队或用途，方便筛选管理
-              </p>
+              <p class="text-xs text-muted-foreground">用于标记不同团队或用途，方便筛选管理</p>
             </div>
           </div>
 
@@ -217,15 +200,13 @@
               >
                 <i class="fas fa-tachometer-alt text-xs text-white" />
               </div>
-              <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                速率限制设置 (可选)
-              </h4>
+              <h4 class="text-sm font-semibold text-foreground">速率限制设置 (可选)</h4>
             </div>
 
             <div class="space-y-2">
               <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
+                  <label class="mb-1 block text-xs font-medium text-foreground"
                     >时间窗口 (分钟)</label
                   >
                   <input
@@ -235,13 +216,11 @@
                     placeholder="无限制"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">时间段单位</p>
+                  <p class="ml-2 mt-0.5 text-xs text-muted-foreground">时间段单位</p>
                 </div>
 
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >请求次数限制</label
-                  >
+                  <label class="mb-1 block text-xs font-medium text-foreground">请求次数限制</label>
                   <input
                     v-model="form.rateLimitRequests"
                     class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
@@ -249,11 +228,11 @@
                     placeholder="无限制"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">窗口内最大请求</p>
+                  <p class="ml-2 mt-0.5 text-xs text-muted-foreground">窗口内最大请求</p>
                 </div>
 
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
+                  <label class="mb-1 block text-xs font-medium text-foreground"
                     >费用限制 (美元)</label
                   >
                   <input
@@ -264,7 +243,7 @@
                     step="0.01"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">窗口内最大费用</p>
+                  <p class="ml-2 mt-0.5 text-xs text-muted-foreground">窗口内最大费用</p>
                 </div>
               </div>
 
@@ -273,7 +252,7 @@
                 <h5 class="mb-1 text-xs font-semibold text-blue-800 dark:text-blue-400">
                   💡 使用示例
                 </h5>
-                <div class="space-y-0.5 text-xs text-blue-700 dark:text-blue-300">
+                <div class="space-y-0.5 text-xs text-primary dark:text-blue-300">
                   <div>
                     <strong>示例1:</strong> 时间窗口=60，请求次数=1000 → 每60分钟最多1000次请求
                   </div>
@@ -287,7 +266,7 @@
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+            <label class="mb-2 block text-sm font-semibold text-foreground"
               >每日费用限制 (美元)</label
             >
             <div class="space-y-2">
@@ -323,7 +302,7 @@
               </div>
               <input
                 v-model="form.dailyCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
                 placeholder="0 表示无限制"
                 step="0.01"
@@ -336,7 +315,7 @@
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+            <label class="mb-2 block text-sm font-semibold text-foreground"
               >总费用限制 (美元)</label
             >
             <div class="space-y-2">
@@ -372,20 +351,20 @@
               </div>
               <input
                 v-model="form.totalCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
                 placeholder="0 表示无限制"
                 step="0.01"
                 type="number"
               />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 设置此 API Key 的累计总费用限制，达到限制后将拒绝所有后续请求，0 或留空表示无限制
               </p>
             </div>
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+            <label class="mb-2 block text-sm font-semibold text-foreground"
               >Opus 模型周费用限制 (美元)</label
             >
             <div class="space-y-2">
@@ -421,38 +400,34 @@
               </div>
               <input
                 v-model="form.weeklyOpusCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
                 placeholder="0 表示无限制"
                 step="0.01"
                 type="number"
               />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-muted-foreground">
                 设置 Opus 模型的周费用限制（周一到周日），仅限 Claude 官方账户，0 或留空表示无限制
               </p>
             </div>
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >并发限制 (可选)</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-foreground">并发限制 (可选)</label>
             <input
               v-model="form.concurrencyLimit"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               min="0"
               placeholder="0 表示无限制"
               type="number"
             />
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               设置此 API Key 可同时处理的最大请求数，0 或留空表示无限制
             </p>
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >备注 (可选)</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-foreground">备注 (可选)</label>
             <textarea
               v-model="form.description"
               class="form-input w-full resize-none border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
@@ -462,9 +437,7 @@
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >过期设置</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-foreground">过期设置</label>
             <!-- 过期模式选择 -->
             <div
               class="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800"
@@ -473,23 +446,23 @@
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.expirationMode"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="fixed"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">固定时间过期</span>
+                  <span class="text-sm text-foreground">固定时间过期</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
                     v-model="form.expirationMode"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                    class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                     type="radio"
                     value="activation"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">首次使用后激活</span>
+                  <span class="text-sm text-foreground">首次使用后激活</span>
                 </label>
               </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-2 text-xs text-muted-foreground">
                 <span v-if="form.expirationMode === 'fixed'">
                   <i class="fas fa-info-circle mr-1" />
                   固定时间模式：Key 创建后立即生效，按设定时间过期（支持小时和天数）
@@ -505,7 +478,7 @@
             <div v-if="form.expirationMode === 'fixed'">
               <select
                 v-model="form.expireDuration"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                 @change="updateExpireAt"
               >
                 <option value="">永不过期</option>
@@ -524,13 +497,13 @@
               <div v-if="form.expireDuration === 'custom'" class="mt-3">
                 <input
                   v-model="form.customExpireDate"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-full border-border dark:bg-gray-700 dark:text-gray-200"
                   :min="minDateTime"
                   type="datetime-local"
                   @change="updateCustomExpireAt"
                 />
               </div>
-              <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p v-if="form.expiresAt" class="mt-2 text-xs text-muted-foreground">
                 将于 {{ formatExpireDate(form.expiresAt) }} 过期
               </p>
             </div>
@@ -540,7 +513,7 @@
               <div class="flex items-center gap-2">
                 <input
                   v-model.number="form.activationDays"
-                  class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input flex-1 border-border dark:bg-gray-700 dark:text-gray-200"
                   :max="form.activationUnit === 'hours' ? 8760 : 3650"
                   min="1"
                   :placeholder="form.activationUnit === 'hours' ? '输入小时数' : '输入天数'"
@@ -548,7 +521,7 @@
                 />
                 <select
                   v-model="form.activationUnit"
-                  class="form-input w-20 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  class="form-input w-20 border-border dark:bg-gray-700 dark:text-gray-200"
                   @change="updateActivationValue"
                 >
                   <option value="hours">小时</option>
@@ -566,7 +539,7 @@
                   {{ value.label }}
                 </button>
               </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-2 text-xs text-muted-foreground">
                 <i class="fas fa-clock mr-1" />
                 Key 将在首次使用后激活，激活后
                 {{ form.activationDays || (form.activationUnit === 'hours' ? 24 : 30) }}
@@ -576,68 +549,62 @@
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >服务权限</label
-            >
+            <label class="mb-2 block text-sm font-semibold text-foreground">服务权限</label>
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="all"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">全部服务</span>
+                <span class="text-sm text-foreground">全部服务</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="claude"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">仅 Claude</span>
+                <span class="text-sm text-foreground">仅 Claude</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="gemini"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">仅 Gemini</span>
+                <span class="text-sm text-foreground">仅 Gemini</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="openai"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">仅 OpenAI</span>
+                <span class="text-sm text-foreground">仅 OpenAI</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
                   v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  class="mr-2 text-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700"
                   type="radio"
                   value="droid"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">仅 Droid</span>
+                <span class="text-sm text-foreground">仅 Droid</span>
               </label>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              控制此 API Key 可以访问哪些服务
-            </p>
+            <p class="mt-2 text-xs text-muted-foreground">控制此 API Key 可以访问哪些服务</p>
           </div>
 
           <div>
             <div class="mb-2 flex items-center justify-between">
-              <label class="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >专属账号绑定 (可选)</label
-              >
+              <label class="text-sm font-semibold text-foreground">专属账号绑定 (可选)</label>
               <button
-                class="flex items-center gap-1 text-sm text-blue-600 transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
+                class="flex items-center gap-1 text-sm text-primary transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
                 :disabled="accountsLoading"
                 title="刷新账号列表"
                 type="button"
@@ -655,7 +622,7 @@
             </div>
             <div class="grid grid-cols-1 gap-3">
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
+                <label class="mb-1 block text-sm font-medium text-muted-foreground"
                   >Claude 专属账号</label
                 >
                 <AccountSelector
@@ -669,7 +636,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
+                <label class="mb-1 block text-sm font-medium text-muted-foreground"
                   >Gemini 专属账号</label
                 >
                 <AccountSelector
@@ -683,7 +650,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
+                <label class="mb-1 block text-sm font-medium text-muted-foreground"
                   >OpenAI 专属账号</label
                 >
                 <AccountSelector
@@ -697,7 +664,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
+                <label class="mb-1 block text-sm font-medium text-muted-foreground"
                   >Bedrock 专属账号</label
                 >
                 <AccountSelector
@@ -711,7 +678,7 @@
                 />
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
+                <label class="mb-1 block text-sm font-medium text-muted-foreground"
                   >Droid 专属账号</label
                 >
                 <AccountSelector
@@ -725,7 +692,7 @@
                 />
               </div>
             </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            <p class="mt-2 text-xs text-muted-foreground">
               选择专属账号后，此API Key将只使用该账号，不选择则使用共享账号池
             </p>
           </div>
@@ -735,11 +702,11 @@
               <input
                 id="enableModelRestriction"
                 v-model="form.enableModelRestriction"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
+                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring"
                 type="checkbox"
               />
               <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
+                class="ml-2 cursor-pointer text-sm font-semibold text-foreground"
                 for="enableModelRestriction"
               >
                 启用模型限制
@@ -759,7 +726,7 @@
                   >
                     {{ model }}
                     <button
-                      class="ml-2 text-red-600 hover:text-red-800"
+                      class="ml-2 text-destructive hover:text-red-800"
                       type="button"
                       @click="removeRestrictedModel(index)"
                     >
@@ -821,11 +788,11 @@
               <input
                 id="enableClientRestriction"
                 v-model="form.enableClientRestriction"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
+                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring"
                 type="checkbox"
               />
               <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
+                class="ml-2 cursor-pointer text-sm font-semibold text-foreground"
                 for="enableClientRestriction"
               >
                 启用客户端限制
@@ -837,23 +804,19 @@
               class="rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-700 dark:bg-green-900/20"
             >
               <div>
-                <label class="mb-2 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                  >允许的客户端</label
-                >
+                <label class="mb-2 block text-xs font-medium text-foreground">允许的客户端</label>
                 <div class="space-y-1">
                   <div v-for="client in supportedClients" :key="client.id" class="flex items-start">
                     <input
                       :id="`client_${client.id}`"
                       v-model="form.allowedClients"
-                      class="mt-0.5 h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
+                      class="mt-0.5 h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary focus:ring-ring"
                       type="checkbox"
                       :value="client.id"
                     />
                     <label class="ml-2 flex-1 cursor-pointer" :for="`client_${client.id}`">
-                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
-                        client.name
-                      }}</span>
-                      <span class="block text-xs text-gray-500 dark:text-gray-400">{{
+                      <span class="text-sm font-medium text-foreground">{{ client.name }}</span>
+                      <span class="block text-xs text-muted-foreground">{{
                         client.description
                       }}</span>
                     </label>

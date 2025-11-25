@@ -6,7 +6,7 @@
     </div>
     <div class="flex items-center gap-1">
       <span class="text-xs font-semibold">${{ current.toFixed(2) }}</span>
-      <span class="text-xs text-gray-500 dark:text-gray-400">/</span>
+      <span class="text-xs text-muted-foreground">/</span>
       <span class="text-xs">${{ limit.toFixed(2) }}</span>
     </div>
     <!-- 小型进度条 -->
@@ -52,13 +52,13 @@ const progress = computed(() => {
 const badgeClass = computed(() => {
   switch (props.type) {
     case 'daily':
-      return 'bg-gray-50 dark:bg-gray-700/50'
+      return 'bg-muted/50'
     case 'opus':
       return 'bg-indigo-50 dark:bg-indigo-900/20'
     case 'window':
       return 'bg-blue-50 dark:bg-blue-900/20'
     default:
-      return 'bg-gray-50 dark:bg-gray-700/50'
+      return 'bg-muted/50'
   }
 })
 
@@ -69,7 +69,7 @@ const iconClass = computed(() => {
     case 'opus':
       return 'fas fa-gem text-indigo-500'
     case 'window':
-      return 'fas fa-clock text-blue-500'
+      return 'fas fa-clock text-primary'
     default:
       return 'fas fa-info-circle text-gray-500'
   }

@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between text-xs">
       <span class="text-gray-500">{{ label }}</span>
       <span v-if="windowState === 'active'" class="font-medium text-gray-700">
-        <i class="fas fa-clock mr-1 text-blue-500" />
+        <i class="fas fa-clock mr-1 text-primary" />
         {{ formatTime(remainingSeconds) }}
       </span>
       <span v-else-if="windowState === 'expired'" class="font-medium text-orange-600">

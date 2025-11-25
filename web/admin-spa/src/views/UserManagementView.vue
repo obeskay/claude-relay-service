@@ -4,13 +4,13 @@
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">User Management</h1>
-        <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+        <p class="mt-2 text-sm text-foreground">
           Manage users, their API keys, and view usage statistics
         </p>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
         <button
-          class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:w-auto"
+          class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 sm:w-auto"
           :disabled="loading"
           @click="loadUsers"
         >
@@ -34,7 +34,7 @@
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <svg
-                class="h-6 w-6 text-blue-500"
+                class="h-6 w-6 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -49,9 +49,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Total Users
-                </dt>
+                <dt class="truncate text-sm font-medium text-muted-foreground">Total Users</dt>
                 <dd class="text-lg font-medium text-gray-900 dark:text-white">
                   {{ userStats?.totalUsers || 0 }}
                 </dd>
@@ -66,7 +64,7 @@
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <svg
-                class="h-6 w-6 text-green-500"
+                class="h-6 w-6 text-success"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -81,9 +79,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Active Users
-                </dt>
+                <dt class="truncate text-sm font-medium text-muted-foreground">Active Users</dt>
                 <dd class="text-lg font-medium text-gray-900 dark:text-white">
                   {{ userStats?.activeUsers || 0 }}
                 </dd>
@@ -113,9 +109,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Total API Keys
-                </dt>
+                <dt class="truncate text-sm font-medium text-muted-foreground">Total API Keys</dt>
                 <dd class="text-lg font-medium text-gray-900 dark:text-white">
                   {{ userStats?.totalApiKeys || 0 }}
                 </dd>
@@ -130,7 +124,7 @@
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <svg
-                class="h-6 w-6 text-yellow-500"
+                class="h-6 w-6 text-warning"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -145,9 +139,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Total Cost
-                </dt>
+                <dt class="truncate text-sm font-medium text-muted-foreground">Total Cost</dt>
                 <dd class="text-lg font-medium text-gray-900 dark:text-white">
                   ${{ (userStats?.totalUsage?.totalCost || 0).toFixed(4) }}
                 </dd>
@@ -183,7 +175,7 @@
                 </div>
                 <input
                   v-model="searchQuery"
-                  class="block w-full rounded-md border-gray-300 pl-10 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  class="block w-full rounded-md border-gray-300 pl-10 focus:border-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
                   placeholder="Search users..."
                   type="search"
                   @input="debouncedSearch"
@@ -195,7 +187,7 @@
             <div>
               <select
                 v-model="selectedRole"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
                 @change="loadUsers"
               >
                 <option value="">All Roles</option>
@@ -208,7 +200,7 @@
             <div>
               <select
                 v-model="selectedStatus"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-ring dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm"
                 @change="loadUsers"
               >
                 <option value="">All Status</option>
@@ -226,7 +218,7 @@
       <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
         <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
           Users
-          <span v-if="!loading" class="text-sm text-gray-500 dark:text-gray-400"
+          <span v-if="!loading" class="text-sm text-muted-foreground"
             >({{ filteredUsers.length }} of {{ users.length }})</span
           >
         </h3>
@@ -235,7 +227,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="py-12 text-center">
         <svg
-          class="mx-auto h-8 w-8 animate-spin text-blue-600"
+          class="mx-auto h-8 w-8 animate-spin text-primary"
           fill="none"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
@@ -254,7 +246,7 @@
             fill="currentColor"
           ></path>
         </svg>
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Loading users...</p>
+        <p class="mt-2 text-sm text-muted-foreground">Loading users...</p>
       </div>
 
       <!-- Users List -->
@@ -271,7 +263,7 @@
                   class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600"
                 >
                   <svg
-                    class="h-6 w-6 text-gray-600 dark:text-gray-400"
+                    class="h-6 w-6 text-muted-foreground"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -313,9 +305,7 @@
                     </span>
                   </div>
                 </div>
-                <div
-                  class="mt-1 flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400"
-                >
+                <div class="mt-1 flex items-center space-x-4 text-sm text-muted-foreground">
                   <span>@{{ user.username }}</span>
                   <span v-if="user.email">{{ user.email }}</span>
                   <span>{{ user.apiKeyCount || 0 }} API keys</span>
@@ -336,7 +326,7 @@
             <div class="flex items-center space-x-2">
               <!-- View Usage Stats -->
               <button
-                class="inline-flex items-center rounded border border-transparent p-1 text-gray-400 hover:text-blue-600"
+                class="inline-flex items-center rounded border border-transparent p-1 text-gray-400 hover:text-primary"
                 title="View Usage Stats"
                 @click="viewUserStats(user)"
               >
@@ -352,7 +342,7 @@
 
               <!-- Disable User API Keys -->
               <button
-                class="inline-flex items-center rounded border border-transparent p-1 text-gray-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                class="inline-flex items-center rounded border border-transparent p-1 text-gray-400 hover:text-destructive disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="user.apiKeyCount === 0"
                 title="Disable All API Keys"
                 @click="disableUserApiKeys(user)"
@@ -372,8 +362,8 @@
                 :class="[
                   'inline-flex items-center rounded border border-transparent p-1',
                   user.isActive
-                    ? 'text-gray-400 hover:text-red-600'
-                    : 'text-gray-400 hover:text-green-600'
+                    ? 'text-gray-400 hover:text-destructive'
+                    : 'text-gray-400 hover:text-success'
                 ]"
                 :title="user.isActive ? 'Disable User' : 'Enable User'"
                 @click="toggleUserStatus(user)"
@@ -438,7 +428,7 @@
           />
         </svg>
         <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No users found</h3>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p class="mt-1 text-sm text-muted-foreground">
           {{
             searchQuery ? 'No users match your search criteria.' : 'No users have been created yet.'
           }}

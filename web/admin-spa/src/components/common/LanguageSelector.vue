@@ -31,14 +31,14 @@
         <span
           class="flex items-center gap-3"
           :class="{
-            'font-semibold text-blue-600 dark:text-blue-400': currentLocale === locale,
-            'text-gray-700 dark:text-gray-300': currentLocale !== locale
+            'font-semibold text-primary dark:text-blue-400': currentLocale === locale,
+            'text-foreground': currentLocale !== locale
           }"
         >
           <i class="fas" :class="getLocaleIcon(locale)" />
           {{ getLocaleName(locale) }}
         </span>
-        <i v-if="currentLocale === locale" class="fas fa-check text-blue-600 dark:text-blue-400" />
+        <i v-if="currentLocale === locale" class="fas fa-check text-primary dark:text-blue-400" />
       </button>
     </div>
   </div>

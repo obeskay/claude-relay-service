@@ -50,7 +50,7 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs font-medium text-blue-600">创建数量</p>
+                <p class="text-xs font-medium text-primary">创建数量</p>
                 <p class="mt-1 text-2xl font-bold text-blue-900">
                   {{ apiKeys.length }}
                 </p>
@@ -58,7 +58,7 @@
               <div
                 class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500 bg-opacity-20"
               >
-                <i class="fas fa-key text-blue-600" />
+                <i class="fas fa-key text-primary" />
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs font-medium text-green-600">基础名称</p>
+                <p class="text-xs font-medium text-success">基础名称</p>
                 <p class="mt-1 truncate text-lg font-bold text-green-900">
                   {{ baseName }}
                 </p>
@@ -76,7 +76,7 @@
               <div
                 class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500 bg-opacity-20"
               >
-                <i class="fas fa-tag text-green-600" />
+                <i class="fas fa-tag text-success" />
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@
             <label class="text-sm font-semibold text-gray-700">API Keys 预览</label>
             <div class="flex items-center gap-2">
               <button
-                class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                class="flex items-center gap-1 text-xs text-primary hover:text-blue-800"
                 type="button"
                 @click="togglePreview"
               >
@@ -162,7 +162,7 @@
 
         <!-- 额外提示 -->
         <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
-          <p class="flex items-start text-xs text-blue-700">
+          <p class="flex items-start text-xs text-primary">
             <i class="fas fa-info-circle mr-2 mt-0.5 flex-shrink-0" />
             <span>
               下载的文件格式为文本文件（.txt），每行包含一个 API Key。

@@ -1,27 +1,30 @@
 <template>
   <div class="card h-full p-4 md:p-6">
     <h3
-      class="mb-3 flex flex-col text-lg font-bold text-gray-900 dark:text-gray-100 sm:flex-row sm:items-center md:mb-4 md:text-xl"
+      class="mb-3 flex flex-col text-lg font-bold text-foreground sm:flex-row sm:items-center md:mb-4 md:text-xl"
     >
       <span class="flex items-center">
         <i class="fas fa-chart-pie mr-2 text-sm text-orange-500 md:mr-3 md:text-base" />
-        使用占比
+        {{ t('apistats.usage.distribution_title') }}
       </span>
-      <span class="text-xs font-normal text-gray-600 dark:text-gray-400 sm:ml-2 md:text-sm"
-        >({{ statsPeriod === 'daily' ? '今日' : '本月' }})</span
-      >
+      <span class="text-xs font-normal text-muted-foreground sm:ml-2 md:text-sm">{{
+        t('apistats.usage.distribution_period', {
+          period:
+            statsPeriod === 'daily'
+              ? t('apistats.usage.period_today')
+              : t('apistats.usage.period_this_month')
+        })
+      }}</span>
     </h3>
 
     <div v-if="aggregatedStats && individualStats.length > 0" class="space-y-2 md:space-y-3">
       <!-- 各Key使用占比列表 -->
       <div v-for="(stat, index) in topKeys" :key="stat.apiId" class="relative">
         <div class="mb-1 flex items-center justify-between text-sm">
-          <span class="truncate font-medium text-gray-700 dark:text-gray-300">
-            {{ stat.name || `Key ${index + 1}` }}
+          <span class="truncate font-medium text-foreground">
+            {{ stat.name || t('apistats.usage.key_name_default', { index: index + 1 }) }}
           </span>
-          <span class="text-xs text-gray-600 dark:text-gray-400">
-            {{ calculatePercentage(stat) }}%
-          </span>
+          <span class="text-xs text-muted-foreground"> {{ calculatePercentage(stat) }}% </span>
         </div>
         <div class="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
           <div
@@ -30,18 +33,20 @@
             :style="{ width: calculatePercentage(stat) + '%' }"
           />
         </div>
-        <div
-          class="mt-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
-        >
-          <span>{{ formatNumber(getStatUsage(stat)?.requests || 0) }}次</span>
+        <div class="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+          <span>{{
+            t('apistats.usage.requests_count', {
+              count: formatNumber(getStatUsage(stat)?.requests || 0)
+            })
+          }}</span>
           <span>{{ getStatUsage(stat)?.formattedCost || '$0.00' }}</span>
         </div>
       </div>
 
       <!-- 其他Keys汇总 -->
       <div v-if="otherKeysCount > 0" class="border-t border-gray-200 pt-2 dark:border-gray-700">
-        <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-          <span>其他 {{ otherKeysCount }} 个Keys</span>
+        <div class="flex items-center justify-between text-sm text-muted-foreground">
+          <span>{{ t('apistats.usage.other_keys', { count: otherKeysCount }) }}</span>
           <span>{{ otherPercentage }}%</span>
         </div>
       </div>
@@ -50,20 +55,17 @@
     <!-- 单个Key模式提示 -->
     <div
       v-else-if="!multiKeyMode"
-      class="flex h-32 items-center justify-center text-sm text-gray-500 dark:text-gray-400"
+      class="flex h-32 items-center justify-center text-sm text-muted-foreground"
     >
       <div class="text-center">
         <i class="fas fa-chart-pie mb-2 text-2xl" />
-        <p>使用占比仅在多Key查询时显示</p>
+        <p>{{ t('apistats.usage.single_key_hint') }}</p>
       </div>
     </div>
 
-    <div
-      v-else
-      class="flex h-32 items-center justify-center text-sm text-gray-500 dark:text-gray-400"
-    >
+    <div v-else class="flex h-32 items-center justify-center text-sm text-muted-foreground">
       <i class="fas fa-chart-pie mr-2" />
-      暂无数据
+      {{ t('apistats.usage.no_data') }}
     </div>
   </div>
 </template>
@@ -71,7 +73,10 @@
 <script setup>
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useApiStatsStore } from '@/stores/apistats'
+
+const { t } = useI18n()
 
 const apiStatsStore = useApiStatsStore()
 const { aggregatedStats, individualStats, statsPeriod, multiKeyMode } = storeToRefs(apiStatsStore)

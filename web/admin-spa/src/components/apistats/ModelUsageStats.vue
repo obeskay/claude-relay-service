@@ -2,24 +2,29 @@
   <div class="card p-4 md:p-6">
     <div class="mb-4 md:mb-6">
       <h3
-        class="flex flex-col text-lg font-bold text-gray-900 dark:text-gray-100 sm:flex-row sm:items-center md:text-xl"
+        class="flex flex-col text-lg font-bold text-foreground sm:flex-row sm:items-center md:text-xl"
       >
         <span class="flex items-center">
           <i class="fas fa-robot mr-2 text-sm text-indigo-500 md:mr-3 md:text-base" />
-          模型使用统计
+          {{ t('apistats.model.title') }}
         </span>
-        <span class="text-xs font-normal text-gray-600 dark:text-gray-400 sm:ml-2 md:text-sm"
-          >({{ statsPeriod === 'daily' ? '今日' : '本月' }})</span
+        <span class="text-xs font-normal text-muted-foreground sm:ml-2 md:text-sm"
+          >({{
+            t('apistats.usage.distribution_period', {
+              period:
+                statsPeriod === 'daily'
+                  ? t('apistats.usage.period_today')
+                  : t('apistats.usage.period_this_month')
+            })
+          }})</span
         >
       </h3>
     </div>
 
     <!-- 模型统计加载状态 -->
     <div v-if="modelStatsLoading" class="py-6 text-center md:py-8">
-      <i
-        class="fas fa-spinner loading-spinner mb-2 text-xl text-gray-600 dark:text-gray-400 md:text-2xl"
-      />
-      <p class="text-sm text-gray-600 dark:text-gray-400 md:text-base">加载模型统计数据中...</p>
+      <i class="fas fa-spinner loading-spinner mb-2 text-xl text-muted-foreground md:text-2xl" />
+      <p class="text-sm text-muted-foreground md:text-base">{{ t('apistats.model.loading') }}</p>
     </div>
 
     <!-- 模型统计数据 -->
@@ -27,43 +32,45 @@
       <div v-for="(model, index) in modelStats" :key="index" class="model-usage-item">
         <div class="mb-2 flex items-start justify-between md:mb-3">
           <div class="min-w-0 flex-1">
-            <h4 class="break-all text-base font-bold text-gray-900 dark:text-gray-100 md:text-lg">
+            <h4 class="break-all text-base font-bold text-foreground md:text-lg">
               {{ model.model }}
             </h4>
-            <p class="text-xs text-gray-600 dark:text-gray-400 md:text-sm">
-              {{ model.requests }} 次请求
+            <p class="text-xs text-muted-foreground md:text-sm">
+              {{ t('apistats.model.requests_count', { count: model.requests }) }}
             </p>
           </div>
           <div class="ml-3 flex-shrink-0 text-right">
-            <div class="text-base font-bold text-green-600 md:text-lg">
+            <div class="text-base font-bold text-success md:text-lg">
               {{ model.formatted?.total || '$0.000000' }}
             </div>
-            <div class="text-xs text-gray-600 dark:text-gray-400 md:text-sm">总费用</div>
+            <div class="text-xs text-muted-foreground md:text-sm">
+              {{ t('apistats.model.total_cost') }}
+            </div>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2 text-xs md:grid-cols-4 md:gap-3 md:text-sm">
           <div class="rounded bg-gray-50 p-2 dark:bg-gray-700">
-            <div class="text-gray-600 dark:text-gray-400">输入 Token</div>
-            <div class="font-medium text-gray-900 dark:text-gray-100">
+            <div class="text-muted-foreground">{{ t('apistats.model.input_tokens') }}</div>
+            <div class="font-medium text-foreground">
               {{ formatNumber(model.inputTokens) }}
             </div>
           </div>
           <div class="rounded bg-gray-50 p-2 dark:bg-gray-700">
-            <div class="text-gray-600 dark:text-gray-400">输出 Token</div>
-            <div class="font-medium text-gray-900 dark:text-gray-100">
+            <div class="text-muted-foreground">{{ t('apistats.model.output_tokens') }}</div>
+            <div class="font-medium text-foreground">
               {{ formatNumber(model.outputTokens) }}
             </div>
           </div>
           <div class="rounded bg-gray-50 p-2 dark:bg-gray-700">
-            <div class="text-gray-600 dark:text-gray-400">缓存创建</div>
-            <div class="font-medium text-gray-900 dark:text-gray-100">
+            <div class="text-muted-foreground">{{ t('apistats.model.cache_create_tokens') }}</div>
+            <div class="font-medium text-foreground">
               {{ formatNumber(model.cacheCreateTokens) }}
             </div>
           </div>
           <div class="rounded bg-gray-50 p-2 dark:bg-gray-700">
-            <div class="text-gray-600 dark:text-gray-400">缓存读取</div>
-            <div class="font-medium text-gray-900 dark:text-gray-100">
+            <div class="text-muted-foreground">{{ t('apistats.model.cache_read_tokens') }}</div>
+            <div class="font-medium text-foreground">
               {{ formatNumber(model.cacheReadTokens) }}
             </div>
           </div>
@@ -72,10 +79,17 @@
     </div>
 
     <!-- 无模型数据 -->
-    <div v-else class="py-6 text-center text-gray-500 dark:text-gray-400 md:py-8">
+    <div v-else class="py-6 text-center text-muted-foreground md:py-8">
       <i class="fas fa-chart-pie mb-3 text-2xl md:text-3xl" />
       <p class="text-sm md:text-base">
-        暂无{{ statsPeriod === 'daily' ? '今日' : '本月' }}模型使用数据
+        {{
+          t('apistats.model.no_data_period', {
+            period:
+              statsPeriod === 'daily'
+                ? t('apistats.model.period_today')
+                : t('apistats.model.period_this_month')
+          })
+        }}
       </p>
     </div>
   </div>
@@ -83,7 +97,10 @@
 
 <script setup>
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useApiStatsStore } from '@/stores/apistats'
+
+const { t } = useI18n()
 
 const apiStatsStore = useApiStatsStore()
 const { statsPeriod, modelStats, modelStatsLoading } = storeToRefs(apiStatsStore)

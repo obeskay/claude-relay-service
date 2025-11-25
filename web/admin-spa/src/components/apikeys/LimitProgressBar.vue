@@ -6,7 +6,7 @@
       class="flex items-center justify-center rounded-lg px-3 py-2 text-xs"
     >
       <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
-        <i class="fas fa-infinity text-sm text-gray-500 dark:text-gray-400" />
+        <i class="fas fa-infinity text-sm text-muted-foreground" />
         <span class="font-medium">无限制</span>
       </div>
     </div>
@@ -129,7 +129,7 @@ const containerClass = computed(() => {
     case 'window':
       return 'border-sky-200/80 bg-white/80 shadow-[0_10px_24px_rgba(56,189,248,0.18)] group-hover:shadow-[0_14px_30px_rgba(56,189,248,0.22)] dark:border-sky-500/40 dark:bg-sky-950/40 dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]'
     case 'total':
-      return 'border-blue-200/80 bg-white/80 shadow-[0_10px_24px_rgba(59,130,246,0.18)] group-hover:shadow-[0_14px_30px_rgba(59,130,246,0.22)] dark:border-blue-500/40 dark:bg-blue-950/40 dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]'
+      return 'border-blue-200/80 bg-white/80 shadow-[0_10px_24px_rgba(59,130,246,0.18)] group-hover:shadow-[0_14px_30px_rgba(59,130,246,0.22)] dark:border-primary/40 dark:bg-blue-950/40 dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]'
     default:
       return 'border-gray-200/80 bg-white/80 shadow-[0_10px_24px_rgba(148,163,184,0.18)] group-hover:shadow-[0_14px_30px_rgba(148,163,184,0.22)] dark:border-gray-600/50 dark:bg-gray-900/50 dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]'
   }
@@ -229,7 +229,7 @@ const compactLabelClass = computed(() => {
     return 'text-rose-600 dark:text-rose-300'
   }
   if (p >= 80) {
-    return 'text-amber-600 dark:text-amber-300'
+    return 'text-warning dark:text-amber-300'
   }
 
   switch (props.type) {
@@ -240,7 +240,7 @@ const compactLabelClass = computed(() => {
     case 'window':
       return 'text-sky-600 dark:text-sky-300'
     case 'total':
-      return 'text-blue-600 dark:text-blue-300'
+      return 'text-primary dark:text-blue-300'
     default:
       return 'text-gray-600 dark:text-gray-300'
   }
@@ -265,10 +265,10 @@ const iconClass = computed(() => {
         colorClass = 'text-purple-700 dark:text-purple-400'
         break
       case 'window':
-        colorClass = 'text-blue-700 dark:text-blue-400'
+        colorClass = 'text-primary dark:text-blue-400'
         break
       default:
-        colorClass = 'text-gray-600 dark:text-gray-400'
+        colorClass = 'text-muted-foreground'
     }
   }
 
@@ -305,7 +305,7 @@ const labelTextClass = computed(() => {
     // 在浅色背景上使用深色文字
     switch (props.type) {
       case 'daily':
-        return 'text-gray-900 dark:text-gray-100'
+        return 'text-foreground'
       case 'opus':
         return 'text-purple-900 dark:text-purple-100'
       case 'window':
@@ -313,7 +313,7 @@ const labelTextClass = computed(() => {
       case 'total':
         return 'text-blue-900 dark:text-blue-100'
       default:
-        return 'text-gray-900 dark:text-gray-100'
+        return 'text-foreground'
     }
   }
 })
@@ -343,7 +343,7 @@ const currentValueClass = computed(() => {
         case 'total':
           return 'text-blue-800 dark:text-blue-200'
         default:
-          return 'text-gray-900 dark:text-gray-100'
+          return 'text-foreground'
       }
     }
   }

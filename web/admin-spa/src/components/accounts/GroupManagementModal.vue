@@ -123,7 +123,7 @@
                       group.platform === 'claude'
                         ? 'bg-purple-100 text-purple-700'
                         : group.platform === 'gemini'
-                          ? 'bg-blue-100 text-blue-700'
+                          ? 'bg-blue-100 text-primary'
                           : group.platform === 'openai'
                             ? 'bg-gray-100 text-gray-700'
                             : 'bg-cyan-100 text-cyan-700'
@@ -155,14 +155,14 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <button
-                    class="text-blue-600 transition-colors hover:text-blue-800"
+                    class="text-primary transition-colors hover:text-blue-800"
                     title="编辑"
                     @click="editGroup(group)"
                   >
                     <i class="fas fa-edit" />
                   </button>
                   <button
-                    class="text-red-600 transition-colors hover:text-red-800"
+                    class="text-destructive transition-colors hover:text-red-800"
                     :disabled="group.memberCount > 0"
                     title="删除"
                     @click="deleteGroup(group)"

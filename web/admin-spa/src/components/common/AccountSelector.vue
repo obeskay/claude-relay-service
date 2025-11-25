@@ -2,16 +2,13 @@
   <div ref="triggerRef" class="relative">
     <!-- 选择器主体 -->
     <div
-      class="form-input flex w-full cursor-pointer items-center justify-between border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+      class="form-input flex w-full cursor-pointer items-center justify-between border-border dark:bg-gray-700 dark:text-gray-200"
       :class="{ 'opacity-50': disabled }"
       @click="!disabled && toggleDropdown()"
     >
-      <span
-        :class="
-          modelValue ? 'text-gray-900 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'
-        "
-        >{{ selectedLabel }}</span
-      >
+      <span :class="modelValue ? 'text-gray-900 dark:text-gray-200' : 'text-muted-foreground'">{{
+        selectedLabel
+      }}</span>
       <i
         class="fas fa-chevron-down text-gray-400 transition-transform duration-200 dark:text-gray-500"
         :class="{ 'rotate-180': showDropdown }"
@@ -41,7 +38,7 @@
                 ref="searchInput"
                 v-model="searchQuery"
                 class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="搜索账号名称..."
+                :placeholder="t('selector.search_placeholder')"
                 style="padding-left: 40px; padding-right: 36px"
                 type="text"
                 @input="handleSearch"
@@ -74,7 +71,7 @@
                 :class="{ 'bg-blue-50 dark:bg-blue-900/20': modelValue === option.value }"
                 @click="selectAccount(option.value)"
               >
-                <span class="text-gray-700 dark:text-gray-300">{{ option.label }}</span>
+                <span class="text-foreground">{{ option.label }}</span>
                 <span
                   v-if="option.description"
                   class="ml-2 text-xs text-gray-400 dark:text-gray-500"
@@ -90,7 +87,9 @@
               :class="{ 'bg-blue-50 dark:bg-blue-900/20': !modelValue }"
               @click="selectAccount(null)"
             >
-              <span class="text-gray-700 dark:text-gray-300">{{ defaultOptionText }}</span>
+              <span class="text-foreground">{{
+                defaultOptionText || t('selector.use_shared_pool')
+              }}</span>
             </div>
 
             <!-- 分组选项 -->
@@ -98,7 +97,7 @@
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                调度分组
+                {{ t('selector.group_section') }}
               </div>
               <div
                 v-for="group in filteredGroups"
@@ -108,10 +107,10 @@
                 @click="selectAccount(`group:${group.id}`)"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-700 dark:text-gray-300">{{ group.name }}</span>
-                  <span class="text-xs text-gray-500 dark:text-gray-400"
-                    >{{ group.memberCount || 0 }} 个成员</span
-                  >
+                  <span class="text-foreground">{{ group.name }}</span>
+                  <span class="text-xs text-muted-foreground">{{
+                    t('selector.members', { count: group.memberCount || 0 })
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -121,17 +120,7 @@
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                {{
-                  platform === 'claude'
-                    ? 'Claude OAuth 专属账号'
-                    : platform === 'openai'
-                      ? 'OpenAI 专属账号'
-                      : platform === 'droid'
-                        ? 'Droid 专属账号'
-                        : platform === 'gemini'
-                          ? 'Gemini OAuth 专属账号'
-                          : 'OAuth 专属账号'
-                }}
+                {{ t('selector.oauth_accounts') }}
               </div>
               <div
                 v-for="account in filteredOAuthAccounts"
@@ -142,7 +131,7 @@
               >
                 <div class="flex items-center justify-between">
                   <div>
-                    <span class="text-gray-700 dark:text-gray-300">{{ account.name }}</span>
+                    <span class="text-foreground">{{ account.name }}</span>
                     <span
                       class="ml-2 rounded-full px-2 py-0.5 text-xs"
                       :class="
@@ -168,7 +157,7 @@
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                Claude Console 专属账号
+                {{ t('selector.console_accounts') }}
               </div>
               <div
                 v-for="account in filteredConsoleAccounts"
@@ -181,7 +170,7 @@
               >
                 <div class="flex items-center justify-between">
                   <div>
-                    <span class="text-gray-700 dark:text-gray-300">{{ account.name }}</span>
+                    <span class="text-foreground">{{ account.name }}</span>
                     <span
                       class="ml-2 rounded-full px-2 py-0.5 text-xs"
                       :class="
@@ -207,7 +196,7 @@
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                OpenAI-Responses 专属账号
+                {{ t('selector.responses_accounts') }}
               </div>
               <div
                 v-for="account in filteredOpenAIResponsesAccounts"
@@ -220,7 +209,7 @@
               >
                 <div class="flex items-center justify-between">
                   <div>
-                    <span class="text-gray-700 dark:text-gray-300">{{ account.name }}</span>
+                    <span class="text-foreground">{{ account.name }}</span>
                     <span
                       class="ml-2 rounded-full px-2 py-0.5 text-xs"
                       :class="
@@ -246,7 +235,7 @@
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                Gemini-API 专属账号
+                {{ t('selector.api_accounts') }}
               </div>
               <div
                 v-for="account in filteredGeminiApiAccounts"
@@ -259,7 +248,7 @@
               >
                 <div class="flex items-center justify-between">
                   <div>
-                    <span class="text-gray-700 dark:text-gray-300">{{ account.name }}</span>
+                    <span class="text-foreground">{{ account.name }}</span>
                     <span
                       class="ml-2 rounded-full px-2 py-0.5 text-xs"
                       :class="
@@ -283,10 +272,10 @@
             <!-- 无搜索结果 -->
             <div
               v-if="searchQuery && !hasResults"
-              class="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
+              class="px-4 py-8 text-center text-muted-foreground"
             >
               <i class="fas fa-search mb-2 text-2xl" />
-              <p class="text-sm">没有找到匹配的账号</p>
+              <p class="text-sm">{{ t('selector.no_results') }}</p>
             </div>
           </div>
         </div>
@@ -297,6 +286,9 @@
 
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: {
@@ -322,11 +314,11 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '请选择账号'
+    default: ''
   },
   defaultOptionText: {
     type: String,
-    default: '使用共享账号池'
+    default: ''
   },
   specialOptions: {
     type: Array,
@@ -361,7 +353,9 @@ const selectedLabel = computed(() => {
   if (props.modelValue.startsWith('group:')) {
     const groupId = props.modelValue.substring(6)
     const group = props.groups.find((g) => g.id === groupId)
-    return group ? `${group.name} (${group.memberCount || 0} 个成员)` : ''
+    return group
+      ? `${group.name} (${t('selector.members', { count: group.memberCount || 0 })})`
+      : ''
   }
 
   // Console 账号
@@ -396,7 +390,7 @@ const selectedLabel = computed(() => {
 
 // 获取账户状态文本
 const getAccountStatusText = (account) => {
-  if (!account) return '未知'
+  if (!account) return t('status.unknown', 'Unknown')
 
   // 处理 OpenAI-Responses 账号（isActive 可能是字符串）
   const isActive = account.isActive === 'true' || account.isActive === true
@@ -406,26 +400,26 @@ const getAccountStatusText = (account) => {
     // 根据 status 提供更详细的状态信息
     switch (account.status) {
       case 'unauthorized':
-        return '未授权'
+        return t('status.unauthorized', 'Unauthorized')
       case 'error':
-        return 'Token错误'
+        return t('status.error', 'Error')
       case 'created':
-        return '待验证'
+        return t('status.pending', 'Pending')
       case 'rate_limited':
-        return '限流中'
+        return t('status.rate_limited', 'Rate Limited')
       case 'quota_exceeded':
-        return '额度超限'
+        return t('status.quota_exceeded', 'Quota Exceeded')
       default:
-        return '异常'
+        return t('status.abnormal', 'Abnormal')
     }
   }
 
   // 对于激活的账号，如果是限流状态也要显示
   if (account.status === 'rate_limited') {
-    return '限流中'
+    return t('status.rate_limited', 'Rate Limited')
   }
 
-  return '正常'
+  return t('status.normal', 'Normal')
 }
 
 // 按创建时间倒序排序账号
@@ -549,12 +543,12 @@ const formatDate = (dateString) => {
   const diffInHours = (now - date) / (1000 * 60 * 60)
 
   if (diffInHours < 24) {
-    return '今天创建'
+    return t('selector.today_created')
   } else if (diffInHours < 48) {
-    return '昨天创建'
+    return t('selector.yesterday_created')
   } else if (diffInHours < 168) {
     // 7天内
-    return `${Math.floor(diffInHours / 24)} 天前`
+    return t('selector.days_ago', { days: Math.floor(diffInHours / 24) })
   } else {
     return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })
   }

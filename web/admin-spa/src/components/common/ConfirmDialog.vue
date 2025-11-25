@@ -29,7 +29,7 @@
               :disabled="isProcessing"
               @click="handleCancel"
             >
-              {{ cancelText }}
+              {{ cancelText || t('action.cancel') }}
             </button>
             <button
               class="btn btn-warning px-6 py-3"
@@ -38,7 +38,7 @@
               @click="handleConfirm"
             >
               <div v-if="isProcessing" class="loading-spinner mr-2" />
-              {{ confirmText }}
+              {{ confirmText || t('action.confirm') }}
             </button>
           </div>
         </div>
@@ -49,23 +49,21 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // 状态
 const isVisible = ref(false)
 const isProcessing = ref(false)
 const title = ref('')
 const message = ref('')
-const confirmText = ref('确认')
-const cancelText = ref('取消')
+const confirmText = ref('')
+const cancelText = ref('')
 let resolvePromise = null
 
 // 显示确认对话框
-const showConfirm = (
-  titleText,
-  messageText,
-  confirmTextParam = '确认',
-  cancelTextParam = '取消'
-) => {
+const showConfirm = (titleText, messageText, confirmTextParam = '', cancelTextParam = '') => {
   return new Promise((resolve) => {
     title.value = titleText
     message.value = messageText

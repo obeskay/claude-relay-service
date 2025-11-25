@@ -11,45 +11,57 @@
             :class="
               multiKeyMode
                 ? 'fas fa-layer-group text-purple-500'
-                : 'fas fa-info-circle text-blue-500'
+                : 'fas fa-info-circle text-primary'
             "
           />
-          <h3 class="header-title">{{ multiKeyMode ? '批量查询概要' : 'API Key 信息' }}</h3>
+          <h3 class="header-title">
+            {{
+              multiKeyMode
+                ? t('apistats.overview.batch_summary')
+                : t('apistats.overview.api_key_info')
+            }}
+          </h3>
         </header>
 
         <div v-if="multiKeyMode && aggregatedStats" class="info-grid">
           <div class="info-item">
-            <p class="info-label">查询 Keys 数</p>
-            <p class="info-value">{{ aggregatedStats.totalKeys }} 个</p>
+            <p class="info-label">{{ t('apistats.overview.total_keys') }}</p>
+            <p class="info-value">
+              {{ t('apistats.format.count', { count: aggregatedStats.totalKeys }) }}
+            </p>
           </div>
           <div class="info-item">
-            <p class="info-label">有效 Keys 数</p>
-            <p class="info-value text-green-600 dark:text-emerald-400">
-              <i class="fas fa-check-circle mr-1" />{{ aggregatedStats.activeKeys }} 个
+            <p class="info-label">{{ t('apistats.overview.active_keys') }}</p>
+            <p class="info-value text-success dark:text-emerald-400">
+              <i class="fas fa-check-circle mr-1" />{{
+                t('apistats.format.count', { count: aggregatedStats.activeKeys })
+              }}
             </p>
           </div>
           <div v-if="invalidKeys.length > 0" class="info-item">
-            <p class="info-label">无效 Keys 数</p>
-            <p class="info-value text-red-500 dark:text-red-400">
-              <i class="fas fa-times-circle mr-1" />{{ invalidKeys.length }} 个
+            <p class="info-label">{{ t('apistats.overview.invalid_keys') }}</p>
+            <p class="info-value text-destructive dark:text-red-400">
+              <i class="fas fa-times-circle mr-1" />{{
+                t('apistats.format.count', { count: invalidKeys.length })
+              }}
             </p>
           </div>
           <div class="info-item">
-            <p class="info-label">总请求数</p>
+            <p class="info-label">{{ t('apistats.overview.total_requests') }}</p>
             <p class="info-value">{{ formatNumber(aggregatedStats.usage.requests) }}</p>
           </div>
           <div class="info-item">
-            <p class="info-label">总 Token 数</p>
+            <p class="info-label">{{ t('apistats.overview.total_tokens') }}</p>
             <p class="info-value">{{ formatNumber(aggregatedStats.usage.allTokens) }}</p>
           </div>
           <div class="info-item">
-            <p class="info-label">总费用</p>
+            <p class="info-label">{{ t('apistats.overview.total_cost') }}</p>
             <p class="info-value text-indigo-600 dark:text-indigo-300">
               {{ aggregatedStats.usage.formattedCost }}
             </p>
           </div>
           <div v-if="individualStats.length > 1" class="info-item xl:col-span-2">
-            <p class="info-label">Top 3 贡献占比</p>
+            <p class="info-label">{{ t('apistats.overview.top_contributors') }}</p>
             <div class="space-y-2">
               <div v-for="stat in topContributors" :key="stat.apiId" class="contributor-item">
                 <span class="truncate">{{ stat.name }}</span>
@@ -61,53 +73,61 @@
 
         <div v-else class="info-grid">
           <div class="info-item">
-            <p class="info-label">名称</p>
+            <p class="info-label">{{ t('apistats.field.name') }}</p>
             <p class="info-value break-all">{{ statsData.name }}</p>
           </div>
           <div class="info-item">
-            <p class="info-label">状态</p>
+            <p class="info-label">{{ t('apistats.field.status') }}</p>
             <p
               class="info-value font-semibold"
               :class="
                 statsData.isActive
-                  ? 'text-green-600 dark:text-emerald-400'
-                  : 'text-red-500 dark:text-red-400'
+                  ? 'text-success dark:text-emerald-400'
+                  : 'text-destructive dark:text-red-400'
               "
             >
               <i
                 class="mr-1"
                 :class="statsData.isActive ? 'fas fa-check-circle' : 'fas fa-times-circle'"
               />
-              {{ statsData.isActive ? '活跃' : '已停用' }}
+              {{ statsData.isActive ? t('apistats.status.active') : t('apistats.status.disabled') }}
             </p>
           </div>
           <div class="info-item">
-            <p class="info-label">权限</p>
+            <p class="info-label">{{ t('apistats.field.permissions') }}</p>
             <p class="info-value">{{ formatPermissions(statsData.permissions) }}</p>
           </div>
           <div class="info-item">
-            <p class="info-label">创建时间</p>
+            <p class="info-label">{{ t('apistats.field.created_at') }}</p>
             <p class="info-value break-all">{{ formatDate(statsData.createdAt) }}</p>
           </div>
           <div class="info-item xl:col-span-2">
-            <p class="info-label">过期时间</p>
+            <p class="info-label">{{ t('apistats.field.expiry_time') }}</p>
             <div class="info-value">
               <template v-if="statsData.expirationMode === 'activation' && !statsData.isActivated">
-                <span class="text-amber-600 dark:text-amber-400">
-                  <i class="fas fa-pause-circle mr-1" />未激活
+                <span class="text-warning dark:text-amber-400">
+                  <i class="fas fa-pause-circle mr-1" />{{ t('apistats.status.not_activated') }}
                 </span>
-                <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">
-                  首次使用后
-                  {{ statsData.activationDays || (statsData.activationUnit === 'hours' ? 24 : 30) }}
-                  {{ statsData.activationUnit === 'hours' ? '小时' : '天' }}过期
+                <span class="ml-2 text-xs text-muted-foreground">
+                  {{
+                    t('apistats.expiry.not_activated_suffix', {
+                      time:
+                        statsData.activationDays ||
+                        (statsData.activationUnit === 'hours' ? 24 : 30),
+                      unit:
+                        statsData.activationUnit === 'hours'
+                          ? t('apistats.expiry.unit.hours')
+                          : t('apistats.expiry.unit.days')
+                    })
+                  }}
                 </span>
               </template>
               <template v-else-if="statsData.expiresAt">
                 <span
                   v-if="isApiKeyExpired(statsData.expiresAt)"
-                  class="text-red-500 dark:text-red-400"
+                  class="text-destructive dark:text-red-400"
                 >
-                  <i class="fas fa-exclamation-circle mr-1" />已过期
+                  <i class="fas fa-exclamation-circle mr-1" />{{ t('apistats.status.expired') }}
                 </span>
                 <span
                   v-else-if="isApiKeyExpiringSoon(statsData.expiresAt)"
@@ -119,7 +139,7 @@
               </template>
               <template v-else>
                 <span class="text-gray-400 dark:text-gray-500">
-                  <i class="fas fa-infinity mr-1" />永不过期
+                  <i class="fas fa-infinity mr-1" />{{ t('apistats.status.never_expires') }}
                 </span>
               </template>
             </div>
@@ -127,48 +147,76 @@
         </div>
       </div>
 
-      <!-- 使用统计概览 -->
+      <!-- Usage Statistics Overview -->
       <div class="card-section">
         <header class="section-header">
-          <i class="header-icon fas fa-chart-bar text-green-500" />
-          <h3 class="header-title">使用统计概览</h3>
-          <span class="header-tag">{{ statsPeriod === 'daily' ? '今日' : '本月' }}</span>
+          <i class="header-icon fas fa-chart-bar text-success" />
+          <h3 class="header-title">{{ t('apistats.overview.usage_stats') }}</h3>
+          <span class="header-tag">{{
+            statsPeriod === 'daily'
+              ? t('apistats.overview.today')
+              : t('apistats.overview.this_month')
+          }}</span>
         </header>
         <div class="metric-grid">
           <div class="metric-card">
-            <p class="metric-value text-green-600 dark:text-emerald-300">
+            <p class="metric-value text-success dark:text-emerald-300">
               {{ formatNumber(currentPeriodData.requests) }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}请求数</p>
+            <p class="metric-label">
+              {{
+                statsPeriod === 'daily'
+                  ? t('apistats.overview.today_requests')
+                  : t('apistats.overview.this_month_requests')
+              }}
+            </p>
           </div>
           <div class="metric-card">
-            <p class="metric-value text-blue-600 dark:text-sky-300">
+            <p class="metric-value text-primary dark:text-sky-300">
               {{ formatNumber(currentPeriodData.allTokens) }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}Token 数</p>
+            <p class="metric-label">
+              {{
+                statsPeriod === 'daily'
+                  ? t('apistats.overview.today_tokens')
+                  : t('apistats.overview.this_month_tokens')
+              }}
+            </p>
           </div>
           <div class="metric-card">
             <p class="metric-value text-purple-600 dark:text-violet-300">
               {{ currentPeriodData.formattedCost || '$0.000000' }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}费用</p>
+            <p class="metric-label">
+              {{
+                statsPeriod === 'daily'
+                  ? t('apistats.overview.today_cost')
+                  : t('apistats.overview.this_month_cost')
+              }}
+            </p>
           </div>
           <div class="metric-card">
             <p class="metric-value text-amber-500 dark:text-amber-300">
               {{ formatNumber(currentPeriodData.inputTokens) }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}输入 Token</p>
+            <p class="metric-label">
+              {{
+                statsPeriod === 'daily'
+                  ? t('apistats.overview.today_input_tokens')
+                  : t('apistats.overview.this_month_input_tokens')
+              }}
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 专属账号运行状态，仅在单 key 且存在绑定时显示 -->
+    <!-- Dedicated Account Running Status -->
     <div v-if="!multiKeyMode && boundAccountList.length > 0" class="card-section">
       <header class="section-header">
         <i class="header-icon fas fa-plug text-indigo-500" />
-        <h3 class="header-title">专属账号运行状态</h3>
-        <span class="header-tag">实时更新</span>
+        <h3 class="header-title">{{ t('apistats.account.running_status') }}</h3>
+        <span class="header-tag">{{ t('apistats.account.realtime_update') }}</span>
       </header>
 
       <div class="grid grid-cols-1 gap-4" :class="accountGridClass">
@@ -188,7 +236,11 @@
               <div>
                 <p class="account-name">{{ getAccountLabel(account) }}</p>
                 <p class="account-sub">
-                  {{ account.platform === 'claude' ? '会话窗口' : '额度窗口' }}
+                  {{
+                    account.platform === 'claude'
+                      ? t('apistats.field.session_window')
+                      : t('apistats.field.quota_window')
+                  }}
                 </p>
               </div>
             </div>
@@ -231,7 +283,11 @@
                 v-if="account.sessionWindow?.remainingTime > 0"
                 class="font-medium text-indigo-600 dark:text-indigo-400"
               >
-                剩余 {{ formatSessionRemaining(account.sessionWindow.remainingTime) }}
+                {{
+                  t('apistats.status.remaining', {
+                    time: formatSessionRemaining(account.sessionWindow.remainingTime)
+                  })
+                }}
               </span>
             </div>
           </div>
@@ -259,7 +315,11 @@
                   />
                 </div>
                 <div class="quota-foot">
-                  重置剩余 {{ formatCodexRemaining(account.codexUsage?.[type]) }}
+                  {{
+                    t('apistats.time.reset_remaining', {
+                      time: formatCodexRemaining(account.codexUsage?.[type])
+                    })
+                  }}
                 </div>
               </div>
             </div>
@@ -267,7 +327,7 @@
               v-else
               class="rounded-xl bg-slate-100 px-3 py-2 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-300"
             >
-              暂无额度使用数据
+              {{ t('apistats.account.no_quota_data') }}
             </p>
           </div>
         </div>
@@ -281,7 +341,10 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import dayjs from 'dayjs'
+import { useI18n } from 'vue-i18n'
 import { useApiStatsStore } from '@/stores/apistats'
+
+const { t } = useI18n()
 
 const apiStatsStore = useApiStatsStore()
 const {
@@ -308,24 +371,17 @@ const calculateContribution = (stat) => {
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return '无'
+  if (!dateString) return t('apistats.time.none')
   try {
-    return dayjs(dateString).format('YYYY年MM月DD日 HH:mm')
+    return dayjs(dateString).format(t('apistats.format.date'))
   } catch (error) {
-    return '格式错误'
+    return t('apistats.time.format_error')
   }
 }
 
 const formatExpireDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  return dayjs(dateString).format(t('apistats.format.date'))
 }
 
 const isApiKeyExpired = (expiresAt) => {
@@ -351,11 +407,11 @@ const formatNumber = (num) => {
 
 const formatPermissions = (permissions) => {
   const map = {
-    claude: 'Claude',
-    gemini: 'Gemini',
-    all: '全部模型'
+    claude: t('apistats.permissions.claude'),
+    gemini: t('apistats.permissions.gemini'),
+    all: t('apistats.permissions.all')
   }
-  return map[permissions] || permissions || '未知'
+  return map[permissions] || permissions || t('apistats.permissions.unknown')
 }
 
 const boundAccountList = computed(() => {
@@ -383,8 +439,10 @@ const accountGridClass = computed(() => {
 })
 
 const getAccountLabel = (account) => {
-  if (!account) return '专属账号'
-  return account.platform === 'openai' ? 'OpenAI 专属账号' : 'Claude 专属账号'
+  if (!account) return t('apistats.account.dedicated')
+  return account.platform === 'openai'
+    ? t('apistats.account.openai_dedicated')
+    : t('apistats.account.claude_dedicated')
 }
 
 const formatRateLimitTime = (minutes) => {
@@ -393,34 +451,36 @@ const formatRateLimitTime = (minutes) => {
   const days = Math.floor(total / 1440)
   const hours = Math.floor((total % 1440) / 60)
   const mins = total % 60
-  if (days > 0) return hours > 0 ? `${days}天${hours}小时` : `${days}天`
-  if (hours > 0) return mins > 0 ? `${hours}小时${mins}分钟` : `${hours}小时`
-  return `${mins}分钟`
+  if (days > 0) return hours > 0 ? t('apistats.time.day_hour', { days, hours }) : `${days}d`
+  if (hours > 0)
+    return mins > 0 ? t('apistats.time.hour_minute', { hours, minutes: mins }) : `${hours}h`
+  return `${mins}m`
 }
 
 const getRateLimitDisplay = (status) => {
   if (!status) {
     return {
-      text: '状态未知',
+      text: t('apistats.status.unknown'),
       class: 'text-gray-400'
     }
   }
   if (status.isRateLimited) {
     const remaining = formatRateLimitTime(status.minutesRemaining)
-    const suffix = remaining ? ` · 剩余约 ${remaining}` : ''
     return {
-      text: `限流中${suffix}`,
-      class: 'text-red-500 dark:text-red-400'
+      text: remaining
+        ? t('apistats.status.rate_limited_with_time', { time: remaining })
+        : t('apistats.status.rate_limited'),
+      class: 'text-destructive dark:text-red-400'
     }
   }
   return {
-    text: '未限流',
-    class: 'text-green-600 dark:text-emerald-400'
+    text: t('apistats.status.not_rate_limited'),
+    class: 'text-success dark:text-emerald-400'
   }
 }
 
 const formatSessionWindowRange = (start, end) => {
-  if (!start || !end) return '暂无时间窗口信息'
+  if (!start || !end) return t('apistats.expiry.no_time_window')
   const s = new Date(start)
   const e = new Date(end)
   const fmt = (d) => `${`${d.getHours()}`.padStart(2, '0')}:${`${d.getMinutes()}`.padStart(2, '0')}`
@@ -431,7 +491,7 @@ const formatSessionRemaining = (minutes) => {
   if (!minutes || minutes <= 0) return ''
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
-  return hours > 0 ? `${hours}小时${mins}分钟` : `${mins}分钟`
+  return hours > 0 ? t('apistats.time.hour_minute', { hours, minutes: mins }) : `${mins}m`
 }
 
 const getSessionProgressBarClass = (status, account) => {
@@ -499,13 +559,15 @@ const formatCodexRemaining = (usageItem) => {
   const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = seconds % 60
-  if (days > 0) return hours > 0 ? `${days}天${hours}小时` : `${days}天`
-  if (hours > 0) return minutes > 0 ? `${hours}小时${minutes}分钟` : `${hours}小时`
-  if (minutes > 0) return `${minutes}分钟`
-  return `${secs}秒`
+  if (days > 0) return hours > 0 ? t('apistats.time.day_hour', { days, hours }) : `${days}d`
+  if (hours > 0)
+    return minutes > 0 ? t('apistats.time.hour_minute', { hours, minutes }) : `${hours}h`
+  if (minutes > 0) return `${minutes}m`
+  return `${secs}s`
 }
 
-const getCodexWindowLabel = (type) => (type === 'secondary' ? '周限' : '5h')
+const getCodexWindowLabel = (type) =>
+  type === 'secondary' ? t('apistats.window.weekly') : t('apistats.window.5h')
 </script>
 
 <style scoped>

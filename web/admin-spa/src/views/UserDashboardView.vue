@@ -7,7 +7,7 @@
           <div class="flex items-center">
             <div class="flex flex-shrink-0 items-center">
               <svg
-                class="h-8 w-8 text-blue-600 dark:text-blue-400"
+                class="h-8 w-8 text-primary dark:text-blue-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -27,7 +27,7 @@
                   :class="[
                     'rounded-md px-3 py-2 text-sm font-medium',
                     activeTab === 'overview'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      ? 'bg-blue-100 text-primary dark:bg-blue-900 dark:text-blue-300'
                       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   ]"
                   @click="handleTabChange('overview')"
@@ -38,7 +38,7 @@
                   :class="[
                     'rounded-md px-3 py-2 text-sm font-medium',
                     activeTab === 'api-keys'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      ? 'bg-blue-100 text-primary dark:bg-blue-900 dark:text-blue-300'
                       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   ]"
                   @click="handleTabChange('api-keys')"
@@ -49,7 +49,7 @@
                   :class="[
                     'rounded-md px-3 py-2 text-sm font-medium',
                     activeTab === 'usage'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      ? 'bg-blue-100 text-primary dark:bg-blue-900 dark:text-blue-300'
                       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   ]"
                   @click="handleTabChange('usage')"
@@ -60,7 +60,7 @@
                   :class="[
                     'rounded-md px-3 py-2 text-sm font-medium',
                     activeTab === 'tutorial'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      ? 'bg-blue-100 text-primary dark:bg-blue-900 dark:text-blue-300'
                       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   ]"
                   @click="handleTabChange('tutorial')"
@@ -71,7 +71,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-4">
-            <div class="text-sm text-gray-700 dark:text-gray-300">
+            <div class="text-sm text-foreground">
               Welcome, <span class="font-medium">{{ userStore.userName }}</span>
             </div>
 
@@ -95,9 +95,7 @@
       <div v-if="activeTab === 'overview'" class="space-y-6">
         <div>
           <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard Overview</h1>
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Welcome to your Claude Relay dashboard
-          </p>
+          <p class="mt-2 text-sm text-muted-foreground">Welcome to your Claude Relay dashboard</p>
         </div>
 
         <!-- Stats Cards -->
@@ -122,7 +120,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt class="truncate text-sm font-medium text-muted-foreground">
                       Active API Keys
                     </dt>
                     <dd class="text-lg font-medium text-gray-900 dark:text-white">
@@ -154,7 +152,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt class="truncate text-sm font-medium text-muted-foreground">
                       Deleted API Keys
                     </dt>
                     <dd class="text-lg font-medium text-gray-900 dark:text-white">
@@ -186,7 +184,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt class="truncate text-sm font-medium text-muted-foreground">
                       Total Requests
                     </dt>
                     <dd class="text-lg font-medium text-gray-900 dark:text-white">
@@ -218,9 +216,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Input Tokens
-                    </dt>
+                    <dt class="truncate text-sm font-medium text-muted-foreground">Input Tokens</dt>
                     <dd class="text-lg font-medium text-gray-900 dark:text-white">
                       {{ formatNumber(userProfile?.totalUsage?.inputTokens || 0) }}
                     </dd>
@@ -250,9 +246,7 @@
                 </div>
                 <div class="ml-5 w-0 flex-1">
                   <dl>
-                    <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Total Cost
-                    </dt>
+                    <dt class="truncate text-sm font-medium text-muted-foreground">Total Cost</dt>
                     <dd class="text-lg font-medium text-gray-900 dark:text-white">
                       ${{ (userProfile?.totalUsage?.totalCost || 0).toFixed(4) }}
                     </dd>
@@ -269,28 +263,28 @@
             <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
               Account Information
             </h3>
-            <div class="mt-5 border-t border-gray-200 dark:border-gray-700">
+            <div class="mt-5 border-t border-border">
               <dl class="divide-y divide-gray-200 dark:divide-gray-700">
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Username</dt>
+                  <dt class="text-sm font-medium text-muted-foreground">Username</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                     {{ userProfile?.username }}
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Display Name</dt>
+                  <dt class="text-sm font-medium text-muted-foreground">Display Name</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                     {{ userProfile?.displayName || 'N/A' }}
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</dt>
+                  <dt class="text-sm font-medium text-muted-foreground">Email</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                     {{ userProfile?.email || 'N/A' }}
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Role</dt>
+                  <dt class="text-sm font-medium text-muted-foreground">Role</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                     <span
                       class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200"
@@ -300,13 +294,13 @@
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Member Since</dt>
+                  <dt class="text-sm font-medium text-muted-foreground">Member Since</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                     {{ formatDate(userProfile?.createdAt) }}
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Last Login</dt>
+                  <dt class="text-sm font-medium text-muted-foreground">Last Login</dt>
                   <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0">
                     {{ formatDate(userProfile?.lastLoginAt) || 'N/A' }}
                   </dd>
