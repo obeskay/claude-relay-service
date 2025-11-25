@@ -35,98 +35,91 @@
               </p>
               <!-- 各平台账户数量展示 -->
               <div v-if="dashboardData.accountsByPlatform" class="flex items-center gap-2">
-                <!-- Claude账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.claude &&
                     dashboardData.accountsByPlatform.claude.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Claude: ${dashboardData.accountsByPlatform.claude.total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform.claude.normal})`"
+                  :title="`Claude: ${dashboardData.accountsByPlatform.claude.total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform.claude.normal})`"
                 >
                   <i class="fas fa-brain text-xs text-indigo-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.claude.total
                   }}</span>
                 </div>
-                <!-- Claude Console账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform['claude-console'] &&
                     dashboardData.accountsByPlatform['claude-console'].total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Console: ${dashboardData.accountsByPlatform['claude-console'].total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform['claude-console'].normal})`"
+                  :title="`Console: ${dashboardData.accountsByPlatform['claude-console'].total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform['claude-console'].normal})`"
                 >
-                  <i class="fas fa-terminal text-xs text-purple-600" />
+                  <i class="fas fa-terminal text-xs text-violet-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform['claude-console'].total
                   }}</span>
                 </div>
-                <!-- Gemini账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.gemini &&
                     dashboardData.accountsByPlatform.gemini.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Gemini: ${dashboardData.accountsByPlatform.gemini.total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform.gemini.normal})`"
+                  :title="`Gemini: ${dashboardData.accountsByPlatform.gemini.total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform.gemini.normal})`"
                 >
                   <i class="fas fa-robot text-xs text-yellow-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.gemini.total
                   }}</span>
                 </div>
-                <!-- Bedrock账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.bedrock &&
                     dashboardData.accountsByPlatform.bedrock.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Bedrock: ${dashboardData.accountsByPlatform.bedrock.total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform.bedrock.normal})`"
+                  :title="`Bedrock: ${dashboardData.accountsByPlatform.bedrock.total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform.bedrock.normal})`"
                 >
                   <i class="fab fa-aws text-xs text-orange-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.bedrock.total
                   }}</span>
                 </div>
-                <!-- OpenAI账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.openai &&
                     dashboardData.accountsByPlatform.openai.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`OpenAI: ${dashboardData.accountsByPlatform.openai.total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform.openai.normal})`"
+                  :title="`OpenAI: ${dashboardData.accountsByPlatform.openai.total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform.openai.normal})`"
                 >
                   <i class="fas fa-openai text-xs text-gray-100" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.openai.total
                   }}</span>
                 </div>
-                <!-- Azure OpenAI账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.azure_openai &&
                     dashboardData.accountsByPlatform.azure_openai.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Azure OpenAI: ${dashboardData.accountsByPlatform.azure_openai.total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform.azure_openai.normal})`"
+                  :title="`Azure OpenAI: ${dashboardData.accountsByPlatform.azure_openai.total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform.azure_openai.normal})`"
                 >
                   <i class="fab fa-microsoft text-xs text-blue-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.azure_openai.total
                   }}</span>
                 </div>
-                <!-- OpenAI-Responses账户 -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform['openai-responses'] &&
                     dashboardData.accountsByPlatform['openai-responses'].total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`OpenAI Responses: ${dashboardData.accountsByPlatform['openai-responses'].total} 个 ({{ t('dashboard.stats.normal') }}: ${dashboardData.accountsByPlatform['openai-responses'].normal})`"
+                  :title="`OpenAI Responses: ${dashboardData.accountsByPlatform['openai-responses'].total} (${t('dashboard.stats.normal')}: ${dashboardData.accountsByPlatform['openai-responses'].normal})`"
                 >
                   <i class="fas fa-server text-xs text-cyan-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
@@ -171,7 +164,7 @@
               {{ formatNumber(dashboardData.totalRequests || 0) }}
             </p>
           </div>
-          <div class="stat-icon flex-shrink-0 bg-gradient-to-br from-purple-500 to-purple-600">
+          <div class="stat-icon flex-shrink-0 bg-gradient-to-br from-sky-500 to-sky-600">
             <i class="fas fa-chart-line" />
           </div>
         </div>
@@ -318,7 +311,9 @@
           <div>
             <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
               {{ t('dashboard.stats.realtime_rpm') }}
-              <span class="text-xs text-gray-400">({{ dashboardData.metricsWindow }}分钟)</span>
+              <span class="text-xs text-gray-400">{{
+                t('dashboard.stats.minutes_window', { minutes: dashboardData.metricsWindow })
+              }}</span>
             </p>
             <p class="text-2xl font-bold text-orange-600 sm:text-3xl">
               {{ dashboardData.realtimeRPM || 0 }}
@@ -341,7 +336,9 @@
           <div>
             <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
               {{ t('dashboard.stats.realtime_tpm') }}
-              <span class="text-xs text-gray-400">({{ dashboardData.metricsWindow }}分钟)</span>
+              <span class="text-xs text-gray-400">{{
+                t('dashboard.stats.minutes_window', { minutes: dashboardData.metricsWindow })
+              }}</span>
             </p>
             <p class="text-2xl font-bold text-rose-600 sm:text-3xl">
               {{ formatNumber(dashboardData.realtimeTPM || 0) }}
@@ -412,18 +409,17 @@
             </button>
           </div>
 
-          <!-- Element Plus {{ t('dashboard.granularity.date') }}范围选择器 -->
           <div class="flex items-center gap-2">
             <el-date-picker
               v-model="dateFilter.customRange"
               class="custom-date-picker w-full lg:w-auto"
               :default-time="defaultTime"
               :disabled-date="disabledDate"
-              end-placeholder="{{ t('dashboard.filter.end_date') }}"
+              :end-placeholder="t('dashboard.filter.end_date')"
               format="YYYY-MM-DD HH:mm:ss"
-              range-separator="{{ t('dashboard.filter.to') }}"
+              :range-separator="t('dashboard.filter.to')"
               size="default"
-              start-placeholder="{{ t('dashboard.filter.start_date') }}"
+              :start-placeholder="t('dashboard.filter.start_date')"
               style="max-width: 400px"
               type="datetimerange"
               value-format="YYYY-MM-DD HH:mm:ss"
@@ -464,7 +460,7 @@
             <button
               class="flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1 text-sm font-medium text-blue-600 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700 sm:gap-2"
               :disabled="isRefreshing"
-              title="立即{{ t('dashboard.refresh.refresh') }}数据"
+              :title="t('dashboard.refresh.refresh_now')"
               @click="refreshAllData()"
             >
               <i :class="['fas fa-sync-alt text-xs', { 'animate-spin': isRefreshing }]" />
@@ -598,10 +594,7 @@
               ]"
               @click="((apiKeysTrendMetric = 'requests'), updateApiKeysUsageTrendChart())"
             >
-              <i class="fas fa-exchange-alt mr-1" /><span class="hidden sm:inline">{{
-                t('dashboard.metric.requests')
-              }}</span
-              ><span class="sm:hidden">请求</span>
+              <i class="fas fa-exchange-alt mr-1" />{{ t('dashboard.metric.requests') }}
             </button>
             <button
               :class="[
@@ -612,18 +605,18 @@
               ]"
               @click="((apiKeysTrendMetric = 'tokens'), updateApiKeysUsageTrendChart())"
             >
-              <i class="fas fa-coins mr-1" /><span class="hidden sm:inline">{{
-                t('dashboard.metric.tokens')
-              }}</span
-              ><span class="sm:hidden">Token</span>
+              <i class="fas fa-coins mr-1" />{{ t('dashboard.metric.tokens') }}
             </button>
           </div>
         </div>
         <div class="mb-4 text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
           <span v-if="apiKeysTrendData.totalApiKeys > 10">
-            共 {{ apiKeysTrendData.totalApiKeys }} 个 API Key，显示使用量前 10 个
+            {{ t('dashboard.charts.apikeys_total', { count: apiKeysTrendData.totalApiKeys }) }},
+            {{ t('dashboard.charts.apikeys_showing', { count: 10 }) }}
           </span>
-          <span v-else> 共 {{ apiKeysTrendData.totalApiKeys }} 个 API Key </span>
+          <span v-else>
+            {{ t('dashboard.charts.apikeys_total', { count: apiKeysTrendData.totalApiKeys }) }}
+          </span>
         </div>
         <div class="sm:h-[350px]" style="height: 300px">
           <canvas ref="apiKeysUsageTrendChart" />
@@ -916,29 +909,29 @@ function createUsageTrendChart() {
       {
         label: t('dashboard.charts.input_tokens'),
         data: inputData,
-        borderColor: 'rgb(102, 126, 234)',
-        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-        tension: 0.3
-      },
-      {
-        label: t('dashboard.charts.output_tokens'),
-        data: outputData,
-        borderColor: 'rgb(240, 147, 251)',
-        backgroundColor: 'rgba(240, 147, 251, 0.1)',
-        tension: 0.3
-      },
-      {
-        label: t('dashboard.tokens.cache_create'),
-        data: cacheCreateData,
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.3
       },
       {
+        label: t('dashboard.charts.output_tokens'),
+        data: outputData,
+        borderColor: 'rgb(14, 165, 233)',
+        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+        tension: 0.3
+      },
+      {
+        label: t('dashboard.tokens.cache_create'),
+        data: cacheCreateData,
+        borderColor: 'rgb(6, 182, 212)',
+        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+        tension: 0.3
+      },
+      {
         label: t('dashboard.tokens.cache_read'),
         data: cacheReadData,
-        borderColor: 'rgb(147, 51, 234)',
-        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+        borderColor: 'rgb(8, 145, 178)',
+        backgroundColor: 'rgba(8, 145, 178, 0.1)',
         tension: 0.3
       },
       {
@@ -1024,7 +1017,7 @@ function createUsageTrendChart() {
                   return label + ': $' + value.toFixed(4)
                 }
               } else if (label === t('dashboard.table.requests')) {
-                return label + ': ' + value.toLocaleString() + ' 次'
+                return `${label}: ${value.toLocaleString()}`
               } else {
                 // 格式化token数显示
                 if (value >= 1000000) {
@@ -1255,7 +1248,7 @@ function createApiKeysUsageTrendChart() {
 
                 return `${rankIcon}${label}: ${formattedValue} tokens (${cost})`
               } else {
-                return `${rankIcon}${label}: ${value.toLocaleString()} 次`
+                return `${rankIcon}${label}: ${value.toLocaleString()}`
               }
             }
           }
@@ -1343,7 +1336,7 @@ function createAccountUsageTrendChart() {
 
     const accountName =
       trend.find((item) => item.accounts && item.accounts[accountId])?.accounts[accountId]?.name ||
-      `账号 ${String(accountId).slice(0, 6)}`
+      `${t('dashboard.stats.account')} ${String(accountId).slice(0, 6)}`
 
     return {
       label: accountName,
@@ -1437,7 +1430,7 @@ function createAccountUsageTrendChart() {
               const formattedCost = accountDetail?.formattedCost || formatCostValue(value)
               const requests = accountDetail?.requests || 0
 
-              return `${rankIcon}${label}: ${formattedCost} / ${requests.toLocaleString()} 次`
+              return `${rankIcon}${label}: ${formattedCost} / ${requests.toLocaleString()} req`
             }
           }
         }

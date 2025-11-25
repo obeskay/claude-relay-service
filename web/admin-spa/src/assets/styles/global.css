@@ -1,9 +1,9 @@
 /* 从原始 style.css 复制的全局样式 */
 :root {
-  /* 亮色模式 */
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-  --accent-color: #f093fb;
+  /* Modo claro - Paleta moderna sin morados */
+  --primary-color: #3b82f6;
+  --secondary-color: #0ea5e9;
+  --accent-color: #06b6d4;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
@@ -13,21 +13,21 @@
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --border-color: rgba(255, 255, 255, 0.2);
-  --bg-gradient-start: #667eea;
-  --bg-gradient-mid: #764ba2;
-  --bg-gradient-end: #f093fb;
+  --bg-gradient-start: #1e3a5f;
+  --bg-gradient-mid: #1e293b;
+  --bg-gradient-end: #0f172a;
   --input-bg: rgba(255, 255, 255, 0.9);
   --input-border: rgba(209, 213, 219, 0.8);
   --modal-bg: rgba(0, 0, 0, 0.4);
   --table-bg: rgba(255, 255, 255, 0.95);
-  --table-hover: rgba(102, 126, 234, 0.05);
+  --table-hover: rgba(59, 130, 246, 0.05);
 }
 
 .dark {
-  /* 暗黑模式 */
-  --primary-color: #818cf8;
-  --secondary-color: #a78bfa;
-  --accent-color: #c084fc;
+  /* Modo oscuro - Paleta moderna sin morados */
+  --primary-color: #60a5fa;
+  --secondary-color: #38bdf8;
+  --accent-color: #22d3ee;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
@@ -37,14 +37,14 @@
   --text-primary: #f3f4f6;
   --text-secondary: #9ca3af;
   --border-color: rgba(75, 85, 99, 0.3);
-  --bg-gradient-start: #1f2937;
-  --bg-gradient-mid: #374151;
-  --bg-gradient-end: #4b5563;
+  --bg-gradient-start: #0f172a;
+  --bg-gradient-mid: #1e293b;
+  --bg-gradient-end: #334155;
   --input-bg: rgba(31, 41, 55, 0.9);
   --input-border: rgba(75, 85, 99, 0.5);
   --modal-bg: rgba(0, 0, 0, 0.6);
   --table-bg: rgba(31, 41, 55, 0.95);
-  --table-hover: rgba(129, 140, 248, 0.1);
+  --table-hover: rgba(96, 165, 250, 0.1);
 }
 
 /* 优化后的transition - 避免布局跳动 */
@@ -99,9 +99,9 @@ body::before {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 80%, rgba(240, 147, 251, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
 }
@@ -174,8 +174,8 @@ body::before {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
   box-shadow:
-    0 10px 15px -3px rgba(102, 126, 234, 0.3),
-    0 4px 6px -2px rgba(102, 126, 234, 0.05);
+    0 10px 15px -3px rgba(59, 130, 246, 0.3),
+    0 4px 6px -2px rgba(59, 130, 246, 0.05);
   transform: translateY(-1px);
 }
 
@@ -215,15 +215,15 @@ body::before {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
   box-shadow:
-    0 10px 15px -3px rgba(102, 126, 234, 0.3),
-    0 4px 6px -2px rgba(102, 126, 234, 0.05);
+    0 10px 15px -3px rgba(59, 130, 246, 0.3),
+    0 4px 6px -2px rgba(59, 130, 246, 0.05);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 20px 25px -5px rgba(102, 126, 234, 0.3),
-    0 10px 10px -5px rgba(102, 126, 234, 0.1);
+    0 20px 25px -5px rgba(59, 130, 246, 0.3),
+    0 10px 10px -5px rgba(59, 130, 246, 0.1);
 }
 
 .btn-success {
@@ -275,7 +275,7 @@ body::before {
   outline: none;
   border-color: var(--primary-color);
   box-shadow:
-    0 0 0 3px rgba(102, 126, 234, 0.1),
+    0 0 0 3px rgba(59, 130, 246, 0.1),
     0 10px 15px -3px rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.95);
   color: #1f2937;
@@ -283,7 +283,7 @@ body::before {
 
 .dark .form-input:focus {
   box-shadow:
-    0 0 0 3px rgba(129, 140, 248, 0.2),
+    0 0 0 3px rgba(96, 165, 250, 0.2),
     0 10px 15px -3px rgba(0, 0, 0, 0.2);
   background: rgba(17, 24, 39, 0.95);
   color: #f3f4f6;
@@ -348,10 +348,10 @@ body::before {
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .stat-card:hover::before {
@@ -407,15 +407,15 @@ body::before {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
   box-shadow:
-    0 10px 15px -3px rgba(102, 126, 234, 0.3),
-    0 4px 6px -2px rgba(102, 126, 234, 0.05);
+    0 10px 15px -3px rgba(59, 130, 246, 0.3),
+    0 4px 6px -2px rgba(59, 130, 246, 0.05);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 20px 25px -5px rgba(102, 126, 234, 0.3),
-    0 10px 10px -5px rgba(102, 126, 234, 0.1);
+    0 20px 25px -5px rgba(59, 130, 246, 0.3),
+    0 10px 10px -5px rgba(59, 130, 246, 0.1);
 }
 
 .btn-success {
@@ -466,7 +466,7 @@ body::before {
   outline: none;
   border-color: var(--primary-color);
   box-shadow:
-    0 0 0 3px rgba(102, 126, 234, 0.1),
+    0 0 0 3px rgba(59, 130, 246, 0.1),
     0 10px 15px -3px rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.95);
   color: #1f2937;
@@ -474,7 +474,7 @@ body::before {
 
 .dark .form-input:focus {
   box-shadow:
-    0 0 0 3px rgba(129, 140, 248, 0.2),
+    0 0 0 3px rgba(96, 165, 250, 0.2),
     0 10px 15px -3px rgba(0, 0, 0, 0.2);
   background: rgba(17, 24, 39, 0.95);
   color: #f3f4f6;
@@ -504,7 +504,6 @@ body::before {
 
 .table-row:hover {
   background: var(--table-hover);
-  transform: scale(1.005);
 }
 
 .modal {
@@ -630,14 +629,14 @@ body::before {
   display: none;
 }
 
-/* 自定义滚动条样式 */
+/* Estilos de scrollbar personalizados */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(102, 126, 234, 0.3) rgba(102, 126, 234, 0.05);
+  scrollbar-color: rgba(59, 130, 246, 0.3) rgba(59, 130, 246, 0.05);
 }
 
 .dark .custom-scrollbar {
-  scrollbar-color: rgba(129, 140, 248, 0.3) rgba(129, 140, 248, 0.05);
+  scrollbar-color: rgba(96, 165, 250, 0.3) rgba(96, 165, 250, 0.05);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -646,38 +645,38 @@ body::before {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(102, 126, 234, 0.05);
+  background: rgba(59, 130, 246, 0.05);
   border-radius: 10px;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(129, 140, 248, 0.05);
+  background: rgba(96, 165, 250, 0.05);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
+  background: rgba(59, 130, 246, 0.4);
   border-radius: 10px;
   transition: background 0.3s ease;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(129, 140, 248, 0.4) 0%, rgba(167, 139, 250, 0.4) 100%);
+  background: rgba(96, 165, 250, 0.4);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+  background: rgba(59, 130, 246, 0.6);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(129, 140, 248, 0.6) 0%, rgba(167, 139, 250, 0.6) 100%);
+  background: rgba(96, 165, 250, 0.6);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+  background: rgba(59, 130, 246, 0.8);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(135deg, rgba(129, 140, 248, 0.8) 0%, rgba(167, 139, 250, 0.8) 100%);
+  background: rgba(96, 165, 250, 0.8);
 }
 
 /* 弹窗滚动内容样式 */

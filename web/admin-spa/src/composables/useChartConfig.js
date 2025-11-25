@@ -91,9 +91,9 @@ export function useChartConfig() {
     }
   }
 
-  // 颜色方案
+  // Color schemes - blue palette
   const colorSchemes = {
-    primary: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'],
+    primary: ['#3b82f6', '#0ea5e9', '#06b6d4', '#0891b2', '#0369a1'],
     success: ['#10b981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0'],
     warning: ['#f59e0b', '#d97706', '#fbbf24', '#fcd34d', '#fde68a'],
     danger: ['#ef4444', '#dc2626', '#f87171', '#fca5a5', '#fecaca']

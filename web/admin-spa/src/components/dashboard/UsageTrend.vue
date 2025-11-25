@@ -81,18 +81,18 @@ const createChart = () => {
       labels,
       datasets: [
         {
-          label: '请求次数',
+          label: 'Requests',
           data: dashboardStore.trendData.map((item) => item.requests),
-          borderColor: '#667eea',
-          backgroundColor: getGradient(ctx, '#667eea', 0.1),
+          borderColor: '#3b82f6',
+          backgroundColor: getGradient(ctx, '#3b82f6', 0.1),
           yAxisID: 'y',
           tension: 0.4
         },
         {
-          label: 'Token使用量',
+          label: 'Token Usage',
           data: dashboardStore.trendData.map((item) => item.tokens),
-          borderColor: '#f093fb',
-          backgroundColor: getGradient(ctx, '#f093fb', 0.1),
+          borderColor: '#0ea5e9',
+          backgroundColor: getGradient(ctx, '#0ea5e9', 0.1),
           yAxisID: 'y1',
           tension: 0.4
         }
@@ -127,7 +127,7 @@ const createChart = () => {
           position: 'left',
           title: {
             display: true,
-            text: '请求次数'
+            text: 'Requests'
           }
         },
         y1: {
@@ -136,7 +136,7 @@ const createChart = () => {
           position: 'right',
           title: {
             display: true,
-            text: 'Token使用量'
+            text: 'Token Usage'
           },
           grid: {
             drawOnChartArea: false
