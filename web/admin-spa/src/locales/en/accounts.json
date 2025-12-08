@@ -299,5 +299,8 @@
   "form.official": "Official",
   "form.standard_api": "Standard API",
   "form.droid_exclusive": "Droid Exclusive",
-  "form.copy": "Copy"
+  "form.copy": "Copy",
+  "timeline_title": "Account Request Details",
+  "channel": "Channel",
+  "show_records": "Showing last {count} records"
 }

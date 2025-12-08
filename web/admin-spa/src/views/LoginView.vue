@@ -34,7 +34,9 @@
           v-else-if="oemLoading"
           class="mx-auto mb-2 h-8 w-48 animate-pulse rounded bg-gray-300/50 sm:h-9 sm:w-64"
         />
-        <p class="text-base text-gray-600 dark:text-gray-400 sm:text-lg">{{ t('admin.login.subtitle') }}</p>
+        <p class="text-base text-gray-600 dark:text-gray-400 sm:text-lg">
+          {{ t('admin.login.subtitle') }}
+        </p>
       </div>
 
       <form class="space-y-4 sm:space-y-6" @submit.prevent="handleLogin">

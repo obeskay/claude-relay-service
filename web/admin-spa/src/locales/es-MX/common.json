@@ -115,5 +115,7 @@
   "label.optional": "(Opcional)",
   "placeholder.select": "Por favor selecciona",
   "model": "Modelo",
-  "models": "Modelos"
+  "models": "Modelos",
+  "user_login": "Inicio de Sesión de Usuario",
+  "admin_dashboard": "Panel de Administración"
 }

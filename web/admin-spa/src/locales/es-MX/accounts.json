@@ -308,5 +308,8 @@
   "form.official": "Oficial",
   "form.standard_api": "API estándar",
   "form.droid_exclusive": "Droid exclusivo",
-  "form.copy": "Copiar"
+  "form.copy": "Copiar",
+  "timeline_title": "Detalles de Solicitudes de Cuenta",
+  "channel": "Canal",
+  "show_records": "Mostrando últimos {count} registros"
 }

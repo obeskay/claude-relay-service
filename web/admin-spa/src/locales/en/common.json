@@ -115,5 +115,7 @@
   "modal.continue": "Continue",
   "placeholder.select": "Please select",
   "model": "Model",
-  "models": "Models"
+  "models": "Models",
+  "user_login": "User Login",
+  "admin_dashboard": "Admin Dashboard"
 }

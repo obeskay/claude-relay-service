@@ -80,12 +80,12 @@
                   :clearable="true"
                   :default-time="defaultTime"
                   :disabled-date="disabledDate"
-                  end-placeholder="结束日期"
+                  :end-placeholder="t('filter.end_date')"
                   format="YYYY-MM-DD HH:mm:ss"
                   :model-value="globalDateFilter.customRange"
-                  range-separator="至"
+                  :range-separator="t('filter.to')"
                   size="small"
-                  start-placeholder="开始日期"
+                  :start-placeholder="t('filter.start_date')"
                   style="width: 320px; height: 38px"
                   type="datetimerange"
                   :unlink-panels="false"
@@ -94,7 +94,7 @@
                 />
               </div>
 
-              <!-- 标签筛选器 -->
+              <!-- Label Filter -->
               <div class="group relative min-w-[140px]">
                 <div
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -1460,14 +1460,16 @@
                           ({{ getLastUsageTypeLabel(key) }})
                         </span>
                       </span>
-                      <span v-else class="text-gray-400 dark:text-gray-500">暂无使用账号</span>
+                      <span v-else class="text-gray-400 dark:text-gray-500">{{
+                        t('apiKeys.empty.no_account_used')
+                      }}</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- 限制进度条 -->
+                <!-- Limit Progress Bar -->
                 <div class="space-y-2">
-                  <!-- 加载中状态 - 骨架屏（仅在有费用限制配置时显示） -->
+                  <!-- Loading State - Skeleton (shown only if cost limits exist) -->
                   <template
                     v-if="
                       isStatsLoading(key.id) &&
@@ -1485,19 +1487,19 @@
                       />
                     </div>
                   </template>
-                  <!-- 已加载状态 -->
+                  <!-- Loaded State -->
                   <template v-else>
-                    <!-- 每日费用限制 -->
+                    <!-- Daily Cost Limit -->
                     <LimitProgressBar
                       v-if="key.dailyCostLimit > 0"
                       :current="getCachedStats(key.id)?.dailyCost || 0"
-                      label="每日限制"
+                      :label="t('apiKeys.limit_bar.daily_cost')"
                       :limit="key.dailyCostLimit"
                       type="daily"
                       variant="compact"
                     />
 
-                    <!-- 总费用限制（无每日限制时展示） -->
+                    <!-- Total Cost Limit (shown when no daily limit) -->
                     <LimitProgressBar
                       v-else-if="key.totalCostLimit > 0"
                       :current="getCachedStats(key.id)?.allTimeCost || 0"
@@ -2655,7 +2657,7 @@ const loadPageStats = async () => {
     endDate = globalDateFilter.customEnd
   }
 
-  // 筛选出需要加载的 keys（未缓存或时间范围变化）
+  // Filter keys needing stats loading (uncached or time range changed)
   const keysNeedStats = currentPageKeys.filter((key) => {
     const cached = statsCache.value.get(key.id)
     if (!cached) return true
@@ -2668,7 +2670,7 @@ const loadPageStats = async () => {
 
   if (keysNeedStats.length === 0) return
 
-  // 标记为加载中
+  // Mark as loading
   const keyIds = keysNeedStats.map((k) => k.id)
   keyIds.forEach((id) => statsLoading.value.add(id))
 
@@ -2685,7 +2687,7 @@ const loadPageStats = async () => {
     const response = await apiClient.post('/admin/api-keys/batch-stats', requestBody)
 
     if (response.success && response.data) {
-      // 更新缓存
+      // Update cache
       for (const [keyId, stats] of Object.entries(response.data)) {
         statsCache.value.set(keyId, {
           stats,
@@ -2697,8 +2699,8 @@ const loadPageStats = async () => {
       }
     }
   } catch (error) {
-    console.error('加载统计数据失败:', error)
-    // 不显示 toast，避免打扰用户
+    console.error('Failed to load stats:', error)
+    // Do not show toast to avoid disturbing user
   } finally {
     keyIds.forEach((id) => statsLoading.value.delete(id))
   }
