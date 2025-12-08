@@ -34,7 +34,7 @@
           v-else-if="oemLoading"
           class="mx-auto mb-2 h-8 w-48 animate-pulse rounded bg-gray-300/50 sm:h-9 sm:w-64"
         />
-        <p class="text-base text-gray-600 dark:text-gray-400 sm:text-lg">管理后台</p>
+        <p class="text-base text-gray-600 dark:text-gray-400 sm:text-lg">{{ t('admin.login.subtitle') }}</p>
       </div>
 
       <form class="space-y-4 sm:space-y-6" @submit.prevent="handleLogin">
@@ -42,7 +42,7 @@
           <label
             class="mb-2 block text-sm font-semibold text-gray-900 dark:text-gray-100 sm:mb-3"
             for="username"
-            >用户名</label
+            >{{ t('admin.login.username') }}</label
           >
           <input
             id="username"
@@ -50,7 +50,7 @@
             autocomplete="username"
             class="form-input w-full"
             name="username"
-            placeholder="请输入用户名"
+            :placeholder="t('admin.login.usernamePlaceholder')"
             required
             type="text"
           />
@@ -60,7 +60,7 @@
           <label
             class="mb-2 block text-sm font-semibold text-gray-900 dark:text-gray-100 sm:mb-3"
             for="password"
-            >密码</label
+            >{{ t('admin.login.password') }}</label
           >
           <input
             id="password"
@@ -68,7 +68,7 @@
             autocomplete="current-password"
             class="form-input w-full"
             name="password"
-            placeholder="请输入密码"
+            :placeholder="t('admin.login.passwordPlaceholder')"
             required
             type="password"
           />
@@ -81,7 +81,7 @@
         >
           <i v-if="!authStore.loginLoading" class="fas fa-sign-in-alt mr-2" />
           <div v-if="authStore.loginLoading" class="loading-spinner mr-2" />
-          {{ authStore.loginLoading ? '登录中...' : '登录' }}
+          {{ authStore.loginLoading ? t('admin.login.loggingIn') : t('admin.login.submit') }}
         </button>
       </form>
 
@@ -97,9 +97,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import ThemeToggle from '@/components/common/ThemeToggle.vue'
+
+const { t } = useI18n()
 
 const authStore = useAuthStore()
 const themeStore = useThemeStore()

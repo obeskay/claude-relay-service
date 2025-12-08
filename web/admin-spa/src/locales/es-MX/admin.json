@@ -1,4 +1,13 @@
 {
+  "login": {
+    "subtitle": "Panel de Administración",
+    "username": "Usuario",
+    "usernamePlaceholder": "Ingrese su usuario",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingrese su contraseña",
+    "submit": "Iniciar Sesión",
+    "loggingIn": "Iniciando sesión..."
+  },
   "change_role.title": "Cambiar Rol de Usuario",
   "change_role.new_role_label": "Nuevo Rol",
   "change_role.role_user": "Usuario",
