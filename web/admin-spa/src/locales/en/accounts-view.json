@@ -1,0 +1,283 @@
+{
+  "pageTitle": "Account Management",
+  "pageDescription": "Manage Claude, Gemini, OpenAI accounts and proxy configurations",
+
+  "filter": {
+    "allAccounts": "All accounts",
+    "ungroupedAccounts": "Ungrouped accounts"
+  },
+
+  "filters": {
+    "sortBy": "Sort by",
+    "selectSort": "Select sort",
+    "platform": "Platform",
+    "selectPlatform": "Select platform",
+    "group": "Group",
+    "selectGroup": "Select group",
+    "searchPlaceholder": "Search account name...",
+    "clearSearch": "Clear search"
+  },
+
+  "sortOptions": {
+    "nameAsc": "Name A-Z",
+    "nameDesc": "Name Z-A",
+    "platformAsc": "Platform A-Z",
+    "platformDesc": "Platform Z-A",
+    "expiresAsc": "Expiring Soon",
+    "expiresDesc": "More Time Remaining",
+    "statusAsc": "Status: Active First",
+    "statusDesc": "Status: Inactive First",
+    "priorityAsc": "Priority: Low to High",
+    "priorityDesc": "Priority: High to Low"
+  },
+
+  "platformOptions": {
+    "all": "All Platforms",
+    "claude": "Claude Official",
+    "claudeConsole": "Claude Console",
+    "gemini": "Gemini",
+    "openai": "OpenAI",
+    "bedrock": "AWS Bedrock",
+    "azure": "Azure OpenAI",
+    "droid": "Droid",
+    "ccr": "CCR"
+  },
+
+  "groupOptions": {
+    "all": "All Groups",
+    "ungrouped": "Ungrouped"
+  },
+
+  "buttons": {
+    "refresh": "Refresh",
+    "refreshTooltip": "Refresh data (Ctrl/⌘+click to force cache refresh)",
+    "select": "Select",
+    "cancelSelect": "Cancel Selection",
+    "batchDelete": "Delete Selected ({count})",
+    "addAccount": "Add Account"
+  },
+
+  "loading": {
+    "accounts": "Loading accounts...",
+    "saving": "Saving...",
+    "refreshing": "Refreshing..."
+  },
+
+  "empty": {
+    "title": "No Accounts",
+    "description": "Click the button above to add your first account"
+  },
+
+  "table": {
+    "headers": {
+      "name": "Name",
+      "platform": "Platform/Type",
+      "expiresAt": "Expiration Date",
+      "status": "Status",
+      "priority": "Priority",
+      "proxy": "Proxy",
+      "todayUsage": "Today's Usage",
+      "sessionWindow": "Session Window",
+      "sessionWindowTooltip": "Session Window Information",
+      "lastUsed": "Last Used",
+      "actions": "Actions"
+    },
+    "accountType": {
+      "dedicated": "Dedicated",
+      "group": "Group Dispatch",
+      "shared": "Shared"
+    },
+    "groupBadge": "Group: {name}",
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "enable": "Enable",
+      "disable": "Disable",
+      "refresh": "Refresh Token",
+      "viewDetails": "View Details"
+    }
+  },
+
+  "sessionWindow": {
+    "claudeSeries": {
+      "title": "Claude Series",
+      "description": "Session window progress represents the time elapsed in a 5-hour window, with colors indicating current dispatch status.",
+      "statusNormal": "Normal: Requests processed normally",
+      "statusWarning": "Warning: Near limit",
+      "statusDanger": "Rejected: Rate limit reached"
+    },
+    "openai": {
+      "title": "OpenAI",
+      "description": "Progress bars show quota usage for 5h and weekly windows respectively, with the same color meaning as above.",
+      "window5h": "5h Window: 5-hour usage progress, automatically resets when reset time is reached.",
+      "weeklyLimit": "Weekly Limit: 7-day usage progress, also resets to 0% on reset.",
+      "resetInfo": "When 'Reset Remaining' is 0, progress bar and percentage will sync to zero."
+    },
+    "claudeOAuth": {
+      "title": "Claude OAuth Accounts",
+      "description": "Shows utilization rate of three windows (utilization percentage), with the same color meaning as above.",
+      "window5h": "5h Window: 5-hour sliding window utilization rate.",
+      "window7d": "7d Window: 7-day total limit utilization rate.",
+      "opusWindow": "Opus Window: 7-day Opus model exclusive limit.",
+      "autoReset": "Automatically resets to zero when reset time is reached."
+    }
+  },
+
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "expired": "Expired",
+    "error": "Error",
+    "pending": "Pending",
+    "overloaded": "Overloaded"
+  },
+
+  "priority": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+
+  "proxy": {
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "type": {
+      "http": "HTTP",
+      "https": "HTTPS",
+      "socks5": "SOCKS5"
+    }
+  },
+
+  "usage": {
+    "inputTokens": "{count} input tokens",
+    "outputTokens": "{count} output tokens",
+    "totalTokens": "{count} total tokens",
+    "cacheHits": "{count} cache hits",
+    "cacheMisses": "{count} cache misses",
+    "cost": "Cost: ${amount}"
+  },
+
+  "modals": {
+    "create": {
+      "title": "Add New Account",
+      "subtitle": "Configure AI platform account"
+    },
+    "edit": {
+      "title": "Edit Account",
+      "subtitle": "Modify account settings"
+    },
+    "delete": {
+      "title": "Confirm Deletion",
+      "message": "Are you sure you want to delete this account?",
+      "messageBatch": "Are you sure you want to delete {count} selected accounts?",
+      "warning": "This action cannot be undone.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "oauth": {
+      "title": "OAuth Authorization",
+      "step1": "Step 1: Generate Authorization URL",
+      "step2": "Step 2: Complete Authorization",
+      "step3": "Step 3: Exchange Code",
+      "generateUrl": "Generate URL",
+      "openUrl": "Open Authorization URL",
+      "enterCode": "Enter Authorization Code",
+      "exchange": "Exchange Token"
+    }
+  },
+
+  "forms": {
+    "name": {
+      "label": "Account Name",
+      "placeholder": "Enter account name",
+      "required": "Name is required",
+      "maxLength": "Maximum {max} characters"
+    },
+    "platform": {
+      "label": "Platform",
+      "placeholder": "Select a platform",
+      "required": "Platform is required"
+    },
+    "accountType": {
+      "label": "Account Type",
+      "options": {
+        "shared": "Shared",
+        "dedicated": "Dedicated",
+        "group": "Group Dispatch"
+      }
+    },
+    "priority": {
+      "label": "Priority",
+      "description": "Higher number = higher priority"
+    },
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "expiresAt": {
+      "label": "Expiration Date",
+      "placeholder": "Select expiration date",
+      "never": "Never"
+    },
+    "proxy": {
+      "label": "Proxy Configuration",
+      "enabled": "Enable Proxy",
+      "type": "Proxy Type",
+      "host": "Proxy Host",
+      "port": "Port",
+      "username": "Username (optional)",
+      "password": "Password (optional)"
+    },
+    "credentials": {
+      "label": "Credentials",
+      "apiKey": "API Key",
+      "accessToken": "Access Token",
+      "refreshToken": "Refresh Token",
+      "clientId": "Client ID",
+      "clientSecret": "Client Secret"
+    },
+    "groups": {
+      "label": "Groups",
+      "placeholder": "Select groups",
+      "empty": "No groups available",
+      "createNew": "Create new group"
+    }
+  },
+
+  "messages": {
+    "success": {
+      "created": "Account created successfully",
+      "updated": "Account updated successfully",
+      "deleted": "Account deleted successfully",
+      "batchDeleted": "{count} accounts deleted successfully",
+      "refreshed": "Token refreshed successfully",
+      "enabled": "Account enabled",
+      "disabled": "Account disabled"
+    },
+    "error": {
+      "loadFailed": "Failed to load accounts",
+      "createFailed": "Failed to create account",
+      "updateFailed": "Failed to update account",
+      "deleteFailed": "Failed to delete account",
+      "refreshFailed": "Failed to refresh token",
+      "invalidData": "Invalid data",
+      "networkError": "Network error",
+      "unauthorized": "Unauthorized",
+      "serverError": "Server error"
+    },
+    "warning": {
+      "expiringSoon": "Account will expire soon",
+      "rateLimitReached": "Rate limit reached",
+      "lowPriority": "Low priority account"
+    }
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {current} of {total}",
+    "itemsPerPage": "Items per page:",
+    "totalItems": "{total} total items"
+  }
+}
