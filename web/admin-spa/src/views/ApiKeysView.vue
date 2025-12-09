@@ -2122,6 +2122,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { showToast } from '@/utils/toast'
 import { apiClient } from '@/config/api'
 import { useClientsStore } from '@/stores/clients'
@@ -2140,6 +2141,7 @@ import CustomDropdown from '@/components/common/CustomDropdown.vue'
 import ActionDropdown from '@/components/common/ActionDropdown.vue'
 
 // 响应式数据
+const { t } = useI18n()
 const router = useRouter()
 const clientsStore = useClientsStore()
 const authStore = useAuthStore()
