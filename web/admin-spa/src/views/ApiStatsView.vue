@@ -6,7 +6,11 @@
         <LogoTitle
           :loading="oemLoading"
           :logo-src="oemSettings.siteIconData || oemSettings.siteIcon"
-          :subtitle="currentTab === 'stats' ? t('apistats.page.subtitle_stats') : t('apistats.page.subtitle_tutorial')"
+          :subtitle="
+            currentTab === 'stats'
+              ? t('apistats.page.subtitle_stats')
+              : t('apistats.page.subtitle_tutorial')
+          "
           :title="oemSettings.siteName"
         />
         <div class="flex items-center gap-2 md:gap-4">
@@ -95,9 +99,9 @@
             >
               <div class="flex items-center gap-2 md:gap-3">
                 <i class="fas fa-clock text-base text-blue-500 md:text-lg" />
-                <span class="text-base font-medium text-gray-700 dark:text-gray-200 md:text-lg"
-                  >{{ t('apistats.filter.time_range') }}</span
-                >
+                <span class="text-base font-medium text-gray-700 dark:text-gray-200 md:text-lg">{{
+                  t('apistats.filter.time_range')
+                }}</span>
               </div>
               <div class="flex w-full items-center gap-2 md:w-auto">
                 <button

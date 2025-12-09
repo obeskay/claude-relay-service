@@ -7,9 +7,9 @@
   /* ─────────────────────────────────────────────────────────────────────────
      TYPOGRAPHY
      ───────────────────────────────────────────────────────────────────────── */
-  --font-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
-  --font-serif: "Source Serif 4", serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Source Serif 4', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 
   /* ─────────────────────────────────────────────────────────────────────────
      BASE SEMANTIC COLORS - Light Mode
@@ -111,22 +111,22 @@
 
   --shadow-2xs: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.04);
   --shadow-xs: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.04);
-  --shadow-sm: 
+  --shadow-sm:
     0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
     0px 1px 2px -5px hsl(var(--shadow-color) / 0.08);
-  --shadow: 
+  --shadow:
     0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
     0px 1px 2px -5px hsl(var(--shadow-color) / 0.08);
-  --shadow-md: 
+  --shadow-md:
     0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
     0px 2px 4px -5px hsl(var(--shadow-color) / 0.08);
-  --shadow-lg: 
+  --shadow-lg:
     0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
     0px 4px 6px -5px hsl(var(--shadow-color) / 0.08);
-  --shadow-xl: 
+  --shadow-xl:
     0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
     0px 8px 10px -5px hsl(var(--shadow-color) / 0.08);
-  --shadow-2xl: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.20);
+  --shadow-2xl: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.2);
 
   /* Two-layer shadow with highlight */
   --shadow-sm-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -142,40 +142,31 @@
      GRADIENT SYSTEM - Premium Effects
      ───────────────────────────────────────────────────────────────────────── */
 
-  --gradient-surface: linear-gradient(to bottom,
-    hsl(0 0% 100%) 0%,
-    hsl(0 0% 98%) 100%
-  );
+  --gradient-surface: linear-gradient(to bottom, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
 
-  --gradient-interactive: linear-gradient(to bottom,
-    hsl(0 0% 99%) 0%,
-    hsl(0 0% 96%) 100%
-  );
+  --gradient-interactive: linear-gradient(to bottom, hsl(0 0% 99%) 0%, hsl(0 0% 96%) 100%);
 
-  --gradient-primary: linear-gradient(to bottom,
+  --gradient-primary: linear-gradient(
+    to bottom,
     hsl(206.1538 100% 27%) 0%,
     hsl(206.1538 100% 20%) 100%
   );
 
-  --gradient-accent: linear-gradient(135deg,
+  --gradient-accent: linear-gradient(
+    135deg,
     hsl(44.918 77.8723% 58%) 0%,
     hsl(44.918 77.8723% 48%) 100%
   );
 
-  --gradient-success: linear-gradient(to bottom,
-    hsl(158 64% 57%) 0%,
-    hsl(158 64% 47%) 100%
-  );
+  --gradient-success: linear-gradient(to bottom, hsl(158 64% 57%) 0%, hsl(158 64% 47%) 100%);
 
-  --gradient-destructive: linear-gradient(to bottom,
+  --gradient-destructive: linear-gradient(
+    to bottom,
     hsl(0 84.3137% 65%) 0%,
     hsl(0 84.3137% 55%) 100%
   );
 
-  --gradient-warning: linear-gradient(to bottom,
-    hsl(38 92% 55%) 0%,
-    hsl(38 92% 45%) 100%
-  );
+  --gradient-warning: linear-gradient(to bottom, hsl(38 92% 55%) 0%, hsl(38 92% 45%) 100%);
 
   /* ─────────────────────────────────────────────────────────────────────────
      SPACING & TRACKING
@@ -198,7 +189,6 @@
   --text-secondary: #5a7a99;
   --border-color: rgba(226, 232, 240, 0.8);
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DARK MODE
@@ -293,21 +283,15 @@
   --shadow-2xs: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.04);
   --shadow-xs: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.04);
   --shadow-sm:
-    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08),
-    0px 1px 2px -5px hsl(0 0% 10.1961% / 0.08);
-  --shadow:
-    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08),
-    0px 1px 2px -5px hsl(0 0% 10.1961% / 0.08);
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 1px 2px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 1px 2px -5px hsl(0 0% 10.1961% / 0.08);
   --shadow-md:
-    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08),
-    0px 2px 4px -5px hsl(0 0% 10.1961% / 0.08);
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 2px 4px -5px hsl(0 0% 10.1961% / 0.08);
   --shadow-lg:
-    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08),
-    0px 4px 6px -5px hsl(0 0% 10.1961% / 0.08);
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 4px 6px -5px hsl(0 0% 10.1961% / 0.08);
   --shadow-xl:
-    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08),
-    0px 8px 10px -5px hsl(0 0% 10.1961% / 0.08);
-  --shadow-2xl: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.20);
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 8px 10px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow-2xl: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.2);
 
   --shadow-sm-top: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   --shadow-sm-bottom: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -327,20 +311,15 @@
   --gradient-primary: linear-gradient(135deg, hsl(215 100% 60%), hsl(215 100% 50%));
   --gradient-accent: linear-gradient(135deg, hsl(45 93% 55%), hsl(45 93% 45%));
 
-  --gradient-success: linear-gradient(to bottom,
-    hsl(158 64% 54%) 0%,
-    hsl(158 64% 44%) 100%
-  );
+  --gradient-success: linear-gradient(to bottom, hsl(158 64% 54%) 0%, hsl(158 64% 44%) 100%);
 
-  --gradient-destructive: linear-gradient(to bottom,
+  --gradient-destructive: linear-gradient(
+    to bottom,
     hsl(0 84.3137% 62%) 0%,
     hsl(0 84.3137% 52%) 100%
   );
 
-  --gradient-warning: linear-gradient(to bottom,
-    hsl(38 92% 52%) 0%,
-    hsl(38 92% 42%) 100%
-  );
+  --gradient-warning: linear-gradient(to bottom, hsl(38 92% 52%) 0%, hsl(38 92% 42%) 100%);
 
   /* Legacy variable mapping for compatibility */
   --primary-color: hsl(var(--primary));
@@ -355,4 +334,3 @@
   --text-secondary: #a3b8cc;
   --border-color: rgba(51, 75, 99, 0.8);
 }
-

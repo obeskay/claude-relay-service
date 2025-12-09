@@ -16,15 +16,24 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 body {
-  font-family: var(--font-sans, 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-family: var(
+    --font-sans,
+    'Space Grotesk',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
   background: var(--background); /* Use semantic variable */
-  
+
   /* Geometric Grid - Subtle */
-  background-image: 
+  background-image:
     linear-gradient(to bottom, hsl(var(--border) / 0.1) 1px, transparent 1px),
     linear-gradient(to right, hsl(var(--border) / 0.1) 1px, transparent 1px);
   background-size: 4rem 4rem;
-  
+
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
@@ -36,7 +45,7 @@ body {
 /* Dark mode overrides for background */
 .dark body {
   background: hsl(var(--background));
-  background-image: 
+  background-image:
     linear-gradient(to bottom, hsl(var(--border) / 0.05) 1px, transparent 1px),
     linear-gradient(to right, hsl(var(--border) / 0.05) 1px, transparent 1px);
 }
@@ -44,7 +53,9 @@ body {
 /* (Removed expensive body::before radial gradient glow) */
 
 /* Monospace for code elements */
-code, pre, .font-mono {
+code,
+pre,
+.font-mono {
   font-family: var(--font-mono, 'IBM Plex Mono', 'Fira Code', monospace);
 }
 
@@ -103,14 +114,30 @@ code, pre, .font-mono {
 }
 
 /* Stagger delay utilities */
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.1s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.2s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.3s; }
-.stagger-7 { animation-delay: 0.35s; }
-.stagger-8 { animation-delay: 0.4s; }
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+.stagger-2 {
+  animation-delay: 0.1s;
+}
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+.stagger-4 {
+  animation-delay: 0.2s;
+}
+.stagger-5 {
+  animation-delay: 0.25s;
+}
+.stagger-6 {
+  animation-delay: 0.3s;
+}
+.stagger-7 {
+  animation-delay: 0.35s;
+}
+.stagger-8 {
+  animation-delay: 0.4s;
+}
 
 /* Fade in on load */
 .fade-up {
@@ -139,7 +166,9 @@ code, pre, .font-mono {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .slide-up-enter-from {
@@ -308,12 +337,22 @@ code, pre, .font-mono {
   .animate-in {
     animation-duration: 0.4s;
   }
-  
-  .stagger-1 { animation-delay: 0.03s; }
-  .stagger-2 { animation-delay: 0.06s; }
-  .stagger-3 { animation-delay: 0.09s; }
-  .stagger-4 { animation-delay: 0.12s; }
-  .stagger-5 { animation-delay: 0.15s; }
+
+  .stagger-1 {
+    animation-delay: 0.03s;
+  }
+  .stagger-2 {
+    animation-delay: 0.06s;
+  }
+  .stagger-3 {
+    animation-delay: 0.09s;
+  }
+  .stagger-4 {
+    animation-delay: 0.12s;
+  }
+  .stagger-5 {
+    animation-delay: 0.15s;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

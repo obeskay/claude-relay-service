@@ -31,7 +31,16 @@ html {
 }
 
 body {
-  font-family: var(--font-sans, 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-family: var(
+    --font-sans,
+    'Space Grotesk',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
   background: linear-gradient(
     135deg,
     var(--bg-gradient-start) 0%,
@@ -78,7 +87,9 @@ textarea {
 }
 
 a {
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -179,7 +190,9 @@ a {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.4s ease, height 0.4s ease;
+  transition:
+    width 0.4s ease,
+    height 0.4s ease;
 }
 
 .btn:active::before {
@@ -293,7 +306,9 @@ a {
   box-shadow: var(--shadow-md);
   overflow: hidden;
   position: relative;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .card::before {
@@ -324,7 +339,9 @@ a {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .stat-card::before {
@@ -450,8 +467,12 @@ a {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -528,7 +549,8 @@ a {
 
 /* Subtle pulse - only on explicit hover */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -558,7 +580,9 @@ a {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .slide-up-enter-from {

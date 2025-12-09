@@ -6,7 +6,9 @@
         <i class="fas fa-chart-line mr-3" />
         {{ t('apistats.input.query_title') }}
       </h2>
-      <p class="text-base text-gray-600 dark:text-gray-400">{{ t('apistats.input.query_subtitle') }}</p>
+      <p class="text-base text-gray-600 dark:text-gray-400">
+        {{ t('apistats.input.query_subtitle') }}
+      </p>
     </div>
 
     <!-- 输入区域 -->
@@ -16,7 +18,9 @@
         <!-- API Key 标签 -->
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
           <i class="fas fa-key mr-2" />
-          {{ multiKeyMode ? t('apistats.input.api_keys_label') : t('apistats.input.api_key_label') }}
+          {{
+            multiKeyMode ? t('apistats.input.api_keys_label') : t('apistats.input.api_key_label')
+          }}
         </label>
 
         <!-- 模式切换和查询按钮组 -->
