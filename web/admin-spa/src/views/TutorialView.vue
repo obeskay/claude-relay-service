@@ -5,10 +5,10 @@
         class="mb-3 flex items-center text-xl font-bold text-gray-900 dark:text-gray-100 sm:mb-4 sm:text-2xl"
       >
         <i class="fas fa-graduation-cap mr-2 text-blue-600 sm:mr-3" />
-        Claude Code 使用教程
+        {{ t('tutorial.title') }}
       </h3>
       <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-lg">
-        跟着这个教程，你可以轻松在自己的电脑上安装并使用 Claude Code。
+        {{ t('tutorial.subtitle') }}
       </p>
     </div>
 
@@ -43,10 +43,10 @@
             class="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white sm:mr-3 sm:h-8 sm:w-8 sm:text-sm"
             >1</span
           >
-          安装 Node.js 环境
+          {{ t('tutorial.steps.step1.title') }}
         </h4>
         <p class="mb-4 text-sm text-gray-600 dark:text-gray-400 sm:mb-4 sm:mb-6 sm:text-base">
-          Claude Code 需要 Node.js 环境才能运行。
+          {{ t('tutorial.steps.step1.subtitle') }}
         </p>
 
         <div
@@ -56,47 +56,47 @@
             class="mb-2 flex items-center text-base font-semibold text-gray-800 dark:text-gray-200 sm:mb-3 sm:text-lg"
           >
             <i class="fab fa-windows mr-2 text-blue-600" />
-            Windows 安装方法
+            {{ t('tutorial.steps.step1.windows.title') }}
           </h5>
           <div class="mb-3 sm:mb-4">
             <p class="mb-2 text-sm text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-base">
-              方法一：官网下载（推荐）
+              {{ t('tutorial.steps.step1.windows.method1') }}
             </p>
             <ol
               class="ml-2 list-inside list-decimal space-y-1 text-xs text-gray-600 dark:text-gray-400 sm:ml-4 sm:space-y-2 sm:text-sm"
             >
               <li>
-                打开浏览器访问
+                {{ t('tutorial.steps.step1.windows.method1_steps.1').split('https')[0] }}
                 <code
                   class="rounded bg-gray-100 px-1 py-1 text-xs dark:bg-gray-800 dark:text-yellow-400 sm:px-2 sm:text-sm"
                   >https://nodejs.org/</code
                 >
               </li>
-              <li>点击 "LTS" 版本进行下载（推荐长期支持版本）</li>
+              <li>{{ t('tutorial.steps.step1.windows.method1_steps.2') }}</li>
               <li>
-                下载完成后双击
+                {{ t('tutorial.steps.step1.windows.method1_steps.3').split('.msi')[0] }}
                 <code
                   class="rounded bg-gray-100 px-1 py-1 text-xs dark:bg-gray-800 dark:text-yellow-400 sm:px-2 sm:text-sm"
                   >.msi</code
                 >
-                文件
+                {{ t('tutorial.steps.step1.windows.method1_steps.3').split('.msi')[1] || '' }}
               </li>
-              <li>按照安装向导完成安装，保持默认设置即可</li>
+              <li>{{ t('tutorial.steps.step1.windows.method1_steps.4') }}</li>
             </ol>
           </div>
           <div class="mb-3 sm:mb-4">
             <p class="mb-2 text-sm text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-base">
-              方法二：使用包管理器
+              {{ t('tutorial.steps.step1.windows.method2') }}
             </p>
             <p class="mb-2 text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
-              如果你安装了 Chocolatey 或 Scoop，可以使用命令行安装：
+              {{ t('tutorial.steps.step1.windows.method2_desc') }}
             </p>
             <div
               class="overflow-x-auto rounded-lg bg-gray-900 p-3 font-mono text-xs text-green-400 dark:border dark:border-slate-700 dark:bg-slate-900 sm:p-4 sm:text-sm"
             >
-              <div class="mb-2"># 使用 Chocolatey</div>
+              <div class="mb-2">{{ t('tutorial.steps.step1.windows.choco_comment') }}</div>
               <div class="whitespace-nowrap text-gray-300">choco install nodejs</div>
-              <div class="mb-2 mt-3"># 或使用 Scoop</div>
+              <div class="mb-2 mt-3">{{ t('tutorial.steps.step1.windows.scoop_comment') }}</div>
               <div class="whitespace-nowrap text-gray-300">scoop install nodejs</div>
             </div>
           </div>
@@ -2071,16 +2071,18 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 // 当前系统选择
 const activeTutorialSystem = ref('windows')
 
 // 系统列表
-const tutorialSystems = [
-  { key: 'windows', name: 'Windows', icon: 'fab fa-windows' },
-  { key: 'macos', name: 'macOS', icon: 'fab fa-apple' },
-  { key: 'linux', name: 'Linux / WSL2', icon: 'fab fa-linux' }
-]
+const { t } = useI18n()
+const tutorialSystems = computed(() => [
+  { key: 'windows', name: t('tutorial.systems.windows'), icon: 'fab fa-windows' },
+  { key: 'macos', name: t('tutorial.systems.macos'), icon: 'fab fa-apple' },
+  { key: 'linux', name: t('tutorial.systems.linux'), icon: 'fab fa-linux' }
+])
 
 // 获取基础URL前缀
 const getBaseUrlPrefix = () => {

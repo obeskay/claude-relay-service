@@ -13,6 +13,7 @@ import enSettings from './locales/en/settings.json'
 import enAdmin from './locales/en/admin.json'
 import enUser from './locales/en/user.json'
 import enApistats from './locales/en/apistats.json'
+import enTutorial from './locales/en/tutorial.json'
 
 import esMXCommon from './locales/es-MX/common.json'
 import esMXNav from './locales/es-MX/nav.json'
@@ -26,6 +27,7 @@ import esMXSettings from './locales/es-MX/settings.json'
 import esMXAdmin from './locales/es-MX/admin.json'
 import esMXUser from './locales/es-MX/user.json'
 import esMXApistats from './locales/es-MX/apistats.json'
+import esMXTutorial from './locales/es-MX/tutorial.json'
 
 // Standard vue-i18n structure
 const messages = {
@@ -43,6 +45,7 @@ const messages = {
     admin: enAdmin,
     user: enUser,
     apistats: enApistats,
+    tutorial: enTutorial,
     // Add specific keys that might be expected at root if any (e.g. from nav tabs)
     // Legacy support for flat keys if absolutely needed, but better to fix usage.
     ...enNav // Spread nav to root if tabs expect 'tab.dashboard' directly
@@ -61,6 +64,7 @@ const messages = {
     admin: esMXAdmin,
     user: esMXUser,
     apistats: esMXApistats,
+    tutorial: esMXTutorial,
     ...esMXNav
   }
 }

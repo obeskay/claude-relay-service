@@ -119,5 +119,14 @@
   "allModels": "All models",
   "user_login": "User Login",
   "admin_dashboard": "Admin Dashboard",
-  "test": "Test"
+  "test": "Test",
+  "login.user_sign_in": "User Sign In",
+  "login.user_subtitle": "Sign in to your account to manage your API keys",
+  "login.enter_username": "Enter your username",
+  "login.enter_password": "Enter your password",
+  "login.signing_in": "Signing In...",
+  "login.sign_in": "Sign In",
+  "login.admin_link": "Admin Login",
+  "login.error_missing_fields": "Please enter both username and password",
+  "login.success": "Login successful!"
 }

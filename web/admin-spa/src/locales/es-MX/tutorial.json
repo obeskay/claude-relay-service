@@ -1,0 +1,85 @@
+{
+  "title": "Tutorial de Claude Code",
+  "subtitle": "Sigue este tutorial para instalar y usar Claude Code en tu computadora fácilmente.",
+  "systems": {
+    "windows": "Windows",
+    "macos": "macOS",
+    "linux": "Linux"
+  },
+  "steps": {
+    "step1": {
+      "title": "Instalar entorno Node.js",
+      "subtitle": "Claude Code requiere un entorno Node.js para ejecutarse.",
+      "windows": {
+        "title": "Método de instalación en Windows",
+        "method1": "Método 1: Descarga oficial (Recomendado)",
+        "method1_steps": {
+          "1": "Abre tu navegador y visita https://nodejs.org/",
+          "2": "Haz clic en la versión \"LTS\" para descargar (Recomendado versión de soporte a largo plazo)",
+          "3": "Una vez descargado, haz doble clic en el archivo .msi",
+          "4": "Sigue el asistente de instalación para completar la instalación, mantén la configuración predeterminada"
+        },
+        "method2": "Método 2: Usar gestor de paquetes",
+        "method2_desc": "Si tienes Chocolatey o Scoop instalado, puedes usar la línea de comandos:",
+        "choco_comment": "# Usando Chocolatey",
+        "scoop_comment": "# O usando Scoop"
+      },
+      "macos": {
+        "title": "Método de instalación en macOS",
+        "method1": "Método 1: Descarga oficial",
+        "method1_desc": "Visita https://nodejs.org/ descarga el paquete .pkg de macOS e instálalo",
+        "method2": "Método 2: Usar Homebrew (Recomendado)",
+        "method2_desc": "Si tienes Homebrew instalado, abre la terminal y ejecuta:"
+      },
+      "linux": {
+        "title": "Método de instalación en Linux",
+        "desc": "Usa el gestor de paquetes de tu distribución para instalar."
+      },
+      "verify": {
+        "title": "Verificar instalación",
+        "desc": "Abre la terminal (cmd/PowerShell) y ejecuta el siguiente comando, si ves el número de versión, la instalación fue exitosa:"
+      }
+    },
+    "step2": {
+      "title": "Instalar Claude Code",
+      "desc": "Usa npm (gestor de paquetes de Node.js) para instalar la herramienta Claude Code.",
+      "command_desc": "Ejecuta el siguiente comando en la terminal para instalar globalmente:",
+      "verify_desc": "Después de instalar, verifica si la instalación fue exitosa:"
+    },
+    "step3": {
+      "title": "Configurar y Login (Paso Crítico)",
+      "desc": "Este paso vinculará tu Claude Code local con tu cuenta en este sistema.",
+      "warning": "Nota importante: No uses el comando 'claude login' directamente, ya que intentará iniciar sesión en la web oficial de Anthropic. Debes seguir los pasos a continuación para configurar la URL de retransmisión.",
+      "auth_title": "Configuración de autenticación de un clic",
+      "auth_desc": "Haz clic en el botón de abajo para copiar el comando de configuración y login completo, luego pégalo en tu terminal y ejecútalo:",
+      "copy_button": "Copiar configuración y comando de login",
+      "manual_title": "Configuración manual (Alternativa)",
+      "manual_desc": "Si el comando anterior falla, puedes configurar paso a paso:",
+      "set_url": "1. Configurar URL del servicio de retransmisión:",
+      "ignore_errors": "2. Configurar para ignorar errores de certificado (si es necesario):",
+      "login_cmd": "3. Ejecutar comando de login:"
+    },
+    "step4": {
+      "title": "Comenzar a usar",
+      "desc": "¡Ahora puedes comenzar a usar Claude Code para programar asistido por AI!",
+      "example_title": "Comando de ejemplo:",
+      "example_desc": "Pídele a Claude que te ayude a escribir un script de Python:"
+    }
+  },
+  "troubleshooting": {
+    "title": "Solución de problemas comunes",
+    "ssl_error": {
+      "title": "Error de certificado SSL",
+      "desc": "Si encuentras errores relacionados con SSL/TLS, intenta ejecutar:",
+      "cmd": "export NODE_TLS_REJECT_UNAUTHORIZED=0"
+    },
+    "login_error": {
+      "title": "Fallo de login o error 404",
+      "desc": "Asegúrate de haber ejecutado el comando 'claude config set apiBaseUrl ...' correctamente y que la URL es correcta."
+    },
+    "permission_error": {
+      "title": "Error de permisos (EACCES)",
+      "desc": "En Mac/Linux, es posible que necesites agregar 'sudo' antes del comando de instalación global npm."
+    }
+  }
+}

@@ -119,5 +119,14 @@
   "allModels": "Todos los modelos",
   "user_login": "Inicio de Sesión de Usuario",
   "admin_dashboard": "Panel de Administración",
-  "test": "Probar"
+  "test": "Probar",
+  "login.user_sign_in": "Inicio de Sesión de Usuario",
+  "login.user_subtitle": "Inicia sesión en tu cuenta para gestionar tus API keys",
+  "login.enter_username": "Ingresa tu usuario",
+  "login.enter_password": "Ingresa tu contraseña",
+  "login.signing_in": "Iniciando sesión...",
+  "login.sign_in": "Iniciar sesión",
+  "login.admin_link": "Inicio de Sesión de Admin",
+  "login.error_missing_fields": "Por favor ingresa usuario y contraseña",
+  "login.success": "Inicio de sesión exitoso"
 }
