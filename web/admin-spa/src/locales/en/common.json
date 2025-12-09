@@ -116,6 +116,7 @@
   "placeholder.select": "Please select",
   "model": "Model",
   "models": "Models",
+  "allModels": "All models",
   "user_login": "User Login",
   "admin_dashboard": "Admin Dashboard",
   "test": "Test"

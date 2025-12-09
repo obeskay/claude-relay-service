@@ -116,6 +116,7 @@
   "placeholder.select": "Por favor selecciona",
   "model": "Modelo",
   "models": "Modelos",
+  "allModels": "Todos los modelos",
   "user_login": "Inicio de Sesión de Usuario",
   "admin_dashboard": "Panel de Administración",
   "test": "Probar"

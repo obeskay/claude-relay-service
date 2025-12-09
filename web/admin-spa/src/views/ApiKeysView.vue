@@ -4,10 +4,10 @@
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
           <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-            API Keys 管理
+            {{ t('apiKeys.page.title') }}
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-            管理和监控您的 API 密钥
+            {{ t('apiKeys.page.subtitle') }}
           </p>
         </div>
 
@@ -23,7 +23,7 @@
               ]"
               @click="activeTab = 'active'"
             >
-              活跃 API Keys
+              {{ t('apiKeys.tab.active') }}
               <span
                 v-if="apiKeys.length > 0"
                 class="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-100"
@@ -40,7 +40,7 @@
               ]"
               @click="loadDeletedApiKeys"
             >
-              已删除 API Keys
+              {{ t('apiKeys.tab.deleted') }}
               <span
                 v-if="deletedApiKeys.length > 0"
                 class="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-100"
@@ -68,7 +68,7 @@
                   icon="fa-calendar-alt"
                   icon-color="text-blue-500"
                   :options="timeRangeDropdownOptions"
-                  placeholder="选择时间范围"
+                  :placeholder="t('apiKeys.filter.time_range')"
                   @change="handleTimeRangeChange"
                 />
               </div>
@@ -105,7 +105,7 @@
                     icon="fa-tags"
                     icon-color="text-purple-500"
                     :options="tagOptions"
-                    placeholder="所有标签"
+                    :placeholder="t('apiKeys.filter.all_tags')"
                   />
                   <span
                     v-if="selectedTagFilter"
@@ -128,7 +128,7 @@
                     icon-color="text-orange-500"
                     :multiple="true"
                     :options="modelOptions"
-                    placeholder="所有模型"
+                    :placeholder="t('common.allModels')"
                   />
                   <span
                     v-if="selectedModels.length > 0"
@@ -147,7 +147,7 @@
                     icon="fa-filter"
                     icon-color="text-cyan-500"
                     :options="searchModeOptions"
-                    placeholder="选择搜索类型"
+                    :placeholder="t('apiKeys.filter.search_type')"
                   />
                 </div>
                 <div class="group relative flex-1">
@@ -160,10 +160,10 @@
                       class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 pl-9 text-sm text-gray-700 placeholder-gray-400 shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 dark:hover:border-gray-500"
                       :placeholder="
                         searchMode === 'bindingAccount'
-                          ? '搜索所属账号...'
+                          ? t('apiKeys.filter.search_placeholder_account')
                           : isLdapEnabled
-                            ? '搜索名称或所有者...'
-                            : '搜索名称...'
+                            ? t('apiKeys.filter.search_placeholder_name_owner')
+                            : t('apiKeys.filter.search_placeholder_name')
                       "
                       type="text"
                     />
@@ -197,7 +197,7 @@
                     apiKeysLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                   ]"
                 />
-                <span class="relative">刷新</span>
+                <span class="relative">{{ t('apiKeys.action.refresh') }}</span>
               </button>
 
               <!-- 选择/取消选择按钮 -->
@@ -206,7 +206,9 @@
                 @click="toggleSelectionMode"
               >
                 <i :class="showCheckboxes ? 'fas fa-times' : 'fas fa-check-square'"></i>
-                <span>{{ showCheckboxes ? '取消选择' : '选择' }}</span>
+                <span>{{
+                  showCheckboxes ? t('apiKeys.action.deselect') : t('apiKeys.action.select')
+                }}</span>
               </button>
 
               <!-- 导出数据按钮 -->
@@ -218,7 +220,7 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-file-excel relative text-emerald-500" />
-                <span class="relative">导出数据</span>
+                <span class="relative">{{ t('apiKeys.action.export') }}</span>
               </button>
 
               <!-- 批量编辑按钮 - 移到刷新按钮旁边 -->
@@ -231,7 +233,9 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-edit relative text-blue-600 dark:text-blue-400" />
-                <span class="relative">编辑选中 ({{ selectedApiKeys.length }})</span>
+                <span class="relative">{{
+                  t('apiKeys.action.edit_selected', { count: selectedApiKeys.length })
+                }}</span>
               </button>
 
               <!-- 批量删除按钮 - 移到刷新按钮旁边 -->
@@ -244,7 +248,9 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-trash relative text-red-600 dark:text-red-400" />
-                <span class="relative">删除选中 ({{ selectedApiKeys.length }})</span>
+                <span class="relative">{{
+                  t('apiKeys.action.delete_selected', { count: selectedApiKeys.length })
+                }}</span>
               </button>
 
               <!-- 创建按钮 -->
@@ -253,14 +259,14 @@
                 @click.stop="openCreateApiKeyModal"
               >
                 <i class="fas fa-plus"></i>
-                <span>创建新 Key</span>
+                <span>{{ t('apiKeys.action.create_new') }}</span>
               </button>
             </div>
           </div>
 
           <div v-if="apiKeysLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400">正在加载 API Keys...</p>
+            <p class="text-gray-500 dark:text-gray-400">{{ t('apiKeys.loading.keys') }}</p>
           </div>
 
           <div v-else-if="apiKeys.length === 0" class="py-12 text-center">
@@ -269,8 +275,8 @@
             >
               <i class="fas fa-key text-xl text-gray-400" />
             </div>
-            <p class="text-lg text-gray-500 dark:text-gray-400">暂无 API Keys</p>
-            <p class="mt-2 text-sm text-gray-400">点击上方按钮创建您的第一个 API Key</p>
+            <p class="text-lg text-gray-500 dark:text-gray-400">{{ t('apiKeys.empty.no_keys') }}</p>
+            <p class="mt-2 text-sm text-gray-400">{{ t('apiKeys.empty.create_first') }}</p>
           </div>
 
           <!-- 桌面端表格视图 -->
@@ -300,7 +306,7 @@
                       :class="shouldShowCheckboxes ? 'left-[50px]' : 'left-0'"
                       @click="sortApiKeys('name')"
                     >
-                      名称
+                      {{ t('apiKeys.table.name') }}
                       <i
                         v-if="apiKeysSortBy === 'name'"
                         :class="[
@@ -314,18 +320,18 @@
                     <th
                       class="min-w-[140px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      所属账号
+                      {{ t('apiKeys.table.account') }}
                     </th>
                     <th
                       class="min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      标签
+                      {{ t('apiKeys.table.tags') }}
                     </th>
                     <th
                       class="min-w-[80px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('status')"
                     >
-                      状态
+                      {{ t('apiKeys.table.status') }}
                       <i
                         v-if="apiKeysSortBy === 'status'"
                         :class="[
@@ -345,7 +351,7 @@
                       :title="costSortTooltip"
                       @click="sortApiKeys('cost')"
                     >
-                      费用
+                      {{ t('apiKeys.table.cost') }}
                       <i
                         v-if="apiKeysSortBy === 'cost'"
                         :class="[
@@ -360,7 +366,7 @@
                     <th
                       class="min-w-[180px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      限制
+                      {{ t('apiKeys.table.limit') }}
                     </th>
                     <th
                       class="min-w-[80px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
@@ -370,13 +376,13 @@
                     <th
                       class="min-w-[80px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      请求数
+                      {{ t('apiKeys.table.requests') }}
                     </th>
                     <th
                       class="min-w-[100px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('lastUsedAt')"
                     >
-                      最后使用
+                      {{ t('apiKeys.table.last_used') }}
                       <i
                         v-if="apiKeysSortBy === 'lastUsedAt'"
                         :class="[
@@ -391,7 +397,7 @@
                       class="min-w-[100px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('createdAt')"
                     >
-                      创建时间
+                      {{ t('apiKeys.table.created_at') }}
                       <i
                         v-if="apiKeysSortBy === 'createdAt'"
                         :class="[
@@ -406,7 +412,7 @@
                       class="min-w-[100px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('expiresAt')"
                     >
-                      过期时间
+                      {{ t('apiKeys.table.expires_at') }}
                       <i
                         v-if="apiKeysSortBy === 'expiresAt'"
                         :class="[
@@ -420,7 +426,7 @@
                     <th
                       class="operations-column sticky right-0 min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      操作
+                      {{ t('apiKeys.table.operations') }}
                     </th>
                   </tr>
                 </thead>
