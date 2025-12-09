@@ -117,5 +117,6 @@
   "model": "Modelo",
   "models": "Modelos",
   "user_login": "Inicio de Sesión de Usuario",
-  "admin_dashboard": "Panel de Administración"
+  "admin_dashboard": "Panel de Administración",
+  "test": "Probar"
 }

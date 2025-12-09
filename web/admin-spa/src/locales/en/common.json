@@ -117,5 +117,6 @@
   "model": "Model",
   "models": "Models",
   "user_login": "User Login",
-  "admin_dashboard": "Admin Dashboard"
+  "admin_dashboard": "Admin Dashboard",
+  "test": "Test"
 }
