@@ -13,7 +13,7 @@ services:
     container_name: ${COOLIFY_CONTAINER_NAME:-claude-relay-app}
     restart: unless-stopped
     ports:
-      - '${PORT:-3011}:3011'
+      - '${PORT:-3000}:3000'
     volumes:
       - ./logs:/app/logs
       - ./data:/app/data
@@ -21,7 +21,7 @@ services:
     environment:
       # 🌐 Configuración del servidor
       NODE_ENV: production
-      PORT: 3011
+      PORT: 3000
       HOST: 0.0.0.0
 
       # 🔐 Configuración de seguridad
