@@ -12,7 +12,9 @@
             <i class="fas fa-link text-white" />
           </div>
           <div class="flex-1">
-            <h4 class="mb-3 font-semibold text-blue-900 dark:text-blue-200">{{ $t('accounts.auth.title') }}</h4>
+            <h4 class="mb-3 font-semibold text-blue-900 dark:text-blue-200">
+              {{ $t('accounts.auth.title') }}
+            </h4>
 
             <!-- 授权方式选择 -->
             <div class="mb-4">
@@ -29,7 +31,9 @@
                     value="manual"
                     @change="onAuthMethodChange"
                   />
-                  <span class="text-sm text-blue-900 dark:text-blue-200">{{ $t('accounts.auth.manual') }}</span>
+                  <span class="text-sm text-blue-900 dark:text-blue-200">{{
+                    $t('accounts.auth.manual')
+                  }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center gap-2">
                   <input
@@ -40,7 +44,9 @@
                     value="cookie"
                     @change="onAuthMethodChange"
                   />
-                  <span class="text-sm text-blue-900 dark:text-blue-200">{{ $t('accounts.auth.cookie') }}</span>
+                  <span class="text-sm text-blue-900 dark:text-blue-200">{{
+                    $t('accounts.auth.cookie')
+                  }}</span>
                 </label>
               </div>
             </div>
@@ -143,9 +149,13 @@
                   <div v-if="cookieAuthLoading" class="loading-spinner mr-2" />
                   <i v-else class="fas fa-magic mr-2" />
                   <template v-if="cookieAuthLoading && batchProgress.total > 1">
-                    {{ $t('common.status.loading') }} {{ batchProgress.current }}/{{ batchProgress.total }}...
+                    {{ $t('common.status.loading') }} {{ batchProgress.current }}/{{
+                      batchProgress.total
+                    }}...
                   </template>
-                  <template v-else-if="cookieAuthLoading"> {{ $t('common.status.loading') }} </template>
+                  <template v-else-if="cookieAuthLoading">
+                    {{ $t('common.status.loading') }}
+                  </template>
                   <template v-else> {{ $t('accounts.auth.steps.generateLink') }} </template>
                 </button>
               </div>
@@ -180,7 +190,11 @@
                       >
                         <i v-if="!loading" class="fas fa-link mr-2" />
                         <div v-else class="loading-spinner mr-2" />
-                        {{ loading ? $t('common.status.loading') : $t('accounts.auth.steps.generateLink') }}
+                        {{
+                          loading
+                            ? $t('common.status.loading')
+                            : $t('accounts.auth.steps.generateLink')
+                        }}
                       </button>
                       <div v-else class="space-y-3">
                         <div class="flex items-center gap-2">
@@ -231,7 +245,8 @@
                       >
                         <p class="text-xs text-yellow-800 dark:text-yellow-300">
                           <i class="fas fa-exclamation-triangle mr-1" />
-                          <strong>注意：</strong>如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
+                          <strong>注意：</strong
+                          >如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
                         </p>
                       </div>
                     </div>
@@ -257,7 +272,9 @@
                           <label
                             class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                           >
-                            <i class="fas fa-key mr-2 text-blue-500" />{{ $t('accounts.auth.auth_code') || 'Code' }}
+                            <i class="fas fa-key mr-2 text-blue-500" />{{
+                              $t('accounts.auth.auth_code') || 'Code'
+                            }}
                           </label>
                           <textarea
                             v-model="authCode"
@@ -289,7 +306,9 @@
             <i class="fas fa-robot text-white" />
           </div>
           <div class="flex-1">
-            <h4 class="mb-3 font-semibold text-green-900 dark:text-blue-200">{{ $t('accounts.auth.geminiTitle') }}</h4>
+            <h4 class="mb-3 font-semibold text-green-900 dark:text-blue-200">
+              {{ $t('accounts.auth.geminiTitle') }}
+            </h4>
             <p class="mb-4 text-sm text-green-800 dark:text-blue-300">
               {{ $t('accounts.auth.instructions') }}
             </p>
@@ -317,7 +336,11 @@
                     >
                       <i v-if="!loading" class="fas fa-link mr-2" />
                       <div v-else class="loading-spinner mr-2" />
-                      {{ loading ? $t('common.status.loading') : $t('accounts.auth.steps.generateLink') }}
+                      {{
+                        loading
+                          ? $t('common.status.loading')
+                          : $t('accounts.auth.steps.generateLink')
+                      }}
                     </button>
                     <div v-else class="space-y-3">
                       <div class="flex items-center gap-2">
@@ -368,7 +391,8 @@
                     >
                       <p class="text-xs text-yellow-800 dark:text-yellow-300">
                         <i class="fas fa-exclamation-triangle mr-1" />
-                        <strong>注意：</strong>如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
+                        <strong>注意：</strong
+                        >如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
                       </p>
                     </div>
                   </div>
@@ -397,7 +421,9 @@
                         <label
                           class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                         >
-                          <i class="fas fa-key mr-2 text-blue-500" />{{ $t('accounts.auth.auth_code') }}
+                          <i class="fas fa-key mr-2 text-blue-500" />{{
+                            $t('accounts.auth.auth_code')
+                          }}
                         </label>
                         <textarea
                           v-model="authCode"
@@ -428,7 +454,9 @@
             <i class="fas fa-brain text-white" />
           </div>
           <div class="flex-1">
-            <h4 class="mb-3 font-semibold text-orange-900 dark:text-blue-200">{{ $t('accounts.auth.openaiTitle') }}</h4>
+            <h4 class="mb-3 font-semibold text-orange-900 dark:text-blue-200">
+              {{ $t('accounts.auth.openaiTitle') }}
+            </h4>
             <p class="mb-4 text-sm text-orange-800 dark:text-blue-300">
               {{ $t('accounts.auth.instructions') }}
             </p>
@@ -456,7 +484,11 @@
                     >
                       <i v-if="!loading" class="fas fa-link mr-2" />
                       <div v-else class="loading-spinner mr-2" />
-                      {{ loading ? $t('common.status.loading') : $t('accounts.auth.steps.generateLink') }}
+                      {{
+                        loading
+                          ? $t('common.status.loading')
+                          : $t('accounts.auth.steps.generateLink')
+                      }}
                     </button>
                     <div v-else class="space-y-3">
                       <div class="flex items-center gap-2">
@@ -533,7 +565,9 @@
                         <label
                           class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                         >
-                          <i class="fas fa-link mr-2 text-orange-500" />{{ $t('accounts.auth.auth_url_or_code') }}
+                          <i class="fas fa-link mr-2 text-orange-500" />{{
+                            $t('accounts.auth.auth_url_or_code')
+                          }}
                         </label>
                         <textarea
                           v-model="authCode"
@@ -564,7 +598,9 @@
             <i class="fas fa-robot text-white" />
           </div>
           <div class="flex-1">
-            <h4 class="mb-3 font-semibold text-cyan-900 dark:text-blue-200">{{ $t('accounts.auth.droidTitle') }}</h4>
+            <h4 class="mb-3 font-semibold text-cyan-900 dark:text-blue-200">
+              {{ $t('accounts.auth.droidTitle') }}
+            </h4>
             <p class="mb-4 text-sm text-cyan-800 dark:text-blue-300">
               {{ $t('accounts.auth.instructions') }}
             </p>
@@ -592,13 +628,17 @@
                     >
                       <i v-if="!loading" class="fas fa-link mr-2" />
                       <div v-else class="loading-spinner mr-2" />
-                      {{ loading ? $t('common.status.loading') : $t('accounts.auth.steps.generateLink') }}
+                      {{
+                        loading
+                          ? $t('common.status.loading')
+                          : $t('accounts.auth.steps.generateLink')
+                      }}
                     </button>
                     <div v-else class="space-y-4">
                       <div class="space-y-2">
-                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-300"
-                          >{{ $t('accounts.auth.authUrl') }}</label
-                        >
+                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-300">{{
+                          $t('accounts.auth.authUrl')
+                        }}</label>
                         <div
                           class="flex flex-col gap-2 rounded-md border border-cyan-200 bg-white p-3 dark:border-cyan-700 dark:bg-gray-800"
                         >
@@ -622,21 +662,24 @@
                               class="inline-flex items-center gap-1 rounded-md border border-cyan-200 bg-white px-3 py-1.5 text-xs font-medium text-cyan-600 shadow-sm transition-colors hover:border-cyan-300 hover:bg-cyan-50 dark:border-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-200 dark:hover:border-cyan-500 dark:hover:bg-cyan-900/60"
                               @click="openVerificationPage"
                             >
-                              <i class="fas fa-external-link-alt text-xs" /> {{ $t('common.action.openInNewTab') }}
+                              <i class="fas fa-external-link-alt text-xs" />
+                              {{ $t('common.action.openInNewTab') }}
                             </button>
                             <button
                               class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium text-cyan-600 transition-colors hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200"
                               @click="regenerateAuthUrl"
                             >
-                              <i class="fas fa-sync-alt text-xs" />{{ $t('accounts.form.regenerate') }}
+                              <i class="fas fa-sync-alt text-xs" />{{
+                                $t('accounts.form.regenerate')
+                              }}
                             </button>
                           </div>
                         </div>
                       </div>
                       <div class="space-y-2">
-                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-300"
-                          >{{ $t('accounts.auth.userCode') }}</label
-                        >
+                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-300">{{
+                          $t('accounts.auth.userCode')
+                        }}</label>
                         <div
                           class="flex items-center justify-between rounded-md border border-cyan-200 bg-cyan-50 px-4 py-3 dark:border-cyan-700 dark:bg-cyan-900/30"
                         >

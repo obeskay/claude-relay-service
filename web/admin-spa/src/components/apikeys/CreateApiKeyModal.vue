@@ -10,7 +10,7 @@
               <i class="fas fa-key text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              {{ $t('apiKeys.createNew') }}
+              创建新的 API Key
             </h3>
           </div>
           <button
@@ -37,7 +37,7 @@
             >
               <label
                 class="flex h-full items-center text-xs font-semibold text-gray-700 dark:text-gray-300 sm:text-sm"
-                >{{ $t('apiKeys.creationType') }}</label
+                >创建类型</label
               >
               <div class="flex items-center gap-3 sm:gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -51,7 +51,7 @@
                     class="flex items-center text-xs text-gray-700 dark:text-gray-300 sm:text-sm"
                   >
                     <i class="fas fa-key mr-1 text-xs" />
-                    {{ $t('apiKeys.single') }}
+                    单个创建
                   </span>
                 </label>
                 <label class="flex cursor-pointer items-center">
@@ -65,7 +65,7 @@
                     class="flex items-center text-xs text-gray-700 dark:text-gray-300 sm:text-sm"
                   >
                     <i class="fas fa-layer-group mr-1 text-xs" />
-                    {{ $t('apiKeys.batch') }}
+                    批量创建
                   </span>
                 </label>
               </div>
@@ -76,7 +76,7 @@
               <div class="flex items-center gap-4">
                 <div class="flex-1">
                   <label class="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
-                    >{{ $t('apiKeys.batchCount') }}</label
+                    >创建数量</label
                   >
                   <div class="flex items-center gap-2">
                     <input
@@ -84,12 +84,12 @@
                       class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                       max="500"
                       min="2"
-                      :placeholder="$t('apiKeys.batchCount')"
+                      placeholder="输入数量 (2-500)"
                       required
                       type="number"
                     />
                     <div class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
-                      {{ $t('apiKeys.batchMax') || 'Max 500' }}
+                      最大支持 500 个
                     </div>
                   </div>
                 </div>
@@ -97,7 +97,9 @@
               <p class="mt-2 flex items-start text-xs text-amber-600 dark:text-amber-400">
                 <i class="fas fa-info-circle mr-1 mt-0.5 flex-shrink-0" />
                 <span
-                  >{{ $t('apiKeys.batchInfo', { name: form.name || 'MyKey' }) }}</span
+                  >批量创建时，每个 Key 的名称会自动添加序号后缀，例如：{{
+                    form.name || 'MyKey'
+                  }}_1, {{ form.name || 'MyKey' }}_2 ...</span
                 >
               </p>
             </div>
@@ -106,7 +108,7 @@
           <div>
             <label
               class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-2 sm:text-sm"
-              >{{ $t('common.label.name') }} <span class="text-red-500">*</span></label
+              >名称 <span class="text-red-500">*</span></label
             >
             <div>
               <input
@@ -115,95 +117,14 @@
                 :class="{ 'border-red-500': errors.name }"
                 :placeholder="
                   form.createType === 'batch'
-                    ? $t('apiKeys.create_modal.name_placeholder_batch')
-                    : $t('apiKeys.create_modal.name_placeholder')
+                    ? '输入基础名称（将自动添加序号）'
+                    : '为您的 API Key 取一个名称'
                 "
                 required
                 type="text"
                 @input="errors.name = ''"
               />
             </div>
-            <p v-if="errors.name" class="mt-1 text-xs text-red-500 dark:text-red-400">
-              {{ errors.name }}
-            </p>
-          </div>
-
-          <!-- 标签 -->
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('common.label.tags') }}</label
-            >
-            <div class="space-y-4">
-              <!-- 已选择的标签 -->
-              <div v-if="form.tags.length > 0">
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  {{ $t('apiKeys.edit.tags.selected') }}
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="(tag, index) in form.tags"
-                    :key="'selected-' + index"
-                    class="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                  >
-                    {{ tag }}
-                    <button
-                      class="ml-1 hover:text-blue-900 dark:hover:text-blue-300"
-                      type="button"
-                      @click="removeTag(index)"
-                    >
-                      <i class="fas fa-times text-xs" />
-                    </button>
-                  </span>
-                </div>
-              </div>
-
-              <!-- 可选择的已有标签 -->
-              <div v-if="unselectedTags.length > 0">
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  {{ $t('apiKeys.edit.tags.available') }}
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="tag in unselectedTags"
-                    :key="'available-' + tag"
-                    class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-colors hover:bg-blue-100 hover:text-blue-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/30 dark:hover:text-blue-400"
-                    type="button"
-                    @click="selectTag(tag)"
-                  >
-                    <i class="fas fa-tag text-xs text-gray-500 dark:text-gray-400" />
-                    {{ tag }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- 创建新标签 -->
-              <div>
-                <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  {{ $t('apiKeys.edit.tags.create') }}
-                </div>
-                <div class="flex gap-2">
-                  <input
-                    v-model="newTag"
-                    class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                    :placeholder="$t('apiKeys.edit.tags.input_placeholder')"
-                    type="text"
-                    @keypress.enter.prevent="addTag"
-                  />
-                  <button
-                    class="rounded-lg bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
-                    type="button"
-                    @click="addTag"
-                  >
-                    <i class="fas fa-plus" />
-                  </button>
-                </div>
-              </div>
-
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ $t('apiKeys.edit.tags.help') }}
-              </p>
-            </div>
-          </div>
             <p v-if="errors.name" class="mt-1 text-xs text-red-500 dark:text-red-400">
               {{ errors.name }}
             </p>
@@ -296,668 +217,6 @@
               >
                 <i class="fas fa-tachometer-alt text-xs text-white" />
               </div>
-              <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                {{ $t('apiKeys.edit.rate_limit.title') }}
-              </h4>
-            </div>
-
-            <div class="space-y-2">
-              <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
-                <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >{{ $t('apiKeys.edit.rate_limit.window.label') }}</label
-                  >
-                  <input
-                    v-model="form.rateLimitWindow"
-                    class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                    min="1"
-                    :placeholder="$t('apiKeys.edit.rate_limit.window.placeholder')"
-                    type="number"
-                  />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">{{ $t('apiKeys.edit.rate_limit.window.help') }}</p>
-                </div>
-
-                <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >{{ $t('apiKeys.edit.rate_limit.requests.label') }}</label
-                  >
-                  <input
-                    v-model="form.rateLimitRequests"
-                    class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                    min="1"
-                    :placeholder="$t('apiKeys.edit.rate_limit.requests.placeholder')"
-                    type="number"
-                  />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">{{ $t('apiKeys.edit.rate_limit.requests.help') }}</p>
-                </div>
-
-                <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >{{ $t('apiKeys.edit.rate_limit.cost.label') }}</label
-                  >
-                  <input
-                    v-model="form.rateLimitCost"
-                    class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                    min="0"
-                    :placeholder="$t('apiKeys.edit.rate_limit.cost.placeholder')"
-                    step="0.01"
-                    type="number"
-                  />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">{{ $t('apiKeys.edit.rate_limit.cost.help') }}</p>
-                </div>
-              </div>
-
-              <!-- 示例说明 -->
-              <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-                <h5 class="mb-1 text-xs font-semibold text-blue-800 dark:text-blue-400">
-                  {{ $t('apiKeys.edit.rate_limit.examples.title') }}
-                </h5>
-                <div class="space-y-0.5 text-xs text-blue-700 dark:text-blue-300">
-                  <div>
-                    {{ $t('apiKeys.edit.rate_limit.example1') }}
-                  </div>
-                  <div>{{ $t('apiKeys.edit.rate_limit.example2') }}</div>
-                  <div>
-                    {{ $t('apiKeys.edit.rate_limit.example3') }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('apiKeys.edit.daily_cost_limit.label') }}</label
-            >
-            <div class="space-y-2">
-              <div class="flex gap-2">
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.dailyCostLimit = '50'"
-                >
-                  $50
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.dailyCostLimit = '100'"
-                >
-                  $100
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.dailyCostLimit = '200'"
-                >
-                  $200
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.dailyCostLimit = ''"
-                >
-                  {{ $t('filter.custom') }}
-                </button>
-              </div>
-              <input
-                v-model="form.dailyCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                min="0"
-                :placeholder="$t('apiKeys.edit.concurrency_limit.placeholder')"
-                step="0.01"
-                type="number"
-              />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ $t('apiKeys.edit.daily_cost_limit.help') }}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('apiKeys.edit.total_cost_limit.label') }}</label
-            >
-            <div class="space-y-2">
-              <div class="flex gap-2">
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.totalCostLimit = '100'"
-                >
-                  $100
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.totalCostLimit = '500'"
-                >
-                  $500
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.totalCostLimit = '1000'"
-                >
-                  $1000
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.totalCostLimit = ''"
-                >
-                  {{ $t('filter.custom') }}
-                </button>
-              </div>
-              <input
-                v-model="form.totalCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                min="0"
-                :placeholder="$t('apiKeys.edit.concurrency_limit.placeholder')"
-                step="0.01"
-                type="number"
-              />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ $t('apiKeys.edit.total_cost_limit.help') }}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('apiKeys.edit.weekly_opus_cost_limit.label') }}</label
-            >
-            <div class="space-y-2">
-              <div class="flex gap-2">
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.weeklyOpusCostLimit = '100'"
-                >
-                  $100
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.weeklyOpusCostLimit = '500'"
-                >
-                  $500
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.weeklyOpusCostLimit = '1000'"
-                >
-                  $1000
-                </button>
-                <button
-                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  type="button"
-                  @click="form.weeklyOpusCostLimit = ''"
-                >
-                  {{ $t('filter.custom') }}
-                </button>
-              </div>
-              <input
-                v-model="form.weeklyOpusCostLimit"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                min="0"
-                :placeholder="$t('apiKeys.edit.concurrency_limit.placeholder')"
-                step="0.01"
-                type="number"
-              />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ $t('apiKeys.edit.weekly_opus_cost_limit.help') }}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('apiKeys.edit.concurrency_limit.label') }}</label
-            >
-            <input
-              v-model="form.concurrencyLimit"
-              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              min="0"
-              :placeholder="$t('apiKeys.edit.concurrency_limit.placeholder')"
-              type="number"
-            />
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              {{ $t('apiKeys.edit.concurrency_limit.help') }}
-            </p>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('create_modal.description_label') }}</label
-            >
-            <textarea
-              v-model="form.description"
-              class="form-input w-full resize-none border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              :placeholder="$t('create_modal.description_placeholder')"
-              rows="2"
-            />
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('create_modal.expiry.title') }}</label
-            >
-            <!-- 过期模式选择 -->
-            <div
-              class="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800"
-            >
-              <div class="flex items-center gap-4">
-                <label class="flex cursor-pointer items-center">
-                  <input
-                    v-model="form.expirationMode"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                    type="radio"
-                    value="fixed"
-                  />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('create_modal.expiry.fixed_mode') }}</span>
-                </label>
-                <label class="flex cursor-pointer items-center">
-                  <input
-                    v-model="form.expirationMode"
-                    class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                    type="radio"
-                    value="activation"
-                  />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('create_modal.expiry.activation_mode') }}</span>
-                </label>
-              </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                <span v-if="form.expirationMode === 'fixed'">
-                  <i class="fas fa-info-circle mr-1" />
-                  {{ $t('create_modal.expiry.fixed_help') }}
-                </span>
-                <span v-else>
-                  <i class="fas fa-info-circle mr-1" />
-                  {{ $t('create_modal.expiry.activation_help') }}
-                </span>
-              </p>
-            </div>
-
-            <!-- 固定时间模式 -->
-            <div v-if="form.expirationMode === 'fixed'">
-              <select
-                v-model="form.expireDuration"
-                class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                @change="updateExpireAt"
-              >
-                <option value="">{{ $t('status.never_expires') }}</option>
-                <option value="1h">1 {{ $t('time.hours') }}</option>
-                <option value="3h">3 {{ $t('time.hours') }}</option>
-                <option value="6h">6 {{ $t('time.hours') }}</option>
-                <option value="12h">12 {{ $t('time.hours') }}</option>
-                <option value="1d">1 {{ $t('time.days') }}</option>
-                <option value="7d">7 {{ $t('time.days') }}</option>
-                <option value="30d">30 {{ $t('time.days') }}</option>
-                <option value="90d">90 {{ $t('time.days') }}</option>
-                <option value="180d">180 {{ $t('time.days') }}</option>
-                <option value="365d">365 {{ $t('time.days') }}</option>
-                <option value="custom">{{ $t('create_modal.expiry.custom_date') }}</option>
-              </select>
-              <div v-if="form.expireDuration === 'custom'" class="mt-3">
-                <input
-                  v-model="form.customExpireDate"
-                  class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                  :min="minDateTime"
-                  type="datetime-local"
-                  @change="updateCustomExpireAt"
-                />
-              </div>
-              <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                {{ $t('expiry_modal.expires_at', { date: formatExpireDate(form.expiresAt) }) }}
-              </p>
-            </div>
-
-            <!-- 激活模式 -->
-            <div v-else>
-              <div class="flex items-center gap-2">
-                <input
-                  v-model.number="form.activationDays"
-                  class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                  :max="form.activationUnit === 'hours' ? 8760 : 3650"
-                  min="1"
-                  :placeholder="form.activationUnit === 'hours' ? $t('create_modal.expiry.hours_placeholder') : $t('create_modal.expiry.days_placeholder')"
-                  type="number"
-                />
-                <select
-                  v-model="form.activationUnit"
-                  class="form-input w-20 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                  @change="updateActivationValue"
-                >
-                  <option value="hours">{{ $t('create_modal.expiry.hours_label') }}</option>
-                  <option value="days">{{ $t('create_modal.expiry.days_label') }}</option>
-                </select>
-              </div>
-              <div class="mt-2 flex flex-wrap gap-2">
-                <button
-                  v-for="value in getQuickTimeOptions()"
-                  :key="value.value"
-                  class="rounded-md border border-gray-300 px-3 py-1 text-xs hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
-                  type="button"
-                  @click="form.activationDays = value.value"
-                >
-                  {{ value.label }}
-                </button>
-              </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                <i class="fas fa-clock mr-1" />
-                {{ $t('create_modal.expiry.activation_info', { time: form.activationDays || (form.activationUnit === 'hours' ? 24 : 30), unit: form.activationUnit === 'hours' ? $t('time.hours') : $t('time.days') }) }}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >{{ $t('apiKeys.edit.permissions.label') }}</label
-            >
-            <div class="flex gap-4 flex-wrap">
-              <label class="flex cursor-pointer items-center">
-                <input
-                  v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                  type="radio"
-                  value="all"
-                />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('apiKeys.edit.permissions.all') }}</span>
-              </label>
-              <label class="flex cursor-pointer items-center">
-                <input
-                  v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                  type="radio"
-                  value="claude"
-                />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('apiKeys.edit.permissions.claude_only') }}</span>
-              </label>
-              <label class="flex cursor-pointer items-center">
-                <input
-                  v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                  type="radio"
-                  value="gemini"
-                />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('apiKeys.edit.permissions.gemini_only') }}</span>
-              </label>
-              <label class="flex cursor-pointer items-center">
-                <input
-                  v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                  type="radio"
-                  value="openai"
-                />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('apiKeys.edit.permissions.openai_only') }}</span>
-              </label>
-              <label class="flex cursor-pointer items-center">
-                <input
-                  v-model="form.permissions"
-                  class="mr-2 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
-                  type="radio"
-                  value="droid"
-                />
-                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('apiKeys.edit.permissions.droid_only') }}</span>
-              </label>
-            </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              {{ $t('apiKeys.edit.permissions.help') }}
-            </p>
-          </div>
-
-          <div>
-            <div class="mb-2 flex items-center justify-between">
-              <label class="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >{{ $t('apiKeys.edit.dedicated_accounts.title') }}</label
-              >
-              <button
-                class="flex items-center gap-1 text-sm text-blue-600 transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
-                :disabled="accountsLoading"
-                :title="$t('apiKeys.edit.dedicated_accounts.refresh')"
-                type="button"
-                @click="refreshAccounts"
-              >
-                <i
-                  :class="[
-                    'fas',
-                    accountsLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt',
-                    'text-xs'
-                  ]"
-                />
-                <span>{{ accountsLoading ? $t('apiKeys.edit.dedicated_accounts.refreshing') : $t('apiKeys.edit.dedicated_accounts.refresh') }}</span>
-              </button>
-            </div>
-            <div class="grid grid-cols-1 gap-3">
-              <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
-                  >{{ $t('apiKeys.edit.dedicated_accounts.claude') }}</label
-                >
-                <AccountSelector
-                  v-model="form.claudeAccountId"
-                  :accounts="localAccounts.claude"
-                  :default-option-text="$t('apiKeys.edit.dedicated_accounts.use_shared')"
-                  :disabled="form.permissions !== 'all' && form.permissions !== 'claude'"
-                  :groups="localAccounts.claudeGroups"
-                  :placeholder="$t('apiKeys.edit.dedicated_accounts.select_placeholder')"
-                  platform="claude"
-                />
-              </div>
-              <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
-                  >{{ $t('apiKeys.edit.dedicated_accounts.gemini') }}</label
-                >
-                <AccountSelector
-                  v-model="form.geminiAccountId"
-                  :accounts="localAccounts.gemini"
-                  :default-option-text="$t('apiKeys.edit.dedicated_accounts.use_shared')"
-                  :disabled="form.permissions !== 'all' && form.permissions !== 'gemini'"
-                  :groups="localAccounts.geminiGroups"
-                  :placeholder="$t('apiKeys.edit.dedicated_accounts.select_placeholder')"
-                  platform="gemini"
-                />
-              </div>
-              <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
-                  >{{ $t('apiKeys.edit.dedicated_accounts.openai') }}</label
-                >
-                <AccountSelector
-                  v-model="form.openaiAccountId"
-                  :accounts="localAccounts.openai"
-                  :default-option-text="$t('apiKeys.edit.dedicated_accounts.use_shared')"
-                  :disabled="form.permissions !== 'all' && form.permissions !== 'openai'"
-                  :groups="localAccounts.openaiGroups"
-                  :placeholder="$t('apiKeys.edit.dedicated_accounts.select_placeholder')"
-                  platform="openai"
-                />
-              </div>
-              <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
-                  >{{ $t('apiKeys.edit.dedicated_accounts.bedrock') }}</label
-                >
-                <AccountSelector
-                  v-model="form.bedrockAccountId"
-                  :accounts="localAccounts.bedrock"
-                  :default-option-text="$t('apiKeys.edit.dedicated_accounts.use_shared')"
-                  :disabled="form.permissions !== 'all' && form.permissions !== 'openai'"
-                  :groups="[]"
-                  :placeholder="$t('apiKeys.edit.dedicated_accounts.select_placeholder')"
-                  platform="bedrock"
-                />
-              </div>
-              <div>
-                <label class="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400"
-                  >{{ $t('apiKeys.edit.dedicated_accounts.droid') }}</label
-                >
-                <AccountSelector
-                  v-model="form.droidAccountId"
-                  :accounts="localAccounts.droid"
-                  :default-option-text="$t('apiKeys.edit.dedicated_accounts.use_shared')"
-                  :disabled="form.permissions !== 'all' && form.permissions !== 'droid'"
-                  :groups="localAccounts.droidGroups"
-                  :placeholder="$t('apiKeys.edit.dedicated_accounts.select_placeholder')"
-                  platform="droid"
-                />
-              </div>
-            </div>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              {{ $t('apiKeys.edit.dedicated_accounts.help') }}
-            </p>
-          </div>
-
-          <div>
-            <div class="mb-2 flex items-center">
-              <input
-                id="enableModelRestriction"
-                v-model="form.enableModelRestriction"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
-                type="checkbox"
-              />
-              <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
-                for="enableModelRestriction"
-              >
-                {{ $t('apiKeys.edit.model_restriction.enable') }}
-              </label>
-            </div>
-
-            <div v-if="form.enableModelRestriction" class="space-y-3">
-              <div>
-                <label class="mb-2 block text-sm font-medium text-gray-600">{{ $t('apiKeys.edit.model_restriction.list.label') }}</label>
-                <div
-                  class="mb-3 flex min-h-[32px] flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2"
-                >
-                  <span
-                    v-for="(model, index) in form.restrictedModels"
-                    :key="index"
-                    class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-sm text-red-800"
-                  >
-                    {{ model }}
-                    <button
-                      class="ml-2 text-red-600 hover:text-red-800"
-                      type="button"
-                      @click="removeRestrictedModel(index)"
-                    >
-                      <i class="fas fa-times text-xs" />
-                    </button>
-                  </span>
-                  <span v-if="form.restrictedModels.length === 0" class="text-sm text-gray-400">
-                    {{ $t('apiKeys.edit.model_restriction.list.empty') }}
-                  </span>
-                </div>
-                <div class="space-y-3">
-                  <!-- 快速添加按钮 -->
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      v-for="model in availableQuickModels"
-                      :key="model"
-                      class="flex-shrink-0 rounded-lg bg-gray-100 px-3 py-1 text-xs text-gray-700 transition-colors hover:bg-gray-200 sm:text-sm"
-                      type="button"
-                      @click="quickAddRestrictedModel(model)"
-                    >
-                      {{ model }}
-                    </button>
-                    <span
-                      v-if="availableQuickModels.length === 0"
-                      class="text-sm italic text-gray-400"
-                    >
-                      {{ $t('apiKeys.edit.model_restriction.all_added') }}
-                    </span>
-                  </div>
-
-                  <!-- 手动输入 -->
-                  <div class="flex gap-2">
-                    <input
-                      v-model="form.modelInput"
-                      class="form-input flex-1"
-                      :placeholder="$t('apiKeys.edit.model_restriction.list.placeholder')"
-                      type="text"
-                      @keydown.enter.prevent="addRestrictedModel"
-                    />
-                    <button
-                      class="rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600"
-                      type="button"
-                      @click="addRestrictedModel"
-                    >
-                      <i class="fas fa-plus" />
-                    </button>
-                  </div>
-                </div>
-                <p class="mt-2 text-xs text-gray-500">
-                  {{ $t('apiKeys.edit.model_restriction.list.help') }}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 客户端限制 -->
-          <div>
-            <div class="mb-2 flex items-center">
-              <input
-                id="enableClientRestriction"
-                v-model="form.enableClientRestriction"
-                class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
-                type="checkbox"
-              />
-              <label
-                class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
-                for="enableClientRestriction"
-              >
-                {{ $t('apiKeys.edit.client_restriction.enable') }}
-              </label>
-            </div>
-
-            <div
-              v-if="form.enableClientRestriction"
-              class="rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-700 dark:bg-green-900/20"
-            >
-              <div>
-                <label class="mb-2 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                  >{{ $t('apiKeys.edit.client_restriction.label') }}</label
-                >
-                <div class="space-y-1">
-                  <div v-for="client in supportedClients" :key="client.id" class="flex items-start">
-                    <input
-                      :id="`client_${client.id}`"
-                      v-model="form.allowedClients"
-                      class="mt-0.5 h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
-                      type="checkbox"
-                      :value="client.id"
-                    />
-                    <label class="ml-2 flex-1 cursor-pointer" :for="`client_${client.id}`">
-                      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
-                        client.name
-                      }}</span>
-                      <span class="block text-xs text-gray-500 dark:text-gray-400">{{
-                        client.description
-                      }}</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex gap-3 pt-2">
-            <button
-              class="flex-1 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-              type="button"
-              @click="$emit('close')"
-            >
-              {{ $t('common.action.cancel') }}
-            </button>
-            <button
-              class="btn btn-primary flex-1 px-4 py-2.5 text-sm font-semibold"
-              :disabled="loading"
-              type="submit"
-            >
-              <div v-if="loading" class="loading-spinner mr-2" />
-              <i v-else class="fas fa-plus mr-2" />
-              {{ loading ? $t('common.status.loading') : $t('common.action.create') }}
-            </button>
-          </div>
               <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
                 速率限制设置 (可选)
               </h4>

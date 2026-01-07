@@ -715,7 +715,7 @@
                                       ? formatWindowTime(
                                           getCachedStats(key.id)?.windowRemainingSeconds || 0
                                         )
-                                      : '{{ t('apiKeys.limit.not_activated') }}'
+                                      : t('apiKeys.limit.not_activated')
                                   }}
                                 </span>
                               </div>
@@ -1439,7 +1439,7 @@
                     <div class="flex items-center justify-between">
                       <span>最后使用</span>
                       <span class="font-medium text-gray-700 dark:text-gray-300">
-                        {{ key.lastUsedAt ? formatLastUsed(key.lastUsedAt) : '{{ t('apiKeys.time.never_used') }}' }}
+                        {{ key.lastUsedAt ? formatLastUsed(key.lastUsedAt) : t('apiKeys.time.never_used') }}
                       </span>
                     </div>
                     <div class="mt-1 flex items-center justify-between">
@@ -1552,7 +1552,7 @@
                               ? formatWindowTime(
                                   getCachedStats(key.id)?.windowRemainingSeconds || 0
                                 )
-                              : '{{ t('apiKeys.limit.not_activated') }}'
+                              : t('apiKeys.limit.not_activated')
                           }}
                         </span>
                       </div>
@@ -1584,11 +1584,11 @@
                         isApiKeyExpiringSoon(key.expiresAt) ? 'font-semibold text-orange-600' : ''
                       "
                     >
-                      {{ key.expiresAt ? formatDate(key.expiresAt) : '{{ t('apiKeys.status.never_expires') }}' }}
+                      {{ key.expiresAt ? formatDate(key.expiresAt) : t('apiKeys.status.never_expires') }}
                     </span>
                     <button
                       class="inline-flex h-5 w-5 items-center justify-center rounded text-gray-300 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-900/20"
-                      title="{{ t('common.action.edit') }}过期时间"
+                      :title="t('common.action.edit') + '过期时间'"
                       @click.stop="startEditExpiry(key)"
                     >
                       <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3768,10 +3768,10 @@ const handleBatchCreateSuccess = (data) => {
   loadApiKeys()
 }
 
-// 打开批量{{ t('common.action.edit') }}模态框
+// 打开批量编辑模态框
 const openBatchEditModal = () => {
   if (selectedApiKeys.value.length === 0) {
-    showToast('请先选择要{{ t('common.action.edit') }}的 API Keys', 'warning')
+    showToast('请先选择要' + t('common.action.edit') + '的 API Keys', 'warning')
     return
   }
 
@@ -3799,10 +3799,10 @@ const handleEditSuccess = () => {
   loadApiKeys()
 }
 
-// 处理{{ t('common.action.renew') }}成功
+// 处理续期成功
 const handleRenewSuccess = () => {
   showRenewApiKeyModal.value = false
-  showToast('API Key {{ t('common.action.renew') }}成功', 'success')
+  showToast('API Key ' + t('common.action.renew') + '成功', 'success')
   loadApiKeys()
 }
 
@@ -3811,18 +3811,18 @@ const getApiKeyActions = (key) => {
   const actions = [
     {
       key: 'edit',
-      label: '{{ t('common.action.edit') }}',
+      label: t('common.action.edit'),
       icon: 'fa-edit',
       color: 'blue',
       handler: () => openEditApiKeyModal(key)
     }
   ]
 
-  // 如果需要{{ t('common.action.renew') }}
+  // 如果需要续期
   if (key.expiresAt && (isApiKeyExpired(key.expiresAt) || isApiKeyExpiringSoon(key.expiresAt))) {
     actions.push({
       key: 'renew',
-      label: '{{ t('common.action.renew') }}',
+      label: t('common.action.renew'),
       icon: 'fa-clock',
       color: 'green',
       handler: () => openRenewApiKeyModal(key)
@@ -4311,7 +4311,7 @@ const openTimeline = (keyId) => {
 
 // 格式化最后使用时间
 const formatLastUsed = (dateString) => {
-  if (!dateString) return '{{ t('apiKeys.time.never_used') }}'
+  if (!dateString) return t('apiKeys.time.never_used')
   const date = new Date(dateString)
   const now = new Date()
   const diff = now - date
@@ -4481,26 +4481,26 @@ const exportToExcel = () => {
                     : key.permissions || '',
 
         // 限制配置
-        令牌限制: key.tokenLimit === '0' || key.tokenLimit === 0 ? '{{ t('apiKeys.limit.no_limit') }}' : key.tokenLimit || '',
+        令牌限制: key.tokenLimit === '0' || key.tokenLimit === 0 ? t('apiKeys.limit.no_limit') : key.tokenLimit || '',
         并发限制:
           key.concurrencyLimit === '0' || key.concurrencyLimit === 0
-            ? '{{ t('apiKeys.limit.no_limit') }}'
+            ? t('apiKeys.limit.no_limit')
             : key.concurrencyLimit || '',
         '速率窗口(分钟)':
           key.rateLimitWindow === '0' || key.rateLimitWindow === 0
-            ? '{{ t('apiKeys.limit.no_limit') }}'
+            ? t('apiKeys.limit.no_limit')
             : key.rateLimitWindow || '',
         速率请求限制:
           key.rateLimitRequests === '0' || key.rateLimitRequests === 0
-            ? '{{ t('apiKeys.limit.no_limit') }}'
+            ? t('apiKeys.limit.no_limit')
             : key.rateLimitRequests || '',
         '日费用限制($)':
           key.dailyCostLimit === '0' || key.dailyCostLimit === 0
-            ? '{{ t('apiKeys.limit.no_limit') }}'
+            ? t('apiKeys.limit.no_limit')
             : `$${key.dailyCostLimit}` || '',
         '总费用限制($)':
           key.totalCostLimit === '0' || key.totalCostLimit === 0
-            ? '{{ t('apiKeys.limit.no_limit') }}'
+            ? t('apiKeys.limit.no_limit')
             : `$${key.totalCostLimit}` || '',
 
         // 账户绑定
@@ -4535,7 +4535,7 @@ const exportToExcel = () => {
         Token数: formatTokenCount(periodTokens),
         输入Token: formatTokenCount(periodInputTokens),
         输出Token: formatTokenCount(periodOutputTokens),
-        最后使用时间: key.lastUsedAt ? formatDate(key.lastUsedAt) : '{{ t('apiKeys.time.never_used') }}',
+        最后使用时间: key.lastUsedAt ? formatDate(key.lastUsedAt) : t('apiKeys.time.never_used'),
         最后使用账号: getLastUsageFullName(key),
         最后使用类型: getLastUsageTypeLabel(key)
       }
@@ -4683,7 +4683,7 @@ const exportToExcel = () => {
           }
         } else if (header === '最后使用时间') {
           cellStyle.alignment = { horizontal: 'right', vertical: 'center' }
-          if (value === '{{ t('apiKeys.time.never_used') }}') {
+          if (value === t('apiKeys.time.never_used')) {
             cellStyle.font = { ...cellStyle.font, color: { rgb: '999999' }, italic: true }
           }
         } else if (header && header.includes('费用')) {
