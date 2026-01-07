@@ -49,7 +49,7 @@ router.get('/:groupId', authenticateAdmin, async (req, res) => {
     const group = await accountGroupService.getGroup(groupId)
 
     if (!group) {
-      return res.status(404).json({ error: '分组不存在' })
+      return res.status(404).json({ error: 'El grupo no existe' })
     }
 
     return res.json({ success: true, data: group })
@@ -78,7 +78,7 @@ router.delete('/:groupId', authenticateAdmin, async (req, res) => {
   try {
     const { groupId } = req.params
     await accountGroupService.deleteGroup(groupId)
-    return res.json({ success: true, message: '分组删除成功' })
+    return res.json({ success: true, message: 'Grupo eliminado con éxito' })
   } catch (error) {
     logger.error('❌ Failed to delete account group:', error)
     return res.status(400).json({ error: error.message })
@@ -92,7 +92,7 @@ router.get('/:groupId/members', authenticateAdmin, async (req, res) => {
     const group = await accountGroupService.getGroup(groupId)
 
     if (!group) {
-      return res.status(404).json({ error: '分组不存在' })
+      return res.status(404).json({ error: 'El grupo no existe' })
     }
 
     const memberIds = await accountGroupService.getGroupMembers(groupId)

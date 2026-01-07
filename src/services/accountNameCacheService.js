@@ -148,10 +148,10 @@ class AccountNameCacheService {
       this.lastRefresh = Date.now()
 
       logger.debug(
-        `账户名称缓存已刷新: ${newAccountCache.size} 个账户, ${newGroupCache.size} 个分组`
+        `Account name cache refreshed: ${newAccountCache.size} 个账户, ${newGroupCache.size} 个分组`
       )
     } catch (error) {
-      logger.error('刷新账户名称缓存失败:', error)
+      logger.error('Failed to refresh account name cache:', error)
     } finally {
       this.isRefreshing = false
     }
@@ -248,9 +248,9 @@ class AccountNameCacheService {
     return apiKeys.filter((key) => {
       const bindings = this.getBindingDisplayNames(key)
 
-      // 无绑定时，匹配"共享池"
+      // 无绑定时，匹配"Piscina compartida"
       if (bindings.length === 0) {
-        return '共享池'.includes(lowerKeyword) || 'shared'.includes(lowerKeyword)
+        return 'Piscina compartida'.includes(lowerKeyword) || 'shared'.includes(lowerKeyword)
       }
 
       // 匹配任一绑定账户

@@ -105,7 +105,7 @@ class UnifiedOpenAIScheduler {
         account.schedulable = 'true'
       }
       isSchedulable = true
-      logger.info(`✅ OpenAI账号 ${account.name || accountId} 已解除限流，恢复调度权限`)
+      logger.info(`✅ OpenAI account ${account.name || accountId} rate limit cleared, scheduling resumed`)
     }
 
     if (hasRateLimitFlag) {
@@ -476,7 +476,7 @@ class UnifiedOpenAIScheduler {
           if (!schedulable) {
             account.schedulable = 'true'
             account.status = 'active'
-            logger.info(`✅ OpenAI-Responses账号 ${account.name} 已解除限流，恢复调度权限`)
+            logger.info(`✅ OpenAI-Responses account ${account.name} rate limit cleared, scheduling resumed`)
           }
         }
 
@@ -679,7 +679,7 @@ class UnifiedOpenAIScheduler {
     accountId,
     accountType,
     sessionHash = null,
-    reason = 'OpenAI账号认证失败（401错误）'
+    reason = 'OpenAI account authentication failed (401 error)'
   ) {
     try {
       if (accountType === 'openai') {

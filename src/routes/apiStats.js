@@ -99,7 +99,7 @@ router.post('/api/user-stats', async (req, res) => {
         const keyName = keyData.name || 'Unknown'
         return res.status(403).json({
           error: 'API key is disabled',
-          message: `API Key "${keyName}" 已被禁用`,
+          message: `La clave API "${keyName}" ha sido deshabilitada`,
           keyName
         })
       }
@@ -109,7 +109,7 @@ router.post('/api/user-stats', async (req, res) => {
         const keyName = keyData.name || 'Unknown'
         return res.status(403).json({
           error: 'API key has expired',
-          message: `API Key "${keyName}" 已过期`,
+          message: `La clave API "${keyName}" ha caducado`,
           keyName
         })
       }
@@ -898,7 +898,7 @@ router.post('/api/user-model-stats', async (req, res) => {
         const keyName = keyData.name || 'Unknown'
         return res.status(403).json({
           error: 'API key is disabled',
-          message: `API Key "${keyName}" 已被禁用`,
+          message: `La clave API "${keyName}" ha sido deshabilitada`,
           keyName
         })
       }

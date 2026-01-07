@@ -339,7 +339,7 @@ router.post('/test', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 手动触发测试通知
+// 手动触发Notificación de prueba
 router.post('/test-notification', authenticateAdmin, async (req, res) => {
   try {
     const {
@@ -349,11 +349,11 @@ router.post('/test-notification', authenticateAdmin, async (req, res) => {
       platform = 'claude-oauth',
       status = 'test',
       errorCode = 'TEST_NOTIFICATION',
-      reason = '手动测试通知',
-      message = '这是一条测试通知消息，用于验证 Webhook 通知功能是否正常工作'
+      reason = '手动Notificación de prueba',
+      message = '这是一条Notificación de prueba消息，用于验证 Webhook 通知功能是否正常工作'
     } = req.body
 
-    logger.info(`🧪 发送测试通知: ${type}`)
+    logger.info(`🧪 发送Notificación de prueba: ${type}`)
 
     // 先检查webhook配置
     const config = await webhookConfigService.getConfig()
@@ -410,28 +410,28 @@ router.post('/test-notification', authenticateAdmin, async (req, res) => {
     }
 
     if (result.failed > 0) {
-      logger.warn(`⚠️ 测试通知部分失败: ${result.succeeded}成功, ${result.failed}失败`)
+      logger.warn(`⚠️ Notificación de prueba部分失败: ${result.succeeded}成功, ${result.failed}失败`)
       return res.json({
         success: true,
-        message: `测试通知部分成功: ${result.succeeded}个平台成功, ${result.failed}个平台失败`,
+        message: `Notificación de prueba部分成功: ${result.succeeded}个平台成功, ${result.failed}个平台失败`,
         data: testData,
         result
       })
     }
 
-    logger.info(`✅ 测试通知发送成功到 ${result.succeeded} 个平台`)
+    logger.info(`✅ Notificación de prueba发送成功到 ${result.succeeded} 个平台`)
 
     res.json({
       success: true,
-      message: `测试通知已成功发送到 ${result.succeeded} 个平台`,
+      message: `Notificación de prueba已成功发送到 ${result.succeeded} 个平台`,
       data: testData,
       result
     })
   } catch (error) {
-    logger.error('❌ 发送测试通知失败:', error)
+    logger.error('❌ 发送Notificación de prueba失败:', error)
     res.status(500).json({
       error: 'Internal server error',
-      message: `发送测试通知失败: ${error.message}`
+      message: `发送Notificación de prueba失败: ${error.message}`
     })
   }
 })

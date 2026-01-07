@@ -118,13 +118,13 @@ class LdapService {
 
       if (domainParts.length > 0) {
         const domain = domainParts.join('.')
-        logger.debug(`🌐 从DN提取域名: ${domain}`)
+        logger.debug(`🌐 Extracting domain from DN: ${domain}`)
         return domain
       }
 
       return null
     } catch (error) {
-      logger.debug('⚠️ 域名提取失败:', error.message)
+      logger.debug('⚠️ Domain extraction failed:', error.message)
       return null
     }
   }
@@ -400,23 +400,23 @@ class LdapService {
     // 纯用户名（最后尝试）
     adFormats.push(username)
 
-    logger.info(`🔄 尝试 ${adFormats.length} 种Windows AD认证格式...`)
+    logger.info(`🔄 Attempting ${adFormats.length} Windows AD authentication formats...`)
 
     for (const format of adFormats) {
       try {
-        logger.info(`🔍 尝试格式: ${format}`)
+        logger.info(`🔍 Attempting format: ${format}`)
         const result = await this.tryDirectBind(format, password)
         if (result) {
-          logger.info(`✅ Windows AD认证成功: ${format}`)
+          logger.info(`✅ Windows AD authentication successful: ${format}`)
           return true
         }
-        logger.debug(`❌ 认证失败: ${format}`)
+        logger.debug(`❌ Authentication failed: ${format}`)
       } catch (error) {
-        logger.debug(`认证异常 ${format}:`, error.message)
+        logger.debug(`Authentication exception ${format}:`, error.message)
       }
     }
 
-    logger.info(`🚫 所有Windows AD格式认证都失败了`)
+    logger.info(`🚫 All Windows AD format authentications failed`)
     return false
   }
 

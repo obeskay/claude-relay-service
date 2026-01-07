@@ -371,7 +371,7 @@ router.delete('/:accountId', authenticateAdmin, async (req, res) => {
 
     let message = 'Gemini账号已成功删除'
     if (unboundCount > 0) {
-      message += `，${unboundCount} 个 API Key 已切换为共享池模式`
+      message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
 
     logger.success(`🗑️ Admin deleted Gemini account: ${accountId}, unbound ${unboundCount} keys`)

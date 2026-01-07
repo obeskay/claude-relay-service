@@ -824,10 +824,6 @@ function calculatePercentage(value, stats) {
 function createModelUsageChart() {
   if (!modelUsageChart.value) return
 
-  if (modelUsageChartInstance) {
-    modelUsageChartInstance.destroy()
-  }
-
   const data = dashboardModelStats.value || []
   const chartData = {
     labels: data.map((d) => d.model),
@@ -849,6 +845,15 @@ function createModelUsageChart() {
         borderWidth: 0
       }
     ]
+  }
+
+  // Update existing chart instead of recreating
+  if (modelUsageChartInstance) {
+    modelUsageChartInstance.data = chartData
+    // Update theme-dependent options
+    modelUsageChartInstance.options.plugins.legend.labels.color = chartColors.value.legend
+    modelUsageChartInstance.update('none') // 'none' mode skips animations for faster updates
+    return
   }
 
   modelUsageChartInstance = new Chart(modelUsageChart.value, {
@@ -887,10 +892,6 @@ function createModelUsageChart() {
 // 创建使用趋势图
 function createUsageTrendChart() {
   if (!usageTrendChart.value) return
-
-  if (usageTrendChartInstance) {
-    usageTrendChartInstance.destroy()
-  }
 
   const data = trendData.value || []
 
@@ -977,6 +978,25 @@ function createUsageTrendChart() {
         yAxisID: 'y1'
       }
     ]
+  }
+
+  // Update existing chart instead of recreating
+  if (usageTrendChartInstance) {
+    usageTrendChartInstance.data = chartData
+    // Update theme-dependent options
+    const opts = usageTrendChartInstance.options
+    opts.plugins.title.color = chartColors.value.text
+    opts.plugins.legend.labels.color = chartColors.value.legend
+    opts.scales.x.title.color = chartColors.value.text
+    opts.scales.x.ticks.color = chartColors.value.text
+    opts.scales.x.grid.color = chartColors.value.grid
+    opts.scales.y.title.color = chartColors.value.text
+    opts.scales.y.ticks.color = chartColors.value.text
+    opts.scales.y.grid.color = chartColors.value.grid
+    opts.scales.y1.title.color = chartColors.value.text
+    opts.scales.y1.ticks.color = chartColors.value.text
+    usageTrendChartInstance.update('none')
+    return
   }
 
   usageTrendChartInstance = new Chart(usageTrendChart.value, {
@@ -1123,10 +1143,6 @@ function createUsageTrendChart() {
 function createApiKeysUsageTrendChart() {
   if (!apiKeysUsageTrendChart.value) return
 
-  if (apiKeysUsageTrendChartInstance) {
-    apiKeysUsageTrendChartInstance.destroy()
-  }
-
   const data = apiKeysTrendData.value.data || []
   const metric = apiKeysTrendMetric.value
 
@@ -1199,6 +1215,23 @@ function createApiKeysUsageTrendChart() {
       return d.date
     }),
     datasets: datasets
+  }
+
+  // Update existing chart instead of recreating
+  if (apiKeysUsageTrendChartInstance) {
+    apiKeysUsageTrendChartInstance.data = chartData
+    // Update theme-dependent options
+    const opts = apiKeysUsageTrendChartInstance.options
+    opts.plugins.legend.labels.color = chartColors.value.legend
+    opts.scales.x.title.color = chartColors.value.text
+    opts.scales.x.ticks.color = chartColors.value.text
+    opts.scales.x.grid.color = chartColors.value.grid
+    opts.scales.y.title.color = chartColors.value.text
+    opts.scales.y.title.text = metric === 'tokens' ? 'Token 数量' : '请求次数'
+    opts.scales.y.ticks.color = chartColors.value.text
+    opts.scales.y.grid.color = chartColors.value.grid
+    apiKeysUsageTrendChartInstance.update('none')
+    return
   }
 
   apiKeysUsageTrendChartInstance = new Chart(apiKeysUsageTrendChart.value, {
@@ -1323,10 +1356,6 @@ async function updateApiKeysUsageTrendChart() {
 function createAccountUsageTrendChart() {
   if (!accountUsageTrendChart.value) return
 
-  if (accountUsageTrendChartInstance) {
-    accountUsageTrendChartInstance.destroy()
-  }
-
   const trend = accountUsageTrendData.value?.data || []
   const topAccounts = accountUsageTrendData.value?.topAccounts || []
 
@@ -1392,6 +1421,23 @@ function createAccountUsageTrendChart() {
   }
 
   const topAccountIds = topAccounts
+
+  // Update existing chart instead of recreating
+  if (accountUsageTrendChartInstance) {
+    accountUsageTrendChartInstance.data = chartData
+    // Update theme-dependent options
+    const opts = accountUsageTrendChartInstance.options
+    opts.plugins.legend.labels.color = chartColors.value.legend
+    opts.scales.x.title.color = chartColors.value.text
+    opts.scales.x.title.text = trendGranularity.value === 'hour' ? '时间' : '日期'
+    opts.scales.x.ticks.color = chartColors.value.text
+    opts.scales.x.grid.color = chartColors.value.grid
+    opts.scales.y.title.color = chartColors.value.text
+    opts.scales.y.ticks.color = chartColors.value.text
+    opts.scales.y.grid.color = chartColors.value.grid
+    accountUsageTrendChartInstance.update('none')
+    return
+  }
 
   accountUsageTrendChartInstance = new Chart(accountUsageTrendChart.value, {
     type: 'line',

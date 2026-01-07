@@ -126,7 +126,7 @@ async function handleMessagesRequest(req, res) {
       return res.status(403).json({
         error: {
           type: 'permission_error',
-          message: '此 API Key 无权访问 Claude 服务'
+          message: 'Esta clave API no tiene permiso para acceder al servicio Claude'
         }
       })
     }
@@ -169,7 +169,7 @@ async function handleMessagesRequest(req, res) {
         return res.status(403).json({
           error: {
             type: 'forbidden',
-            message: '暂无该模型访问权限'
+            message: 'Sin permiso de acceso para este modelo'
           }
         })
       }
@@ -353,7 +353,7 @@ async function handleMessagesRequest(req, res) {
           return res.status(400).json({
             error: {
               type: 'session_binding_error',
-              message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
+              message: cfg.sessionBindingErrorMessage || 'Su sesión local está contaminada, límpiela antes de usarla.'
             }
           })
         }
@@ -869,7 +869,7 @@ async function handleMessagesRequest(req, res) {
           return res.status(400).json({
             error: {
               type: 'session_binding_error',
-              message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
+              message: cfg.sessionBindingErrorMessage || 'Su sesión local está contaminada, límpiela antes de usarla.'
             }
           })
         }
@@ -1380,7 +1380,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
       return res.status(400).json({
         error: {
           type: 'session_binding_error',
-          message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
+          message: cfg.sessionBindingErrorMessage || 'Su sesión local está contaminada, límpiela antes de usarla.'
         }
       })
     }

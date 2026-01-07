@@ -708,7 +708,7 @@ class ClaudeConsoleAccountService {
       const updates = {
         schedulable: 'false',
         status: 'unauthorized',
-        errorMessage: 'API Key无效或已过期（401错误）',
+        errorMessage: 'La clave API no es válida o ha caducado (error 401)',
         unauthorizedAt: new Date().toISOString(),
         unauthorizedCount: String((parseInt(account.unauthorizedCount || '0') || 0) + 1)
       }
@@ -724,7 +724,7 @@ class ClaudeConsoleAccountService {
           platform: 'claude-console',
           status: 'error',
           errorCode: 'CLAUDE_CONSOLE_UNAUTHORIZED',
-          reason: 'API Key无效或已过期（401错误），账户已停止调度',
+          reason: 'La clave API no es válida o ha caducado (error 401)，账户已停止调度',
           timestamp: new Date().toISOString()
         })
       } catch (webhookError) {
@@ -775,7 +775,7 @@ class ClaudeConsoleAccountService {
         isActive: 'false', // 禁用账户（与429保持一致）
         schedulable: 'false', // 停止调度（与429保持一致）
         status: 'account_blocked', // 设置状态（与429保持一致）
-        errorMessage: '账户临时被禁用（400错误）',
+        errorMessage: 'La cuenta ha sido deshabilitada temporalmente (error 400)',
         // 使用独立的封禁自动停止标记
         blockedAutoStopped: 'true'
       }
@@ -791,7 +791,7 @@ class ClaudeConsoleAccountService {
           platform: 'claude-console',
           status: 'error',
           errorCode: 'CLAUDE_CONSOLE_BLOCKED',
-          reason: `账户临时被禁用（400错误）。账户将在 ${blockedMinutes} 分钟后自动恢复。`,
+          reason: `La cuenta ha sido deshabilitada temporalmente (error 400)。账户将在 ${blockedMinutes} 分钟后自动恢复。`,
           errorDetails: errorDetails || '无错误详情',
           timestamp: new Date().toISOString()
         })
@@ -931,7 +931,7 @@ class ClaudeConsoleAccountService {
       const updates = {
         overloadedAt: new Date().toISOString(),
         overloadStatus: 'overloaded',
-        errorMessage: '服务过载（529错误）'
+        errorMessage: 'Sobrecarga del servicio (error 529)'
       }
 
       await client.hset(`${this.ACCOUNT_KEY_PREFIX}${accountId}`, updates)
@@ -945,7 +945,7 @@ class ClaudeConsoleAccountService {
           platform: 'claude-console',
           status: 'error',
           errorCode: 'CLAUDE_CONSOLE_OVERLOADED',
-          reason: '服务过载（529错误）。账户将暂时停止调度',
+          reason: 'Sobrecarga del servicio (error 529)。账户将暂时停止调度',
           timestamp: new Date().toISOString()
         })
       } catch (webhookError) {

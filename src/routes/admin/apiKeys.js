@@ -1746,7 +1746,7 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
 
     return res.json({
       success: true,
-      message: `批量编辑完成`,
+      message: `Edición por lotes completada`,
       data: results
     })
   } catch (error) {
@@ -2138,7 +2138,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
     if (keyIds.length > 100) {
       return res.status(400).json({
         error: 'Too many keys',
-        message: '每次最多只能删除100个API Keys'
+        message: 'Solo se pueden eliminar hasta 100 claves API a la vez'
       })
     }
 
@@ -2147,7 +2147,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
     if (invalidKeys.length > 0) {
       return res.status(400).json({
         error: 'Invalid key IDs',
-        message: '包含无效的API Key ID'
+        message: 'Contiene IDs de claves API no válidos'
       })
     }
 
@@ -2201,7 +2201,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
 
     return res.json({
       success: true,
-      message: `批量删除完成`,
+      message: `Eliminación por lotes completada`,
       data: results
     })
   } catch (error) {
@@ -2267,7 +2267,7 @@ router.post('/api-keys/:keyId/restore', authenticateAdmin, async (req, res) => {
       logger.success(`✅ Admin ${adminUsername} restored API key: ${keyId}`)
       return res.json({
         success: true,
-        message: 'API Key 已成功恢复',
+        message: 'Clave API recuperada con éxito',
         apiKey: result.apiKey
       })
     } else {
@@ -2313,7 +2313,7 @@ router.delete('/api-keys/:keyId/permanent', authenticateAdmin, async (req, res) 
       logger.success(`🗑️ Admin ${adminUsername} permanently deleted API key: ${keyId}`)
       return res.json({
         success: true,
-        message: 'API Key 已彻底删除'
+        message: 'Clave API eliminada permanentemente'
       })
     }
   } catch (error) {
@@ -2353,7 +2353,7 @@ router.delete('/api-keys/deleted/clear-all', authenticateAdmin, async (req, res)
 
     return res.json({
       success: true,
-      message: `成功清空 ${result.successCount} 个已删除的 API Keys`,
+      message: `Se han vaciado con éxito ${result.successCount} claves API eliminadas`,
       details: {
         total: result.total,
         successCount: result.successCount,

@@ -262,7 +262,7 @@ router.delete('/azure-openai-accounts/:id', authenticateAdmin, async (req, res) 
 
     let message = 'Azure OpenAI账号已成功删除'
     if (unboundCount > 0) {
-      message += `,${unboundCount} 个 API Key 已切换为共享池模式`
+      message += `,${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
 
     logger.success(`🗑️ Admin deleted Azure OpenAI account: ${id}, unbound ${unboundCount} keys`)
@@ -343,13 +343,13 @@ router.put(
       return res.json({
         success: true,
         schedulable: result.schedulable,
-        message: result.schedulable ? '已启用调度' : '已禁用调度'
+        message: result.schedulable ? 'Programación habilitada' : 'Programación deshabilitada'
       })
     } catch (error) {
       logger.error('切换 Azure OpenAI 账户调度状态失败:', error)
       return res.status(500).json({
         success: false,
-        message: '切换调度状态失败',
+        message: 'Error al cambiar el estado de programación',
         error: error.message
       })
     }

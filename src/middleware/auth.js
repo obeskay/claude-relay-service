@@ -1112,7 +1112,7 @@ const authenticateApiKey = async (req, res, next) => {
 
         return res.status(429).json({
           error: 'Rate limit exceeded',
-          message: `已达到请求次数限制 (${rateLimitRequests} 次)，将在 ${remainingMinutes} 分钟后重置`,
+          message: `Se ha alcanzado el límite de solicitudes (${rateLimitRequests}), se restablecerá en ${remainingMinutes} minutos`,
           currentRequests,
           requestLimit: rateLimitRequests,
           resetAt: resetTime.toISOString(),
@@ -1134,7 +1134,7 @@ const authenticateApiKey = async (req, res, next) => {
 
           return res.status(429).json({
             error: 'Rate limit exceeded',
-            message: `已达到 Token 使用限制 (${tokenLimit} tokens)，将在 ${remainingMinutes} 分钟后重置`,
+            message: `Se ha alcanzado el límite de tokens (${tokenLimit} tokens), se restablecerá en ${remainingMinutes} minutos`,
             currentTokens,
             tokenLimit,
             resetAt: resetTime.toISOString(),
@@ -1155,7 +1155,7 @@ const authenticateApiKey = async (req, res, next) => {
 
           return res.status(429).json({
             error: 'Rate limit exceeded',
-            message: `已达到费用限制 ($${rateLimitCost})，将在 ${remainingMinutes} 分钟后重置`,
+            message: `Se ha alcanzado el límite de costo ($${rateLimitCost}), se restablecerá en ${remainingMinutes} minutos`,
             currentCost,
             costLimit: rateLimitCost,
             resetAt: resetTime.toISOString(),
@@ -1197,7 +1197,7 @@ const authenticateApiKey = async (req, res, next) => {
 
         return res.status(429).json({
           error: 'Daily cost limit exceeded',
-          message: `已达到每日费用限制 ($${dailyCostLimit})`,
+          message: `Se ha alcanzado el límite de costo diario ($${dailyCostLimit})`,
           currentCost: dailyCost,
           costLimit: dailyCostLimit,
           resetAt: new Date(new Date().setHours(24, 0, 0, 0)).toISOString() // 明天0点重置
@@ -1226,7 +1226,7 @@ const authenticateApiKey = async (req, res, next) => {
 
         return res.status(429).json({
           error: 'Total cost limit exceeded',
-          message: `已达到总费用限制 ($${totalCostLimit})`,
+          message: `Se ha alcanzado el límite de costo total ($${totalCostLimit})`,
           currentCost: totalCost,
           costLimit: totalCostLimit
         })
@@ -1267,7 +1267,7 @@ const authenticateApiKey = async (req, res, next) => {
 
           return res.status(429).json({
             error: 'Weekly Opus cost limit exceeded',
-            message: `已达到 Opus 模型周费用限制 ($${weeklyOpusCostLimit})`,
+            message: `Se ha alcanzado el límite de costo semanal del modelo Opus ($${weeklyOpusCostLimit})`,
             currentCost: weeklyOpusCost,
             costLimit: weeklyOpusCostLimit,
             resetAt: resetDate.toISOString() // 下周一重置

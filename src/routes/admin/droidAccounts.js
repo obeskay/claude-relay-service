@@ -118,7 +118,7 @@ router.post('/droid-accounts/exchange-code', authenticateAdmin, async (req, res)
         await redis.deleteOAuthSession(sessionId)
         return res.status(400).json({
           error: 'Device code expired',
-          message: '授权已过期，请重新生成设备码并再次授权'
+          message: 'Authorization expired, please regenerate the device code and authorize again'
         })
       }
 

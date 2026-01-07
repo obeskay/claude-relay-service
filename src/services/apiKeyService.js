@@ -87,7 +87,7 @@ class ApiKeyService {
       geminiAccountId = null,
       openaiAccountId = null,
       azureOpenaiAccountId = null,
-      bedrockAccountId = null, // 添加 Bedrock 账号ID支持
+      bedrockAccountId = null, // 添加 Bedrock cuentaID支持
       droidAccountId = null,
       permissions = 'all', // 可选值：'claude'、'gemini'、'openai'、'droid' 或 'all'
       isActive = true,
@@ -130,7 +130,7 @@ class ApiKeyService {
       geminiAccountId: geminiAccountId || '',
       openaiAccountId: openaiAccountId || '',
       azureOpenaiAccountId: azureOpenaiAccountId || '',
-      bedrockAccountId: bedrockAccountId || '', // 添加 Bedrock 账号ID
+      bedrockAccountId: bedrockAccountId || '', // 添加 Bedrock cuentaID
       droidAccountId: droidAccountId || '',
       permissions: permissions || 'all',
       enableModelRestriction: String(enableModelRestriction),
@@ -184,7 +184,7 @@ class ApiKeyService {
       geminiAccountId: keyData.geminiAccountId,
       openaiAccountId: keyData.openaiAccountId,
       azureOpenaiAccountId: keyData.azureOpenaiAccountId,
-      bedrockAccountId: keyData.bedrockAccountId, // 添加 Bedrock 账号ID
+      bedrockAccountId: keyData.bedrockAccountId, // 添加 Bedrock cuentaID
       droidAccountId: keyData.droidAccountId,
       permissions: keyData.permissions,
       enableModelRestriction: keyData.enableModelRestriction === 'true',
@@ -220,7 +220,7 @@ class ApiKeyService {
       const keyData = await redis.findApiKeyByHash(hashedKey)
 
       if (!keyData) {
-        // ⚠️ 警告：映射表查找失败，可能是竞态条件或映射表损坏
+        // ⚠️ 警告：Hash map lookup failed, possibly a race condition or corrupted hash map
         logger.warn(
           `⚠️ API key not found in hash map: ${hashedKey.substring(0, 16)}... (possible race condition or corrupted hash map)`
         )
@@ -336,7 +336,7 @@ class ApiKeyService {
           geminiAccountId: keyData.geminiAccountId,
           openaiAccountId: keyData.openaiAccountId,
           azureOpenaiAccountId: keyData.azureOpenaiAccountId,
-          bedrockAccountId: keyData.bedrockAccountId, // 添加 Bedrock 账号ID
+          bedrockAccountId: keyData.bedrockAccountId, // 添加 Bedrock cuentaID
           droidAccountId: keyData.droidAccountId,
           permissions: keyData.permissions || 'all',
           tokenLimit: parseInt(keyData.tokenLimit),
@@ -384,7 +384,7 @@ class ApiKeyService {
       // 检查是否激活
       if (keyData.isActive !== 'true') {
         const keyName = keyData.name || 'Unknown'
-        return { valid: false, error: `API Key "${keyName}" 已被禁用`, keyName }
+        return { valid: false, error: `API Key "${keyName}" ha sido deshabilitada`, keyName }
       }
 
       // 注意：这里不处理激活逻辑，保持 API Key 的未激活状态
@@ -396,7 +396,7 @@ class ApiKeyService {
         new Date() > new Date(keyData.expiresAt)
       ) {
         const keyName = keyData.name || 'Unknown'
-        return { valid: false, error: `API Key "${keyName}" 已过期`, keyName }
+        return { valid: false, error: `API Key "${keyName}" ha caducado`, keyName }
       }
 
       // 如果API Key属于某个用户，检查用户是否被禁用
@@ -562,11 +562,11 @@ class ApiKeyService {
               key.windowEndTime = windowEndTime
               key.windowRemainingSeconds = Math.max(0, Math.floor((windowEndTime - now) / 1000))
             } else {
-              // 窗口已过期，下次请求会重置
+              // 窗口ha caducado，下次请求会重置
               key.windowStartTime = null
               key.windowEndTime = null
               key.windowRemainingSeconds = 0
-              // 重置计数为0，因为窗口已过期
+              // 重置计数为0，因为窗口ha caducado
               key.currentWindowRequests = 0
               key.currentWindowTokens = 0
               key.currentWindowCost = 0 // 新增：重置费用
@@ -680,7 +680,7 @@ class ApiKeyService {
         'geminiAccountId',
         'openaiAccountId',
         'azureOpenaiAccountId',
-        'bedrockAccountId', // 添加 Bedrock 账号ID
+        'bedrockAccountId', // 添加 Bedrock cuentaID
         'droidAccountId',
         'permissions',
         'expiresAt',
@@ -759,12 +759,12 @@ class ApiKeyService {
 
       await redis.setApiKey(keyId, updatedData)
 
-      // 从哈希映射中移除（这样就不能再使用这个key进行API调用）
+      // de哈希映射中移除（这样就不能再使用这个key进行API调用）
       if (keyData.apiKey) {
         await redis.deleteApiKeyHash(keyData.apiKey)
       }
 
-      // 从费用排序索引中移除
+      // de费用排序索引中移除
       try {
         const costRankService = require('./costRankService')
         await costRankService.removeKeyFromIndexes(keyId)
@@ -801,7 +801,7 @@ class ApiKeyService {
       updatedData.restoredBy = restoredBy
       updatedData.restoredByType = restoredByType
 
-      // 从更新的数据中移除删除相关的字段
+      // de更新的数据中移除删除相关的字段
       delete updatedData.isDeleted
       delete updatedData.deletedAt
       delete updatedData.deletedBy
@@ -1322,7 +1322,7 @@ class ApiKeyService {
     try {
       accountData = await client.hgetall(redisKey)
     } catch (error) {
-      logger.debug(`加载账号信息失败 ${redisKey}:`, error)
+      logger.debug(`Failed to load account information ${redisKey}:`, error)
     }
 
     if (accountData && Object.keys(accountData).length > 0) {
@@ -1714,10 +1714,10 @@ class ApiKeyService {
     }
   }
 
-  // 🔓 解绑账号从所有API Keys
+  // 🔓 解绑cuentade所有API Keys
   async unbindAccountFromAllKeys(accountId, accountType) {
     try {
-      // 账号类型与字段的映射关系
+      // cuenta类型与字段的映射关系
       const fieldMap = {
         claude: 'claudeAccountId',
         'claude-console': 'claudeConsoleAccountId',
@@ -1728,19 +1728,19 @@ class ApiKeyService {
         azure_openai: 'azureOpenaiAccountId',
         bedrock: 'bedrockAccountId',
         droid: 'droidAccountId',
-        ccr: null // CCR 账号没有对应的 API Key 字段
+        ccr: null // CCR cuenta没有对应的 API Key 字段
       }
 
       const field = fieldMap[accountType]
       if (!field) {
-        logger.info(`账号类型 ${accountType} 不需要解绑 API Key`)
+        logger.info(`Account type ${accountType} does not require API key unbinding`)
         return 0
       }
 
       // 获取所有API Keys
       const allKeys = await this.getAllApiKeys()
 
-      // 筛选绑定到此账号的 API Keys
+      // 筛选绑定到此cuenta的 API Keys
       let boundKeys = []
       if (accountType === 'openai-responses') {
         // OpenAI-Responses 特殊处理：查找 openaiAccountId 字段中带 responses: 前缀的
@@ -1749,7 +1749,7 @@ class ApiKeyService {
         // Gemini-API 特殊处理：查找 geminiAccountId 字段中带 api: 前缀的
         boundKeys = allKeys.filter((key) => key.geminiAccountId === `api:${accountId}`)
       } else {
-        // 其他账号类型正常匹配
+        // 其他cuenta类型正常匹配
         boundKeys = allKeys.filter((key) => key[field] === accountId)
       }
 
@@ -1768,19 +1768,19 @@ class ApiKeyService {
 
         await this.updateApiKey(key.id, updates)
         logger.info(
-          `✅ 自动解绑 API Key ${key.id} (${key.name}) 从 ${accountType} 账号 ${accountId}`
+          `✅ Desvinculación automática de la clave API ${key.id} (${key.name}) de ${accountType} cuenta ${accountId}`
         )
       }
 
       if (boundKeys.length > 0) {
         logger.success(
-          `🔓 成功解绑 ${boundKeys.length} 个 API Key 从 ${accountType} 账号 ${accountId}`
+          `🔓 Desvinculación exitosa de ${boundKeys.length} claves API de ${accountType} cuenta ${accountId}`
         )
       }
 
       return boundKeys.length
     } catch (error) {
-      logger.error(`❌ 解绑 API Keys 失败 (${accountType} 账号 ${accountId}):`, error)
+      logger.error(`❌ Failed to unbind API keys (${accountType} cuenta ${accountId}):`, error)
       return 0
     }
   }
@@ -1793,7 +1793,7 @@ class ApiKeyService {
       let cleanedCount = 0
 
       for (const key of apiKeys) {
-        // 检查是否已过期且仍处于激活状态
+        // 检查是否ha caducado且仍处于激活状态
         if (key.expiresAt && new Date(key.expiresAt) < now && key.isActive === 'true') {
           // 将过期的 API Key 标记为禁用状态，而不是直接删除
           await this.updateApiKey(key.id, { isActive: false })

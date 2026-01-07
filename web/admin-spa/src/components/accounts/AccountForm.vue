@@ -12,7 +12,7 @@
               <i class="fas fa-user-circle text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              {{ isEdit ? '编辑账户' : '添加账户' }}
+              {{ isEdit ? $t('accounts.editAccount') : $t('accounts.addAccount') }}
             </h3>
           </div>
           <button
@@ -40,7 +40,7 @@
               </div>
               <span
                 class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >基本信息</span
+                >{{ $t('accounts.form.basic_info') }}</span
               >
             </div>
             <div class="h-0.5 w-4 bg-gray-300 sm:w-8" />
@@ -55,7 +55,7 @@
               </div>
               <span
                 class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >授权认证</span
+                >{{ $t('accounts.form.authorization') }}</span
               >
             </div>
           </div>
@@ -66,7 +66,7 @@
           <div class="space-y-6">
             <div v-if="!isEdit">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >选择平台</label
+                >{{ $t('accounts.form.select_platform') }}</label
               >
               <!-- 平台分组选择器 -->
               <div class="space-y-3">
@@ -212,7 +212,7 @@
                   class="animate-fadeIn rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
                 >
                   <p class="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
-                    选择具体平台类型：
+                    {{ $t('accounts.form.select_specific_platform') }}
                   </p>
                   <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     <!-- Claude 子选项 -->
@@ -237,7 +237,7 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Claude Code</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('accounts.form.official') }}</span>
                           </div>
                         </div>
                         <div
@@ -270,7 +270,7 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Claude Console</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">标准API</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('accounts.form.standard_api') }}</span>
                           </div>
                         </div>
                         <div
@@ -367,7 +367,7 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Codex Cli</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('accounts.form.official') }}</span>
                           </div>
                         </div>
                         <div
@@ -467,7 +467,38 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Gemini Cli</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('accounts.form.official') }}</span>
+                          </div>
+                        </div>
+                        <div
+                          v-if="form.platform === 'gemini'"
+                          class="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500"
+                        >
+                          <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                      </label>
+
+                      <label
+                        class="group relative flex cursor-pointer items-center rounded-md border p-2 transition-all"
+                        :class="[
+                          form.platform === 'gemini-api'
+                            ? 'border-amber-500 bg-amber-50 dark:border-amber-400 dark:bg-amber-900/30'
+                            : 'border-gray-300 bg-white hover:border-amber-400 hover:bg-amber-50/50 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-amber-500 dark:hover:bg-indigo-900/20'
+                        ]"
+                      >
+                        <input
+                          v-model="form.platform"
+                          class="sr-only"
+                          type="radio"
+                          value="gemini-api"
+                        />
+                        <div class="flex items-center gap-2">
+                          <i class="fas fa-key text-sm text-amber-600 dark:text-amber-400"></i>
+                          <div>
+                            <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
+                              >Gemini API</span
+                            >
+                            <span class="text-xs text-gray-500 dark:text-gray-400">API Key</span>
                           </div>
                         </div>
                         <div
@@ -527,7 +558,7 @@
                             <span class="block text-xs font-medium text-gray-900 dark:text-gray-100"
                               >Droid 专属</span
                             >
-                            <span class="text-xs text-gray-500 dark:text-gray-400">官方</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('accounts.form.official') }}</span>
                           </div>
                         </div>
                         <div
@@ -555,7 +586,7 @@
               "
             >
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >添加方式</label
+                >{{ $t('accounts.form.add_method') }}</label
               >
               <div class="flex flex-wrap gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -566,8 +597,8 @@
                     value="oauth"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300">
-                    OAuth 授权<span v-if="form.platform === 'claude' || form.platform === 'openai'">
-                      (用量可视化)</span
+                    {{ $t('accounts.form.oauth_auth') }}<span v-if="form.platform === 'claude' || form.platform === 'openai'">
+                      ({{ $t('accounts.form.usage_visible') }})</span
                     >
                   </span>
                 </label>
@@ -578,7 +609,7 @@
                     type="radio"
                     value="setup-token"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Setup Token (效期长)</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('accounts.form.setup_token') }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -588,7 +619,7 @@
                     value="manual"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300"
-                    >手动输入 Access Token</span
+                    >{{ $t('accounts.form.manual_token') }}</span
                   >
                 </label>
                 <label v-if="form.platform === 'droid'" class="flex cursor-pointer items-center">
@@ -599,7 +630,7 @@
                     value="apikey"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300"
-                    >使用 API Key (支持多个)</span
+                    >{{ $t('accounts.form.use_api_key') }}</span
                   >
                 </label>
               </div>
@@ -607,13 +638,13 @@
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >账户名称</label
+                >{{ $t('accounts.form.account_name') }}</label
               >
               <input
                 v-model="form.name"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.name }"
-                placeholder="为账户设置一个易识别的名称"
+                :placeholder="$t('accounts.form.account_name_placeholder')"
                 required
                 type="text"
               />
@@ -624,19 +655,19 @@
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >描述 (可选)</label
+                >{{ $t('accounts.form.description_optional') }}</label
               >
               <textarea
                 v-model="form.description"
                 class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="账户用途说明..."
+                :placeholder="$t('accounts.form.description_placeholder')"
                 rows="3"
               />
             </div>
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >账户类型</label
+                >{{ $t('accounts.form.account_type') }}</label
               >
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -646,7 +677,7 @@
                     type="radio"
                     value="shared"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">共享账户</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('accounts.form.shared_account') }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -655,7 +686,7 @@
                     type="radio"
                     value="dedicated"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">专属账户</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('accounts.form.dedicated_account') }}</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -664,19 +695,18 @@
                     type="radio"
                     value="group"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">分组调度</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('accounts.form.group_scheduling') }}</span>
                 </label>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                共享账户：供所有API Key使用；专属账户：仅供特定API
-                Key使用；分组调度：加入分组供分组内调度
+                {{ $t('accounts.form.account_type_help') }}
               </p>
             </div>
 
             <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗，Gemini API 不需要 -->
             <div v-if="!isEdit && form.platform !== 'gemini-api'">
               <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >到期时间 (可选)</label
+                >{{ $t('accounts.form.expiry_date') }}</label
               >
               <div
                 class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800"
@@ -686,12 +716,12 @@
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   @change="updateAccountExpireAt"
                 >
-                  <option value="">永不过期</option>
-                  <option value="30d">30 天</option>
-                  <option value="90d">90 天</option>
-                  <option value="180d">180 天</option>
-                  <option value="365d">365 天</option>
-                  <option value="custom">自定义日期</option>
+                  <option value="">{{ $t('accounts.form.never_expire') }}</option>
+                  <option value="30d">{{ $t('accounts.form.30_days') }}</option>
+                  <option value="90d">{{ $t('accounts.form.90_days') }}</option>
+                  <option value="180d">{{ $t('accounts.form.180_days') }}</option>
+                  <option value="365d">{{ $t('accounts.form.365_days') }}</option>
+                  <option value="custom">{{ $t('accounts.form.custom_date') }}</option>
                 </select>
                 <div v-if="form.expireDuration === 'custom'" class="mt-3">
                   <input
@@ -704,22 +734,22 @@
                 </div>
                 <p v-if="form.expiresAt" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-calendar-alt mr-1" />
-                  将于 {{ formatExpireDate(form.expiresAt) }} 过期
+                  {{ $t('accounts.form.expires_on', { date: formatExpireDate(form.expiresAt) }) }}
                 </p>
                 <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-infinity mr-1" />
-                  账户永不过期
+                  {{ $t('accounts.form.account_never_expires') }}
                 </p>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                设置 Claude Max/Pro 订阅的到期时间，到期后将停止调度此账户
+                {{ $t('accounts.form.expiry_help') }}
               </p>
             </div>
 
             <!-- 分组选择器 -->
             <div v-if="form.accountType === 'group'">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >选择分组 *</label
+                >{{ $t('accounts.form.select_group') }}</label
               >
               <div class="flex gap-2">
                 <div class="flex-1">
@@ -731,7 +761,7 @@
                       v-if="filteredGroups.length === 0"
                       class="text-sm text-gray-500 dark:text-gray-400"
                     >
-                      暂无可用分组
+                      {{ $t('accounts.form.no_groups_available') }}
                     </div>
                     <label
                       v-for="group in filteredGroups"
@@ -745,7 +775,7 @@
                         :value="group.id"
                       />
                       <span class="text-sm text-gray-700 dark:text-gray-200">
-                        {{ group.name }} ({{ group.memberCount || 0 }} 个成员)
+                        {{ group.name }} ({{ $t('accounts.form.members_count', { count: group.memberCount || 0 }) }})
                       </span>
                     </label>
                     <!-- 新建分组选项 -->
@@ -756,7 +786,7 @@
                         @click="handleNewGroup"
                       >
                         <i class="fas fa-plus" />
-                        新建分组
+                        {{ $t('accounts.form.create_new_group') }}
                       </button>
                     </div>
                   </div>
@@ -774,44 +804,43 @@
             <!-- Gemini 项目 ID 字段 -->
             <div v-if="form.platform === 'gemini'">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >项目 ID (可选)</label
+                >{{ $t('accounts.form.gemini_project_id') }}</label
               >
               <input
                 v-model="form.projectId"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="例如：verdant-wares-464411-k9"
+                :placeholder="$t('accounts.form.gemini_project_id_placeholder')"
                 type="text"
               />
               <div class="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
                 <div class="flex items-start gap-2">
                   <i class="fas fa-info-circle mt-0.5 text-yellow-600" />
                   <div class="text-xs text-yellow-700">
-                    <p class="mb-1 font-medium">Google Cloud/Workspace 账号需要提供项目 ID</p>
+                    <p class="mb-1 font-medium">{{ $t('accounts.form.gemini_project_id_title') }}</p>
                     <p>
-                      某些 Google 账号（特别是绑定了 Google Cloud 的账号）会被识别为 Workspace
-                      账号，需要提供额外的项目 ID。
+                      {{ $t('accounts.form.gemini_project_id_help') }}
                     </p>
                     <div class="mt-2 rounded border border-yellow-300 bg-white p-2">
-                      <p class="mb-1 font-medium">如何获取项目 ID：</p>
+                      <p class="mb-1 font-medium">{{ $t('accounts.form.gemini_project_id_howto') }}</p>
                       <ol class="ml-2 list-inside list-decimal space-y-1">
                         <li>
-                          访问
-                          <a
-                            class="font-medium text-blue-600 hover:underline"
-                            href="https://console.cloud.google.com/welcome"
-                            target="_blank"
-                            >Google Cloud Console</a
-                          >
+                          {{ $t('accounts.form.gemini_project_id_step1', { url: 'Google Cloud Console' }) }}
                         </li>
                         <li>
-                          复制<span class="font-semibold text-red-600">项目 ID（Project ID）</span
-                          >，通常是字符串格式
+                          {{ $t('accounts.form.gemini_project_id_step2') }}
                         </li>
                         <li class="text-red-600">
-                          ⚠️ 注意：要复制项目 ID（Project ID），不要复制项目编号（Project Number）！
+                          {{ $t('accounts.form.gemini_project_id_warning') }}
                         </li>
                       </ol>
                     </div>
+                    <p class="mt-2">
+                      <strong>{{ $t('accounts.form.gemini_project_id_tip') }}</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
                     <p class="mt-2">
                       <strong>提示：</strong>如果您的账号是普通个人账号（未绑定 Google
                       Cloud），请留空此字段。
@@ -825,13 +854,13 @@
             <div v-if="form.platform === 'bedrock' && !isEdit" class="space-y-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >AWS 访问密钥 ID *</label
+                  >{{ $t('accounts.form.bedrock_access_key') }}</label
                 >
                 <input
                   v-model="form.accessKeyId"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.accessKeyId }"
-                  placeholder="请输入 AWS Access Key ID"
+                  :placeholder="$t('accounts.form.bedrock_access_key_placeholder')"
                   required
                   type="text"
                 />
@@ -842,13 +871,13 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >AWS 秘密访问密钥 *</label
+                  >{{ $t('accounts.form.bedrock_secret_key') }}</label
                 >
                 <input
                   v-model="form.secretAccessKey"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.secretAccessKey }"
-                  placeholder="请输入 AWS Secret Access Key"
+                  :placeholder="$t('accounts.form.bedrock_secret_key_placeholder')"
                   required
                   type="password"
                 />
@@ -859,13 +888,13 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >AWS 区域 *</label
+                  >{{ $t('accounts.form.bedrock_region') }}</label
                 >
                 <input
                   v-model="form.region"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.region }"
-                  placeholder="例如：us-east-1"
+                  :placeholder="$t('accounts.form.bedrock_region_placeholder')"
                   required
                   type="text"
                 />
@@ -876,16 +905,16 @@
                   <div class="flex items-start gap-2">
                     <i class="fas fa-info-circle mt-0.5 text-blue-600" />
                     <div class="text-xs text-blue-700">
-                      <p class="mb-1 font-medium">常用 AWS 区域参考：</p>
+                      <p class="mb-1 font-medium">{{ $t('accounts.form.bedrock_region_help') }}</p>
                       <div class="grid grid-cols-2 gap-1 text-xs">
-                        <span>• us-east-1 (美国东部)</span>
-                        <span>• us-west-2 (美国西部)</span>
-                        <span>• eu-west-1 (欧洲爱尔兰)</span>
-                        <span>• ap-southeast-1 (新加坡)</span>
-                        <span>• ap-northeast-1 (东京)</span>
-                        <span>• eu-central-1 (法兰克福)</span>
+                        <span>• us-east-1 (Este de EE. UU.)</span>
+                        <span>• us-west-2 (Oeste de EE. UU.)</span>
+                        <span>• eu-west-1 (Irlanda, Europa)</span>
+                        <span>• ap-southeast-1 (Singapur)</span>
+                        <span>• ap-northeast-1 (Tokio)</span>
+                        <span>• eu-central-1 (Frankfurt)</span>
                       </div>
-                      <p class="mt-2 text-blue-600">💡 请输入完整的区域代码，如 us-east-1</p>
+                      <p class="mt-2 text-blue-600">{{ $t('accounts.form.bedrock_region_tip') }}</p>
                     </div>
                   </div>
                 </div>
@@ -893,42 +922,42 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >会话令牌 (可选)</label
+                  >{{ $t('accounts.form.bedrock_session_token') }}</label
                 >
                 <input
                   v-model="form.sessionToken"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="如果使用临时凭证，请输入会话令牌"
+                  :placeholder="$t('accounts.form.bedrock_session_token_placeholder')"
                   type="password"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  仅在使用临时 AWS 凭证时需要填写
+                  {{ $t('accounts.form.bedrock_session_token_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >默认主模型 (可选)</label
+                  >{{ $t('accounts.form.bedrock_default_model') }}</label
                 >
                 <input
                   v-model="form.defaultModel"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="例如：us.anthropic.claude-sonnet-4-20250514-v1:0"
+                  :placeholder="$t('accounts.form.bedrock_default_model_placeholder')"
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  留空将使用系统默认模型。支持 inference profile ID 或 ARN
+                  {{ $t('accounts.form.bedrock_default_model_help') }}
                 </p>
                 <div class="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
                   <div class="flex items-start gap-2">
                     <i class="fas fa-info-circle mt-0.5 text-amber-600" />
                     <div class="text-xs text-amber-700">
-                      <p class="mb-1 font-medium">Bedrock 模型配置说明：</p>
+                      <p class="mb-1 font-medium">{{ $t('accounts.form.bedrock_model_help') }}</p>
                       <ul class="list-inside list-disc space-y-1 text-xs">
-                        <li>支持 Inference Profile ID（推荐）</li>
-                        <li>支持 Application Inference Profile ARN</li>
-                        <li>常用模型：us.anthropic.claude-sonnet-4-20250514-v1:0</li>
-                        <li>留空将使用系统配置的默认模型</li>
+                        <li>{{ $t('accounts.form.bedrock_model_help_list').split('|')[0] }}</li>
+                        <li>{{ $t('accounts.form.bedrock_model_help_list').split('|')[1] }}</li>
+                        <li>{{ $t('accounts.form.bedrock_model_help_list').split('|')[2] }}</li>
+                        <li>{{ $t('accounts.form.bedrock_model_help_list').split('|')[3] }}</li>
                       </ul>
                     </div>
                   </div>
@@ -937,16 +966,16 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >小快速模型 (可选)</label
+                  >{{ $t('accounts.form.bedrock_small_fast_model') }}</label
                 >
                 <input
                   v-model="form.smallFastModel"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="例如：us.anthropic.claude-3-5-haiku-20241022-v1:0"
+                  :placeholder="$t('accounts.form.bedrock_small_fast_model_placeholder')"
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  用于快速响应的轻量级模型，留空将使用系统默认
+                  {{ $t('accounts.form.bedrock_small_fast_model_help') }}
                 </p>
               </div>
             </div>
@@ -955,7 +984,7 @@
             <div v-if="form.platform === 'azure_openai' && !isEdit" class="space-y-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Azure Endpoint *</label
+                  >{{ $t('accounts.form.azure_endpoint') }}</label
                 >
                 <input
                   v-model="form.azureEndpoint"
@@ -969,13 +998,13 @@
                   {{ errors.azureEndpoint }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Azure OpenAI 资源的终结点 URL，格式：https://your-resource.openai.azure.com
+                  {{ $t('accounts.form.azure_endpoint_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 版本</label
+                  >{{ $t('accounts.form.azure_api_version') }}</label
                 >
                 <input
                   v-model="form.apiVersion"
@@ -984,13 +1013,13 @@
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Azure OpenAI API 版本，默认使用最新稳定版本 2024-02-01
+                  {{ $t('accounts.form.azure_api_version_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >部署名称 *</label
+                  >{{ $t('accounts.form.azure_deployment_name') }}</label
                 >
                 <input
                   v-model="form.deploymentName"
@@ -1004,19 +1033,19 @@
                   {{ errors.deploymentName }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  在 Azure OpenAI Studio 中创建的部署名称
+                  {{ $t('accounts.form.azure_deployment_name_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API Key *</label
+                  >{{ $t('accounts.form.console_api_key') }}</label
                 >
                 <input
                   v-model="form.apiKey"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKey }"
-                  placeholder="请输入 Azure OpenAI API Key"
+                  :placeholder="$t('accounts.form.console_api_key_placeholder')"
                   required
                   type="password"
                 />
@@ -1030,7 +1059,7 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >支持的模型</label
+                  >{{ $t('accounts.form.azure_supported_models') }}</label
                 >
                 <div class="flex flex-wrap gap-2">
                   <label
@@ -1058,7 +1087,7 @@
                   </label>
                 </div>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  选择此部署支持的模型类型
+                  {{ $t('accounts.form.azure_supported_models_help') }}
                 </p>
               </div>
             </div>
@@ -1066,7 +1095,7 @@
             <div v-if="form.platform === 'bedrock' && !isEdit">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >限流机制</label
+                  >{{ $t('accounts.form.rate_limit_mechanism') }}</label
                 >
                 <div class="mb-3">
                   <label class="inline-flex cursor-pointer items-center">
@@ -1075,26 +1104,26 @@
                       class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">启用限流机制</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('accounts.form.enable_rate_limit') }}</span>
                   </label>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    启用后，当账号返回429错误时将暂停调度一段时间
+                    {{ $t('accounts.form.rate_limit_enabled_help') }}
                   </p>
                 </div>
 
                 <div v-if="form.enableRateLimit">
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                    >限流时间 (分钟)</label
+                    >{{ $t('accounts.form.rate_limit_minutes') }}</label
                   >
                   <input
                     v-model.number="form.rateLimitDuration"
                     class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="1"
-                    placeholder="默认60分钟"
+                    :placeholder="$t('accounts.form.rate_limit_minutes_placeholder')"
                     type="number"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    账号被限流后暂停调度的时间（分钟）
+                    {{ $t('accounts.form.rate_limit_minutes_help') }}
                   </p>
                 </div>
               </div>
@@ -1107,13 +1136,13 @@
             >
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API URL *</label
+                  >{{ $t('accounts.form.console_endpoint') }}</label
                 >
                 <input
                   v-model="form.apiUrl"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiUrl }"
-                  placeholder="例如：https://api.example.com"
+                  :placeholder="$t('accounts.form.console_endpoint_placeholder')"
                   required
                   type="text"
                 />
@@ -1124,13 +1153,13 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API Key *</label
+                  >{{ $t('accounts.form.console_api_key') }}</label
                 >
                 <input
                   v-model="form.apiKey"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKey }"
-                  placeholder="请输入API Key"
+                  :placeholder="$t('accounts.form.console_api_key_placeholder')"
                   required
                   type="password"
                 />
@@ -1143,24 +1172,24 @@
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    每日额度限制 ($)
+                    {{ $t('accounts.form.daily_quota') }}
                   </label>
                   <input
                     v-model.number="form.dailyQuota"
                     class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                     min="0"
-                    placeholder="0 表示不限制"
+                    :placeholder="$t('accounts.form.daily_quota_placeholder')"
                     step="0.01"
                     type="number"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    设置每日使用额度，0 表示不限制
+                    {{ $t('accounts.form.daily_quota_help') }}
                   </p>
                 </div>
 
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    额度重置时间
+                    {{ $t('accounts.form.quota_reset_time') }}
                   </label>
                   <input
                     v-model="form.quotaResetTime"
@@ -1169,7 +1198,7 @@
                     type="time"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    每日自动重置额度的时间
+                    {{ $t('accounts.form.quota_reset_time_help') }}
                   </p>
                 </div>
               </div>
@@ -1177,23 +1206,23 @@
               <!-- 并发控制字段 -->
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  最大并发任务数
+                  {{ $t('accounts.form.max_concurrent') }}
                 </label>
                 <input
                   v-model.number="form.maxConcurrentTasks"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   min="0"
-                  placeholder="0 表示不限制"
+                  :placeholder="$t('accounts.form.max_concurrent_placeholder')"
                   type="number"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  限制该账户的并发请求数量，0 表示不限制
+                  {{ $t('accounts.form.max_concurrent_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >模型限制 (可选)</label
+                  >{{ $t('accounts.form.model_restrictions') }}</label
                 >
 
                 <!-- 模式切换 -->
@@ -1209,7 +1238,7 @@
                     @click="modelRestrictionMode = 'whitelist'"
                   >
                     <i class="fas fa-check-circle mr-2" />
-                    模型白名单
+                    {{ $t('accounts.form.model_whitelist') }}
                   </button>
                   <button
                     class="flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all"
@@ -1222,7 +1251,7 @@
                     @click="modelRestrictionMode = 'mapping'"
                   >
                     <i class="fas fa-random mr-2" />
-                    模型映射
+                    {{ $t('accounts.form.model_mapping') }}
                   </button>
                 </div>
 
@@ -1231,7 +1260,7 @@
                   <div class="mb-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/30">
                     <p class="text-xs text-blue-700 dark:text-blue-400">
                       <i class="fas fa-info-circle mr-1" />
-                      选择允许使用此账户的模型。留空表示支持所有模型。
+                      {{ $t('accounts.form.model_whitelist_help') }}
                     </p>
                   </div>
 
@@ -1260,8 +1289,8 @@
                   </div>
 
                   <p class="text-xs text-gray-500 dark:text-gray-400">
-                    已选择 {{ allowedModels.length }} 个模型
-                    <span v-if="allowedModels.length === 0">（支持所有模型）</span>
+                    {{ $t('accounts.form.models_selected', { count: allowedModels.length }) }}
+                    <span v-if="allowedModels.length === 0">{{ $t('accounts.form.supports_all_models') }}</span>
                   </p>
                 </div>
 
@@ -1270,7 +1299,7 @@
                   <div class="mb-3 rounded-lg bg-purple-50 p-3 dark:bg-purple-900/30">
                     <p class="text-xs text-purple-700 dark:text-purple-400">
                       <i class="fas fa-info-circle mr-1" />
-                      配置模型映射关系。左侧是客户端请求的模型，右侧是实际发送给API的模型。
+                      {{ $t('accounts.form.model_mapping_help') }}
                     </p>
                   </div>
 
@@ -1284,14 +1313,14 @@
                       <input
                         v-model="mapping.from"
                         class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                        placeholder="原始模型名称"
+                        :placeholder="$t('accounts.form.original_model')"
                         type="text"
                       />
                       <i class="fas fa-arrow-right text-gray-400 dark:text-gray-500" />
                       <input
                         v-model="mapping.to"
                         class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                        placeholder="映射后的模型名称"
+                        :placeholder="$t('accounts.form.mapped_model')"
                         type="text"
                       />
                       <button
@@ -1311,7 +1340,7 @@
                     @click="addModelMapping"
                   >
                     <i class="fas fa-plus mr-2" />
-                    添加模型映射
+                    {{ $t('accounts.form.add_model_mapping') }}
                   </button>
 
                   <!-- 快捷添加按钮 -->
@@ -1386,22 +1415,22 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >自定义 User-Agent (可选)</label
+                  >{{ $t('accounts.form.custom_user_agent') }}</label
                 >
                 <input
                   v-model="form.userAgent"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="留空则透传客户端 User-Agent"
+                  :placeholder="$t('accounts.form.custom_user_agent_placeholder')"
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  留空时将自动使用客户端的 User-Agent，仅在需要固定特定 UA 时填写
+                  {{ $t('accounts.form.custom_user_agent_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >限流机制</label
+                  >{{ $t('accounts.form.rate_limit_mechanism') }}</label
                 >
                 <div class="mb-3">
                   <label class="inline-flex cursor-pointer items-center">
@@ -1410,35 +1439,35 @@
                       class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">启用限流机制</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('accounts.form.enable_rate_limit') }}</span>
                   </label>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    启用后，当账号返回429错误时将暂停调度一段时间
+                    {{ $t('accounts.form.rate_limit_enabled_help') }}
                   </p>
                 </div>
 
                 <div v-if="form.enableRateLimit">
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                    >限流时间 (分钟)</label
+                    >{{ $t('accounts.form.rate_limit_minutes') }}</label
                   >
                   <input
                     v-model.number="form.rateLimitDuration"
                     class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="1"
-                    placeholder="默认60分钟"
+                    :placeholder="$t('accounts.form.rate_limit_minutes_placeholder')"
                     type="number"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    账号被限流后暂停调度的时间（分钟）
+                    {{ $t('accounts.form.rate_limit_minutes_help') }}
                   </p>
                 </div>
               </div>
 
               <!-- 上游错误处理 -->
               <div v-if="form.platform === 'claude-console'">
-                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >上游错误处理</label
-                >
+                <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  {{ $t('accounts.form.upstream_error_handling') }}
+                </label>
                 <label class="inline-flex cursor-pointer items-center">
                   <input
                     v-model="form.disableAutoProtection"
@@ -1446,11 +1475,11 @@
                     type="checkbox"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300">
-                    上游错误不自动暂停调度
+                    {{ $t('accounts.form.disable_auto_protection') }}
                   </span>
                 </label>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  勾选后遇到 401/400/429/529 等上游错误仅记录日志并透传，不自动禁用或限流
+                  {{ $t('accounts.form.upstream_error_help') }}
                 </p>
               </div>
             </div>
@@ -1459,29 +1488,29 @@
             <div v-if="form.platform === 'openai-responses' && !isEdit" class="space-y-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 基础地址 *</label
+                  >{{ $t('accounts.form.openai_responses_base_url') }}</label
                 >
                 <input
                   v-model="form.baseApi"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="https://api.example.com/v1"
+                  :placeholder="$t('accounts.form.openai_responses_base_url_placeholder')"
                   required
                   type="url"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  第三方 OpenAI 兼容 API 的基础地址，不要包含具体路径
+                  {{ $t('accounts.form.openai_responses_base_url_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 密钥 *</label
+                  >{{ $t('accounts.form.openai_responses_api_key') }}</label
                 >
                 <div class="relative">
                   <input
                     v-model="form.apiKey"
                     class="form-input w-full border-gray-300 pr-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                    placeholder="sk-xxxxxxxxxxxx"
+                    :placeholder="$t('accounts.form.openai_responses_api_key_placeholder')"
                     required
                     :type="showApiKey ? 'text' : 'password'"
                   />
@@ -1494,22 +1523,22 @@
                   </button>
                 </div>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  第三方服务提供的 API 密钥
+                  {{ $t('accounts.form.openai_responses_api_key_help') }}
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >自定义 User-Agent (可选)</label
+                  >{{ $t('accounts.form.custom_user_agent') }}</label
                 >
                 <input
                   v-model="form.userAgent"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="留空则透传原始请求的 User-Agent"
+                  :placeholder="$t('accounts.form.openai_responses_user_agent_placeholder')"
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  可选项。如果设置，所有请求将使用此 User-Agent；否则透传客户端的 User-Agent
+                  {{ $t('accounts.form.openai_responses_user_agent_help') }}
                 </p>
               </div>
 
@@ -1521,7 +1550,7 @@
             <div v-if="form.platform === 'gemini-api' && !isEdit" class="space-y-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 基础地址 *</label
+                  >{{ $t('accounts.form.base_url') }} *</label
                 >
                 <input
                   v-model="form.baseUrl"
@@ -1535,21 +1564,16 @@
                   {{ errors.baseUrl }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  填写 API 基础地址，必须以
-                  <code class="rounded bg-gray-100 px-1 dark:bg-gray-600">/models</code>
-                  结尾。系统会自动拼接
-                  <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
-                    >/{model}:generateContent</code
-                  >
+                  {{ $t('accounts.form.gemini_api_base_url_help') }}
                 </p>
                 <p class="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
-                  官方:
+                  Official:
                   <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                     >https://generativelanguage.googleapis.com/v1beta/models</code
                   >
                 </p>
                 <p class="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
-                  上游为 CRS:
+                  Upstream CRS:
                   <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                     >https://your-crs.com/gemini/v1beta/models</code
                   >
@@ -1558,7 +1582,7 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 密钥 *</label
+                  >{{ $t('accounts.form.api_key') }} *</label
                 >
                 <div class="relative">
                   <input
@@ -1577,7 +1601,7 @@
                   </button>
                 </div>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  从 Google AI Studio 获取的 API 密钥
+                  {{ $t('accounts.form.gemini_api_key_help') }}
                 </p>
               </div>
             </div>
@@ -1585,7 +1609,7 @@
             <!-- Claude 订阅类型选择 -->
             <div v-if="form.platform === 'claude'">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >订阅类型</label
+                >{{ $t('accounts.form.subscription_type') }}</label
               >
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -1609,7 +1633,7 @@
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <i class="fas fa-info-circle mr-1" />
-                Pro 账号不支持 Claude Opus 4 模型
+                {{ $t('accounts.form.subscription_help') }}
               </p>
             </div>
 
@@ -1623,10 +1647,10 @@
                 />
                 <div class="ml-3">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    5小时使用量接近限制时自动停止调度
+                    {{ $t('accounts.form.auto_stop_on_warning') }}
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    当系统检测到账户接近5小时使用限制时，自动暂停调度该账户。进入新的时间窗口后会自动恢复调度。
+                    {{ $t('accounts.form.auto_stop_help') }}
                   </p>
                 </div>
               </label>
@@ -1642,10 +1666,10 @@
                 />
                 <div class="ml-3">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    启用账户级串行队列
+                    {{ $t('accounts.form.serial_queue_enabled') }}
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    开启后强制该账户的用户消息串行处理，忽略全局串行队列设置。适用于并发限制较低的账户。
+                    {{ $t('accounts.form.serial_queue_help') }}
                   </p>
                 </div>
               </label>
@@ -1664,10 +1688,10 @@
                 />
                 <div class="ml-3">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    拦截预热请求
+                    {{ $t('accounts.form.intercept_warmup') }}
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    启用后，对标题生成、Warmup 等低价值请求直接返回模拟响应，不消耗上游 API 额度
+                    {{ $t('accounts.form.intercept_warmup_help') }}
                   </p>
                 </div>
               </label>
@@ -1683,15 +1707,15 @@
                 />
                 <div class="ml-3">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    使用统一 Claude Code 版本
+                    {{ $t('accounts.form.use_unified_user_agent') }}
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    开启后将使用从真实 Claude Code 客户端捕获的统一 User-Agent，提高兼容性
+                    {{ $t('accounts.form.use_unified_ua_help') }}
                   </p>
                   <div v-if="unifiedUserAgent" class="mt-1">
                     <div class="flex items-center justify-between">
                       <p class="text-xs text-green-600 dark:text-green-400">
-                        💡 当前统一版本：{{ unifiedUserAgent }}
+                        💡 {{ $t('accounts.form.current_unified_version') }}: {{ unifiedUserAgent }}
                       </p>
                       <button
                         class="ml-2 text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
@@ -1701,17 +1725,16 @@
                       >
                         <i v-if="!clearingCache" class="fas fa-trash-alt mr-1"></i>
                         <div v-else class="loading-spinner mr-1"></div>
-                        {{ clearingCache ? '清除中...' : '清除缓存' }}
+                        {{ clearingCache ? $t('common.status.loading') : $t('common.action.reset') }}
                       </button>
                     </div>
                   </div>
                   <div v-else class="mt-1">
                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                      ⏳ 等待从 Claude Code 客户端捕获 User-Agent
+                      ⏳ {{ $t('accounts.form.waiting_for_ua') }}
                     </p>
                     <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                      💡 提示：如果长时间未能捕获，请确认有 Claude Code 客户端正在使用此账户，
-                      或联系开发者检查 User-Agent 格式是否发生变化
+                      💡 {{ $t('accounts.form.ua_hint') }}
                     </p>
                   </div>
                 </div>
@@ -1729,10 +1752,10 @@
                 />
                 <div class="ml-3 flex-1">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    使用统一的客户端标识
+                    {{ $t('accounts.form.use_unified_client_id') }}
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    开启后将使用固定的客户端标识，使所有请求看起来来自同一个客户端，减少特征
+                    {{ $t('accounts.form.use_unified_client_id_help') }}
                   </p>
                   <div v-if="form.useUnifiedClientId" class="mt-3">
                     <div
@@ -1740,7 +1763,7 @@
                     >
                       <div class="mb-2 flex items-center justify-between">
                         <span class="text-xs font-medium text-gray-600 dark:text-gray-400"
-                          >客户端标识 ID</span
+                          >{{ $t('accounts.form.client_id') }}</span
                         >
                         <button
                           class="rounded-md bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
@@ -1748,7 +1771,7 @@
                           @click="regenerateClientId"
                         >
                           <i class="fas fa-sync-alt mr-1" />
-                          重新生成
+                          {{ $t('accounts.form.regenerate') }}
                         </button>
                       </div>
                       <div class="flex items-center gap-2">
@@ -1768,7 +1791,7 @@
                       </div>
                       <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                         <i class="fas fa-info-circle mr-1 text-blue-500" />
-                        此ID将替换请求中的user_id客户端部分，保留session部分用于粘性会话
+                        {{ $t('accounts.form.client_id_tip') }}
                       </p>
                     </div>
                   </div>
@@ -1779,18 +1802,18 @@
             <!-- 所有平台的优先级设置 -->
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >调度优先级 (1-100)</label
+                >{{ $t('common.label.priority') }} (1-100)</label
               >
               <input
                 v-model.number="form.priority"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 max="100"
                 min="1"
-                placeholder="数字越小优先级越高，默认50"
+                :placeholder="$t('accounts.form.priority_placeholder')"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                数字越小优先级越高，建议范围：1-100
+                {{ $t('accounts.form.priority_help') }}
               </p>
             </div>
 
@@ -1814,114 +1837,109 @@
                 </div>
                 <div>
                   <h5 class="mb-2 font-semibold text-blue-900 dark:text-blue-300">
-                    手动输入 Token
+                    {{ $t('accounts.form.manual_token') }}
                   </h5>
                   <p
                     v-if="form.platform === 'claude'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 Claude Access Token。如果您有 Refresh
-                    Token，建议也一并填写以支持自动刷新。
+                    {{ $t('accounts.form.claude_manual_help') }}
                   </p>
                   <p
                     v-else-if="form.platform === 'gemini'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 Gemini Access Token。如果您有 Refresh
-                    Token，建议也一并填写以支持自动刷新。
+                    {{ $t('accounts.form.gemini_manual_help') }}
                   </p>
                   <p
                     v-else-if="form.platform === 'openai'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 OpenAI Access Token。如果您有 Refresh
-                    Token，建议也一并填写以支持自动刷新。
+                    {{ $t('accounts.form.openai_manual_help') }}
                   </p>
                   <p
                     v-else-if="form.platform === 'droid'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 Droid Access Token，并同时提供 Refresh Token 以支持自动刷新。
+                    {{ $t('accounts.form.droid_manual_help') }}
                   </p>
                   <div
                     class="mb-2 mt-2 rounded-lg border border-blue-300 bg-white/80 p-3 dark:border-blue-600 dark:bg-gray-800/80"
                   >
                     <p class="mb-1 text-sm font-medium text-blue-900 dark:text-blue-300">
                       <i class="fas fa-folder-open mr-1" />
-                      获取 Access Token 的方法：
+                      {{ $t('accounts.form.how_to_get_token') }}
                     </p>
                     <p
                       v-if="form.platform === 'claude'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已登录 Claude Code 的机器上获取
+                      {{ $t('accounts.form.claude_token_path') }}
                       <code class="rounded bg-blue-100 px-1 py-0.5 font-mono dark:bg-blue-900/50"
                         >~/.claude/.credentials.json</code
                       >
-                      文件中的凭证， 请勿使用 Claude 官网 API Keys 页面的密钥。
+                      {{ $t('accounts.form.claude_token_warning') }}
                     </p>
                     <p
                       v-else-if="form.platform === 'gemini'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已登录 Gemini CLI 的机器上获取
+                      {{ $t('accounts.form.gemini_token_path') }}
                       <code class="rounded bg-blue-100 px-1 py-0.5 font-mono dark:bg-blue-900/50"
                         >~/.config/.gemini/oauth_creds.json</code
                       >
-                      文件中的凭证。
+                      {{ $t('accounts.form.gemini_token_warning') }}
                     </p>
                     <p
                       v-else-if="form.platform === 'openai'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已登录 OpenAI 账户的机器上获取认证凭证， 或通过 OAuth 授权流程获取 Access
-                      Token。
+                      {{ $t('accounts.form.openai_token_help') }}
                     </p>
                     <p
                       v-else-if="form.platform === 'droid'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已完成授权的 Droid CLI 或 Factory.ai 导出的凭证中获取 Access Token 与
-                      Refresh Token。
+                      {{ $t('accounts.form.droid_token_help') }}
                     </p>
                   </div>
                   <p
                     v-if="form.platform !== 'droid'"
                     class="text-xs text-blue-600 dark:text-blue-400"
                   >
-                    💡 如果未填写 Refresh Token，Token 过期后需要手动更新。
+                    💡 {{ $t('accounts.form.token_refresh_tip') }}
                   </p>
                   <p v-else class="text-xs text-red-600 dark:text-red-400">
-                    ⚠️ Droid 账户必须填写 Refresh Token，缺失将导致无法自动刷新 Access Token。
+                    ⚠️ {{ $t('accounts.form.droid_refresh_warning') }}
                   </p>
                 </div>
               </div>
 
               <div v-if="form.platform === 'openai'">
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Access Token (可选)</label
+                  >{{ $t('accounts.auth.accessToken') }} ({{ $t('common.label.optional') }})</label
                 >
                 <textarea
                   v-model="form.accessToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="可选：如果不填写，系统会自动通过 Refresh Token 获取..."
+                  :placeholder="$t('accounts.form.openai_token_placeholder')"
                   rows="4"
                 />
                 <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-info-circle mr-1" />
-                  Access Token 可选填。如果不提供，系统会通过 Refresh Token 自动获取。
+                  {{ $t('accounts.form.openai_token_note') }}
                 </p>
               </div>
 
               <div v-else>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Access Token *</label
+                  >{{ $t('accounts.auth.accessToken') }} *</label
                 >
                 <textarea
                   v-model="form.accessToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.accessToken }"
-                  placeholder="请输入 Access Token..."
+                  :placeholder="$t('accounts.auth.accessToken')"
                   required
                   rows="4"
                 />
@@ -1932,13 +1950,13 @@
 
               <div v-if="form.platform === 'openai' || form.platform === 'droid'">
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Refresh Token *</label
+                  >{{ $t('accounts.auth.refreshToken') }} *</label
                 >
                 <textarea
                   v-model="form.refreshToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.refreshToken }"
-                  placeholder="请输入 Refresh Token（必填）..."
+                  :placeholder="$t('accounts.auth.refreshToken')"
                   required
                   rows="4"
                 />
@@ -1948,22 +1966,22 @@
                 <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-info-circle mr-1" />
                   <template v-if="form.platform === 'openai'">
-                    系统将使用 Refresh Token 自动获取 Access Token 和用户信息
+                    {{ $t('accounts.form.openai_refresh_note') }}
                   </template>
                   <template v-else>
-                    系统将使用 Refresh Token 自动刷新 Factory.ai 访问令牌，确保账户保持可用。
+                    {{ $t('accounts.form.droid_refresh_note') }}
                   </template>
                 </p>
               </div>
 
               <div v-else>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >Refresh Token (可选)</label
+                  >{{ $t('accounts.auth.refreshToken') }} ({{ $t('common.label.optional') }})</label
                 >
                 <textarea
                   v-model="form.refreshToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="请输入 Refresh Token..."
+                  :placeholder="$t('accounts.auth.refreshToken')"
                   rows="4"
                 />
               </div>
@@ -1971,7 +1989,7 @@
               <!-- Droid User-Agent 配置 (OAuth/Manual 模式) -->
               <div v-if="form.platform === 'droid'">
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >自定义 User-Agent (可选)</label
+                  >{{ $t('accounts.form.custom_user_agent') }} ({{ $t('common.label.optional') }})</label
                 >
                 <input
                   v-model="form.userAgent"
@@ -1980,7 +1998,7 @@
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  留空使用默认值 factory-cli/0.32.1，可根据需要自定义
+                  {{ $t('accounts.form.droid_ua_help') }}
                 </p>
               </div>
             </div>

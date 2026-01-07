@@ -27,11 +27,11 @@ class ClaudeRelayService {
     this.claudeCodeSystemPrompt = "You are Claude Code, Anthropic's official CLI for Claude."
   }
 
-  // 🔧 根据模型ID和客户端传递的 anthropic-beta 获取最终的 header
-  // 规则：
-  // 1. 如果客户端传递了 anthropic-beta，检查是否包含 oauth-2025-04-20
-  // 2. 如果没有 oauth-2025-04-20，则添加到 claude-code-20250219 后面（如果有的话），否则放在第一位
-  // 3. 如果客户端没传递，则根据模型判断：haiku 不需要 claude-code，其他模型需要
+  // 🔧 Get final header based on model ID and client's anthropic-beta
+  // Rules:
+  // 1. If client provided anthropic-beta, check if it contains oauth-2025-04-20
+  // 2. If no oauth-2025-04-20, add it after claude-code-20250219 (if exists), otherwise first
+  // 3. If client didn't provide it, judge by model: haiku doesn't need claude-code, others do
   _getBetaHeader(modelId, clientBetaHeader) {
     const OAUTH_BETA = 'oauth-2025-04-20'
     const CLAUDE_CODE_BETA = 'claude-code-20250219'
@@ -70,21 +70,21 @@ class ClaudeRelayService {
 
   _buildStandardRateLimitMessage(resetTime) {
     if (!resetTime) {
-      return '此专属账号已触发 Anthropic 限流控制。'
+      return 'Esta cuenta dedicada ha activado el control de límite de velocidad de Anthropic.'
     }
     const formattedReset = formatDateWithTimezone(resetTime)
-    return `此专属账号已触发 Anthropic 限流控制，将于 ${formattedReset} 自动恢复。`
+    return `Esta cuenta dedicada ha activado el control de límite de velocidad de Anthropic. Se recuperará automáticamente a las ${formattedReset}.`
   }
 
   _buildOpusLimitMessage(resetTime) {
     if (!resetTime) {
-      return '此专属账号的Opus模型已达到周使用限制，请尝试切换其他模型后再试。'
+      return 'El modelo Opus de esta cuenta dedicada ha alcanzado el límite de uso semanal. Intente cambiar a otro modelo e inténtelo de nuevo.'
     }
     const formattedReset = formatDateWithTimezone(resetTime)
-    return `此专属账号的Opus模型已达到周使用限制，将于 ${formattedReset} 自动恢复，请尝试切换其他模型后再试。`
+    return `El modelo Opus de esta cuenta dedicada ha alcanzado el límite de uso semanal. Se recuperará automáticamente a las ${formattedReset}. Intente cambiar a otro modelo e inténtelo de nuevo.`
   }
 
-  // 🧾 提取错误消息文本
+  // 🧾 Extract error message text
   _extractErrorMessage(body) {
     if (!body) {
       return ''
@@ -123,7 +123,7 @@ class ClaudeRelayService {
     return ''
   }
 
-  // 🚫 检查是否为组织被禁用错误
+  // 🚫 Check if organization is disabled
   _isOrganizationDisabledError(statusCode, body) {
     if (statusCode !== 400) {
       return false
@@ -135,12 +135,12 @@ class ClaudeRelayService {
     return message.toLowerCase().includes('this organization has been disabled')
   }
 
-  // 🔍 判断是否是真实的 Claude Code 请求
+  // 🔍 Determine if it is a real Claude Code request
   isRealClaudeCodeRequest(requestBody) {
     return ClaudeCodeValidator.includesClaudeCodeSystemPrompt(requestBody, 1)
   }
 
-  // 🚀 转发请求到Claude API
+  // 🚀 Forward request to Claude API
   async relayRequest(
     requestBody,
     apiKeyData,
@@ -155,7 +155,7 @@ class ClaudeRelayService {
     let selectedAccountId = null
 
     try {
-      // 调试日志：查看API Key数据
+      // Debug log: check API Key data
       logger.info('🔍 API Key data received:', {
         apiKeyName: apiKeyData.name,
         enableModelRestriction: apiKeyData.enableModelRestriction,
@@ -203,14 +203,14 @@ class ClaudeRelayService {
         `📤 Processing API request for key: ${apiKeyData.name || apiKeyData.id}, account: ${accountId} (${accountType})${sessionHash ? `, session: ${sessionHash}` : ''}`
       )
 
-      // 📬 用户消息队列处理：如果是用户消息请求，需要获取队列锁
+      // 📬 User message queue handling: acquire queue lock if it's a user message request
       if (userMessageQueueService.isUserMessageRequest(requestBody)) {
-        // 校验 accountId 非空，避免空值污染队列锁键
+        // Verify accountId is not empty to avoid polluting queue lock keys
         if (!accountId || accountId === '') {
           logger.error('❌ accountId missing for queue lock in relayRequest')
           throw new Error('accountId missing for queue lock')
         }
-        // 获取账户信息以检查账户级串行队列配置
+        // Get account info to check account-level serial queue config
         const accountForQueue = await claudeAccountService.getAccount(accountId)
         const accountConfig = accountForQueue
           ? { maxConcurrency: parseInt(accountForQueue.maxConcurrency || '0', 10) }
@@ -222,7 +222,7 @@ class ClaudeRelayService {
           accountConfig
         )
         if (!queueResult.acquired && !queueResult.skipped) {
-          // 区分 Redis 后端错误和队列超时
+          // Differentiate between Redis backend error and queue timeout
           const isBackendError = queueResult.error === 'queue_backend_error'
           const errorCode = isBackendError ? 'QUEUE_BACKEND_ERROR' : 'QUEUE_TIMEOUT'
           const errorType = isBackendError ? 'queue_backend_error' : 'queue_timeout'
@@ -231,7 +231,7 @@ class ClaudeRelayService {
             : 'User message queue wait timeout, please retry later'
           const statusCode = isBackendError ? 500 : 503
 
-          // 结构化性能日志，用于后续统计
+          // Structured performance log for later statistics
           logger.performance('user_message_queue_error', {
             errorType,
             errorCode,
@@ -1137,7 +1137,7 @@ class ClaudeRelayService {
 
       return { body: nextBody, headers: nextHeaders, abortResponse }
     } catch (error) {
-      logger.warn('⚠️ 应用请求身份转换失败:', error)
+      logger.warn('⚠️ Failed to apply request identity transform:', error)
       return { body, headers: normalizedHeaders }
     }
   }
@@ -2542,7 +2542,7 @@ class ClaudeRelayService {
 
           // 处理错误事件
           if (data.type === 'error') {
-            const errorMsg = data.error?.message || data.message || '未知错误'
+            const errorMsg = data.error?.message || data.message || 'Unknown error'
             outputLines.push(`data: ${JSON.stringify({ type: 'error', error: errorMsg })}`)
             outputLines.push('')
           }
