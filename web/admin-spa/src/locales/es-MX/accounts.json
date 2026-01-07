@@ -1,4 +1,8 @@
 {
+  "title": "Gestión de Cuentas",
+  "description": "Administrar cuentas de Claude, Gemini, OpenAI y configuraciones de proxy",
+  "addAccount": "Agregar Cuenta",
+
   "type.claude_official": "Claude Oficial",
   "type.claude_console": "Claude Console",
   "type.gemini": "Gemini",
@@ -51,6 +55,11 @@
   "field.total_tokens": "Total de tokens",
   "field.total_cost": "Costo total",
 
+  "actions.details": "Detalles",
+  "actions.reset": "Restablecer",
+  "actions.pause": "Pausar",
+  "actions.schedule": "Programar",
+
   "action.add_account": "Agregar cuenta",
   "action.edit_account": "Editar cuenta",
   "action.delete_account": "Eliminar cuenta",
@@ -92,6 +101,7 @@
   "stats.success_rate": "Tasa de éxito",
   "stats.error_rate": "Tasa de error",
 
+  "message.no_accounts": "No hay cuentas disponibles",
   "message.account_created": "Cuenta creada exitosamente",
   "message.account_updated": "Cuenta actualizada exitosamente",
   "message.account_deleted": "Cuenta eliminada exitosamente",
@@ -129,6 +139,13 @@
   "form.shared_account": "Cuenta compartida",
   "form.dedicated_account": "Cuenta dedicada",
   "form.group_scheduling": "Programación de grupo",
+  "form.shared": "Compartida",
+  "form.dedicated": "Exclusiva",
+  "form.group": "Grupo",
+  "form.neverExpire": "Nunca expira",
+  "form.quotaLimit": "Límite de cuota",
+  "form.max_concurrent": "Máximo concurrente",
+  "form.namePlaceholder": "Buscar nombre de cuenta...",
   "form.account_type_help": "Cuenta compartida: para uso de todas las API Keys; Cuenta dedicada: solo para API Keys específicas; Programación de grupo: unirse al grupo para programación dentro del grupo",
   "form.expiry_date": "Fecha de vencimiento (opcional)",
   "form.never_expire": "Nunca expira",

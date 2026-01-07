@@ -131,5 +131,14 @@
   "login.sign_in": "Iniciar sesión",
   "login.admin_link": "Inicio de Sesión de Admin",
   "login.error_missing_fields": "Por favor ingresa usuario y contraseña",
-  "login.success": "Inicio de sesión exitoso"
+  "login.success": "Inicio de sesión exitoso",
+
+  "filter.today": "Hoy",
+  "limit.resets_in": "Reinicio en",
+  "limit.no_limit": "Sin límite",
+  "loading": "Cargando...",
+  "empty.create_first": "Haz clic en el botón de arriba para agregar el primero",
+  "empty.no_models": "Sin datos",
+  "total": "Total",
+  "itemsPerPage": "Por página:"
 }

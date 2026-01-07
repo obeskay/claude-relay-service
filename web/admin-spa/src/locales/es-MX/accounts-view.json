@@ -165,6 +165,55 @@
     "reason": "Razón: {reason}"
   },
 
+  "compactActions": {
+    "scheduling": "Programar",
+    "disabled": "Desactivar",
+    "clickToDisable": "Clic para desactivar programación",
+    "clickToEnable": "Clic para activar programación",
+    "edit": "Editar",
+    "editAccount": "Editar cuenta"
+  },
+
+  "mobileView": {
+    "resetRemaining": "Reinicio en",
+    "sessionWindow": "Ventana de sesión",
+    "sessionWindowTooltip": "El progreso de la ventana de sesión no representa el uso, solo indica el tiempo restante hasta la próxima ventana de 5 horas",
+    "remaining": "Restante",
+    "ended": "Finalizado",
+    "noStatistics": "Sin estadísticas"
+  },
+
+  "statsDialog": {
+    "title": "Resumen de estadísticas de cuentas",
+    "platformType": "Tipo de plataforma",
+    "normal": "Normal",
+    "unschedulable": "No programable",
+    "rateLimit0_1h": "Límite 0-1h",
+    "rateLimit1_5h": "Límite 1-5h",
+    "rateLimit5_12h": "Límite 5-12h",
+    "rateLimit12_24h": "Límite 12-24h",
+    "rateLimitOver24h": "Límite >24h",
+    "other": "Otro",
+    "total": "Total",
+    "note": "Nota: Las columnas de tiempo de límite indican la cantidad de cuentas con tiempo de límite restante en el rango especificado"
+  },
+
+  "actions": {
+    "resetStatus": "Restablecer estado",
+    "details": "Detalles",
+    "test": "Probar",
+    "scheduledTest": "Prueba programada",
+    "delete": "Eliminar"
+  },
+
+  "messages": {
+    "accountTypeNoDetails": "Este tipo de cuenta no admite ver detalles",
+    "loadUsageDetailsFailed": "Error al cargar detalles de uso",
+    "accountTypeNoTest": "Este tipo de cuenta no admite pruebas",
+    "accountTypeNoScheduledTest": "Este tipo de cuenta no admite pruebas programadas",
+    "scheduledTestSaved": "Configuración de prueba programada guardada"
+  },
+
   "modals": {
     "create": {
       "title": "Agregar Nueva Cuenta",
