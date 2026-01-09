@@ -125,9 +125,9 @@ async function handleMessagesRequest(req, res) {
       if (perms === 'all') {
         hasPermission = true
       } else if (Array.isArray(perms)) {
-        hasPermission = perms.includes('all') || perms.includes('claude')
+        hasPermission = perms.includes('all') || perms.includes('claude') || perms.includes('api')
       } else if (typeof perms === 'string') {
-        hasPermission = perms.includes('all') || perms.includes('claude')
+        hasPermission = perms.includes('all') || perms.includes('claude') || perms.includes('api')
       }
 
       if (!hasPermission) {
