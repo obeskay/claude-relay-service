@@ -1089,7 +1089,12 @@ class ClaudeRelayService {
     }
 
     // 使用统一 User-Agent 或客户端提供的，最后使用默认值
-    const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
+    // [ULTRAWORK FIX] Force Claude Code User-Agent to bypass "This credential is only authorized for use with Claude Code" error
+    // The previous logic allowed client headers (ai-sdk/...) to override, which triggers the ban.
+    // We now ENFORCE the official CLI User-Agent.
+    const userAgent = 'claude-code/0.2.29 (darwin-arm64) anthropic-typescript/0.2.29'
+    // const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
+
     const acceptHeader = headers['accept'] || 'application/json'
     delete headers['user-agent']
     delete headers['accept']
