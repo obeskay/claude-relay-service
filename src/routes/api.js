@@ -22,6 +22,21 @@ const {
 const { sanitizeUpstreamError } = require('../utils/errorSanitizer')
 const router = express.Router()
 
+router.use((req, res, next) => {
+  if (req.url.startsWith('/v1/v1/')) {
+    req.url = req.url.replace('/v1/v1/', '/v1/')
+  }
+  next()
+})
+// 🔧 路径容错中间件：处理某些客户端可能生成的 /v1/v1/messages 重复前缀
+router.use((req, res, next) => {
+  if (req.url.startsWith('/v1/v1/')) {
+    const oldUrl = req.url
+    req.url = req.url.replace('/v1/v1/', '/v1/')
+    logger.debug(`🔄 Fixed double /v1 prefix: ${oldUrl} -> ${req.url}`)
+  }
+  next()
+})
 function queueRateLimitUpdate(rateLimitInfo, usageSummary, model, context = '') {
   if (!rateLimitInfo) {
     return Promise.resolve({ totalTokens: 0, totalCost: 0 })
