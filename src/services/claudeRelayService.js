@@ -62,7 +62,7 @@ class ClaudeRelayService {
 
     // 客户端没有传递，根据模型判断
     const commonBetas =
-      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-01-09'
+      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-03-05'
     return commonBetas
 
     // const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')

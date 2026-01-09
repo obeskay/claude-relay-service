@@ -20,7 +20,7 @@ class ClaudeCodeHeadersService {
       'x-app': 'cli',
       'user-agent': 'claude-code/2.1.2 (darwin-arm64) anthropic-typescript/0.2.29',
       'anthropic-beta':
-        'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-01-09',
+        'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-03-05',
       'anthropic-version': '2023-06-01',
       'accept-language': '*',
       'sec-fetch-mode': 'cors'
