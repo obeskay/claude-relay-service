@@ -315,7 +315,7 @@ async function handleChatCompletion(req, res, apiKeyData) {
         })(),
         {
           betaHeader:
-            'oauth-2025-04-20,claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14'
+            'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-01-09'
         }
       )
     } else {

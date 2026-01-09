@@ -44,7 +44,7 @@ services:
       # 🎯 Configuración de Claude API
       CLAUDE_API_URL: ${CLAUDE_API_URL:-https://api.anthropic.com/v1/messages}
       CLAUDE_API_VERSION: ${CLAUDE_API_VERSION:-2023-06-01}
-      CLAUDE_BETA_HEADER: ${CLAUDE_BETA_HEADER:-claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14}
+      CLAUDE_BETA_HEADER: ${CLAUDE_BETA_HEADER:-claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-01-09}
 
       # 🚫 Manejo de errores 529 y 400
       CLAUDE_OVERLOAD_HANDLING_MINUTES: ${CLAUDE_OVERLOAD_HANDLING_MINUTES:-0}
