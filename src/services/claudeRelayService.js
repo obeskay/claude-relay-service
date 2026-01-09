@@ -1047,12 +1047,11 @@ class ClaudeRelayService {
       // 获取该账号存储的 Claude Code headers
       const claudeCodeHeaders = await claudeCodeHeadersService.getAccountHeaders(accountId)
 
-      // 只添加客户端没有提供的 headers
       Object.keys(claudeCodeHeaders).forEach((key) => {
         const lowerKey = key.toLowerCase()
-        if (!finalHeaders[key] && !finalHeaders[lowerKey]) {
-          finalHeaders[key] = claudeCodeHeaders[key]
-        }
+        delete finalHeaders[key]
+        delete finalHeaders[lowerKey]
+        finalHeaders[key] = claudeCodeHeaders[key]
       })
     }
 

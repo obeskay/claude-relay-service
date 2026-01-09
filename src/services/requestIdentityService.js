@@ -329,7 +329,7 @@ function rewriteUserId(body, accountId, accountUuid) {
   const effectiveScheduler = accountId ? String(accountId) : 'unknown-scheduler'
   const hashed = formatUuidFromSeed(`${effectiveScheduler}::${seedTail}`)
 
-  let normalizedPrefix = prefixBeforeSession
+  let normalizedPrefix = prefixBeforeSession.replace(/_+$/, '')
 
   if (accountUuid) {
     const trimmedUuid = normalizeAccountUuid(accountUuid)
@@ -337,32 +337,15 @@ function rewriteUserId(body, accountId, accountUuid) {
       const accountIndex = normalizedPrefix.indexOf(ACCOUNT_MARKER)
 
       if (accountIndex === -1) {
-        const base = normalizedPrefix.replace(/_+$/, '')
-        const baseWithMarker = /_account$/.test(base) ? base : `${base}_account`
-        normalizedPrefix = `${baseWithMarker}_${trimmedUuid}_`
+        normalizedPrefix = `${normalizedPrefix}${ACCOUNT_MARKER}_${trimmedUuid}`
       } else {
-        const valueStart = accountIndex + ACCOUNT_MARKER.length
-        let separatorIndex = normalizedPrefix.indexOf('_', valueStart)
-        if (separatorIndex === -1) {
-          separatorIndex = normalizedPrefix.length
-        }
-
-        const head = normalizedPrefix.slice(0, valueStart)
-        let tail = '_'
-
-        if (separatorIndex < normalizedPrefix.length) {
-          tail = normalizedPrefix.slice(separatorIndex)
-          if (/^_+$/.test(tail)) {
-            tail = '_'
-          }
-        }
-
-        normalizedPrefix = `${head}${trimmedUuid}${tail}`
+        const head = normalizedPrefix.slice(0, accountIndex + ACCOUNT_MARKER.length)
+        normalizedPrefix = `${head}_${trimmedUuid}`
       }
     }
   }
 
-  const nextUserId = `${normalizedPrefix}${SESSION_PREFIX}${hashed}`
+  const nextUserId = `${normalizedPrefix.replace(/_+$/, '')}${SESSION_PREFIX}${hashed}`
 
   if (nextUserId === userId) {
     return { nextBody: body, changed: false }
