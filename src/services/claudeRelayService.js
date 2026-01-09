@@ -63,7 +63,7 @@ class ClaudeRelayService {
     // 客户端没有传递，根据模型判断
     // [ULTRAWORK FIX] Always include claude-code-20250219 for Claude Code tokens, plus other required betas
     const commonBetas =
-      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,output-128k-2024-10-22,prompt-caching-2024-07-31'
+      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,output-128k-2024-10-22,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-03-05'
     return commonBetas
 
     // const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')
@@ -260,7 +260,6 @@ class ClaudeRelayService {
               type: 'error',
               error: {
                 type: errorType,
-                code: errorCode,
                 message: errorMessage
               }
             }),
@@ -1097,7 +1096,7 @@ class ClaudeRelayService {
     // [ULTRAWORK FIX] Force Claude Code User-Agent to bypass "This credential is only authorized for use with Claude Code" error
     // The previous logic allowed client headers (ai-sdk/...) to override, which triggers the ban.
     // We now ENFORCE the official CLI User-Agent.
-    const userAgent = 'claude-code/1.0.90 (darwin-arm64) anthropic-typescript/0.2.29'
+    const userAgent = 'claude-cli/2.1.2 (external, cli)'
     // const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
 
     const acceptHeader = headers['accept'] || 'application/json'
@@ -1108,7 +1107,7 @@ class ClaudeRelayService {
 
     // [ULTRAWORK FIX] Add missing Stainless/CLI headers to fully mimic Claude Code CLI
     headers['x-app'] = 'cli'
-    headers['x-stainless-package-version'] = '1.0.90'
+    headers['x-stainless-package-version'] = '2.1.2'
     headers['x-stainless-os'] = 'darwin'
     headers['x-stainless-arch'] = 'arm64'
     headers['x-stainless-runtime'] = 'node'
@@ -1841,16 +1840,34 @@ class ClaudeRelayService {
                   `data: ${JSON.stringify({ type: 'error', error: errorMessage })}\n\n`
                 )
               } else {
-                // 标准错误格式
+                // [FIX] standard Anthropic error format to avoid client validation failure
                 responseStream.write('event: error\n')
-                responseStream.write(
-                  `data: ${JSON.stringify({
-                    error: 'Claude API error',
-                    status: res.statusCode,
-                    details: errorData,
-                    timestamp: new Date().toISOString()
-                  })}\n\n`
-                )
+                try {
+                  const parsed = JSON.parse(errorData)
+                  if (parsed.type === 'error') {
+                    responseStream.write(`data: ${errorData}\n\n`)
+                  } else {
+                    responseStream.write(
+                      `data: ${JSON.stringify({
+                        type: 'error',
+                        error: {
+                          type: 'upstream_error',
+                          message: errorMessage
+                        }
+                      })}\n\n`
+                    )
+                  }
+                } catch {
+                  responseStream.write(
+                    `data: ${JSON.stringify({
+                      type: 'error',
+                      error: {
+                        type: 'upstream_error',
+                        message: errorMessage
+                      }
+                    })}\n\n`
+                  )
+                }
               }
               responseStream.end()
             }

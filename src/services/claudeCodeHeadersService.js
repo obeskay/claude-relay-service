@@ -12,14 +12,13 @@ class ClaudeCodeHeadersService {
       'x-stainless-retry-count': '0',
       'x-stainless-timeout': '60',
       'x-stainless-lang': 'js',
-      'x-stainless-package-version': '0.55.1',
-      'x-stainless-os': 'Windows',
-      'x-stainless-arch': 'x64',
+      'x-stainless-package-version': '2.1.2',
+      'x-stainless-os': 'darwin',
+      'x-stainless-arch': 'arm64',
       'x-stainless-runtime': 'node',
       'x-stainless-runtime-version': 'v20.19.2',
-      'anthropic-dangerous-direct-browser-access': 'true',
       'x-app': 'cli',
-      'user-agent': 'claude-cli/1.0.57 (external, cli)',
+      'user-agent': 'claude-cli/2.1.2 (external, npm)',
       'accept-language': '*',
       'sec-fetch-mode': 'cors'
     }

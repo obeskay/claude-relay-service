@@ -78,7 +78,6 @@ class ClaudeConsoleRelayService {
               type: 'error',
               error: {
                 type: errorType,
-                code: errorCode,
                 message: errorMessage
               }
             }),
@@ -529,7 +528,13 @@ class ClaudeConsoleRelayService {
               'x-user-message-queue-error': errorType
             })
           }
-          const errorEvent = `event: error\ndata: ${JSON.stringify({ type: 'error', error: { type: errorType, code: errorCode, message: errorMessage } })}\n\n`
+          const errorEvent = `event: error\ndata: ${JSON.stringify({
+            type: 'error',
+            error: {
+              type: errorType,
+              message: errorMessage
+            }
+          })}\n\n`
           responseStream.write(errorEvent)
           responseStream.write('data: [DONE]\n\n')
           responseStream.end()

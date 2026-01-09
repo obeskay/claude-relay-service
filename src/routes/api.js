@@ -181,6 +181,7 @@ async function handleMessagesRequest(req, res) {
       const effectiveModel = getEffectiveModel(req.body.model || '')
       if (req.apiKey.restrictedModels.includes(effectiveModel)) {
         return res.status(403).json({
+          type: 'error',
           error: {
             type: 'forbidden',
             message: 'Sin permiso de acceso para este modelo'
@@ -1196,9 +1197,11 @@ async function handleMessagesRequest(req, res) {
       }
 
       return res.status(statusCode).json({
-        error: errorType,
-        message: handledError.message || 'An unexpected error occurred',
-        timestamp: new Date().toISOString()
+        type: 'error',
+        error: {
+          type: 'relay_error',
+          message: handledError.message || 'An unexpected error occurred'
+        }
       })
     } else {
       // 如果响应头已经发送，尝试结束响应
@@ -1547,6 +1550,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
             logger.error('❌ Failed to clear session mapping for count_tokens retry:', clearError)
             if (!res.headersSent) {
               return res.status(500).json({
+                type: 'error',
                 error: {
                   type: 'server_error',
                   message: 'Failed to count tokens'

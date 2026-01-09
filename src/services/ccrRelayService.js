@@ -68,7 +68,6 @@ class CcrRelayService {
               type: 'error',
               error: {
                 type: errorType,
-                code: errorCode,
                 message: errorMessage
               }
             }),
@@ -394,7 +393,6 @@ class CcrRelayService {
             type: 'error',
             error: {
               type: errorType,
-              code: errorCode,
               message: errorMessage
             }
           })}\n\n`
