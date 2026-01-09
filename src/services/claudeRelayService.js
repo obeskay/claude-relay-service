@@ -61,11 +61,16 @@ class ClaudeRelayService {
     }
 
     // 客户端没有传递，根据模型判断
-    const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')
-    if (isHaikuModel) {
-      return 'oauth-2025-04-20,interleaved-thinking-2025-05-14'
-    }
-    return 'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14'
+    // [ULTRAWORK FIX] Always include claude-code-20250219 for Claude Code tokens, plus other required betas
+    const commonBetas =
+      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,output-128k-2024-10-22,prompt-caching-2024-07-31'
+    return commonBetas
+
+    // const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')
+    // if (isHaikuModel) {
+    //   return 'oauth-2025-04-20,interleaved-thinking-2025-05-14'
+    // }
+    // return 'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14'
   }
 
   _buildStandardRateLimitMessage(resetTime) {
@@ -1101,7 +1106,14 @@ class ClaudeRelayService {
     headers['User-Agent'] = userAgent
     headers['Accept'] = acceptHeader
 
-    logger.info(`🔗 指纹是这个: ${headers['User-Agent']}`)
+    // [ULTRAWORK FIX] Add missing Stainless/CLI headers to fully mimic Claude Code CLI
+    headers['x-app'] = 'cli'
+    headers['x-stainless-package-version'] = '0.2.29'
+    headers['x-stainless-os'] = 'darwin'
+    headers['x-stainless-arch'] = 'arm64'
+    headers['x-stainless-runtime'] = 'node'
+    headers['x-stainless-lang'] = 'js'
+    headers['anthropic-dangerous-direct-browser-access'] = 'true'
 
     logger.info(`🔗 指纹是这个: ${headers['User-Agent']}`)
 
