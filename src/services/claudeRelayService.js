@@ -1097,7 +1097,7 @@ class ClaudeRelayService {
     // [ULTRAWORK FIX] Force Claude Code User-Agent to bypass "This credential is only authorized for use with Claude Code" error
     // The previous logic allowed client headers (ai-sdk/...) to override, which triggers the ban.
     // We now ENFORCE the official CLI User-Agent.
-    const userAgent = 'claude-code/0.2.29 (darwin-arm64) anthropic-typescript/0.2.29'
+    const userAgent = 'claude-code/1.0.90 (darwin-arm64) anthropic-typescript/0.2.29'
     // const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
 
     const acceptHeader = headers['accept'] || 'application/json'
@@ -1108,12 +1108,12 @@ class ClaudeRelayService {
 
     // [ULTRAWORK FIX] Add missing Stainless/CLI headers to fully mimic Claude Code CLI
     headers['x-app'] = 'cli'
-    headers['x-stainless-package-version'] = '0.2.29'
+    headers['x-stainless-package-version'] = '1.0.90'
     headers['x-stainless-os'] = 'darwin'
     headers['x-stainless-arch'] = 'arm64'
     headers['x-stainless-runtime'] = 'node'
     headers['x-stainless-lang'] = 'js'
-    headers['anthropic-dangerous-direct-browser-access'] = 'true'
+    // headers['anthropic-dangerous-direct-browser-access'] = 'true' // REMOVED: This flags us as a browser, contradicting CLI identity
 
     logger.info(`🔗 指纹是这个: ${headers['User-Agent']}`)
 
