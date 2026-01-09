@@ -118,17 +118,26 @@ async function handleMessagesRequest(req, res) {
     const startTime = Date.now()
 
     // Claude 服务权限校验，阻止未授权的 Key
-    if (
-      req.apiKey.permissions &&
-      req.apiKey.permissions !== 'all' &&
-      req.apiKey.permissions !== 'claude'
-    ) {
-      return res.status(403).json({
-        error: {
-          type: 'permission_error',
-          message: 'Esta clave API no tiene permiso para acceder al servicio Claude'
-        }
-      })
+    if (req.apiKey.permissions) {
+      const perms = req.apiKey.permissions
+      let hasPermission = false
+
+      if (perms === 'all') {
+        hasPermission = true
+      } else if (Array.isArray(perms)) {
+        hasPermission = perms.includes('all') || perms.includes('claude')
+      } else if (typeof perms === 'string') {
+        hasPermission = perms.includes('all') || perms.includes('claude')
+      }
+
+      if (!hasPermission) {
+        return res.status(403).json({
+          error: {
+            type: 'permission_error',
+            message: 'Esta clave API no tiene permiso para acceder al servicio Claude'
+          }
+        })
+      }
     }
 
     // 🔄 并发满额重试标志：最多重试一次（使用req对象存储状态）
@@ -353,7 +362,9 @@ async function handleMessagesRequest(req, res) {
           return res.status(400).json({
             error: {
               type: 'session_binding_error',
-              message: cfg.sessionBindingErrorMessage || 'Su sesión local está contaminada, límpiela antes de usarla.'
+              message:
+                cfg.sessionBindingErrorMessage ||
+                'Su sesión local está contaminada, límpiela antes de usarla.'
             }
           })
         }
@@ -869,7 +880,9 @@ async function handleMessagesRequest(req, res) {
           return res.status(400).json({
             error: {
               type: 'session_binding_error',
-              message: cfg.sessionBindingErrorMessage || 'Su sesión local está contaminada, límpiela antes de usarla.'
+              message:
+                cfg.sessionBindingErrorMessage ||
+                'Su sesión local está contaminada, límpiela antes de usarla.'
             }
           })
         }
@@ -1380,7 +1393,9 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
       return res.status(400).json({
         error: {
           type: 'session_binding_error',
-          message: cfg.sessionBindingErrorMessage || 'Su sesión local está contaminada, límpiela antes de usarla.'
+          message:
+            cfg.sessionBindingErrorMessage ||
+            'Su sesión local está contaminada, límpiela antes de usarla.'
         }
       })
     }
