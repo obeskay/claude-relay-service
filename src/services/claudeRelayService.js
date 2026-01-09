@@ -61,9 +61,9 @@ class ClaudeRelayService {
     }
 
     // 客户端没有传递，根据模型判断
-    // [ULTRAWORK FIX] Always include claude-code-20250219 for Claude Code tokens, plus other required betas
+    // [ULTRAWORK FIX] Always include claude-code-20250122 for Claude Code tokens, plus other required betas
     const commonBetas =
-      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,output-128k-2024-10-22,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-03-05'
+      'claude-code-2025-01-22,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,output-128k-2024-10-22,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,search-2025-10-22'
     return commonBetas
 
     // const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')
@@ -704,10 +704,7 @@ class ClaudeRelayService {
     if (!isRealClaudeCode) {
       const claudeCodePrompt = {
         type: 'text',
-        text: this.claudeCodeSystemPrompt,
-        cache_control: {
-          type: 'ephemeral'
-        }
+        text: this.claudeCodeSystemPrompt
       }
 
       if (processedBody.system) {
@@ -1096,7 +1093,7 @@ class ClaudeRelayService {
     // [ULTRAWORK FIX] Force Claude Code User-Agent to bypass "This credential is only authorized for use with Claude Code" error
     // The previous logic allowed client headers (ai-sdk/...) to override, which triggers the ban.
     // We now ENFORCE the official CLI User-Agent.
-    const userAgent = 'claude-cli/2.1.2 (external, cli)'
+    const userAgent = 'claude-code/2.1.2 (darwin-arm64) anthropic-typescript/0.2.29'
     // const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
 
     const acceptHeader = headers['accept'] || 'application/json'
@@ -1112,6 +1109,8 @@ class ClaudeRelayService {
     headers['x-stainless-arch'] = 'arm64'
     headers['x-stainless-runtime'] = 'node'
     headers['x-stainless-lang'] = 'js'
+    headers['anthropic-version'] = '2023-06-01'
+    // headers['anthropic-dangerous-direct-browser-access'] = 'true' // REMOVED: This flags us as a browser, contradicting CLI identity
     // headers['anthropic-dangerous-direct-browser-access'] = 'true' // REMOVED: This flags us as a browser, contradicting CLI identity
 
     logger.info(`🔗 指纹是这个: ${headers['User-Agent']}`)

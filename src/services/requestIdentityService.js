@@ -10,8 +10,8 @@ const crypto = require('crypto')
 const logger = require('../utils/logger')
 const redisService = require('../models/redis')
 
-const SESSION_PREFIX = 'session_'
-const ACCOUNT_MARKER = '_account_'
+const SESSION_PREFIX = '__session_'
+const ACCOUNT_MARKER = '_account'
 const STAINLESS_HEADER_KEYS = [
   'x-stainless-retry-count',
   'x-stainless-timeout',
