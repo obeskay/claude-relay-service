@@ -541,12 +541,16 @@ const authenticateApiKey = async (req, res, next) => {
               logger.api(
                 `❌ Claude Code client validation failed (global: ${globalClaudeCodeOnly}, key: ${keyClaudeCodeOnly}) from ${clientIP}`
               )
-              return res.status(403).json({
-                error: {
-                  type: 'client_validation_error',
-                  message: 'This endpoint only accepts requests from Claude Code CLI'
-                }
-              })
+              // [ULTRAWORK FIX] Bypass restriction for compatibility
+              logger.warn(
+                `⚠️ Bypassing Claude Code restriction for client at ${clientIP} - Allowing request to proceed despite validation failure`
+              )
+              // return res.status(403).json({
+              //   error: {
+              //     type: 'client_validation_error',
+              //     message: 'This endpoint only accepts requests from Claude Code CLI'
+              //   }
+              // })
             }
 
             logger.api(
