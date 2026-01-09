@@ -337,7 +337,9 @@ class ClaudeRelayService {
 
       // 发送请求到Claude API（传入回调以获取请求对象）
       // 🔄 403 重试机制：仅对 claude-official 类型账户（OAuth 或 Setup Token）
-      const maxRetries = this._shouldRetryOn403(accountType) ? 2 : 0
+      // 优化：增加重试次数和等待时间，避免临时403导致账户被误标记为blocked
+      const maxRetries = this._shouldRetryOn403(accountType) ? 3 : 0
+      const retryDelays = [3000, 5000, 8000] // 指数退避：3s, 5s, 8s
       let retryCount = 0
       let response
       let shouldRetry = false
@@ -358,11 +360,12 @@ class ClaudeRelayService {
         // 检查是否需要重试 403
         shouldRetry = response.statusCode === 403 && retryCount < maxRetries
         if (shouldRetry) {
+          const delay = retryDelays[retryCount] || retryDelays[retryDelays.length - 1]
           retryCount++
           logger.warn(
-            `🔄 403 error for account ${accountId}, retry ${retryCount}/${maxRetries} after 2s`
+            `🔄 403 error for account ${accountId}, retry ${retryCount}/${maxRetries} after ${delay / 1000}s`
           )
-          await this._sleep(2000)
+          await this._sleep(delay)
         }
       } while (shouldRetry)
 
@@ -1563,7 +1566,9 @@ class ClaudeRelayService {
     onResponseStart = null, // 📬 新增：收到响应头时的回调，用于提前释放队列锁
     retryCount = 0 // 🔄 403 重试计数器
   ) {
-    const maxRetries = 2 // 最大重试次数
+    // 🔄 优化：增加重试次数和等待时间，避免临时403导致账户被误标记为blocked
+    const maxRetries = 3 // 最大重试次数
+    const retryDelays = [3000, 5000, 8000] // 指数退避：3s, 5s, 8s
     // 获取账户信息用于统一 User-Agent
     const account = await claudeAccountService.getAccount(accountId)
 
@@ -1685,15 +1690,16 @@ class ClaudeRelayService {
               !responseStream.headersSent
 
             if (canRetry) {
+              const delay = retryDelays[retryCount] || retryDelays[retryDelays.length - 1]
               logger.warn(
-                `🔄 [Stream] 403 error for account ${accountId}, retry ${retryCount + 1}/${maxRetries} after 2s`
+                `🔄 [Stream] 403 error for account ${accountId}, retry ${retryCount + 1}/${maxRetries} after ${delay / 1000}s`
               )
               // 消费当前响应并销毁请求
               res.resume()
               req.destroy()
 
-              // 等待 2 秒后递归重试
-              await this._sleep(2000)
+              // 等待指数退避时间后递归重试
+              await this._sleep(delay)
 
               try {
                 // 递归调用自身进行重试
