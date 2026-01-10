@@ -1,0 +1,85 @@
+{
+  "title": "Claude Code Tutorial",
+  "subtitle": "Follow this tutorial to easily install and use Claude Code on your computer.",
+  "systems": {
+    "windows": "Windows",
+    "macos": "macOS",
+    "linux": "Linux"
+  },
+  "steps": {
+    "step1": {
+      "title": "Install Node.js Environment",
+      "subtitle": "Claude Code requires a Node.js environment to run.",
+      "windows": {
+        "title": "Windows Installation Method",
+        "method1": "Method 1: Official Download (Recommended)",
+        "method1_steps": {
+          "1": "Open your browser and visit https://nodejs.org/",
+          "2": "Click the \"LTS\" version to download (Recommended Long Term Support version)",
+          "3": "Once downloaded, double-click the .msi file",
+          "4": "Follow the installation wizard to complete the installation, keep default settings"
+        },
+        "method2": "Method 2: Use Package Manager",
+        "method2_desc": "If you have Chocolatey or Scoop installed, you can use the command line:",
+        "choco_comment": "# Using Chocolatey",
+        "scoop_comment": "# Or using Scoop"
+      },
+      "macos": {
+        "title": "macOS Installation Method",
+        "method1": "Method 1: Official Download",
+        "method1_desc": "Visit https://nodejs.org/ download the macOS .pkg package and install it",
+        "method2": "Method 2: Use Homebrew (Recommended)",
+        "method2_desc": "If you have Homebrew installed, open terminal and run:"
+      },
+      "linux": {
+        "title": "Linux Installation Method",
+        "desc": "Use your distribution's package manager to install."
+      },
+      "verify": {
+        "title": "Verify Installation",
+        "desc": "Open terminal (cmd/PowerShell) and run the following command, if you see the version number, installation was successful:"
+      }
+    },
+    "step2": {
+      "title": "Install Claude Code",
+      "desc": "Use npm (Node.js package manager) to install the Claude Code tool.",
+      "command_desc": "Run the following command in terminal to install globally:",
+      "verify_desc": "After installation, verify if it was successful:"
+    },
+    "step3": {
+      "title": "Configure and Login (Critical Step)",
+      "desc": "This step will link your local Claude Code with your account on this system.",
+      "warning": "Important Note: Do not use 'claude login' command directly, as it will try to login to official Anthropic web. You must follow the steps below to configure the relay URL.",
+      "auth_title": "One-Click Authentication Setup",
+      "auth_desc": "Click the button below to copy the full configuration and login command, then paste it into your terminal and run it:",
+      "copy_button": "Copy Configuration & Login Command",
+      "manual_title": "Manual Configuration (Alternative)",
+      "manual_desc": "If the above command fails, you can configure step by step:",
+      "set_url": "1. Configure Relay Service URL:",
+      "ignore_errors": "2. Configure to ignore certificate errors (if needed):",
+      "login_cmd": "3. Run Login Command:"
+    },
+    "step4": {
+      "title": "Start Using",
+      "desc": "You can now start using Claude Code for AI-assisted programming!",
+      "example_title": "Example Command:",
+      "example_desc": "Ask Claude to help you write a Python script:"
+    }
+  },
+  "troubleshooting": {
+    "title": "Common Troubleshooting",
+    "ssl_error": {
+      "title": "SSL Certificate Error",
+      "desc": "If you encounter SSL/TLS related errors, try running:",
+      "cmd": "export NODE_TLS_REJECT_UNAUTHORIZED=0"
+    },
+    "login_error": {
+      "title": "Login Failure or 404 Error",
+      "desc": "Ensure you have executed 'claude config set apiBaseUrl ...' command correctly and the URL is correct."
+    },
+    "permission_error": {
+      "title": "Permission Error (EACCES)",
+      "desc": "On Mac/Linux, you might need to add 'sudo' before the npm global install command."
+    }
+  }
+}

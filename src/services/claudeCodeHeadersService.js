@@ -12,14 +12,16 @@ class ClaudeCodeHeadersService {
       'x-stainless-retry-count': '0',
       'x-stainless-timeout': '60',
       'x-stainless-lang': 'js',
-      'x-stainless-package-version': '0.55.1',
-      'x-stainless-os': 'Windows',
-      'x-stainless-arch': 'x64',
+      'x-stainless-package-version': '2.1.2',
+      'x-stainless-os': 'darwin',
+      'x-stainless-arch': 'arm64',
       'x-stainless-runtime': 'node',
       'x-stainless-runtime-version': 'v20.19.2',
-      'anthropic-dangerous-direct-browser-access': 'true',
       'x-app': 'cli',
-      'user-agent': 'claude-cli/1.0.57 (external, cli)',
+      'user-agent': 'claude-code/2.1.2 (darwin-arm64) anthropic-typescript/0.2.29',
+      'anthropic-beta':
+        'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-03-05',
+      'anthropic-version': '2023-06-01',
       'accept-language': '*',
       'sec-fetch-mode': 'cors'
     }
@@ -50,8 +52,8 @@ class ClaudeCodeHeadersService {
     if (!userAgent) {
       return null
     }
-    const match = userAgent.match(/claude-cli\/([\d.]+(?:[a-zA-Z0-9-]*)?)/i)
-    return match ? match[1] : null
+    const match = userAgent.match(/claude-(cli|code)\/([\d.]+(?:[a-zA-Z0-9-]*)?)/i)
+    return match ? match[2] : null
   }
 
   /**
@@ -113,7 +115,7 @@ class ClaudeCodeHeadersService {
 
       // 检查是否有 user-agent
       const userAgent = extractedHeaders['user-agent']
-      if (!userAgent || !/^claude-cli\/[\d.]+\s+\(/i.test(userAgent)) {
+      if (!userAgent || !/^claude-(cli|code)\/[\d.]+\s+\(/i.test(userAgent)) {
         // 不是 Claude Code 的请求，不存储
         return
       }

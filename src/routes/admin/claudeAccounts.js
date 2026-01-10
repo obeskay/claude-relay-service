@@ -270,7 +270,7 @@ router.post('/claude-accounts/oauth-with-cookie', authenticateAdmin, async (req,
       return res.status(400).json({
         success: false,
         error: 'sessionKey不能为空',
-        message: '请提供有效的sessionKey值'
+        message: 'Proporcione un valor de sessionKey válido'
       })
     }
 
@@ -319,7 +319,7 @@ router.post('/claude-accounts/setup-token-with-cookie', authenticateAdmin, async
       return res.status(400).json({
         success: false,
         error: 'sessionKey不能为空',
-        message: '请提供有效的sessionKey值'
+        message: 'Proporcione un valor de sessionKey válido'
       })
     }
 
@@ -762,7 +762,7 @@ router.delete('/claude-accounts/:accountId', authenticateAdmin, async (req, res)
 
     let message = 'Claude账号已成功删除'
     if (unboundCount > 0) {
-      message += `，${unboundCount} 个 API Key 已切换为共享池模式`
+      message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
 
     logger.success(`🗑️ Admin deleted Claude account: ${accountId}, unbound ${unboundCount} keys`)

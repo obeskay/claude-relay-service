@@ -1,33 +1,37 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import es from 'element-plus/dist/locale/es.mjs'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 import { useUserStore } from './stores/user'
 import './assets/styles/main.css'
 import './assets/styles/global.css'
 
-// 创建Vue应用
+// Create Vue app
 const app = createApp(App)
 
-// 使用Pinia状态管理
+// Use Pinia state management
 const pinia = createPinia()
 app.use(pinia)
 
-// 使用路由
+// Use i18n for translations
+app.use(i18n)
+
+// Use router
 app.use(router)
 
-// 使用Element Plus
+// Use Element Plus with Spanish locale
 app.use(ElementPlus, {
-  locale: zhCn
+  locale: es
 })
 
-// 设置axios拦截器
+// Setup axios interceptors
 const userStore = useUserStore()
 userStore.setupAxiosInterceptors()
 
-// 挂载应用
+// Mount app
 app.mount('#app')

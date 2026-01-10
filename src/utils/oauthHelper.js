@@ -674,7 +674,7 @@ async function getOrganizationInfo(sessionKey, proxyConfig = null) {
       const { status } = error.response
 
       if (status === 403 || status === 401) {
-        throw new Error('Cookie授权失败：无效的sessionKey或已过期')
+        throw new Error('Cookie authorization failed: invalid sessionKey or expired')
       }
 
       if (status === 302) {
@@ -792,7 +792,7 @@ async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyCon
       const { status } = error.response
 
       if (status === 403 || status === 401) {
-        throw new Error('Cookie授权失败：无效的sessionKey或已过期')
+        throw new Error('Cookie authorization failed: invalid sessionKey or expired')
       }
 
       if (status === 302) {

@@ -4,9 +4,9 @@
       <!-- 页面标题 -->
       <div class="mb-4 sm:mb-6">
         <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-          系统设置
+          {{ $t('settings.pageTitle') }}
         </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">网站定制和通知配置</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">{{ $t('settings.pageDescription') }}</p>
       </div>
 
       <!-- 设置分类导航 -->
@@ -22,7 +22,7 @@
             @click="activeSection = 'branding'"
           >
             <i class="fas fa-palette mr-2"></i>
-            品牌设置
+            {{ $t('settings.navigation.branding') }}
           </button>
           <button
             :class="[
@@ -34,7 +34,7 @@
             @click="activeSection = 'webhook'"
           >
             <i class="fas fa-bell mr-2"></i>
-            通知设置
+            {{ $t('settings.navigation.webhook') }}
           </button>
           <button
             :class="[
@@ -46,7 +46,7 @@
             @click="activeSection = 'claude'"
           >
             <i class="fas fa-robot mr-2"></i>
-            Claude 转发
+            Claude {{ $t('settings.branding.actions.save') }}
           </button>
         </nav>
       </div>
@@ -54,7 +54,7 @@
       <!-- 加载状态 -->
       <div v-if="loading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4"></div>
-        <p class="text-gray-500 dark:text-gray-400">正在加载设置...</p>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('settings.loading.settings') }}</p>
       </div>
 
       <!-- 内容区域 -->
@@ -76,9 +76,9 @@
                       </div>
                       <div>
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          网站名称
+                          {{ $t('settings.branding.siteName.label') }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">品牌标识</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('settings.branding.siteName.description') }}</div>
                       </div>
                     </div>
                   </td>
@@ -87,11 +87,11 @@
                       v-model="oemSettings.siteName"
                       class="form-input w-full max-w-md dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                       maxlength="100"
-                      placeholder="Claude Relay Service"
+                      :placeholder="$t('settings.branding.siteName.placeholder')"
                       type="text"
                     />
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      将显示在浏览器标题和页面头部
+                      {{ $t('settings.branding.siteName.helpText') }}
                     </p>
                   </td>
                 </tr>
@@ -107,9 +107,9 @@
                       </div>
                       <div>
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          网站图标
+                          {{ $t('settings.branding.siteIcon.label') }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">Favicon</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('settings.branding.siteIcon.description') }}</div>
                       </div>
                     </div>
                   </td>
@@ -126,12 +126,12 @@
                           :src="oemSettings.siteIconData || oemSettings.siteIcon"
                           @error="handleIconError"
                         />
-                        <span class="text-sm text-gray-600 dark:text-gray-400">当前图标</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $t('settings.branding.siteIcon.currentIcon') }}</span>
                         <button
                           class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                           @click="removeIcon"
                         >
-                          <i class="fas fa-trash mr-1" />删除
+                          <i class="fas fa-trash mr-1" />{{ $t('common.action.delete') }}
                         </button>
                       </div>
 
@@ -149,10 +149,10 @@
                           @click="$refs.iconFileInput.click()"
                         >
                           <i class="fas fa-upload mr-2" />
-                          上传图标
+                          {{ $t('settings.branding.siteIcon.uploadButton') }}
                         </button>
                         <span class="ml-3 text-xs text-gray-500 dark:text-gray-400"
-                          >支持 .ico, .png, .jpg, .svg 格式，最大 350KB</span
+                          >{{ $t('settings.branding.siteIcon.supportedFormats') }}</span
                         >
                       </div>
                     </div>
@@ -170,9 +170,9 @@
                       </div>
                       <div>
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          管理入口
+                          {{ $t('settings.branding.adminButton.label') }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">登录按钮显示</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('settings.branding.adminButton.description') }}</div>
                       </div>
                     </div>
                   </td>
@@ -184,12 +184,12 @@
                           class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                         ></div>
                         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{
-                          hideAdminButton ? '隐藏登录按钮' : '显示登录按钮'
+                          hideAdminButton ? $t('settings.branding.adminButton.hideButton') : $t('settings.branding.adminButton.showButton')
                         }}</span>
                       </label>
                     </div>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      隐藏后，用户需要直接访问 /admin/login 页面登录
+                      {{ $t('settings.branding.adminButton.helpText') }}
                     </p>
                   </td>
                 </tr>
@@ -207,7 +207,7 @@
                         >
                           <div v-if="saving" class="loading-spinner mr-2"></div>
                           <i v-else class="fas fa-save mr-2" />
-                          {{ saving ? '保存中...' : '保存设置' }}
+                          {{ saving ? $t('settings.loading.saving') : $t('settings.branding.actions.save') }}
                         </button>
 
                         <button
@@ -216,7 +216,7 @@
                           @click="resetOemSettings"
                         >
                           <i class="fas fa-undo mr-2" />
-                          重置为默认
+                          {{ $t('settings.branding.actions.reset') }}
                         </button>
                       </div>
 
@@ -225,7 +225,7 @@
                         class="text-sm text-gray-500 dark:text-gray-400"
                       >
                         <i class="fas fa-clock mr-1" />
-                        最后更新：{{ formatDateTime(oemSettings.updatedAt) }}
+                        {{ $t('settings.branding.actions.lastUpdated', { time: formatDateTime(oemSettings.updatedAt) }) }}
                       </div>
                     </div>
                   </td>
@@ -381,7 +381,7 @@
           </div>
         </div>
 
-        <!-- Webhook 设置部分 -->
+          <!-- Webhook 设置部分 -->
         <div v-show="activeSection === 'webhook'">
           <!-- 主开关 -->
           <div
@@ -389,9 +389,9 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">启用通知</h2>
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $t('settings.webhook.mainSwitch.title') }}</h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                  开启后，系统将按配置发送通知到指定平台
+                  {{ $t('settings.webhook.mainSwitch.description') }}
                 </p>
               </div>
               <label class="relative inline-flex cursor-pointer items-center">
@@ -412,7 +412,7 @@
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
-            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">通知类型</h2>
+            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $t('settings.webhook.notificationTypes.title') }}</h2>
             <div class="space-y-3">
               <div
                 v-for="(enabled, type) in webhookConfig.notificationTypes"
@@ -447,13 +447,13 @@
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
             <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">通知平台</h2>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $t('settings.webhook.platforms.title') }}</h2>
               <button
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 @click="showAddPlatformModal = true"
               >
                 <i class="fas fa-plus mr-2"></i>
-                添加平台
+                {{ $t('settings.webhook.platforms.addButton') }}
               </button>
             </div>
 
@@ -493,7 +493,7 @@
                         class="flex items-center text-gray-600 dark:text-gray-400"
                       >
                         <i class="fas fa-comments mr-2"></i>
-                        <span class="truncate">Chat ID: {{ platform.chatId || '未配置' }}</span>
+                        <span class="truncate">Chat ID: {{ platform.chatId || $t('settings.webhook.platforms.fields.notConfigured') }}</span>
                       </div>
                       <div
                         v-if="platform.type === 'telegram' && platform.botToken"
@@ -516,7 +516,7 @@
                         class="flex items-center text-gray-600 dark:text-gray-400"
                       >
                         <i class="fas fa-route mr-2"></i>
-                        <span class="truncate">代理: {{ platform.proxyUrl }}</span>
+                        <span class="truncate">Proxy: {{ platform.proxyUrl }}</span>
                       </div>
                       <div
                         v-if="platform.type === 'smtp' && platform.to"
@@ -532,7 +532,7 @@
                         class="flex items-center text-gray-600 dark:text-gray-400"
                       >
                         <i class="fas fa-shield-alt mr-2"></i>
-                        <span>已启用签名验证</span>
+                        <span>{{ $t('settings.webhook.platforms.fields.enableSign') }}</span>
                       </div>
                     </div>
                   </div>
@@ -552,7 +552,7 @@
                     <!-- 测试按钮 -->
                     <button
                       class="rounded-lg bg-blue-100 p-2 text-blue-600 transition-colors hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800"
-                      title="测试连接"
+                      :title="$t('settings.webhook.platforms.actions.test')"
                       @click="testPlatform(platform)"
                     >
                       <i class="fas fa-vial"></i>
@@ -560,7 +560,7 @@
                     <!-- 编辑按钮 -->
                     <button
                       class="rounded-lg bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-                      title="编辑"
+                      :title="$t('common.action.edit')"
                       @click="editPlatform(platform)"
                     >
                       <i class="fas fa-edit"></i>
@@ -568,7 +568,7 @@
                     <!-- 删除按钮 -->
                     <button
                       class="rounded-lg bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800"
-                      title="删除"
+                      :title="$t('common.action.delete')"
                       @click="deletePlatform(platform.id)"
                     >
                       <i class="fas fa-trash"></i>
@@ -578,7 +578,7 @@
               </div>
             </div>
             <div v-else class="py-8 text-center text-gray-500 dark:text-gray-400">
-              暂无配置的通知平台，请点击"添加平台"按钮添加
+              {{ $t('settings.webhook.platforms.emptyDescription') }}
             </div>
           </div>
 

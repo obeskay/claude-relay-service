@@ -61,7 +61,7 @@ async function startDeviceAuthorization(proxyConfig = null) {
       throw new Error('WorkOS 返回数据缺少必要字段 (device_code / verification_uri)')
     }
 
-    logger.success('✅ 成功获取 WorkOS 设备码授权信息', {
+    logger.success('✅ Successfully obtained WorkOS device code authorization info', {
       verificationUri: data.verification_uri,
       userCode: data.user_code
     })
@@ -76,7 +76,7 @@ async function startDeviceAuthorization(proxyConfig = null) {
     }
   } catch (error) {
     if (error.response) {
-      logger.error('❌ WorkOS 设备码授权失败', {
+      logger.error('❌ WorkOS device code authorization failed', {
         status: error.response.status,
         data: error.response.data
       })
@@ -88,7 +88,7 @@ async function startDeviceAuthorization(proxyConfig = null) {
       )
     }
 
-    logger.error('❌ 请求 WorkOS 设备码授权异常', {
+    logger.error('❌ Exception during WorkOS device code authorization request', {
       message: error.message
     })
     throw new WorkOSDeviceAuthError(error.message)
@@ -103,7 +103,7 @@ async function startDeviceAuthorization(proxyConfig = null) {
  */
 async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
   if (!deviceCode) {
-    throw new WorkOSDeviceAuthError('缺少设备码，无法查询授权结果', 'missing_device_code')
+    throw new WorkOSDeviceAuthError('Missing device code, cannot query authorization result', 'missing_device_code')
   }
 
   const form = new URLSearchParams({
@@ -133,10 +133,10 @@ async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
     const data = response.data || {}
 
     if (!data.access_token) {
-      throw new WorkOSDeviceAuthError('WorkOS 返回结果缺少 access_token', 'missing_access_token')
+      throw new WorkOSDeviceAuthError('WorkOS response missing access_token', 'missing_access_token')
     }
 
-    logger.success('🤖 Droid 授权完成，获取到访问令牌', {
+    logger.success('🤖 Droid authorization complete, access token obtained', {
       hasRefreshToken: !!data.refresh_token
     })
 
@@ -163,14 +163,14 @@ async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
         throw new WorkOSDeviceAuthError(errorDescription, errorCode)
       }
 
-      logger.error('❌ WorkOS 设备授权轮询失败', {
+      logger.error('❌ WorkOS device authorization polling failed', {
         status: error.response.status,
         data: responseData
       })
       throw new WorkOSDeviceAuthError(errorDescription, errorCode)
     }
 
-    logger.error('❌ WorkOS 设备授权轮询异常', {
+    logger.error('❌ Exception during WorkOS device authorization polling', {
       message: error.message
     })
     throw new WorkOSDeviceAuthError(error.message)

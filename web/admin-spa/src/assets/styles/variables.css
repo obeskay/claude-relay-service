@@ -1,13 +1,336 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM DESIGN SYSTEM - Navy Blue + Gold Accent
+   Inspired by modern, minimalist aesthetics with professional color palette
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-  --accent-color: #f093fb;
+  /* ─────────────────────────────────────────────────────────────────────────
+     TYPOGRAPHY
+     ───────────────────────────────────────────────────────────────────────── */
+  --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Source Serif 4', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     BASE SEMANTIC COLORS - Light Mode
+     Navy Blue Primary + Gold Accent (User Provided Theme)
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Background & Foreground */
+  --background: 0 0% 98.8235%;
+  --foreground: 206.1538 100% 22.9412%;
+
+  /* Card & Popover */
+  --card: 0 0% 98.8235%;
+  --card-foreground: 206.1538 100% 22.9412%;
+  --popover: 0 0% 98.8235%;
+  --popover-foreground: 206.1538 100% 22.9412%;
+
+  /* Primary - Deep Navy Blue */
+  --primary: 206.1538 100% 22.9412%;
+  --primary-foreground: 0 0% 98.8235%;
+
+  /* Secondary - Soft Gray */
+  --secondary: 0 0% 94.902%;
+  --secondary-foreground: 206.1538 100% 22.9412%;
+
+  /* Muted */
+  --muted: 0 0% 94.902%;
+  --muted-foreground: 205.2632 24.8908% 44.902%;
+
+  /* Accent - Gold */
+  --accent: 44.918 77.8723% 53.9216%;
+  --accent-foreground: 206.1538 100% 22.9412%;
+
+  /* Semantic colors */
+  --success: 158 64% 52%;
+  --success-foreground: 210 40% 98%;
+
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 5%;
+
+  --destructive: 0 84.3137% 60%;
+  --destructive-foreground: 0 0% 98.8235%;
+
+  --error: 0 84.3137% 60%;
+  --error-foreground: 0 0% 98.8235%;
+
+  /* Border & Input */
+  --border: 0 0% 90.1961%;
+  --input: 0 0% 90.1961%;
+  --ring: 206.1538 100% 22.9412%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     COLOR LAYERING SYSTEM (4 Shades for Depth)
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Background Shades - Light Mode */
+  --background-shade-1: 0 0% 96%;
+  --background-shade-2: 0 0% 98%;
+  --background-shade-3: 0 0% 100%;
+  --background-shade-4: 210 40% 98%;
+
+  /* Foreground Shades - Text hierarchy */
+  --foreground-shade-1: 206.1538 100% 22.9412%;
+  --foreground-shade-2: 206 60% 30%;
+  --foreground-shade-3: 205.2632 24.8908% 44.902%;
+  --foreground-shade-4: 205 20% 60%;
+
+  /* Sidebar */
+  --sidebar: 0 0% 96.0784%;
+  --sidebar-foreground: 206.1538 100% 22.9412%;
+  --sidebar-primary: 206.1538 100% 22.9412%;
+  --sidebar-primary-foreground: 0 0% 98.8235%;
+  --sidebar-accent: 44.918 77.8723% 53.9216%;
+  --sidebar-accent-foreground: 206.1538 100% 22.9412%;
+  --sidebar-border: 0 0% 90.1961%;
+  --sidebar-ring: 206.1538 100% 22.9412%;
+
+  /* Chart colors */
+  --chart-1: 206.1538 100% 22.9412%;
+  --chart-2: 206.0526 85.3933% 34.902%;
+  --chart-3: 44.918 77.8723% 53.9216%;
+  --chart-4: 50.9268 82.3293% 51.1765%;
+  --chart-5: 206.0656 59.8039% 60%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     BORDER RADIUS - Premium Rounded Corners (1.5rem base)
+     ───────────────────────────────────────────────────────────────────────── */
+  --radius: 1.5rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     SHADOW SYSTEM - Premium Depth (User Provided)
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --shadow-color: 0 0% 10.1961%;
+
+  --shadow-2xs: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.04);
+  --shadow-xs: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.04);
+  --shadow-sm:
+    0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
+    0px 1px 2px -5px hsl(var(--shadow-color) / 0.08);
+  --shadow:
+    0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
+    0px 1px 2px -5px hsl(var(--shadow-color) / 0.08);
+  --shadow-md:
+    0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
+    0px 2px 4px -5px hsl(var(--shadow-color) / 0.08);
+  --shadow-lg:
+    0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
+    0px 4px 6px -5px hsl(var(--shadow-color) / 0.08);
+  --shadow-xl:
+    0px 8px 16px -4px hsl(var(--shadow-color) / 0.08),
+    0px 8px 10px -5px hsl(var(--shadow-color) / 0.08);
+  --shadow-2xl: 0px 8px 16px -4px hsl(var(--shadow-color) / 0.2);
+
+  /* Two-layer shadow with highlight */
+  --shadow-sm-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-sm-bottom: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md-top: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-md-bottom: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg-top: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --shadow-lg-bottom: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl-top: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --shadow-xl-bottom: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     GRADIENT SYSTEM - Premium Effects
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --gradient-surface: linear-gradient(to bottom, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+
+  --gradient-interactive: linear-gradient(to bottom, hsl(0 0% 99%) 0%, hsl(0 0% 96%) 100%);
+
+  --gradient-primary: linear-gradient(
+    to bottom,
+    hsl(206.1538 100% 27%) 0%,
+    hsl(206.1538 100% 20%) 100%
+  );
+
+  --gradient-accent: linear-gradient(
+    135deg,
+    hsl(44.918 77.8723% 58%) 0%,
+    hsl(44.918 77.8723% 48%) 100%
+  );
+
+  --gradient-success: linear-gradient(to bottom, hsl(158 64% 57%) 0%, hsl(158 64% 47%) 100%);
+
+  --gradient-destructive: linear-gradient(
+    to bottom,
+    hsl(0 84.3137% 65%) 0%,
+    hsl(0 84.3137% 55%) 100%
+  );
+
+  --gradient-warning: linear-gradient(to bottom, hsl(38 92% 55%) 0%, hsl(38 92% 45%) 100%);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     SPACING & TRACKING
+     ───────────────────────────────────────────────────────────────────────── */
+  --spacing: 0.25rem;
+  --tracking-normal: 0em;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     LEGACY SUPPORT (hex values for compatibility)
+     ───────────────────────────────────────────────────────────────────────── */
+  --primary-color: #003c75;
+  --secondary-color: #005a9e;
+  --accent-color: #d4a84b;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
-  --surface-color: rgba(255, 255, 255, 0.95);
-  --glass-color: rgba(255, 255, 255, 0.1);
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border-color: rgba(255, 255, 255, 0.2);
+  --surface-color: rgba(255, 255, 255, 0.98);
+  --glass-color: rgba(255, 255, 255, 0.85);
+  --text-primary: #003c75;
+  --text-secondary: #5a7a99;
+  --border-color: rgba(226, 232, 240, 0.8);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dark {
+  /* ─────────────────────────────────────────────────────────────────────────
+     BASE SEMANTIC COLORS - Dark Mode
+     Deep Navy Background + Glowing Gold Accents
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Background & Foreground */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  /* Card & Popover - Slightly lighter than bg */
+  --card: 217 33% 17%;
+  --card-foreground: 210 40% 98%;
+  --popover: 217 33% 17%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary - Bright Navy/Blue */
+  --primary: 215 100% 60%;
+  --primary-foreground: 222 47% 11%;
+
+  /* Secondary - Darker Blue/Gray */
+  --secondary: 217 33% 17%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted */
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  /* Accent - Glowing Gold */
+  --accent: 45 93% 47%;
+  --accent-foreground: 222 47% 11%;
+
+  /* Semantic colors */
+  --success: 158 64% 52%;
+  --success-foreground: 222 47% 11%;
+
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 5%;
+
+  /* Destructive */
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --error: 0 84.3137% 60%;
+  --error-foreground: 208 36.5854% 8.0392%;
+
+  /* Borders & Input */
+  --border: 217 33% 22%;
+  --input: 217 33% 22%;
+  --ring: 215 100% 60%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     COLOR LAYERING SYSTEM - Dark Mode
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --background-shade-1: 208 37% 6%;
+  --background-shade-2: 208 37% 10%;
+  --background-shade-3: 206 30% 14%;
+  --background-shade-4: 206 30% 18%;
+
+  --foreground-shade-1: 0 0% 100%;
+  --foreground-shade-2: 0 0% 90%;
+  --foreground-shade-3: 204 15% 70%;
+  --foreground-shade-4: 204 15% 55%;
+
+  /* Sidebar */
+  --sidebar: 205.2632 31.1475% 11.9608%;
+  --sidebar-foreground: 45.3237 77.6536% 64.902%;
+  --sidebar-primary: 206.087 90.1961% 60%;
+  --sidebar-primary-foreground: 208 36.5854% 8.0392%;
+  --sidebar-accent: 44.918 77.8723% 53.9216%;
+  --sidebar-accent-foreground: 208 36.5854% 8.0392%;
+  --sidebar-border: 206.25 25% 25.098%;
+  --sidebar-ring: 206.087 90.1961% 60%;
+
+  /* Chart colors */
+  --chart-1: 206.087 90.1961% 60%;
+  --chart-2: 206.0733 74.902% 50%;
+  --chart-3: 44.918 77.8723% 53.9216%;
+  --chart-4: 50.9268 82.3293% 51.1765%;
+  --chart-5: 205.8824 50% 40%;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     SHADOW SYSTEM - Dark Mode
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --shadow-2xs: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.04);
+  --shadow-xs: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.04);
+  --shadow-sm:
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 1px 2px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 1px 2px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow-md:
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 2px 4px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow-lg:
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 4px 6px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow-xl:
+    0px 8px 16px -4px hsl(0 0% 10.1961% / 0.08), 0px 8px 10px -5px hsl(0 0% 10.1961% / 0.08);
+  --shadow-2xl: 0px 8px 16px -4px hsl(0 0% 10.1961% / 0.2);
+
+  --shadow-sm-top: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-sm-bottom: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md-top: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-md-bottom: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-lg-bottom: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-xl-top: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-xl-bottom: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     GRADIENT SYSTEM - Dark Mode
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Dark Mode Gradients */
+  --gradient-surface: linear-gradient(to bottom, hsl(222 47% 11%), hsl(217 33% 15%));
+  --gradient-primary: linear-gradient(135deg, hsl(215 100% 60%), hsl(215 100% 50%));
+  --gradient-accent: linear-gradient(135deg, hsl(45 93% 55%), hsl(45 93% 45%));
+
+  --gradient-success: linear-gradient(to bottom, hsl(158 64% 54%) 0%, hsl(158 64% 44%) 100%);
+
+  --gradient-destructive: linear-gradient(
+    to bottom,
+    hsl(0 84.3137% 62%) 0%,
+    hsl(0 84.3137% 52%) 100%
+  );
+
+  --gradient-warning: linear-gradient(to bottom, hsl(38 92% 52%) 0%, hsl(38 92% 42%) 100%);
+
+  /* Legacy variable mapping for compatibility */
+  --primary-color: hsl(var(--primary));
+  --secondary-color: hsl(var(--secondary));
+  --accent-color: hsl(var(--accent));
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --surface-color: hsl(var(--card));
+  --glass-color: rgba(20, 30, 42, 0.85);
+  --text-primary: #ffffff;
+  --text-secondary: #a3b8cc;
+  --border-color: rgba(51, 75, 99, 0.8);
 }

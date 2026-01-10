@@ -249,7 +249,7 @@ class WebhookService {
       axiosOptions
     )
     if (!response || response.ok !== true) {
-      throw new Error(`Telegram API 错误: ${response?.description || '未知错误'}`)
+      throw new Error(`Telegram API Error: ${response?.description || '未知错误'}`)
     }
   }
 
@@ -399,8 +399,8 @@ class WebhookService {
     const details = this.formatNotificationDetails(data)
     return (
       `## ${title}\n\n` +
-      `> **服务**: Claude Relay Service\n` +
-      `> **时间**: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}\n\n${details}`
+      `> **Servicio**: Claude Relay Service\n` +
+      `> **Tiempo**: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}\n\n${details}`
     )
   }
 
@@ -411,8 +411,8 @@ class WebhookService {
     const details = this.formatNotificationDetails(data)
 
     return (
-      `#### 服务: Claude Relay Service\n` +
-      `#### 时间: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}\n\n${details}`
+      `#### Servicio: Claude Relay Service\n` +
+      `#### Tiempo: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}\n\n${details}`
     )
   }
 
@@ -496,7 +496,7 @@ class WebhookService {
     const timestamp = new Date().toLocaleString('zh-CN', { timeZone: this.timezone })
     const details = this.buildNotificationDetails(data)
 
-    const lines = [`${title}`, '服务: Claude Relay Service']
+    const lines = [`${title}`, 'Servicio: Claude Relay Service']
 
     if (details.length > 0) {
       lines.push('')
@@ -505,7 +505,7 @@ class WebhookService {
       }
     }
 
-    lines.push('', `时间: ${timestamp}`)
+    lines.push('', `Tiempo: ${timestamp}`)
 
     return lines.join('\n')
   }
@@ -534,15 +534,15 @@ class WebhookService {
    */
   getNotificationTitle(type) {
     const titles = {
-      accountAnomaly: '⚠️ 账号异常通知',
-      quotaWarning: '📊 配额警告',
-      systemError: '❌ 系统错误',
-      securityAlert: '🔒 安全警报',
-      rateLimitRecovery: '🎉 限流恢复通知',
-      test: '🧪 测试通知'
+      accountAnomaly: '⚠️ Notificación de anomalía de cuenta',
+      quotaWarning: '📊 Advertencia de cuota',
+      systemError: '❌ Error del sistema',
+      securityAlert: '🔒 Alerta de seguridad',
+      rateLimitRecovery: '🎉 Notificación de recuperación de límite de velocidad',
+      test: '🧪 Notificación de prueba'
     }
 
-    return titles[type] || '📢 系统通知'
+    return titles[type] || '📢 Notificación del sistema'
   }
 
   /**
@@ -584,31 +584,31 @@ class WebhookService {
     const lines = []
 
     if (data.accountName) {
-      lines.push(`账号: ${data.accountName}`)
+      lines.push(`Cuenta: ${data.accountName}`)
     }
 
     if (data.platform) {
-      lines.push(`平台: ${data.platform}`)
+      lines.push(`Plataforma: ${data.platform}`)
     }
 
     if (data.status) {
-      lines.push(`状态: ${data.status}`)
+      lines.push(`Estado: ${data.status}`)
     }
 
     if (data.errorCode) {
-      lines.push(`错误: ${data.errorCode}`)
+      lines.push(`Error: ${data.errorCode}`)
     }
 
     if (data.reason) {
-      lines.push(`原因: ${data.reason}`)
+      lines.push(`Razón: ${data.reason}`)
     }
 
     if (data.message) {
-      lines.push(`消息: ${data.message}`)
+      lines.push(`Mensaje: ${data.message}`)
     }
 
     if (data.quota) {
-      lines.push(`剩余配额: ${data.quota.remaining}/${data.quota.total}`)
+      lines.push(`Cuota restante: ${data.quota.remaining}/${data.quota.total}`)
     }
 
     if (data.usage) {
@@ -616,8 +616,8 @@ class WebhookService {
     }
 
     // 添加服务标识和时间戳
-    lines.push(`\n服务: Claude Relay Service`)
-    lines.push(`时间: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}`)
+    lines.push(`\nServicio: Claude Relay Service`)
+    lines.push(`Tiempo: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}`)
 
     return lines.join('\n')
   }
@@ -629,28 +629,28 @@ class WebhookService {
     const details = []
 
     if (data.accountName) {
-      details.push({ label: '账号', value: data.accountName })
+      details.push({ label: 'Cuenta', value: data.accountName })
     }
     if (data.platform) {
-      details.push({ label: '平台', value: data.platform })
+      details.push({ label: 'Plataforma', value: data.platform })
     }
     if (data.status) {
-      details.push({ label: '状态', value: data.status, color: this.getStatusColor(data.status) })
+      details.push({ label: 'Estado', value: data.status, color: this.getStatusColor(data.status) })
     }
     if (data.errorCode) {
-      details.push({ label: '错误代码', value: data.errorCode, isCode: true })
+      details.push({ label: 'Código de error', value: data.errorCode, isCode: true })
     }
     if (data.reason) {
-      details.push({ label: '原因', value: data.reason })
+      details.push({ label: 'Razón', value: data.reason })
     }
     if (data.message) {
-      details.push({ label: '消息', value: data.message })
+      details.push({ label: 'Mensaje', value: data.message })
     }
     if (data.quota) {
-      details.push({ label: '配额', value: `${data.quota.remaining}/${data.quota.total}` })
+      details.push({ label: 'Cuota', value: `${data.quota.remaining}/${data.quota.total}` })
     }
     if (data.usage) {
-      details.push({ label: '使用率', value: `${data.usage}%` })
+      details.push({ label: 'Tasa de uso', value: `${data.usage}%` })
     }
 
     return details
@@ -688,8 +688,8 @@ class WebhookService {
     content += `
           </div>
           <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e9ecef; font-size: 14px; color: #6c757d; text-align: center;">
-            <p>发送时间: ${timestamp}</p>
-            <p style="margin: 0;">此邮件由 Claude Relay Service 自动发送</p>
+            <p>Tiempo de envío: ${timestamp}</p>
+            <p style="margin: 0;">Este correo fue enviado automáticamente por Claude Relay Service</p>
           </div>
         </div>
       </div>
@@ -714,10 +714,10 @@ class WebhookService {
       content += `${detail.label}: ${detail.value}\n`
     })
 
-    content += `\n发送时间: ${timestamp}\n`
-    content += `服务: Claude Relay Service\n`
+    content += `\nTiempo de envío: ${timestamp}\n`
+    content += `Servicio: Claude Relay Service\n`
     content += `=====================================\n`
-    content += `此邮件由系统自动发送，请勿回复。`
+    content += `Este correo fue enviado automáticamente por el sistema, por favor no responda.`
 
     return content
   }
@@ -744,43 +744,43 @@ class WebhookService {
     const lines = []
 
     if (data.accountName) {
-      lines.push(`**账号**: ${data.accountName}`)
+      lines.push(`**Cuenta**: ${data.accountName}`)
     }
 
     if (data.platform) {
-      lines.push(`**平台**: ${data.platform}`)
+      lines.push(`**Plataforma**: ${data.platform}`)
     }
 
     if (data.platforms) {
-      lines.push(`**涉及平台**: ${data.platforms.join(', ')}`)
+      lines.push(`**Plataformas involucradas**: ${data.platforms.join(', ')}`)
     }
 
     if (data.totalAccounts) {
-      lines.push(`**恢复账户数**: ${data.totalAccounts}`)
+      lines.push(`**Número de cuentas recuperadas**: ${data.totalAccounts}`)
     }
 
     if (data.status) {
-      lines.push(`**状态**: ${data.status}`)
+      lines.push(`**Estado**: ${data.status}`)
     }
 
     if (data.errorCode) {
-      lines.push(`**错误代码**: ${data.errorCode}`)
+      lines.push(`**Código de error**: ${data.errorCode}`)
     }
 
     if (data.reason) {
-      lines.push(`**原因**: ${data.reason}`)
+      lines.push(`**Razón**: ${data.reason}`)
     }
 
     if (data.message) {
-      lines.push(`**消息**: ${data.message}`)
+      lines.push(`**Mensaje**: ${data.message}`)
     }
 
     if (data.quota) {
-      lines.push(`**剩余配额**: ${data.quota.remaining}/${data.quota.total}`)
+      lines.push(`**Cuota restante**: ${data.quota.remaining}/${data.quota.total}`)
     }
 
     if (data.usage) {
-      lines.push(`**使用率**: ${data.usage}%`)
+      lines.push(`**Tasa de uso**: ${data.usage}%`)
     }
 
     return lines.join('\n')
@@ -793,27 +793,27 @@ class WebhookService {
     const fields = []
 
     if (data.accountName) {
-      fields.push({ name: '账号', value: data.accountName, inline: true })
+      fields.push({ name: 'Cuenta', value: data.accountName, inline: true })
     }
 
     if (data.platform) {
-      fields.push({ name: '平台', value: data.platform, inline: true })
+      fields.push({ name: 'Plataforma', value: data.platform, inline: true })
     }
 
     if (data.status) {
-      fields.push({ name: '状态', value: data.status, inline: true })
+      fields.push({ name: 'Estado', value: data.status, inline: true })
     }
 
     if (data.errorCode) {
-      fields.push({ name: '错误代码', value: data.errorCode, inline: false })
+      fields.push({ name: 'Código de error', value: data.errorCode, inline: false })
     }
 
     if (data.reason) {
-      fields.push({ name: '原因', value: data.reason, inline: false })
+      fields.push({ name: 'Razón', value: data.reason, inline: false })
     }
 
     if (data.message) {
-      fields.push({ name: '消息', value: data.message, inline: false })
+      fields.push({ name: 'Mensaje', value: data.message, inline: false })
     }
 
     return fields
@@ -873,7 +873,7 @@ class WebhookService {
   async testWebhook(platform) {
     try {
       const testData = {
-        message: 'Claude Relay Service webhook测试',
+        message: 'Prueba de webhook de Claude Relay Service',
         timestamp: getISOStringWithTimezone(new Date())
       }
 

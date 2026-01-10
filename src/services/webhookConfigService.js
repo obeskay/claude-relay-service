@@ -9,7 +9,7 @@ class WebhookConfigService {
   }
 
   /**
-   * 获取webhook配置
+   * Get webhook configuration
    */
   async getConfig() {
     try {
@@ -30,13 +30,13 @@ class WebhookConfigService {
 
       return storedConfig
     } catch (error) {
-      logger.error('获取webhook配置失败:', error)
+      logger.error('Failed to get webhook configuration:', error)
       return this.getDefaultConfig()
     }
   }
 
   /**
-   * 保存webhook配置
+   * Save webhook configuration
    */
   async saveConfig(config) {
     try {
@@ -47,28 +47,28 @@ class WebhookConfigService {
         ...(config.notificationTypes || {})
       }
 
-      // 验证配置
+      // Validate configuration
       this.validateConfig(config)
 
       // 添加更新时间
       config.updatedAt = new Date().toISOString()
 
       await redis.client.set(this.DEFAULT_CONFIG_KEY, JSON.stringify(config))
-      logger.info('✅ Webhook配置已保存')
+      logger.info('✅ Webhook configuration saved')
 
       return config
     } catch (error) {
-      logger.error('保存webhook配置失败:', error)
+      logger.error('Failed to save webhook configuration:', error)
       throw error
     }
   }
 
   /**
-   * 验证配置
+   * Validate configuration
    */
   validateConfig(config) {
     if (!config || typeof config !== 'object') {
-      throw new Error('无效的配置格式')
+      throw new Error('Invalid configuration format')
     }
 
     // 验证平台配置
@@ -87,13 +87,13 @@ class WebhookConfigService {
 
       for (const platform of config.platforms) {
         if (!validPlatforms.includes(platform.type)) {
-          throw new Error(`不支持的平台类型: ${platform.type}`)
+          throw new Error(`Unsupported platform type: ${platform.type}`)
         }
 
         // Bark和SMTP平台不使用标准URL
         if (!['bark', 'smtp', 'telegram'].includes(platform.type)) {
           if (!platform.url || !this.isValidUrl(platform.url)) {
-            throw new Error(`无效的webhook URL: ${platform.url}`)
+            throw new Error(`Invalid webhook URL: ${platform.url}`)
           }
         }
 
@@ -104,7 +104,7 @@ class WebhookConfigService {
   }
 
   /**
-   * 验证平台特定配置
+   * Validate platform-specific configuration
    */
   validatePlatformConfig(platform) {
     switch (platform.type) {
@@ -114,61 +114,61 @@ class WebhookConfigService {
       case 'dingtalk':
         // 钉钉可能需要secret用于签名
         if (platform.enableSign && !platform.secret) {
-          throw new Error('钉钉启用签名时必须提供secret')
+          throw new Error('Secret must be provided when DingTalk signing is enabled')
         }
         break
       case 'feishu':
         // 飞书可能需要签名
         if (platform.enableSign && !platform.secret) {
-          throw new Error('飞书启用签名时必须提供secret')
+          throw new Error('Secret must be provided when Feishu signing is enabled')
         }
         break
       case 'slack':
         // Slack webhook URL通常包含token
         if (!platform.url.includes('hooks.slack.com')) {
-          logger.warn('⚠️ Slack webhook URL格式可能不正确')
+          logger.warn('⚠️ Slack webhook URL format may be incorrect')
         }
         break
       case 'discord':
-        // Discord webhook URL格式检查
+        // Discord webhook URL format check
         if (!platform.url.includes('discord.com/api/webhooks')) {
           logger.warn('⚠️ Discord webhook URL格式可能不正确')
         }
         break
       case 'telegram':
         if (!platform.botToken) {
-          throw new Error('Telegram 平台必须提供机器人 Token')
+          throw new Error('Telegram platform must provide bot Token')
         }
         if (!platform.chatId) {
-          throw new Error('Telegram 平台必须提供 Chat ID')
+          throw new Error('Telegram platform must provide Chat ID')
         }
 
         if (!platform.botToken.includes(':')) {
-          logger.warn('⚠️ Telegram 机器人 Token 格式可能不正确')
+          logger.warn('⚠️ Telegram bot Token format may be incorrect')
         }
 
         if (!/^[-\d]+$/.test(String(platform.chatId))) {
-          logger.warn('⚠️ Telegram Chat ID 应该是数字，如为频道请确认已获取正确ID')
+          logger.warn('⚠️ Telegram Chat ID should be a number, please confirm the correct ID for channels')
         }
 
         if (platform.apiBaseUrl) {
           if (!this.isValidUrl(platform.apiBaseUrl)) {
-            throw new Error('Telegram API 基础地址格式无效')
+            throw new Error('Invalid Telegram API base address format')
           }
           const { protocol } = new URL(platform.apiBaseUrl)
           if (!['http:', 'https:'].includes(protocol)) {
-            throw new Error('Telegram API 基础地址仅支持 http 或 https 协议')
+            throw new Error('Telegram API base address only supports http or https protocols')
           }
         }
 
         if (platform.proxyUrl) {
           if (!this.isValidUrl(platform.proxyUrl)) {
-            throw new Error('Telegram 代理地址格式无效')
+            throw new Error('Invalid Telegram proxy address format')
           }
           const proxyProtocol = new URL(platform.proxyUrl).protocol
           const supportedProtocols = ['http:', 'https:', 'socks4:', 'socks4a:', 'socks5:']
           if (!supportedProtocols.includes(proxyProtocol)) {
-            throw new Error('Telegram 代理仅支持 http/https/socks 协议')
+            throw new Error('Telegram proxy only supports http/https/socks protocols')
           }
         }
         break
@@ -178,21 +178,21 @@ class WebhookConfigService {
       case 'bark':
         // 验证设备密钥
         if (!platform.deviceKey) {
-          throw new Error('Bark平台必须提供设备密钥')
+          throw new Error('Bark platform must provide device key')
         }
 
         // 验证设备密钥格式（通常是22-24位字符）
         if (platform.deviceKey.length < 20 || platform.deviceKey.length > 30) {
-          logger.warn('⚠️ Bark设备密钥长度可能不正确，请检查是否完整复制')
+          logger.warn('⚠️ Bark device key length may be incorrect, please check if fully copied')
         }
 
         // 验证服务器URL（如果提供）
         if (platform.serverUrl) {
           if (!this.isValidUrl(platform.serverUrl)) {
-            throw new Error('Bark服务器URL格式无效')
+            throw new Error('Invalid Bark server URL format')
           }
           if (!platform.serverUrl.includes('/push')) {
-            logger.warn('⚠️ Bark服务器URL应该以/push结尾')
+            logger.warn('⚠️ Bark server URL should end with /push')
           }
         }
 
@@ -235,7 +235,7 @@ class WebhookConfigService {
             'alert'
           ]
           if (!validSounds.includes(platform.sound)) {
-            logger.warn(`⚠️ 未知的Bark声音: ${platform.sound}`)
+            logger.warn(`⚠️ Unknown Bark sound: ${platform.sound}`)
           }
         }
 
@@ -243,38 +243,38 @@ class WebhookConfigService {
         if (platform.level) {
           const validLevels = ['active', 'timeSensitive', 'passive', 'critical']
           if (!validLevels.includes(platform.level)) {
-            throw new Error(`无效的Bark通知级别: ${platform.level}`)
+            throw new Error(`Invalid Bark notification level: ${platform.level}`)
           }
         }
 
         // 验证图标URL（如果提供）
         if (platform.icon && !this.isValidUrl(platform.icon)) {
-          logger.warn('⚠️ Bark图标URL格式可能不正确')
+          logger.warn('⚠️ Bark icon URL format may be incorrect')
         }
 
         // 验证点击跳转URL（如果提供）
         if (platform.clickUrl && !this.isValidUrl(platform.clickUrl)) {
-          logger.warn('⚠️ Bark点击跳转URL格式可能不正确')
+          logger.warn('⚠️ Bark redirect URL format may be incorrect')
         }
         break
       case 'smtp': {
         // 验证SMTP必需配置
         if (!platform.host) {
-          throw new Error('SMTP平台必须提供主机地址')
+          throw new Error('SMTP platform must provide host address')
         }
         if (!platform.user) {
-          throw new Error('SMTP平台必须提供用户名')
+          throw new Error('SMTP platform must provide username')
         }
         if (!platform.pass) {
-          throw new Error('SMTP平台必须提供密码')
+          throw new Error('SMTP platform must provide password')
         }
         if (!platform.to) {
-          throw new Error('SMTP平台必须提供接收邮箱')
+          throw new Error('SMTP platform must provide recipient email')
         }
 
         // 验证端口
         if (platform.port && (platform.port < 1 || platform.port > 65535)) {
-          throw new Error('SMTP端口必须在1-65535之间')
+          throw new Error('SMTP port must be between 1-65535')
         }
 
         // 验证邮箱格式
@@ -287,7 +287,7 @@ class WebhookConfigService {
           // 提取实际邮箱地址（如果是 Name <email> 格式）
           const actualEmail = email.includes('<') ? email.match(/<([^>]+)>/)?.[1] : email
           if (!actualEmail || !simpleEmailRegex.test(actualEmail)) {
-            throw new Error(`无效的接收邮箱格式: ${email}`)
+            throw new Error(`Invalid recipient email format: ${email}`)
           }
         }
 
@@ -297,7 +297,7 @@ class WebhookConfigService {
             ? platform.from.match(/<([^>]+)>/)?.[1]
             : platform.from
           if (!actualFromEmail || !simpleEmailRegex.test(actualFromEmail)) {
-            throw new Error(`无效的发送邮箱格式: ${platform.from}`)
+            throw new Error(`Invalid sender email format: ${platform.from}`)
           }
         }
         break
@@ -306,7 +306,7 @@ class WebhookConfigService {
   }
 
   /**
-   * 验证URL格式
+   * Validate URL format
    */
   isValidUrl(url) {
     try {
@@ -318,24 +318,24 @@ class WebhookConfigService {
   }
 
   /**
-   * 获取默认配置
+   * Get default configuration
    */
   getDefaultConfig() {
     return {
       enabled: false,
       platforms: [],
       notificationTypes: {
-        accountAnomaly: true, // 账号异常
-        quotaWarning: true, // 配额警告
-        systemError: true, // 系统错误
-        securityAlert: true, // 安全警报
-        rateLimitRecovery: true, // 限流恢复
-        test: true // 测试通知
+        accountAnomaly: true, // Anomalía de cuenta
+        quotaWarning: true, // Advertencia de cuota
+        systemError: true, // Error del sistema
+        securityAlert: true, // Alerta de seguridad
+        rateLimitRecovery: true, // Recuperación de límite de velocidad
+        test: true // Notificación de prueba
       },
       retrySettings: {
         maxRetries: 3,
-        retryDelay: 1000, // 毫秒
-        timeout: 10000 // 毫秒
+        retryDelay: 1000, // ms
+        timeout: 10000 // ms
       },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -343,7 +343,7 @@ class WebhookConfigService {
   }
 
   /**
-   * 添加webhook平台
+   * Add webhook platform
    */
   async addPlatform(platform) {
     try {
@@ -365,13 +365,13 @@ class WebhookConfigService {
 
       return platform
     } catch (error) {
-      logger.error('添加webhook平台失败:', error)
+      logger.error('Failed to add webhook platform:', error)
       throw error
     }
   }
 
   /**
-   * 更新webhook平台
+   * Update webhook platform
    */
   async updatePlatform(platformId, updates) {
     try {
@@ -379,7 +379,7 @@ class WebhookConfigService {
 
       const index = config.platforms.findIndex((p) => p.id === platformId)
       if (index === -1) {
-        throw new Error('找不到指定的webhook平台')
+        throw new Error('Specified webhook platform not found')
       }
 
       // 合并更新
@@ -396,13 +396,13 @@ class WebhookConfigService {
 
       return config.platforms[index]
     } catch (error) {
-      logger.error('更新webhook平台失败:', error)
+      logger.error('Failed to update webhook platform:', error)
       throw error
     }
   }
 
   /**
-   * 删除webhook平台
+   * Delete webhook platform
    */
   async deletePlatform(platformId) {
     try {
@@ -412,16 +412,16 @@ class WebhookConfigService {
 
       await this.saveConfig(config)
 
-      logger.info(`✅ 已删除webhook平台: ${platformId}`)
+      logger.info(`✅ Deleted webhook platform: ${platformId}`)
       return true
     } catch (error) {
-      logger.error('删除webhook平台失败:', error)
+      logger.error('Failed to delete webhook platform:', error)
       throw error
     }
   }
 
   /**
-   * 切换webhook平台启用状态
+   * Toggle webhook platform enabled status
    */
   async togglePlatform(platformId) {
     try {
@@ -429,7 +429,7 @@ class WebhookConfigService {
 
       const platform = config.platforms.find((p) => p.id === platformId)
       if (!platform) {
-        throw new Error('找不到指定的webhook平台')
+        throw new Error('Specified webhook platform not found')
       }
 
       platform.enabled = !platform.enabled
@@ -437,16 +437,16 @@ class WebhookConfigService {
 
       await this.saveConfig(config)
 
-      logger.info(`✅ Webhook平台 ${platformId} 已${platform.enabled ? '启用' : '禁用'}`)
+      logger.info(`✅ Webhook platform ${platformId} is now ${platform.enabled ? 'enabled' : 'disabled'}`)
       return platform
     } catch (error) {
-      logger.error('切换webhook平台状态失败:', error)
+      logger.error('Failed to toggle webhook platform status:', error)
       throw error
     }
   }
 
   /**
-   * 获取启用的平台列表
+   * Get list of enabled platforms
    */
   async getEnabledPlatforms() {
     try {
@@ -458,7 +458,7 @@ class WebhookConfigService {
 
       return config.platforms.filter((p) => p.enabled)
     } catch (error) {
-      logger.error('获取启用的webhook平台失败:', error)
+      logger.error('Failed to get enabled webhook platforms:', error)
       return []
     }
   }

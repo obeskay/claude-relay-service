@@ -100,7 +100,7 @@ router.post('/generate-auth-url', authenticateAdmin, async (req, res) => {
     logger.error('生成 OpenAI OAuth URL 失败:', error)
     return res.status(500).json({
       success: false,
-      message: '生成授权链接失败',
+      message: 'Error al generar el enlace de autorización',
       error: error.message
     })
   }
@@ -114,7 +114,7 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
     if (!code || !sessionId) {
       return res.status(400).json({
         success: false,
-        message: '缺少必要参数'
+        message: 'Faltan parámetros necesarios'
       })
     }
 
@@ -123,7 +123,7 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
     if (!sessionData) {
       return res.status(400).json({
         success: false,
-        message: '会话已过期或无效'
+        message: 'Session expired or invalid'
       })
     }
 
@@ -336,7 +336,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
     if (!name) {
       return res.status(400).json({
         success: false,
-        message: '账户名称不能为空'
+        message: 'El nombre de la cuenta no puede estar vacío'
       })
     }
 
@@ -391,7 +391,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
         return res.json({
           success: true,
           data: refreshedAccount,
-          message: '账户创建成功，并已获取完整 token 信息'
+          message: 'Cuenta creada con éxito y se ha obtenido la información completa del token'
         })
       } catch (refreshError) {
         // 刷新失败，删除临时创建的账户
@@ -401,7 +401,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
         // 构建详细的错误信息
         const errorResponse = {
           success: false,
-          message: '账户创建失败',
+          message: 'Error al crear la cuenta',
           error: refreshError.message
         }
 
@@ -669,7 +669,7 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
     if (!account) {
       return res.status(404).json({
         success: false,
-        message: '账户不存在'
+        message: 'La cuenta no existe'
       })
     }
 
@@ -688,7 +688,7 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
 
     let message = 'OpenAI账号已成功删除'
     if (unboundCount > 0) {
-      message += `，${unboundCount} 个 API Key 已切换为共享池模式`
+      message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
 
     logger.success(
@@ -719,7 +719,7 @@ router.put('/:id/toggle', authenticateAdmin, async (req, res) => {
     if (!account) {
       return res.status(404).json({
         success: false,
-        message: '账户不存在'
+        message: 'La cuenta no existe'
       })
     }
 
@@ -790,13 +790,13 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
     return res.json({
       success: result.success,
       schedulable: result.schedulable,
-      message: result.schedulable ? '已启用调度' : '已禁用调度'
+      message: result.schedulable ? 'Programación habilitada' : 'Programación deshabilitada'
     })
   } catch (error) {
     logger.error('切换 OpenAI 账户调度状态失败:', error)
     return res.status(500).json({
       success: false,
-      message: '切换调度状态失败',
+      message: 'Error al cambiar el estado de programación',
       error: error.message
     })
   }

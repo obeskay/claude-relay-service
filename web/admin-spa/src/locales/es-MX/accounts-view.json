@@ -1,0 +1,340 @@
+{
+  "pageTitle": "Gestión de Cuentas",
+  "pageDescription": "Administrar cuentas de Claude, Gemini, OpenAI y configuraciones de proxy",
+
+  "filter": {
+    "allAccounts": "Todas las cuentas",
+    "ungroupedAccounts": "Cuentas sin grupo"
+  },
+
+  "filters": {
+    "sortBy": "Ordenar por",
+    "selectSort": "Seleccionar orden",
+    "platform": "Plataforma",
+    "selectPlatform": "Seleccionar plataforma",
+    "group": "Grupo",
+    "selectGroup": "Seleccionar grupo",
+    "searchPlaceholder": "Buscar nombre de cuenta...",
+    "clearSearch": "Limpiar búsqueda"
+  },
+
+  "sortOptions": {
+    "nameAsc": "Nombre A-Z",
+    "nameDesc": "Nombre Z-A",
+    "platformAsc": "Plataforma A-Z",
+    "platformDesc": "Plataforma Z-A",
+    "expiresAsc": "Próximo a expirar",
+    "expiresDesc": "Más tiempo restante",
+    "statusAsc": "Estado: Activo primero",
+    "statusDesc": "Estado: Inactivo primero",
+    "priorityAsc": "Prioridad: Baja a Alta",
+    "priorityDesc": "Prioridad: Alta a Baja"
+  },
+
+  "platformOptions": {
+    "all": "Todas las plataformas",
+    "claude": "Claude Official",
+    "claudeConsole": "Claude Console",
+    "gemini": "Gemini",
+    "openai": "OpenAI",
+    "bedrock": "AWS Bedrock",
+    "azure": "Azure OpenAI",
+    "droid": "Droid",
+    "ccr": "CCR"
+  },
+
+  "groupOptions": {
+    "all": "Todos los grupos",
+    "ungrouped": "Sin grupo"
+  },
+
+  "buttons": {
+    "refresh": "Actualizar",
+    "refreshTooltip": "Actualizar datos (Ctrl/⌘+clic para forzar actualización de caché)",
+    "select": "Seleccionar",
+    "cancelSelect": "Cancelar selección",
+    "batchDelete": "Eliminar seleccionados ({count})",
+    "addAccount": "Agregar Cuenta"
+  },
+
+  "loading": {
+    "accounts": "Cargando cuentas...",
+    "saving": "Guardando...",
+    "refreshing": "Actualizando..."
+  },
+
+  "empty": {
+    "title": "No hay cuentas",
+    "description": "Haz clic en el botón de arriba para agregar tu primera cuenta"
+  },
+
+  "table": {
+    "headers": {
+      "name": "Nombre",
+      "platform": "Plataforma/Tipo",
+      "expiresAt": "Fecha de expiración",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "proxy": "Proxy",
+      "todayUsage": "Uso de hoy",
+      "sessionWindow": "Ventana de sesión",
+      "sessionWindowTooltip": "Información de ventana de sesión",
+      "lastUsed": "Último uso",
+      "actions": "Acciones"
+    },
+    "accountType": {
+      "dedicated": "Exclusiva",
+      "group": "Despacho de grupo",
+      "shared": "Compartida"
+    },
+    "groupBadge": "Grupo: {name}",
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "enable": "Activar",
+      "disable": "Desactivar",
+      "refresh": "Actualizar token",
+      "viewDetails": "Ver detalles"
+    }
+  },
+
+  "sessionWindow": {
+    "claudeSeries": {
+      "title": "Serie Claude",
+      "description": "El progreso de la ventana de sesión representa el transcurso del tiempo en una ventana de 5 horas, con colores que indican el estado actual del despacho.",
+      "statusNormal": "Normal: Solicitudes procesadas normalmente",
+      "statusWarning": "Advertencia: Cerca del límite",
+      "statusDanger": "Rechazado: Límite de velocidad alcanzado"
+    },
+    "openai": {
+      "title": "OpenAI",
+      "description": "Las barras de progreso muestran el uso de cuota para ventanas de 5h y semanales respectivamente, con el mismo significado de color que arriba.",
+      "window5h": "Ventana 5h: Progreso de uso de 5 horas, se restablece automáticamente al llegar al tiempo de reinicio.",
+      "weeklyLimit": "Límite semanal: Progreso de uso de 7 días, también se restablece a 0% al reiniciar.",
+      "resetInfo": "Cuando 'Restante para reinicio' es 0, la barra de progreso y el porcentaje se sincronizarán a cero."
+    },
+    "claudeOAuth": {
+      "title": "Cuentas OAuth de Claude",
+      "description": "Muestra la tasa de utilización de tres ventanas (porcentaje de utilización), con el mismo significado de color que arriba.",
+      "window5h": "Ventana 5h: Tasa de utilización de ventana deslizante de 5 horas.",
+      "window7d": "Ventana 7d: Tasa de utilización del límite total de 7 días.",
+      "opusWindow": "Ventana Opus: Límite exclusivo del modelo Opus de 7 días.",
+      "autoReset": "Se restablece automáticamente a cero al llegar al tiempo de reinicio."
+    }
+  },
+
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "expired": "Vencido",
+    "error": "Error",
+    "pending": "Pendiente",
+    "overloaded": "Sobrecargado",
+    "permanent": "Permanente/Sin Vencimiento"
+  },
+
+  "priority": {
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja"
+  },
+
+  "proxy": {
+    "enabled": "Activado",
+    "disabled": "Desactivado",
+    "type": {
+      "http": "HTTP",
+      "https": "HTTPS",
+      "socks5": "SOCKS5"
+    },
+    "none": "Sin Proxy"
+  },
+
+  "usage": {
+    "today": "Uso Hoy",
+    "inputTokens": "{count} tokens de entrada",
+    "outputTokens": "{count} tokens de salida",
+    "totalTokens": "{count} tokens totales",
+    "cacheHits": "{count} aciertos de caché",
+    "cacheMisses": "{count} fallos de caché",
+    "cost": "Costo: ${amount}"
+  },
+  "schedulable": {
+    "yes": "Programable",
+    "no": "No programable",
+    "reason": "Razón: {reason}"
+  },
+
+  "compactActions": {
+    "scheduling": "Programar",
+    "disabled": "Desactivar",
+    "clickToDisable": "Clic para desactivar programación",
+    "clickToEnable": "Clic para activar programación",
+    "edit": "Editar",
+    "editAccount": "Editar cuenta"
+  },
+
+  "mobileView": {
+    "resetRemaining": "Reinicio en",
+    "sessionWindow": "Ventana de sesión",
+    "sessionWindowTooltip": "El progreso de la ventana de sesión no representa el uso, solo indica el tiempo restante hasta la próxima ventana de 5 horas",
+    "remaining": "Restante",
+    "ended": "Finalizado",
+    "noStatistics": "Sin estadísticas"
+  },
+
+  "statsDialog": {
+    "title": "Resumen de estadísticas de cuentas",
+    "platformType": "Tipo de plataforma",
+    "normal": "Normal",
+    "unschedulable": "No programable",
+    "rateLimit0_1h": "Límite 0-1h",
+    "rateLimit1_5h": "Límite 1-5h",
+    "rateLimit5_12h": "Límite 5-12h",
+    "rateLimit12_24h": "Límite 12-24h",
+    "rateLimitOver24h": "Límite >24h",
+    "other": "Otro",
+    "total": "Total",
+    "note": "Nota: Las columnas de tiempo de límite indican la cantidad de cuentas con tiempo de límite restante en el rango especificado"
+  },
+
+  "actions": {
+    "resetStatus": "Restablecer estado",
+    "details": "Detalles",
+    "test": "Probar",
+    "scheduledTest": "Prueba programada",
+    "delete": "Eliminar"
+  },
+
+  "messages": {
+    "accountTypeNoDetails": "Este tipo de cuenta no admite ver detalles",
+    "loadUsageDetailsFailed": "Error al cargar detalles de uso",
+    "accountTypeNoTest": "Este tipo de cuenta no admite pruebas",
+    "accountTypeNoScheduledTest": "Este tipo de cuenta no admite pruebas programadas",
+    "scheduledTestSaved": "Configuración de prueba programada guardada"
+  },
+
+  "modals": {
+    "create": {
+      "title": "Agregar Nueva Cuenta",
+      "subtitle": "Configurar cuenta de plataforma de IA"
+    },
+    "edit": {
+      "title": "Editar Cuenta",
+      "subtitle": "Modificar configuración de cuenta"
+    },
+    "delete": {
+      "title": "Confirmar Eliminación",
+      "message": "¿Estás seguro de que deseas eliminar esta cuenta?",
+      "messageBatch": "¿Estás seguro de que deseas eliminar {count} cuentas seleccionadas?",
+      "warning": "Esta acción no se puede deshacer.",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "oauth": {
+      "title": "Autorización OAuth",
+      "step1": "Paso 1: Generar URL de autorización",
+      "step2": "Paso 2: Completar autorización",
+      "step3": "Paso 3: Intercambiar código",
+      "generateUrl": "Generar URL",
+      "openUrl": "Abrir URL de autorización",
+      "enterCode": "Ingresar código de autorización",
+      "exchange": "Intercambiar token"
+    }
+  },
+
+  "forms": {
+    "name": {
+      "label": "Nombre de la cuenta",
+      "placeholder": "Ingresa el nombre de la cuenta",
+      "required": "El nombre es obligatorio",
+      "maxLength": "Máximo {max} caracteres"
+    },
+    "platform": {
+      "label": "Plataforma",
+      "placeholder": "Selecciona una plataforma",
+      "required": "La plataforma es obligatoria"
+    },
+    "accountType": {
+      "label": "Tipo de cuenta",
+      "options": {
+        "shared": "Compartida",
+        "dedicated": "Exclusiva",
+        "group": "Despacho de grupo"
+      }
+    },
+    "priority": {
+      "label": "Prioridad",
+      "description": "Mayor número = mayor prioridad"
+    },
+    "status": {
+      "label": "Estado",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "expiresAt": {
+      "label": "Fecha de expiración",
+      "placeholder": "Selecciona fecha de expiración",
+      "never": "Nunca"
+    },
+    "proxy": {
+      "label": "Configuración de proxy",
+      "enabled": "Habilitar proxy",
+      "type": "Tipo de proxy",
+      "host": "Host del proxy",
+      "port": "Puerto",
+      "username": "Usuario (opcional)",
+      "password": "Contraseña (opcional)"
+    },
+    "credentials": {
+      "label": "Credenciales",
+      "apiKey": "Clave API",
+      "accessToken": "Token de acceso",
+      "refreshToken": "Token de actualización",
+      "clientId": "ID de cliente",
+      "clientSecret": "Secreto de cliente"
+    },
+    "groups": {
+      "label": "Grupos",
+      "placeholder": "Selecciona grupos",
+      "empty": "Sin grupos disponibles",
+      "createNew": "Crear nuevo grupo"
+    }
+  },
+
+  "messages": {
+    "success": {
+      "created": "Cuenta creada exitosamente",
+      "updated": "Cuenta actualizada exitosamente",
+      "deleted": "Cuenta eliminada exitosamente",
+      "batchDeleted": "{count} cuentas eliminadas exitosamente",
+      "refreshed": "Token actualizado exitosamente",
+      "enabled": "Cuenta activada",
+      "disabled": "Cuenta desactivada"
+    },
+    "error": {
+      "loadFailed": "Error al cargar cuentas",
+      "createFailed": "Error al crear cuenta",
+      "updateFailed": "Error al actualizar cuenta",
+      "deleteFailed": "Error al eliminar cuenta",
+      "refreshFailed": "Error al actualizar token",
+      "invalidData": "Datos inválidos",
+      "networkError": "Error de red",
+      "unauthorized": "No autorizado",
+      "serverError": "Error del servidor"
+    },
+    "warning": {
+      "expiringSoon": "La cuenta expirará pronto",
+      "rateLimitReached": "Límite de velocidad alcanzado",
+      "lowPriority": "Cuenta de baja prioridad"
+    }
+  },
+
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {current} de {total}",
+    "itemsPerPage": "Elementos por página:",
+    "totalItems": "{total} elementos en total"
+  }
+}

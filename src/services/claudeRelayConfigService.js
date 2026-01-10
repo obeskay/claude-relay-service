@@ -13,7 +13,7 @@ const SESSION_BINDING_PREFIX = 'original_session_binding:'
 const DEFAULT_CONFIG = {
   claudeCodeOnlyEnabled: false,
   globalSessionBindingEnabled: false,
-  sessionBindingErrorMessage: '你的本地session已污染，请清理后使用。',
+  sessionBindingErrorMessage: 'Su sesión local está contaminada, límpiela antes de usarla.',
   sessionBindingTtlDays: 30, // 会话绑定 TTL（天），默认30天
   // 用户消息队列配置
   userMessageQueueEnabled: false, // 是否启用用户消息队列（默认关闭）

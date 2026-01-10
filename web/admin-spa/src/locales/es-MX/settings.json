@@ -1,0 +1,229 @@
+{
+  "pageTitle": "Configuración del Sistema",
+  "pageDescription": "Personalización del sitio web y configuración de notificaciones",
+
+  "navigation": {
+    "branding": "Configuración de Marca",
+    "webhook": "Configuración de Notificaciones"
+  },
+
+  "loading": {
+    "settings": "Cargando configuración...",
+    "saving": "Guardando...",
+    "uploading": "Subiendo..."
+  },
+
+  "branding": {
+    "siteName": {
+      "label": "Nombre del Sitio",
+      "description": "Identidad de marca",
+      "placeholder": "Claude Relay Service",
+      "helpText": "Se mostrará en el título del navegador y el encabezado de la página",
+      "maxLength": "Máximo 100 caracteres"
+    },
+    "siteIcon": {
+      "label": "Ícono del Sitio",
+      "description": "Favicon",
+      "currentIcon": "Ícono actual",
+      "uploadButton": "Subir Ícono",
+      "deleteButton": "Eliminar",
+      "supportedFormats": "Soporta formatos .ico, .png, .jpg, .svg, máximo 350KB",
+      "preview": "Vista previa del ícono"
+    },
+    "adminButton": {
+      "label": "Entrada de Administración",
+      "description": "Mostrar botón de inicio de sesión",
+      "hideButton": "Ocultar botón de inicio de sesión",
+      "showButton": "Mostrar botón de inicio de sesión",
+      "helpText": "Una vez oculto, los usuarios necesitarán acceder directamente a la página /admin/login para iniciar sesión"
+    },
+    "actions": {
+      "save": "Guardar Configuración",
+      "saving": "Guardando...",
+      "reset": "Restablecer a Predeterminado",
+      "lastUpdated": "Última actualización: {time}"
+    }
+  },
+
+  "webhook": {
+    "mainSwitch": {
+      "title": "Habilitar Notificaciones",
+      "description": "Una vez habilitado, el sistema enviará notificaciones a las plataformas especificadas según la configuración"
+    },
+    "notificationTypes": {
+      "title": "Tipos de Notificación",
+      "accountExpiring": {
+        "name": "Cuenta por Expirar",
+        "description": "Notificar cuando una cuenta está cerca de su fecha de expiración"
+      },
+      "accountExpired": {
+        "name": "Cuenta Expirada",
+        "description": "Notificar cuando una cuenta ha expirado"
+      },
+      "accountError": {
+        "name": "Error de Cuenta",
+        "description": "Notificar cuando hay un error en la cuenta"
+      },
+      "accountDisabled": {
+        "name": "Cuenta Deshabilitada",
+        "description": "Notificar cuando una cuenta es deshabilitada"
+      },
+      "tokenRefreshFailed": {
+        "name": "Fallo en Actualización de Token",
+        "description": "Notificar cuando falla la actualización del token"
+      },
+      "rateLimitReached": {
+        "name": "Límite de Velocidad Alcanzado",
+        "description": "Notificar cuando se alcanza el límite de velocidad"
+      },
+      "apiKeyExpiring": {
+        "name": "Clave API por Expirar",
+        "description": "Notificar cuando una clave API está cerca de su fecha de expiración"
+      },
+      "apiKeyExpired": {
+        "name": "Clave API Expirada",
+        "description": "Notificar cuando una clave API ha expirado"
+      },
+      "systemError": {
+        "name": "Error del Sistema",
+        "description": "Notificar cuando ocurre un error del sistema"
+      },
+      "dailyReport": {
+        "name": "Informe Diario",
+        "description": "Enviar informe de uso diario"
+      }
+    },
+    "platforms": {
+      "title": "Plataformas de Notificación",
+      "addButton": "Agregar Plataforma",
+      "empty": "No hay plataformas configuradas",
+      "emptyDescription": "Haz clic en el botón de arriba para agregar tu primera plataforma de notificación",
+      "types": {
+        "dingtalk": "DingTalk",
+        "wecom": "WeChat Work",
+        "feishu": "Feishu",
+        "webhook": "Webhook Personalizado",
+        "telegram": "Telegram",
+        "discord": "Discord",
+        "slack": "Slack",
+        "smtp": "Correo Electrónico (SMTP)"
+      },
+      "fields": {
+        "type": "Tipo de Plataforma",
+        "name": "Nombre",
+        "url": "URL del Webhook",
+        "deviceKey": "Device Key",
+        "serverUrl": "URL del Servidor",
+        "level": "Nivel de Notificación",
+        "sound": "Sonido",
+        "group": "Grupo de Notificación",
+        "chatId": "ID del Chat",
+        "botToken": "Token del Bot",
+        "apiBaseUrl": "URL Base de la API",
+        "proxyUrl": "URL Proxy",
+        "secret": "Clave de Firma",
+        "enableSign": "Habilitar Firma",
+        "host": "Servidor SMTP",
+        "port": "Puerto",
+        "secure": "Usar SSL/TLS",
+        "from": "Dirección de Envío",
+        "to": "Dirección de Recepción",
+        "username": "Nombre de Usuario",
+        "password": "Contraseña"
+      },
+      "actions": {
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "test": "Probar Notificación",
+        "testConnection": "Probar Conexión",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "requiredFields": "Campos Requeridos"
+      }
+    }
+  },
+
+  "modal": {
+    "addPlatform": {
+      "title": "Agregar Plataforma de Notificación",
+      "selectType": "Selecciona el tipo de plataforma",
+      "confirm": "Agregar",
+      "cancel": "Cancelar"
+    },
+    "editPlatform": {
+      "title": "Editar Plataforma de Notificación",
+      "confirm": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "deletePlatform": {
+      "title": "Confirmar Eliminación",
+      "message": "¿Estás seguro de que deseas eliminar esta plataforma de notificación?",
+      "warning": "Esta acción no se puede deshacer.",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    }
+  },
+
+  "messages": {
+    "success": {
+      "saved": "Configuración guardada exitosamente",
+      "reset": "Configuración restablecida exitosamente",
+      "platformAdded": "Plataforma agregada exitosamente",
+      "platformUpdated": "Plataforma actualizada exitosamente",
+      "platformDeleted": "Plataforma eliminada exitosamente",
+      "testSent": "Notificación de prueba enviada exitosamente",
+      "iconUploaded": "Ícono subido exitosamente",
+      "iconRemoved": "Ícono eliminado exitosamente"
+    },
+    "error": {
+      "loadFailed": "Error al cargar configuración",
+      "saveFailed": "Error al guardar configuración",
+      "resetFailed": "Error al restablecer configuración",
+      "platformAddFailed": "Error al agregar plataforma",
+      "platformUpdateFailed": "Error al actualizar plataforma",
+      "platformDeleteFailed": "Error al eliminar plataforma",
+      "testFailed": "Error al enviar notificación de prueba",
+      "uploadFailed": "Error al subir ícono",
+      "fileTooLarge": "El archivo es demasiado grande (máximo 350KB)",
+      "invalidFormat": "Formato de archivo inválido",
+      "networkError": "Error de red",
+      "unauthorized": "No autorizado",
+      "serverError": "Error del servidor"
+    },
+    "validation": {
+      "nameRequired": "El nombre es obligatorio",
+      "urlRequired": "La URL es obligatoria",
+      "urlInvalid": "Formato de URL inválido",
+      "chatIdRequired": "El ID del chat es obligatorio",
+      "botTokenRequired": "El token del bot es obligatorio",
+      "hostRequired": "El servidor es obligatorio",
+      "portRequired": "El puerto es obligatorio",
+      "portInvalid": "Número de puerto inválido",
+      "fromRequired": "La dirección de envío es obligatoria",
+      "toRequired": "La dirección de recepción es obligatoria",
+      "emailInvalid": "Formato de correo electrónico inválido"
+    }
+  },
+
+  "mobileView": {
+    "siteName": {
+      "title": "Nombre del Sitio",
+      "description": "Personaliza el nombre de marca de tu sitio"
+    },
+    "siteIcon": {
+      "title": "Ícono del Sitio",
+      "description": "Sube un ícono personalizado o ingresa una URL de ícono"
+    },
+    "adminEntry": {
+      "title": "Entrada de Administración",
+      "description": "Controla la visualización del botón de inicio de sesión en la página de inicio"
+    }
+  },
+
+  "telegram": {
+    "tokenFormat": "Token: {masked}",
+    "apiUrl": "API: {url}",
+    "chatId": "ID del Chat: {id}",
+    "notConfigured": "No configurado"
+  }
+}

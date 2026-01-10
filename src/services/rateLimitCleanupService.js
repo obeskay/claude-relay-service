@@ -1,6 +1,6 @@
 /**
- * 限流状态自动清理服务
- * 定期检查并清理所有类型账号的过期限流状态
+ * Rate Limit Automatic Cleanup Service
+ * Periodically checks and cleans up expired rate limit states for all account types
  */
 
 const logger = require('../utils/logger')
@@ -14,15 +14,15 @@ class RateLimitCleanupService {
   constructor() {
     this.cleanupInterval = null
     this.isRunning = false
-    // 默认每5分钟检查一次
+    // Default: check every 5 minutes
     this.intervalMs = 5 * 60 * 1000
-    // 存储已清理的账户信息，用于发送恢复通知
+    // Store cleared account information for sending recovery notifications
     this.clearedAccounts = []
   }
 
   /**
-   * 启动自动清理服务
-   * @param {number} intervalMinutes - 检查间隔（分钟），默认5分钟
+   * Start automatic cleanup service
+   * @param {number} intervalMinutes - Check interval (minutes), default 5 minutes
    */
   start(intervalMinutes = 5) {
     if (this.cleanupInterval) {
@@ -34,17 +34,17 @@ class RateLimitCleanupService {
 
     logger.info(`🧹 Starting rate limit cleanup service (interval: ${intervalMinutes} minutes)`)
 
-    // 立即执行一次清理
+    // Execute cleanup immediately once
     this.performCleanup()
 
-    // 设置定期执行
+    // Set periodic execution
     this.cleanupInterval = setInterval(() => {
       this.performCleanup()
     }, this.intervalMs)
   }
 
   /**
-   * 停止自动清理服务
+   * Stop automatic cleanup service
    */
   stop() {
     if (this.cleanupInterval) {
@@ -55,7 +55,7 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 执行一次清理检查
+   * Perform one cleanup check
    */
   async performCleanup() {
     if (this.isRunning) {
@@ -76,13 +76,13 @@ class RateLimitCleanupService {
         tokenRefresh: { checked: 0, refreshed: 0, errors: [] }
       }
 
-      // 清理 OpenAI 账号
+      // Cleanup OpenAI accounts
       await this.cleanupOpenAIAccounts(results.openai)
 
-      // 清理 Claude 账号
+      // Cleanup Claude accounts
       await this.cleanupClaudeAccounts(results.claude)
 
-      // 清理 Claude Console 账号
+      // Cleanup Claude Console accounts
       await this.cleanupClaudeConsoleAccounts(results.claudeConsole)
 
       // 主动刷新等待重置的 Claude 账户 Token（防止 5小时/7天 等待期间 Token 过期）
@@ -109,7 +109,7 @@ class RateLimitCleanupService {
           )
         }
 
-        // 发送 webhook 恢复通知
+        // Send webhook recovery notifications
         if (this.clearedAccounts.length > 0) {
           await this.sendRecoveryNotifications()
         }
@@ -119,7 +119,7 @@ class RateLimitCleanupService {
         )
       }
 
-      // 记录错误
+      // Log errors
       const allErrors = [
         ...results.openai.errors,
         ...results.claude.errors,
@@ -132,18 +132,18 @@ class RateLimitCleanupService {
     } catch (error) {
       logger.error('❌ Rate limit cleanup failed:', error)
     } finally {
-      // 确保无论成功或失败都重置列表，避免重复通知
+      // Ensure list is reset regardless of success or failure to avoid duplicate notifications
       this.clearedAccounts = []
       this.isRunning = false
     }
   }
 
   /**
-   * 清理 OpenAI 账号的过期限流
+   * Cleanup expired rate limits for OpenAI accounts
    */
   async cleanupOpenAIAccounts(result) {
     try {
-      // 使用服务层获取账户数据
+      // Get account data using service layer
       const accounts = await openaiAccountService.getAllAccounts()
 
       for (const account of accounts) {
@@ -158,7 +158,7 @@ class RateLimitCleanupService {
           result.checked++
 
           try {
-            // 使用 unifiedOpenAIScheduler 的检查方法，它会自动清除过期的限流
+            // Use unifiedOpenAIScheduler's check method, which automatically clears expired rate limits
             const isStillLimited = await unifiedOpenAIScheduler.isAccountRateLimited(account.id)
 
             if (!isStillLimited) {
@@ -192,16 +192,16 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 清理 Claude 账号的过期限流
+   * Cleanup expired rate limits for Claude accounts
    */
   async cleanupClaudeAccounts(result) {
     try {
-      // 使用 Redis 获取账户数据
+      // Get account data using Redis
       const redis = require('../models/redis')
       const accounts = await redis.getAllClaudeAccounts()
 
       for (const account of accounts) {
-        // 检查是否处于限流状态（兼容对象和字符串格式）
+        // Check if rate limited (compatible with object and string formats)
         const isRateLimited =
           account.rateLimitStatus === 'limited' ||
           (account.rateLimitStatus &&
@@ -436,7 +436,7 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 发送限流恢复通知
+   * 发送Recuperación de límite de velocidad Notification
    */
   async sendRecoveryNotifications() {
     try {
@@ -453,7 +453,7 @@ class RateLimitCleanupService {
       const platforms = Object.keys(groupedAccounts)
       const totalAccounts = this.clearedAccounts.length
 
-      let message = `🎉 共有 ${totalAccounts} 个账户的限流状态已恢复\n\n`
+      let message = `🎉 A total of ${totalAccounts} accounts have been recovered from rate limit\n\n`
 
       for (const platform of platforms) {
         const accounts = groupedAccounts[platform]
@@ -466,7 +466,7 @@ class RateLimitCleanupService {
 
       // 发送 webhook 通知
       await webhookService.sendNotification('rateLimitRecovery', {
-        title: '限流恢复通知',
+        title: 'Recuperación de límite de velocidad Notification',
         message,
         totalAccounts,
         platforms: Object.keys(groupedAccounts),
@@ -474,9 +474,9 @@ class RateLimitCleanupService {
         timestamp: new Date().toISOString()
       })
 
-      logger.info(`📢 已发送限流恢复通知，涉及 ${totalAccounts} 个账户`)
+      logger.info(`📢 Rate limit recovery notification sent, involving ${totalAccounts} accounts`)
     } catch (error) {
-      logger.error('❌ 发送限流恢复通知失败:', error)
+      logger.error('❌ Failed to send rate limit recovery notification:', error)
     }
   }
 

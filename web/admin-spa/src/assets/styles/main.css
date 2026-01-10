@@ -4,113 +4,159 @@
 @import './variables.css';
 @import './components.css';
 
-/* Font Awesome 图标 */
+/* Font Awesome icons */
 @import '@fortawesome/fontawesome-free/css/all.css';
 
-/* 全局样式 */
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAIN STYLES - Animations & Utilities
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY
+   ───────────────────────────────────────────────────────────────────────────── */
+
 body {
-  font-family:
+  font-family: var(
+    --font-sans,
+    'Space Grotesk',
     'Inter',
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
     Roboto,
-    sans-serif;
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    var(--secondary-color) 50%,
-    var(--accent-color) 100%
+    sans-serif
   );
-  background-attachment: fixed;
+  background: var(--background); /* Use semantic variable */
+
+  /* Geometric Grid - Subtle */
+  background-image:
+    linear-gradient(to bottom, hsl(var(--border) / 0.1) 1px, transparent 1px),
+    linear-gradient(to right, hsl(var(--border) / 0.1) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(240, 147, 251, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
+/* Dark mode overrides for background */
+.dark body {
+  background: hsl(var(--background));
+  background-image:
+    linear-gradient(to bottom, hsl(var(--border) / 0.05) 1px, transparent 1px),
+    linear-gradient(to right, hsl(var(--border) / 0.05) 1px, transparent 1px);
 }
 
-/* 通用transition - 仅应用于特定元素 */
-body,
-div,
-button,
-input,
-select,
-textarea,
-table,
-tr,
-td,
-th,
-span,
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* (Removed expensive body::before radial gradient glow) */
+
+/* Monospace for code elements */
+code,
+pre,
+.font-mono {
+  font-family: var(--font-mono, 'IBM Plex Mono', 'Fira Code', monospace);
 }
 
-/* Element Plus 主题覆盖 */
-.el-button--primary {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  border-color: transparent;
+/* ─────────────────────────────────────────────────────────────────────────────
+   ENTRANCE ANIMATIONS
+   Inspired by reference template - fade + slide + blur
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@keyframes animateIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.el-button--primary:hover,
-.el-button--primary:focus {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  opacity: 0.9;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* 自定义滚动条样式 */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(102, 126, 234, 0.3) rgba(102, 126, 234, 0.05);
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(102, 126, 234, 0.05);
-  border-radius: 10px;
+/* Animate In class - use with stagger delays */
+.animate-in {
+  animation: animateIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
-  border-radius: 10px;
-  transition: background 0.3s ease;
+/* Stagger delay utilities */
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+.stagger-2 {
+  animation-delay: 0.1s;
+}
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+.stagger-4 {
+  animation-delay: 0.2s;
+}
+.stagger-5 {
+  animation-delay: 0.25s;
+}
+.stagger-6 {
+  animation-delay: 0.3s;
+}
+.stagger-7 {
+  animation-delay: 0.35s;
+}
+.stagger-8 {
+  animation-delay: 0.4s;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+/* Fade in on load */
+.fade-up {
+  animation: fadeUp 0.5s ease-out both;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+/* Scale in */
+.scale-in {
+  animation: scaleIn 0.4s ease-out both;
 }
 
-/* Vue过渡动画 */
+/* ─────────────────────────────────────────────────────────────────────────────
+   VUE PAGE TRANSITIONS
+   Smooth page changes
+   ───────────────────────────────────────────────────────────────────────────── */
+
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .fade-enter-from,
@@ -120,25 +166,157 @@ h6 {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .slide-up-enter-from {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(20px);
 }
 
 .slide-up-leave-to {
   opacity: 0;
-  transform: translateY(-30px);
+  transform: translateY(-20px);
 }
 
-/* 响应式调整 */
+/* Page transition */
+.page-enter-active {
+  animation: animateIn 0.4s ease-out;
+}
+
+.page-leave-active {
+  animation: animateIn 0.3s ease-in reverse;
+}
+
+/* Tab content animation */
+.tab-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ELEMENT PLUS THEME OVERRIDES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.el-button--primary {
+  background: var(--gradient-primary) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px -2px hsl(var(--primary) / 0.35);
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CUSTOM SCROLLBAR
+   Premium subtle scrollbar
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.3) hsl(var(--primary) / 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--primary) / 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.35);
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+.dark .custom-scrollbar {
+  scrollbar-color: hsl(var(--accent) / 0.3) hsl(var(--accent) / 0.05);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--accent) / 0.05);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--accent) / 0.35);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--accent) / 0.5);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HOVER MICRO-INTERACTIONS
+   Simplified for performance
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Interactive lift effect - simplified */
+.hover-lift {
+  transition: transform 0.15s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+}
+
+/* Subtle scale on hover - simplified */
+.hover-scale {
+  transition: transform 0.15s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.01);
+}
+
+/* hover-glow removed for performance */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   UTILITY CLASSES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold accent text */
+.text-accent {
+  color: hsl(var(--accent));
+}
+
+/* Blend mode for visual effects */
+.blend-overlay {
+  mix-blend-mode: overlay;
+}
+
+.blend-soft-light {
+  mix-blend-mode: soft-light;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE ADJUSTMENTS
+   ───────────────────────────────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   .glass,
   .glass-strong {
     margin: 16px;
-    border-radius: 20px;
+    border-radius: var(--radius-lg, 1rem);
   }
 
   .stat-card {
@@ -146,11 +324,48 @@ h6 {
   }
 
   .tab-btn {
-    font-size: 14px;
-    padding: 12px 8px;
+    font-size: 13px;
+    padding: 10px 8px;
   }
 
   .modal-scroll-content {
     max-height: calc(85vh - 120px);
+  }
+}
+
+@media (max-width: 640px) {
+  .animate-in {
+    animation-duration: 0.4s;
+  }
+
+  .stagger-1 {
+    animation-delay: 0.03s;
+  }
+  .stagger-2 {
+    animation-delay: 0.06s;
+  }
+  .stagger-3 {
+    animation-delay: 0.09s;
+  }
+  .stagger-4 {
+    animation-delay: 0.12s;
+  }
+  .stagger-5 {
+    animation-delay: 0.15s;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   REDUCED MOTION
+   Respect user preferences
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

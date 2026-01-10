@@ -23,12 +23,12 @@ class AccountGroupService {
 
       // 验证必填字段
       if (!name || !platform) {
-        throw new Error('分组名称和平台类型为必填项')
+        throw new Error('Group name and platform type are required')
       }
 
       // 验证平台类型
       if (!['claude', 'gemini', 'openai', 'droid'].includes(platform)) {
-        throw new Error('平台类型必须是 claude、gemini、openai 或 droid')
+        throw new Error('Platform type must be claude, gemini, openai, or droid')
       }
 
       const client = redis.getClientSafe()
@@ -50,11 +50,11 @@ class AccountGroupService {
       // 添加到分组集合
       await client.sadd(this.GROUPS_KEY, groupId)
 
-      logger.success(`✅ 创建账户分组成功: ${name} (${platform})`)
+      logger.success(`✅ Successfully created account group: ${name} (${platform})`)
 
       return group
     } catch (error) {
-      logger.error('❌ 创建账户分组失败:', error)
+      logger.error('❌ Failed to create account group:', error)
       throw error
     }
   }
@@ -73,7 +73,7 @@ class AccountGroupService {
       // 检查分组是否存在
       const exists = await client.exists(groupKey)
       if (!exists) {
-        throw new Error('分组不存在')
+        throw new Error('Group does not exist')
       }
 
       // 获取现有分组数据
@@ -81,7 +81,7 @@ class AccountGroupService {
 
       // 不允许修改平台类型
       if (updates.platform && updates.platform !== existingGroup.platform) {
-        throw new Error('不能修改分组的平台类型')
+        throw new Error('Cannot modify group platform type')
       }
 
       // 准备更新数据
@@ -101,11 +101,11 @@ class AccountGroupService {
       // 返回更新后的完整数据
       const updatedGroup = await client.hgetall(groupKey)
 
-      logger.success(`✅ 更新账户分组成功: ${updatedGroup.name}`)
+      logger.success(`✅ Successfully updated account group: ${updatedGroup.name}`)
 
       return updatedGroup
     } catch (error) {
-      logger.error('❌ 更新账户分组失败:', error)
+      logger.error('❌ Failed to update account group:', error)
       throw error
     }
   }
@@ -121,19 +121,19 @@ class AccountGroupService {
       // 检查分组是否存在
       const group = await this.getGroup(groupId)
       if (!group) {
-        throw new Error('分组不存在')
+        throw new Error('Group does not exist')
       }
 
       // 检查分组是否为空
       const members = await this.getGroupMembers(groupId)
       if (members.length > 0) {
-        throw new Error('分组内还有账户，无法删除')
+        throw new Error('Group still has accounts, cannot delete')
       }
 
       // 检查是否有API Key绑定此分组
       const boundApiKeys = await this.getApiKeysUsingGroup(groupId)
       if (boundApiKeys.length > 0) {
-        throw new Error('还有API Key使用此分组，无法删除')
+        throw new Error('API keys are still using this group, cannot delete')
       }
 
       // 删除分组数据
@@ -143,9 +143,9 @@ class AccountGroupService {
       // 从分组集合中移除
       await client.srem(this.GROUPS_KEY, groupId)
 
-      logger.success(`✅ 删除账户分组成功: ${group.name}`)
+      logger.success(`✅ Successfully deleted account group: ${group.name}`)
     } catch (error) {
-      logger.error('❌ 删除账户分组失败:', error)
+      logger.error('❌ Failed to delete account group:', error)
       throw error
     }
   }
@@ -221,22 +221,22 @@ class AccountGroupService {
       // 获取分组信息
       const group = await this.getGroup(groupId)
       if (!group) {
-        throw new Error('分组不存在')
+        throw new Error('Group does not exist')
       }
 
       // 验证平台一致性 (Claude和Claude Console视为同一平台)
       const normalizedAccountPlatform =
         accountPlatform === 'claude-console' ? 'claude' : accountPlatform
       if (normalizedAccountPlatform !== group.platform) {
-        throw new Error('账户平台与分组平台不匹配')
+        throw new Error('Account platform does not match group platform')
       }
 
       // 添加到分组成员集合
       await client.sadd(`${this.GROUP_MEMBERS_PREFIX}${groupId}`, accountId)
 
-      logger.success(`✅ 添加账户到分组成功: ${accountId} -> ${group.name}`)
+      logger.success(`✅ Successfully added account to group: ${accountId} -> ${group.name}`)
     } catch (error) {
-      logger.error('❌ 添加账户到分组失败:', error)
+      logger.error('❌ Failed to add account to group:', error)
       throw error
     }
   }
@@ -253,9 +253,9 @@ class AccountGroupService {
       // 从分组成员集合中移除
       await client.srem(`${this.GROUP_MEMBERS_PREFIX}${groupId}`, accountId)
 
-      logger.success(`✅ 从分组移除账户成功: ${accountId}`)
+      logger.success(`✅ Successfully removed account from group: ${accountId}`)
     } catch (error) {
-      logger.error('❌ 从分组移除账户失败:', error)
+      logger.error('❌ Failed to remove account from group:', error)
       throw error
     }
   }
@@ -399,9 +399,9 @@ class AccountGroupService {
         await this.addAccountToGroup(accountId, groupId, accountPlatform)
       }
 
-      logger.success(`✅ 批量设置账户分组成功: ${accountId} -> [${groupIds.join(', ')}]`)
+      logger.success(`✅ Successfully batch set account groups: ${accountId} -> [${groupIds.join(', ')}]`)
     } catch (error) {
-      logger.error('❌ 批量设置账户分组失败:', error)
+      logger.error('❌ Failed to batch set account groups:', error)
       throw error
     }
   }
@@ -419,9 +419,9 @@ class AccountGroupService {
         await client.srem(`${this.GROUP_MEMBERS_PREFIX}${groupId}`, accountId)
       }
 
-      logger.success(`✅ 从所有分组移除账户成功: ${accountId}`)
+      logger.success(`✅ Successfully removed account from all groups: ${accountId}`)
     } catch (error) {
-      logger.error('❌ 从所有分组移除账户失败:', error)
+      logger.error('❌ Failed to remove account from all groups:', error)
       throw error
     }
   }

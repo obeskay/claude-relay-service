@@ -6,7 +6,11 @@
         <LogoTitle
           :loading="oemLoading"
           :logo-src="oemSettings.siteIconData || oemSettings.siteIcon"
-          :subtitle="currentTab === 'stats' ? 'API Key 使用统计' : '使用教程'"
+          :subtitle="
+            currentTab === 'stats'
+              ? t('apistats.page.subtitle_stats')
+              : t('apistats.page.subtitle_tutorial')
+          "
           :title="oemSettings.siteName"
         />
         <div class="flex items-center gap-2 md:gap-4">
@@ -21,23 +25,26 @@
             class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent opacity-50 dark:via-gray-600"
           />
 
-          <!-- 用户登录按钮 (仅在 LDAP 启用时显示) -->
+          <!-- User Login Button -->
           <router-link
-            v-if="oemSettings.ldapEnabled"
-            class="user-login-button flex items-center gap-2 rounded-2xl px-4 py-2 text-white transition-all duration-300 md:px-5 md:py-2.5"
+            class="user-login-button flex items-center gap-2 rounded-2xl px-4 py-2 transition-all duration-300 md:px-5 md:py-2.5"
             to="/user-login"
           >
             <i class="fas fa-user text-sm md:text-base" />
-            <span class="text-xs font-semibold tracking-wide md:text-sm">用户登录</span>
+            <span class="text-xs font-semibold tracking-wide md:text-sm">{{
+              t('common.user_login')
+            }}</span>
           </router-link>
-          <!-- 管理后台按钮 -->
+          <!-- Admin Dashboard Button -->
           <router-link
             v-if="oemSettings.showAdminButton !== false"
             class="admin-button-refined flex items-center gap-2 rounded-2xl px-4 py-2 transition-all duration-300 md:px-5 md:py-2.5"
             to="/dashboard"
           >
             <i class="fas fa-shield-alt text-sm md:text-base" />
-            <span class="text-xs font-semibold tracking-wide md:text-sm">管理后台</span>
+            <span class="text-xs font-semibold tracking-wide md:text-sm">{{
+              t('common.admin_dashboard')
+            }}</span>
           </router-link>
         </div>
       </div>
@@ -54,14 +61,14 @@
             @click="currentTab = 'stats'"
           >
             <i class="fas fa-chart-line mr-1 md:mr-2" />
-            <span class="text-sm md:text-base">统计查询</span>
+            <span class="text-sm md:text-base">{{ t('apistats.tabs.stats_query') }}</span>
           </button>
           <button
             :class="['tab-pill-button', currentTab === 'tutorial' ? 'active' : '']"
             @click="currentTab = 'tutorial'"
           >
             <i class="fas fa-graduation-cap mr-1 md:mr-2" />
-            <span class="text-sm md:text-base">使用教程</span>
+            <span class="text-sm md:text-base">{{ t('apistats.tabs.tutorial') }}</span>
           </button>
         </div>
       </div>
@@ -92,9 +99,9 @@
             >
               <div class="flex items-center gap-2 md:gap-3">
                 <i class="fas fa-clock text-base text-blue-500 md:text-lg" />
-                <span class="text-base font-medium text-gray-700 dark:text-gray-200 md:text-lg"
-                  >统计时间范围</span
-                >
+                <span class="text-base font-medium text-gray-700 dark:text-gray-200 md:text-lg">{{
+                  t('apistats.filter.time_range')
+                }}</span>
               </div>
               <div class="flex w-full items-center gap-2 md:w-auto">
                 <button
@@ -104,7 +111,7 @@
                   @click="switchPeriod('daily')"
                 >
                   <i class="fas fa-calendar-day text-xs md:text-sm" />
-                  今日
+                  {{ t('apistats.filter.today') }}
                 </button>
                 <button
                   class="flex flex-1 items-center justify-center gap-1 px-4 py-2 text-xs font-medium md:flex-none md:gap-2 md:px-6 md:text-sm"
@@ -113,7 +120,7 @@
                   @click="switchPeriod('monthly')"
                 >
                   <i class="fas fa-calendar-alt text-xs md:text-sm" />
-                  本月
+                  {{ t('apistats.filter.this_month') }}
                 </button>
                 <!-- 测试按钮 - 仅在单Key模式下显示 -->
                 <button
@@ -123,7 +130,7 @@
                   @click="openTestModal"
                 >
                   <i class="fas fa-vial text-xs md:text-sm" />
-                  测试
+                  {{ t('common.test') }}
                 </button>
               </div>
             </div>
@@ -172,6 +179,7 @@
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useApiStatsStore } from '@/stores/apistats'
 import { useThemeStore } from '@/stores/theme'
 import LogoTitle from '@/components/common/LogoTitle.vue'
@@ -188,6 +196,7 @@ import ApiKeyTestModal from '@/components/apikeys/ApiKeyTestModal.vue'
 const route = useRoute()
 const apiStatsStore = useApiStatsStore()
 const themeStore = useThemeStore()
+const { t } = useI18n()
 
 // 当前标签页
 const currentTab = ref('stats')
@@ -330,7 +339,7 @@ watch(apiKey, (newValue) => {
   z-index: 0;
 }
 
-/* 玻璃态效果 - 使用CSS变量 */
+/* Glassmorphism Effect - Using CSS Variables */
 .glass-strong {
   background: var(--glass-strong-color);
   backdrop-filter: blur(25px);
@@ -575,7 +584,7 @@ watch(apiKey, (newValue) => {
   transform: none;
 }
 
-/* Tab 胶囊按钮样式 */
+/* Tab Pill Button Styles */
 .tab-pill-button {
   padding: 0.5rem 1rem;
   border-radius: 9999px;
@@ -594,7 +603,7 @@ watch(apiKey, (newValue) => {
   justify-content: center;
 }
 
-/* 暗夜模式下的Tab按钮基础样式 */
+/* Dark Mode Tab Button Base Styles */
 :global(html.dark) .tab-pill-button {
   color: rgba(209, 213, 219, 0.8);
 }
@@ -636,7 +645,7 @@ watch(apiKey, (newValue) => {
   font-size: 0.875rem;
 }
 
-/* Tab 内容切换动画 */
+/* Tab Content Switch Animation */
 .tab-content {
   animation: tabFadeIn 0.4s ease-out;
 }

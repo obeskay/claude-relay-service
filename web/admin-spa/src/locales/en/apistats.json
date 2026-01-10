@@ -1,0 +1,223 @@
+{
+  "page": {
+    "title": "API Statistics",
+    "subtitle": "View API key usage statistics and analytics",
+    "subtitle_stats": "API Key Usage Statistics",
+    "subtitle_tutorial": "Usage Tutorial"
+  },
+  "nav": {
+    "user_login": "User Login",
+    "admin_panel": "Admin Panel"
+  },
+  "tabs": {
+    "stats_query": "Statistics Query",
+    "tutorial": "Usage Tutorial"
+  },
+  "filter": {
+    "time_range": "Statistics Time Range",
+    "today": "Today",
+    "this_month": "This Month"
+  },
+  "overview": {
+    "batch_summary": "Batch Query Summary",
+    "api_key_info": "API Key Information",
+    "total_keys": "Total Keys",
+    "active_keys": "Active Keys",
+    "invalid_keys": "Invalid Keys",
+    "total_requests": "Total Requests",
+    "total_tokens": "Total Tokens",
+    "total_cost": "Total Cost",
+    "top_contributors": "Top 3 Contributors",
+    "usage_stats": "Usage Statistics Overview",
+    "today": "Today",
+    "this_month": "This Month",
+    "today_requests": "Requests Today",
+    "this_month_requests": "Requests This Month",
+    "today_tokens": "Tokens Today",
+    "this_month_tokens": "Tokens This Month",
+    "today_cost": "Cost Today",
+    "this_month_cost": "Cost This Month",
+    "today_input_tokens": "Input Tokens Today",
+    "this_month_input_tokens": "Input Tokens This Month"
+  },
+  "field": {
+    "name": "Name",
+    "status": "Status",
+    "permissions": "Permissions",
+    "created_at": "Created At",
+    "expiry_time": "Expiry Time",
+    "session_window": "Session Window",
+    "quota_window": "Quota Window"
+  },
+  "status": {
+    "active": "Active",
+    "disabled": "Disabled",
+    "not_activated": "Not Activated",
+    "expired": "Expired",
+    "never_expires": "Never Expires",
+    "unknown": "Status Unknown",
+    "not_rate_limited": "Not Limited",
+    "rate_limited": "Rate Limited",
+    "rate_limited_with_time": "Rate Limited · Approx. {time} remaining",
+    "remaining": "Remaining {time}"
+  },
+  "account": {
+    "dedicated": "Dedicated Account",
+    "claude_dedicated": "Claude Dedicated Account",
+    "openai_dedicated": "OpenAI Dedicated Account",
+    "running_status": "Dedicated Account Running Status",
+    "realtime_update": "Realtime Update",
+    "no_quota_data": "No quota usage data available"
+  },
+  "permissions": {
+    "all": "All Models",
+    "claude": "Claude",
+    "gemini": "Gemini",
+    "unknown": "Unknown"
+  },
+  "expiry": {
+    "not_activated_suffix": "expires {time} {unit} after first use",
+    "unit": {
+      "hours": "hours",
+      "days": "days"
+    },
+    "no_time_window": "No time window information"
+  },
+  "time": {
+    "days": "{count} day | {count} days",
+    "hours": "{count} hour | {count} hours",
+    "minutes": "{count} minute | {count} minutes",
+    "seconds": "{count} second | {count} seconds",
+    "day_hour": "{days}d {hours}h",
+    "hour_minute": "{hours}h {minutes}m",
+    "remaining_approx": "Remaining approx. {time}",
+    "reset_remaining": "Reset in {time}",
+    "format_error": "Format Error",
+    "none": "None"
+  },
+  "format": {
+    "date": "MMM DD, YYYY HH:mm",
+    "count": "{count}"
+  },
+  "window": {
+    "5h": "5h",
+    "weekly": "Weekly"
+  },
+  "input": {
+    "enter_api_key": "Enter API Key",
+    "api_key_placeholder": "Enter API Key (e.g., cr_xxxxx)",
+    "query": "Query",
+    "querying": "Querying...",
+    "clear_history": "Clear History",
+    "recent_queries": "Recent Queries",
+    "batch_mode": "Batch Mode",
+    "batch_hint": "One API Key per line",
+    "batch_query": "Batch Query",
+    "batch_querying": "Batch Querying...",
+    "view_mode": "View Mode",
+    "single_query": "Single",
+    "batch_query_mode": "Batch",
+    "query_title": "Usage Statistics Query",
+    "query_subtitle": "Query your API Key usage and statistics",
+    "api_key_label": "Enter your API Key",
+    "api_keys_label": "Enter your API Keys (one per line or comma-separated)",
+    "mode_single": "Single",
+    "mode_aggregated": "Aggregated",
+    "mode_single_title": "Single Mode",
+    "mode_aggregated_title": "Aggregated Mode",
+    "single_placeholder": "Enter your API Key (cr_...)",
+    "multi_placeholder": "Enter your API Keys, supports the following formats:\ncr_xxx\ncr_yyy\nor\ncr_xxx, cr_yyy",
+    "clear_input": "Clear input",
+    "query_stats": "Query Statistics",
+    "querying_stats": "Querying...",
+    "security_notice_single": "Your API Key is only used to query your own statistics and will not be stored or used for other purposes",
+    "security_notice_multi": "Your API Keys are only used to query statistics and will not be stored. Some individual information will not be displayed in aggregated mode.",
+    "multi_hint": "Tip: Supports querying up to 30 API Keys at once. Use Ctrl+Enter for quick query."
+  },
+  "limit": {
+    "title": "Limit Settings",
+    "daily_limit": "Daily Limit",
+    "total_limit": "Total Limit",
+    "window_limit": "Window Limit",
+    "window_cost_limit": "Window Cost Limit",
+    "window_time": "{minutes}-minute window",
+    "no_limit": "No Limit",
+    "resets_in": "Resets in",
+    "config_title": "Limit Configuration",
+    "config_aggregated": "Limit Configuration (Aggregated Query Mode)",
+    "api_keys_overview": "API Keys Overview",
+    "total_keys_count": "Total Keys",
+    "active_keys_count": "Active Keys",
+    "aggregated_summary": "Aggregated Statistics Summary",
+    "total_requests": "Total Requests",
+    "total_tokens": "Total Tokens",
+    "total_cost": "Total Cost",
+    "invalid_keys_count": "{count} invalid API Keys",
+    "aggregated_mode_hint": "Each API Key has independent limit settings. Aggregated mode does not show individual limit configurations",
+    "daily_cost_limit": "Daily Cost Limit",
+    "total_cost_limit": "Total Cost Limit",
+    "opus_weekly_cost_limit": "Opus Model Weekly Cost Limit",
+    "time_window_limit": "Time Window Limit",
+    "window_hint_cost": "Request count and cost limits are OR-based, triggering rate limit when either is reached",
+    "window_hint_token": "Request count and token usage are OR-based, triggering rate limit when either is reached",
+    "window_hint_request": "Request count only",
+    "concurrency_limit": "Concurrency Limit",
+    "model_restrictions": "Model Restrictions",
+    "restricted_models_count": "Restricts {count} models",
+    "all_models_allowed": "All models allowed",
+    "client_restrictions": "Client Restrictions",
+    "restricted_clients_count": "Restricts to {count} clients",
+    "all_clients_allowed": "All clients allowed",
+    "detailed_restrictions": "Detailed Restriction Information",
+    "restricted_models_list": "Restricted Model List",
+    "restriction_hint": "This API Key cannot access the models listed above"
+  },
+  "model": {
+    "title": "Model Usage Statistics",
+    "no_data": "No model usage data",
+    "requests": "Requests",
+    "tokens": "Tokens",
+    "cost": "Cost",
+    "loading": "Loading model statistics...",
+    "no_data_period": "No model usage data for {period}",
+    "period_today": "today",
+    "period_this_month": "this month",
+    "requests_count": "{count} requests",
+    "total_cost": "Total Cost",
+    "input_tokens": "Input Tokens",
+    "output_tokens": "Output Tokens",
+    "cache_create_tokens": "Cache Create",
+    "cache_read_tokens": "Cache Read"
+  },
+  "token": {
+    "distribution": "Token Distribution",
+    "input": "Input",
+    "output": "Output",
+    "cache_create": "Cache Create",
+    "cache_read": "Cache Read",
+    "total_today": "Total Today",
+    "total_this_month": "Total This Month"
+  },
+  "aggregated": {
+    "title": "Aggregated Statistics",
+    "total_usage": "Total Usage",
+    "by_api_key": "By API Key"
+  },
+  "error": {
+    "invalid_key": "Invalid API Key",
+    "key_not_found": "API Key not found",
+    "load_failed": "Failed to load statistics",
+    "network": "Network error"
+  },
+  "usage": {
+    "distribution_title": "Usage Distribution",
+    "distribution_period": "({period})",
+    "period_today": "Today",
+    "period_this_month": "This Month",
+    "key_name_default": "Key {index}",
+    "requests_count": "{count} times",
+    "other_keys": "Other {count} Keys",
+    "single_key_hint": "Usage distribution is only shown in multi-key queries",
+    "no_data": "No data"
+  }
+}

@@ -102,7 +102,7 @@ class BillingEventPublisher {
 
       return messageId
     } catch (error) {
-      // ⚠️ 发布失败不影响主流程，只记录错误
+      // ⚠️ Publishing failed, main flow unaffected, error logged
       logger.error('❌ Failed to publish billing event:', error)
       return null
     }
