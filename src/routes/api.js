@@ -20,23 +20,13 @@ const {
   sendMockWarmupStream
 } = require('../utils/warmupInterceptor')
 const { sanitizeUpstreamError } = require('../utils/errorSanitizer')
+const { dumpAnthropicMessagesRequest } = require('../utils/anthropicRequestDump')
+const {
+  handleAnthropicMessagesToGemini,
+  handleAnthropicCountTokensToGemini
+} = require('../services/anthropicGeminiBridgeService')
 const router = express.Router()
 
-router.use((req, res, next) => {
-  if (req.url.startsWith('/v1/v1/')) {
-    req.url = req.url.replace('/v1/v1/', '/v1/')
-  }
-  next()
-})
-// 🔧 路径容错中间件：处理某些客户端可能生成的 /v1/v1/messages 重复前缀
-router.use((req, res, next) => {
-  if (req.url.startsWith('/v1/v1/')) {
-    const oldUrl = req.url
-    req.url = req.url.replace('/v1/v1/', '/v1/')
-    logger.debug(`🔄 Fixed double /v1 prefix: ${oldUrl} -> ${req.url}`)
-  }
-  next()
-})
 function queueRateLimitUpdate(rateLimitInfo, usageSummary, model, context = '') {
   if (!rateLimitInfo) {
     return Promise.resolve({ totalTokens: 0, totalCost: 0 })
@@ -132,32 +122,20 @@ async function handleMessagesRequest(req, res) {
   try {
     const startTime = Date.now()
 
-    // Claude 服务权限校验，阻止未授权的 Key
-    if (req.apiKey.permissions) {
-      const perms = req.apiKey.permissions
-      let hasPermission = false
+    const forcedVendor = req._anthropicVendor || null
+    const requiredService =
+      forcedVendor === 'gemini-cli' || forcedVendor === 'antigravity' ? 'gemini' : 'claude'
 
-      logger.info(`[DEBUG] Checking permissions for key ${req.apiKey.id}: ${JSON.stringify(perms)}`)
-
-      if (perms === 'all') {
-        hasPermission = true
-      } else if (Array.isArray(perms)) {
-        hasPermission = perms.includes('all') || perms.includes('claude') || perms.includes('api')
-      } else if (typeof perms === 'string') {
-        hasPermission = perms.includes('all') || perms.includes('claude') || perms.includes('api')
-      }
-
-      if (!hasPermission) {
-        logger.warn(
-          `[DEBUG] Permission check failed but bypassed for testing. Perms: ${JSON.stringify(perms)}`
-        )
-        // return res.status(403).json({
-        //   error: {
-        //     type: 'permission_error',
-        //     message: 'Esta clave API no tiene permiso para acceder al servicio Claude'
-        //   }
-        // })
-      }
+    if (!apiKeyService.hasPermission(req.apiKey?.permissions, requiredService)) {
+      return res.status(403).json({
+        error: {
+          type: 'permission_error',
+          message:
+            requiredService === 'gemini'
+              ? '此 API Key 无权访问 Gemini 服务'
+              : '此 API Key 无权访问 Claude 服务'
+        }
+      })
     }
 
     // 🔄 并发满额重试标志：最多重试一次（使用req对象存储状态）
@@ -196,13 +174,31 @@ async function handleMessagesRequest(req, res) {
       const effectiveModel = getEffectiveModel(req.body.model || '')
       if (req.apiKey.restrictedModels.includes(effectiveModel)) {
         return res.status(403).json({
-          type: 'error',
           error: {
             type: 'forbidden',
-            message: 'Sin permiso de acceso para este modelo'
+            message: '暂无该模型访问权限'
           }
         })
       }
+    }
+
+    logger.api('📥 /v1/messages request received', {
+      model: req.body.model || null,
+      forcedVendor,
+      stream: req.body.stream === true
+    })
+
+    dumpAnthropicMessagesRequest(req, {
+      route: '/v1/messages',
+      forcedVendor,
+      model: req.body?.model || null,
+      stream: req.body?.stream === true
+    })
+
+    // /v1/messages 的扩展：按路径强制分流到 Gemini OAuth 账户（避免 model 前缀混乱）
+    if (forcedVendor === 'gemini-cli' || forcedVendor === 'antigravity') {
+      const baseModel = (req.body.model || '').trim()
+      return await handleAnthropicMessagesToGemini(req, res, { vendor: forcedVendor, baseModel })
     }
 
     // 检查是否为流式请求
@@ -383,9 +379,7 @@ async function handleMessagesRequest(req, res) {
           return res.status(400).json({
             error: {
               type: 'session_binding_error',
-              message:
-                cfg.sessionBindingErrorMessage ||
-                'Su sesión local está contaminada, límpiela antes de usarla.'
+              message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
             }
           })
         }
@@ -422,11 +416,18 @@ async function handleMessagesRequest(req, res) {
       // 根据账号类型选择对应的转发服务并调用
       if (accountType === 'claude-official') {
         // 官方Claude账号使用原有的转发服务（会自己选择账号）
+        // 🧹 内存优化：提取需要的值，避免闭包捕获整个 req 对象
+        const _apiKeyId = req.apiKey.id
+        const _rateLimitInfo = req.rateLimitInfo
+        const _requestBody = req.body // 传递后清除引用
+        const _apiKey = req.apiKey
+        const _headers = req.headers
+
         await claudeRelayService.relayStreamRequestWithUsageCapture(
-          req.body,
-          req.apiKey,
+          _requestBody,
+          _apiKey,
           res,
-          req.headers,
+          _headers,
           (usageData) => {
             // 回调函数：当检测到完整usage数据时记录真实token使用量
             logger.info(
@@ -476,13 +477,13 @@ async function handleMessagesRequest(req, res) {
               }
 
               apiKeyService
-                .recordUsageWithDetails(req.apiKey.id, usageObject, model, usageAccountId, 'claude')
+                .recordUsageWithDetails(_apiKeyId, usageObject, model, usageAccountId, 'claude')
                 .catch((error) => {
                   logger.error('❌ Failed to record stream usage:', error)
                 })
 
               queueRateLimitUpdate(
-                req.rateLimitInfo,
+                _rateLimitInfo,
                 {
                   inputTokens,
                   outputTokens,
@@ -507,11 +508,18 @@ async function handleMessagesRequest(req, res) {
         )
       } else if (accountType === 'claude-console') {
         // Claude Console账号使用Console转发服务（需要传递accountId）
+        // 🧹 内存优化：提取需要的值
+        const _apiKeyIdConsole = req.apiKey.id
+        const _rateLimitInfoConsole = req.rateLimitInfo
+        const _requestBodyConsole = req.body
+        const _apiKeyConsole = req.apiKey
+        const _headersConsole = req.headers
+
         await claudeConsoleRelayService.relayStreamRequestWithUsageCapture(
-          req.body,
-          req.apiKey,
+          _requestBodyConsole,
+          _apiKeyConsole,
           res,
-          req.headers,
+          _headersConsole,
           (usageData) => {
             // 回调函数：当检测到完整usage数据时记录真实token使用量
             logger.info(
@@ -562,7 +570,7 @@ async function handleMessagesRequest(req, res) {
 
               apiKeyService
                 .recordUsageWithDetails(
-                  req.apiKey.id,
+                  _apiKeyIdConsole,
                   usageObject,
                   model,
                   usageAccountId,
@@ -573,7 +581,7 @@ async function handleMessagesRequest(req, res) {
                 })
 
               queueRateLimitUpdate(
-                req.rateLimitInfo,
+                _rateLimitInfoConsole,
                 {
                   inputTokens,
                   outputTokens,
@@ -599,6 +607,11 @@ async function handleMessagesRequest(req, res) {
         )
       } else if (accountType === 'bedrock') {
         // Bedrock账号使用Bedrock转发服务
+        // 🧹 内存优化：提取需要的值
+        const _apiKeyIdBedrock = req.apiKey.id
+        const _rateLimitInfoBedrock = req.rateLimitInfo
+        const _requestBodyBedrock = req.body
+
         try {
           const bedrockAccountResult = await bedrockAccountService.getAccount(accountId)
           if (!bedrockAccountResult.success) {
@@ -606,7 +619,7 @@ async function handleMessagesRequest(req, res) {
           }
 
           const result = await bedrockRelayService.handleStreamRequest(
-            req.body,
+            _requestBodyBedrock,
             bedrockAccountResult.data,
             res
           )
@@ -617,13 +630,21 @@ async function handleMessagesRequest(req, res) {
             const outputTokens = result.usage.output_tokens || 0
 
             apiKeyService
-              .recordUsage(req.apiKey.id, inputTokens, outputTokens, 0, 0, result.model, accountId)
+              .recordUsage(
+                _apiKeyIdBedrock,
+                inputTokens,
+                outputTokens,
+                0,
+                0,
+                result.model,
+                accountId
+              )
               .catch((error) => {
                 logger.error('❌ Failed to record Bedrock stream usage:', error)
               })
 
             queueRateLimitUpdate(
-              req.rateLimitInfo,
+              _rateLimitInfoBedrock,
               {
                 inputTokens,
                 outputTokens,
@@ -648,11 +669,18 @@ async function handleMessagesRequest(req, res) {
         }
       } else if (accountType === 'ccr') {
         // CCR账号使用CCR转发服务（需要传递accountId）
+        // 🧹 内存优化：提取需要的值
+        const _apiKeyIdCcr = req.apiKey.id
+        const _rateLimitInfoCcr = req.rateLimitInfo
+        const _requestBodyCcr = req.body
+        const _apiKeyCcr = req.apiKey
+        const _headersCcr = req.headers
+
         await ccrRelayService.relayStreamRequestWithUsageCapture(
-          req.body,
-          req.apiKey,
+          _requestBodyCcr,
+          _apiKeyCcr,
           res,
-          req.headers,
+          _headersCcr,
           (usageData) => {
             // 回调函数：当检测到完整usage数据时记录真实token使用量
             logger.info(
@@ -702,13 +730,13 @@ async function handleMessagesRequest(req, res) {
               }
 
               apiKeyService
-                .recordUsageWithDetails(req.apiKey.id, usageObject, model, usageAccountId, 'ccr')
+                .recordUsageWithDetails(_apiKeyIdCcr, usageObject, model, usageAccountId, 'ccr')
                 .catch((error) => {
                   logger.error('❌ Failed to record CCR stream usage:', error)
                 })
 
               queueRateLimitUpdate(
-                req.rateLimitInfo,
+                _rateLimitInfoCcr,
                 {
                   inputTokens,
                   outputTokens,
@@ -743,18 +771,26 @@ async function handleMessagesRequest(req, res) {
         }
       }, 1000) // 1秒后检查
     } else {
+      // 🧹 内存优化：提取需要的值，避免后续回调捕获整个 req
+      const _apiKeyIdNonStream = req.apiKey.id
+      const _apiKeyNameNonStream = req.apiKey.name
+      const _rateLimitInfoNonStream = req.rateLimitInfo
+      const _requestBodyNonStream = req.body
+      const _apiKeyNonStream = req.apiKey
+      const _headersNonStream = req.headers
+
       // 🔍 检查客户端连接是否仍然有效（可能在并发排队等待期间断开）
       if (res.destroyed || res.socket?.destroyed || res.writableEnded) {
         logger.warn(
-          `⚠️ Client disconnected before non-stream request could start for key: ${req.apiKey?.name || 'unknown'}`
+          `⚠️ Client disconnected before non-stream request could start for key: ${_apiKeyNameNonStream || 'unknown'}`
         )
         return undefined
       }
 
       // 非流式响应 - 只使用官方真实usage数据
       logger.info('📄 Starting non-streaming request', {
-        apiKeyId: req.apiKey.id,
-        apiKeyName: req.apiKey.name
+        apiKeyId: _apiKeyIdNonStream,
+        apiKeyName: _apiKeyNameNonStream
       })
 
       // 📊 监听 socket 事件以追踪连接状态变化
@@ -901,9 +937,7 @@ async function handleMessagesRequest(req, res) {
           return res.status(400).json({
             error: {
               type: 'session_binding_error',
-              message:
-                cfg.sessionBindingErrorMessage ||
-                'Su sesión local está contaminada, límpiela antes de usarla.'
+              message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
             }
           })
         }
@@ -927,11 +961,11 @@ async function handleMessagesRequest(req, res) {
             ? await claudeAccountService.getAccount(accountId)
             : await claudeConsoleAccountService.getAccount(accountId)
 
-        if (account?.interceptWarmup === 'true' && isWarmupRequest(req.body)) {
+        if (account?.interceptWarmup === 'true' && isWarmupRequest(_requestBodyNonStream)) {
           logger.api(
             `🔥 Warmup request intercepted (non-stream) for account: ${account.name} (${accountId})`
           )
-          return res.json(buildMockWarmupResponse(req.body.model))
+          return res.json(buildMockWarmupResponse(_requestBodyNonStream.model))
         }
       }
 
@@ -944,11 +978,11 @@ async function handleMessagesRequest(req, res) {
       if (accountType === 'claude-official') {
         // 官方Claude账号使用原有的转发服务
         response = await claudeRelayService.relayRequest(
-          req.body,
-          req.apiKey,
-          req,
+          _requestBodyNonStream,
+          _apiKeyNonStream,
+          req, // clientRequest 用于断开检测，保留但服务层已优化
           res,
-          req.headers
+          _headersNonStream
         )
       } else if (accountType === 'claude-console') {
         // Claude Console账号使用Console转发服务
@@ -956,11 +990,11 @@ async function handleMessagesRequest(req, res) {
           `[DEBUG] Calling claudeConsoleRelayService.relayRequest with accountId: ${accountId}`
         )
         response = await claudeConsoleRelayService.relayRequest(
-          req.body,
-          req.apiKey,
-          req,
+          _requestBodyNonStream,
+          _apiKeyNonStream,
+          req, // clientRequest 保留用于断开检测
           res,
-          req.headers,
+          _headersNonStream,
           accountId
         )
       } else if (accountType === 'bedrock') {
@@ -972,9 +1006,9 @@ async function handleMessagesRequest(req, res) {
           }
 
           const result = await bedrockRelayService.handleNonStreamRequest(
-            req.body,
+            _requestBodyNonStream,
             bedrockAccountResult.data,
-            req.headers
+            _headersNonStream
           )
 
           // 构建标准响应格式
@@ -1004,11 +1038,11 @@ async function handleMessagesRequest(req, res) {
         // CCR账号使用CCR转发服务
         logger.debug(`[DEBUG] Calling ccrRelayService.relayRequest with accountId: ${accountId}`)
         response = await ccrRelayService.relayRequest(
-          req.body,
-          req.apiKey,
-          req,
+          _requestBodyNonStream,
+          _apiKeyNonStream,
+          req, // clientRequest 保留用于断开检测
           res,
-          req.headers,
+          _headersNonStream,
           accountId
         )
       }
@@ -1057,14 +1091,14 @@ async function handleMessagesRequest(req, res) {
           const cacheCreateTokens = jsonData.usage.cache_creation_input_tokens || 0
           const cacheReadTokens = jsonData.usage.cache_read_input_tokens || 0
           // Parse the model to remove vendor prefix if present (e.g., "ccr,gemini-2.5-pro" -> "gemini-2.5-pro")
-          const rawModel = jsonData.model || req.body.model || 'unknown'
-          const { baseModel } = parseVendorPrefixedModel(rawModel)
-          const model = baseModel || rawModel
+          const rawModel = jsonData.model || _requestBodyNonStream.model || 'unknown'
+          const { baseModel: usageBaseModel } = parseVendorPrefixedModel(rawModel)
+          const model = usageBaseModel || rawModel
 
           // 记录真实的token使用量（包含模型信息和所有4种token以及账户ID）
           const { accountId: responseAccountId } = response
           await apiKeyService.recordUsage(
-            req.apiKey.id,
+            _apiKeyIdNonStream,
             inputTokens,
             outputTokens,
             cacheCreateTokens,
@@ -1074,7 +1108,7 @@ async function handleMessagesRequest(req, res) {
           )
 
           await queueRateLimitUpdate(
-            req.rateLimitInfo,
+            _rateLimitInfoNonStream,
             {
               inputTokens,
               outputTokens,
@@ -1212,11 +1246,9 @@ async function handleMessagesRequest(req, res) {
       }
 
       return res.status(statusCode).json({
-        type: 'error',
-        error: {
-          type: 'relay_error',
-          message: handledError.message || 'An unexpected error occurred'
-        }
+        error: errorType,
+        message: handledError.message || 'An unexpected error occurred',
+        timestamp: new Date().toISOString()
       })
     } else {
       // 如果响应头已经发送，尝试结束响应
@@ -1237,6 +1269,65 @@ router.post('/claude/v1/messages', authenticateApiKey, handleMessagesRequest)
 // 📋 模型列表端点 - 支持 Claude, OpenAI, Gemini
 router.get('/v1/models', authenticateApiKey, async (req, res) => {
   try {
+    // Claude Code / Anthropic baseUrl 的分流：/antigravity/api/v1/models 返回 Antigravity 实时模型列表
+    //（通过 v1internal:fetchAvailableModels），避免依赖静态 modelService 列表。
+    const forcedVendor = req._anthropicVendor || null
+    if (forcedVendor === 'antigravity') {
+      if (!apiKeyService.hasPermission(req.apiKey?.permissions, 'gemini')) {
+        return res.status(403).json({
+          error: {
+            type: 'permission_error',
+            message: '此 API Key 无权访问 Gemini 服务'
+          }
+        })
+      }
+
+      const unifiedGeminiScheduler = require('../services/unifiedGeminiScheduler')
+      const geminiAccountService = require('../services/geminiAccountService')
+
+      let accountSelection
+      try {
+        accountSelection = await unifiedGeminiScheduler.selectAccountForApiKey(
+          req.apiKey,
+          null,
+          null,
+          { oauthProvider: 'antigravity' }
+        )
+      } catch (error) {
+        logger.error('Failed to select Gemini OAuth account (antigravity models):', error)
+        return res.status(503).json({ error: 'No available Gemini OAuth accounts' })
+      }
+
+      const account = await geminiAccountService.getAccount(accountSelection.accountId)
+      if (!account) {
+        return res.status(503).json({ error: 'Gemini OAuth account not found' })
+      }
+
+      let proxyConfig = null
+      if (account.proxy) {
+        try {
+          proxyConfig =
+            typeof account.proxy === 'string' ? JSON.parse(account.proxy) : account.proxy
+        } catch (e) {
+          logger.warn('Failed to parse proxy configuration:', e)
+        }
+      }
+
+      const models = await geminiAccountService.fetchAvailableModelsAntigravity(
+        account.accessToken,
+        proxyConfig,
+        account.refreshToken
+      )
+
+      // 可选：根据 API Key 的模型限制过滤（黑名单语义）
+      let filteredModels = models
+      if (req.apiKey.enableModelRestriction && req.apiKey.restrictedModels?.length > 0) {
+        filteredModels = models.filter((model) => !req.apiKey.restrictedModels.includes(model.id))
+      }
+
+      return res.json({ object: 'list', data: filteredModels })
+    }
+
     const modelService = require('../services/modelService')
 
     // 从 modelService 获取所有支持的模型
@@ -1373,18 +1464,25 @@ router.get('/v1/organizations/:org_id/usage', authenticateApiKey, async (req, re
 
 // 🔢 Token计数端点 - count_tokens beta API
 router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) => {
-  // 检查权限
-  if (
-    req.apiKey.permissions &&
-    req.apiKey.permissions !== 'all' &&
-    req.apiKey.permissions !== 'claude'
-  ) {
+  // 按路径强制分流到 Gemini OAuth 账户（避免 model 前缀混乱）
+  const forcedVendor = req._anthropicVendor || null
+  const requiredService =
+    forcedVendor === 'gemini-cli' || forcedVendor === 'antigravity' ? 'gemini' : 'claude'
+
+  if (!apiKeyService.hasPermission(req.apiKey?.permissions, requiredService)) {
     return res.status(403).json({
       error: {
         type: 'permission_error',
-        message: 'This API key does not have permission to access Claude'
+        message:
+          requiredService === 'gemini'
+            ? 'This API key does not have permission to access Gemini'
+            : 'This API key does not have permission to access Claude'
       }
     })
+  }
+
+  if (requiredService === 'gemini') {
+    return await handleAnthropicCountTokensToGemini(req, res, { vendor: forcedVendor })
   }
 
   // 🔗 会话绑定验证（与 messages 端点保持一致）
@@ -1416,9 +1514,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
       return res.status(400).json({
         error: {
           type: 'session_binding_error',
-          message:
-            cfg.sessionBindingErrorMessage ||
-            'Su sesión local está contaminada, límpiela antes de usarla.'
+          message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
         }
       })
     }
@@ -1565,7 +1661,6 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
             logger.error('❌ Failed to clear session mapping for count_tokens retry:', clearError)
             if (!res.headersSent) {
               return res.status(500).json({
-                type: 'error',
                 error: {
                   type: 'server_error',
                   message: 'Failed to count tokens'

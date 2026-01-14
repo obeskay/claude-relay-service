@@ -21,74 +21,70 @@ const { isStreamWritable } = require('../utils/streamHelper')
 class ClaudeRelayService {
   constructor() {
     this.claudeApiUrl = 'https://api.anthropic.com/v1/messages?beta=true'
+    // 🧹 内存优化：用于存储请求体字符串，避免闭包捕获
+    this.bodyStore = new Map()
+    this._bodyStoreIdCounter = 0
     this.apiVersion = config.claude.apiVersion
     this.betaHeader = config.claude.betaHeader
     this.systemPrompt = config.claude.systemPrompt
     this.claudeCodeSystemPrompt = "You are Claude Code, Anthropic's official CLI for Claude."
+    this.toolNameSuffix = null
+    this.toolNameSuffixGeneratedAt = 0
+    this.toolNameSuffixTtlMs = 60 * 60 * 1000
   }
 
-  // 🔧 Get final header based on model ID and client's anthropic-beta
-  // Rules:
-  // 1. If client provided anthropic-beta, check if it contains oauth-2025-04-20
-  // 2. If no oauth-2025-04-20, add it after claude-code-20250219 (if exists), otherwise first
-  // 3. If client didn't provide it, judge by model: haiku doesn't need claude-code, others do
+  // 🔧 根据模型ID和客户端传递的 anthropic-beta 获取最终的 header
   _getBetaHeader(modelId, clientBetaHeader) {
     const OAUTH_BETA = 'oauth-2025-04-20'
     const CLAUDE_CODE_BETA = 'claude-code-20250219'
+    const INTERLEAVED_THINKING_BETA = 'interleaved-thinking-2025-05-14'
+    const TOOL_STREAMING_BETA = 'fine-grained-tool-streaming-2025-05-14'
 
-    // 如果客户端传递了 anthropic-beta
-    if (clientBetaHeader) {
-      // 检查是否已包含 oauth-2025-04-20
-      if (clientBetaHeader.includes(OAUTH_BETA)) {
-        return clientBetaHeader
+    const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')
+    const baseBetas = isHaikuModel
+      ? [OAUTH_BETA, INTERLEAVED_THINKING_BETA]
+      : [CLAUDE_CODE_BETA, OAUTH_BETA, INTERLEAVED_THINKING_BETA, TOOL_STREAMING_BETA]
+
+    const betaList = []
+    const seen = new Set()
+    const addBeta = (beta) => {
+      if (!beta || seen.has(beta)) {
+        return
       }
-
-      // 需要添加 oauth-2025-04-20
-      const parts = clientBetaHeader.split(',').map((p) => p.trim())
-
-      // 找到 claude-code-20250219 的位置
-      const claudeCodeIndex = parts.findIndex((p) => p === CLAUDE_CODE_BETA)
-
-      if (claudeCodeIndex !== -1) {
-        // 在 claude-code-20250219 后面插入
-        parts.splice(claudeCodeIndex + 1, 0, OAUTH_BETA)
-      } else {
-        // 放在第一位
-        parts.unshift(OAUTH_BETA)
-      }
-
-      return parts.join(',')
+      seen.add(beta)
+      betaList.push(beta)
     }
 
-    // 客户端没有传递，根据模型判断
-    const commonBetas =
-      'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14,computer-use-2024-10-22,token-counting-2024-11-01,prompt-caching-2024-07-31,context-management-2025-06-27,context-1m-2025-08-07,web-search-2025-03-05'
-    return commonBetas
+    baseBetas.forEach(addBeta)
 
-    // const isHaikuModel = modelId && modelId.toLowerCase().includes('haiku')
-    // if (isHaikuModel) {
-    //   return 'oauth-2025-04-20,interleaved-thinking-2025-05-14'
-    // }
-    // return 'claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14'
+    if (clientBetaHeader) {
+      clientBetaHeader
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+        .forEach(addBeta)
+    }
+
+    return betaList.join(',')
   }
 
   _buildStandardRateLimitMessage(resetTime) {
     if (!resetTime) {
-      return 'Esta cuenta dedicada ha activado el control de límite de velocidad de Anthropic.'
+      return '此专属账号已触发 Anthropic 限流控制。'
     }
     const formattedReset = formatDateWithTimezone(resetTime)
-    return `Esta cuenta dedicada ha activado el control de límite de velocidad de Anthropic. Se recuperará automáticamente a las ${formattedReset}.`
+    return `此专属账号已触发 Anthropic 限流控制，将于 ${formattedReset} 自动恢复。`
   }
 
   _buildOpusLimitMessage(resetTime) {
     if (!resetTime) {
-      return 'El modelo Opus de esta cuenta dedicada ha alcanzado el límite de uso semanal. Intente cambiar a otro modelo e inténtelo de nuevo.'
+      return '此专属账号的Opus模型已达到周使用限制，请尝试切换其他模型后再试。'
     }
     const formattedReset = formatDateWithTimezone(resetTime)
-    return `El modelo Opus de esta cuenta dedicada ha alcanzado el límite de uso semanal. Se recuperará automáticamente a las ${formattedReset}. Intente cambiar a otro modelo e inténtelo de nuevo.`
+    return `此专属账号的Opus模型已达到周使用限制，将于 ${formattedReset} 自动恢复，请尝试切换其他模型后再试。`
   }
 
-  // 🧾 Extract error message text
+  // 🧾 提取错误消息文本
   _extractErrorMessage(body) {
     if (!body) {
       return ''
@@ -127,7 +123,7 @@ class ClaudeRelayService {
     return ''
   }
 
-  // 🚫 Check if organization is disabled
+  // 🚫 检查是否为组织被禁用错误
   _isOrganizationDisabledError(statusCode, body) {
     if (statusCode !== 400) {
       return false
@@ -139,12 +135,241 @@ class ClaudeRelayService {
     return message.toLowerCase().includes('this organization has been disabled')
   }
 
-  // 🔍 Determine if it is a real Claude Code request
+  // 🔍 判断是否是真实的 Claude Code 请求
   isRealClaudeCodeRequest(requestBody) {
     return ClaudeCodeValidator.includesClaudeCodeSystemPrompt(requestBody, 1)
   }
 
-  // 🚀 Forward request to Claude API
+  _isClaudeCodeUserAgent(clientHeaders) {
+    const userAgent = clientHeaders?.['user-agent'] || clientHeaders?.['User-Agent']
+    return typeof userAgent === 'string' && /^claude-cli\/[^\s]+\s+\(/i.test(userAgent)
+  }
+
+  _isActualClaudeCodeRequest(requestBody, clientHeaders) {
+    return this.isRealClaudeCodeRequest(requestBody) && this._isClaudeCodeUserAgent(clientHeaders)
+  }
+
+  _getHeaderValueCaseInsensitive(headers, key) {
+    if (!headers || typeof headers !== 'object') {
+      return undefined
+    }
+    const lowerKey = key.toLowerCase()
+    for (const candidate of Object.keys(headers)) {
+      if (candidate.toLowerCase() === lowerKey) {
+        return headers[candidate]
+      }
+    }
+    return undefined
+  }
+
+  _isClaudeCodeCredentialError(body) {
+    const message = this._extractErrorMessage(body)
+    if (!message) {
+      return false
+    }
+    const lower = message.toLowerCase()
+    return (
+      lower.includes('only authorized for use with claude code') ||
+      lower.includes('cannot be used for other api requests')
+    )
+  }
+
+  _toPascalCaseToolName(name) {
+    const parts = name.split(/[_-]/).filter(Boolean)
+    if (parts.length === 0) {
+      return name
+    }
+    const pascal = parts
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join('')
+    return `${pascal}_tool`
+  }
+
+  _getToolNameSuffix() {
+    const now = Date.now()
+    if (!this.toolNameSuffix || now - this.toolNameSuffixGeneratedAt > this.toolNameSuffixTtlMs) {
+      this.toolNameSuffix = Math.random().toString(36).substring(2, 8)
+      this.toolNameSuffixGeneratedAt = now
+    }
+    return this.toolNameSuffix
+  }
+
+  _toRandomizedToolName(name) {
+    const suffix = this._getToolNameSuffix()
+    return `${name}_${suffix}`
+  }
+
+  _transformToolNamesInRequestBody(body, options = {}) {
+    if (!body || typeof body !== 'object') {
+      return null
+    }
+
+    const useRandomized = options.useRandomizedToolNames === true
+    const forwardMap = new Map()
+    const reverseMap = new Map()
+
+    const transformName = (name) => {
+      if (typeof name !== 'string' || name.length === 0) {
+        return name
+      }
+      if (forwardMap.has(name)) {
+        return forwardMap.get(name)
+      }
+      const transformed = useRandomized
+        ? this._toRandomizedToolName(name)
+        : this._toPascalCaseToolName(name)
+      if (transformed !== name) {
+        forwardMap.set(name, transformed)
+        reverseMap.set(transformed, name)
+      }
+      return transformed
+    }
+
+    if (Array.isArray(body.tools)) {
+      body.tools.forEach((tool) => {
+        if (tool && typeof tool.name === 'string') {
+          tool.name = transformName(tool.name)
+        }
+      })
+    }
+
+    if (body.tool_choice && typeof body.tool_choice === 'object') {
+      if (typeof body.tool_choice.name === 'string') {
+        body.tool_choice.name = transformName(body.tool_choice.name)
+      }
+    }
+
+    if (Array.isArray(body.messages)) {
+      body.messages.forEach((message) => {
+        const content = message?.content
+        if (Array.isArray(content)) {
+          content.forEach((block) => {
+            if (block?.type === 'tool_use' && typeof block.name === 'string') {
+              block.name = transformName(block.name)
+            }
+          })
+        }
+      })
+    }
+
+    return reverseMap.size > 0 ? reverseMap : null
+  }
+
+  _restoreToolName(name, toolNameMap) {
+    if (!toolNameMap || toolNameMap.size === 0) {
+      return name
+    }
+    return toolNameMap.get(name) || name
+  }
+
+  _restoreToolNamesInContentBlocks(content, toolNameMap) {
+    if (!Array.isArray(content)) {
+      return
+    }
+
+    content.forEach((block) => {
+      if (block?.type === 'tool_use' && typeof block.name === 'string') {
+        block.name = this._restoreToolName(block.name, toolNameMap)
+      }
+    })
+  }
+
+  _restoreToolNamesInResponseObject(responseBody, toolNameMap) {
+    if (!responseBody || typeof responseBody !== 'object') {
+      return
+    }
+
+    if (Array.isArray(responseBody.content)) {
+      this._restoreToolNamesInContentBlocks(responseBody.content, toolNameMap)
+    }
+
+    if (responseBody.message && Array.isArray(responseBody.message.content)) {
+      this._restoreToolNamesInContentBlocks(responseBody.message.content, toolNameMap)
+    }
+  }
+
+  _restoreToolNamesInResponseBody(responseBody, toolNameMap) {
+    if (!responseBody || !toolNameMap || toolNameMap.size === 0) {
+      return responseBody
+    }
+
+    if (typeof responseBody === 'string') {
+      try {
+        const parsed = JSON.parse(responseBody)
+        this._restoreToolNamesInResponseObject(parsed, toolNameMap)
+        return JSON.stringify(parsed)
+      } catch (error) {
+        return responseBody
+      }
+    }
+
+    if (typeof responseBody === 'object') {
+      this._restoreToolNamesInResponseObject(responseBody, toolNameMap)
+    }
+
+    return responseBody
+  }
+
+  _restoreToolNamesInStreamEvent(event, toolNameMap) {
+    if (!event || typeof event !== 'object') {
+      return
+    }
+
+    if (event.content_block && event.content_block.type === 'tool_use') {
+      if (typeof event.content_block.name === 'string') {
+        event.content_block.name = this._restoreToolName(event.content_block.name, toolNameMap)
+      }
+    }
+
+    if (event.delta && event.delta.type === 'tool_use') {
+      if (typeof event.delta.name === 'string') {
+        event.delta.name = this._restoreToolName(event.delta.name, toolNameMap)
+      }
+    }
+
+    if (event.message && Array.isArray(event.message.content)) {
+      this._restoreToolNamesInContentBlocks(event.message.content, toolNameMap)
+    }
+
+    if (Array.isArray(event.content)) {
+      this._restoreToolNamesInContentBlocks(event.content, toolNameMap)
+    }
+  }
+
+  _createToolNameStripperStreamTransformer(streamTransformer, toolNameMap) {
+    if (!toolNameMap || toolNameMap.size === 0) {
+      return streamTransformer
+    }
+
+    return (payload) => {
+      const transformed = streamTransformer ? streamTransformer(payload) : payload
+      if (!transformed || typeof transformed !== 'string') {
+        return transformed
+      }
+
+      const lines = transformed.split('\n')
+      const updated = lines.map((line) => {
+        if (!line.startsWith('data:')) {
+          return line
+        }
+        const jsonStr = line.slice(5).trimStart()
+        if (!jsonStr || jsonStr === '[DONE]') {
+          return line
+        }
+        try {
+          const data = JSON.parse(jsonStr)
+          this._restoreToolNamesInStreamEvent(data, toolNameMap)
+          return `data: ${JSON.stringify(data)}`
+        } catch (error) {
+          return line
+        }
+      })
+
+      return updated.join('\n')
+    }
+  }
+
+  // 🚀 转发请求到Claude API
   async relayRequest(
     requestBody,
     apiKeyData,
@@ -157,9 +382,10 @@ class ClaudeRelayService {
     let queueLockAcquired = false
     let queueRequestId = null
     let selectedAccountId = null
+    let bodyStoreIdNonStream = null // 🧹 在 try 块外声明，以便 finally 清理
 
     try {
-      // Debug log: check API Key data
+      // 调试日志：查看API Key数据
       logger.info('🔍 API Key data received:', {
         apiKeyName: apiKeyData.name,
         enableModelRestriction: apiKeyData.enableModelRestriction,
@@ -207,14 +433,14 @@ class ClaudeRelayService {
         `📤 Processing API request for key: ${apiKeyData.name || apiKeyData.id}, account: ${accountId} (${accountType})${sessionHash ? `, session: ${sessionHash}` : ''}`
       )
 
-      // 📬 User message queue handling: acquire queue lock if it's a user message request
+      // 📬 用户消息队列处理：如果是用户消息请求，需要获取队列锁
       if (userMessageQueueService.isUserMessageRequest(requestBody)) {
-        // Verify accountId is not empty to avoid polluting queue lock keys
+        // 校验 accountId 非空，避免空值污染队列锁键
         if (!accountId || accountId === '') {
           logger.error('❌ accountId missing for queue lock in relayRequest')
           throw new Error('accountId missing for queue lock')
         }
-        // Get account info to check account-level serial queue config
+        // 获取账户信息以检查账户级串行队列配置
         const accountForQueue = await claudeAccountService.getAccount(accountId)
         const accountConfig = accountForQueue
           ? { maxConcurrency: parseInt(accountForQueue.maxConcurrency || '0', 10) }
@@ -226,7 +452,7 @@ class ClaudeRelayService {
           accountConfig
         )
         if (!queueResult.acquired && !queueResult.skipped) {
-          // Differentiate between Redis backend error and queue timeout
+          // 区分 Redis 后端错误和队列超时
           const isBackendError = queueResult.error === 'queue_backend_error'
           const errorCode = isBackendError ? 'QUEUE_BACKEND_ERROR' : 'QUEUE_TIMEOUT'
           const errorType = isBackendError ? 'queue_backend_error' : 'queue_timeout'
@@ -235,7 +461,7 @@ class ClaudeRelayService {
             : 'User message queue wait timeout, please retry later'
           const statusCode = isBackendError ? 500 : 503
 
-          // Structured performance log for later statistics
+          // 结构化性能日志，用于后续统计
           logger.performance('user_message_queue_error', {
             errorType,
             errorCode,
@@ -259,6 +485,7 @@ class ClaudeRelayService {
               type: 'error',
               error: {
                 type: errorType,
+                code: errorCode,
                 message: errorMessage
               }
             }),
@@ -314,7 +541,12 @@ class ClaudeRelayService {
       // 获取有效的访问token
       const accessToken = await claudeAccountService.getValidAccessToken(accountId)
 
+      const isRealClaudeCodeRequest = this._isActualClaudeCodeRequest(requestBody, clientHeaders)
       const processedBody = this._processRequestBody(requestBody, account)
+      // 🧹 内存优化：存储到 bodyStore，避免闭包捕获
+      const originalBodyString = JSON.stringify(processedBody)
+      bodyStoreIdNonStream = ++this._bodyStoreIdCounter
+      this.bodyStore.set(bodyStoreIdNonStream, originalBodyString)
 
       // 获取代理配置
       const proxyAgent = await this._getProxyAgent(accountId)
@@ -335,39 +567,59 @@ class ClaudeRelayService {
         clientResponse.once('close', handleClientDisconnect)
       }
 
-      // 发送请求到Claude API（传入回调以获取请求对象）
-      // 🔄 403 重试机制：仅对 claude-official 类型账户（OAuth 或 Setup Token）
-      // 优化：增加重试次数和等待时间，避免临时403导致账户被误标记为blocked
-      const maxRetries = this._shouldRetryOn403(accountType) ? 3 : 0
-      const retryDelays = [3000, 5000, 8000] // 指数退避：3s, 5s, 8s
-      let retryCount = 0
-      let response
-      let shouldRetry = false
+      const makeRequestWithRetries = async (requestOptions) => {
+        const maxRetries = this._shouldRetryOn403(accountType) ? 2 : 0
+        let retryCount = 0
+        let response
+        let shouldRetry = false
 
-      do {
-        response = await this._makeClaudeRequest(
-          processedBody,
-          accessToken,
-          proxyAgent,
-          clientHeaders,
-          accountId,
-          (req) => {
-            upstreamRequest = req
-          },
-          options
-        )
-
-        // 检查是否需要重试 403
-        shouldRetry = response.statusCode === 403 && retryCount < maxRetries
-        if (shouldRetry) {
-          const delay = retryDelays[retryCount] || retryDelays[retryDelays.length - 1]
-          retryCount++
-          logger.warn(
-            `🔄 403 error for account ${accountId}, retry ${retryCount}/${maxRetries} after ${delay / 1000}s`
+        do {
+          // 🧹 每次重试从 bodyStore 解析新对象，避免闭包捕获
+          let retryRequestBody
+          try {
+            retryRequestBody = JSON.parse(this.bodyStore.get(bodyStoreIdNonStream))
+          } catch (parseError) {
+            logger.error(`❌ Failed to parse body for retry: ${parseError.message}`)
+            throw new Error(`Request body parse failed: ${parseError.message}`)
+          }
+          response = await this._makeClaudeRequest(
+            retryRequestBody,
+            accessToken,
+            proxyAgent,
+            clientHeaders,
+            accountId,
+            (req) => {
+              upstreamRequest = req
+            },
+            {
+              ...requestOptions,
+              isRealClaudeCodeRequest
+            }
           )
-          await this._sleep(delay)
-        }
-      } while (shouldRetry)
+
+          shouldRetry = response.statusCode === 403 && retryCount < maxRetries
+          if (shouldRetry) {
+            retryCount++
+            logger.warn(
+              `🔄 403 error for account ${accountId}, retry ${retryCount}/${maxRetries} after 2s`
+            )
+            await this._sleep(2000)
+          }
+        } while (shouldRetry)
+
+        return { response, retryCount }
+      }
+
+      let requestOptions = options
+      let { response, retryCount } = await makeRequestWithRetries(requestOptions)
+
+      if (
+        this._isClaudeCodeCredentialError(response.body) &&
+        requestOptions.useRandomizedToolNames !== true
+      ) {
+        requestOptions = { ...requestOptions, useRandomizedToolNames: true }
+        ;({ response, retryCount } = await makeRequestWithRetries(requestOptions))
+      }
 
       // 如果进行了重试，记录最终结果
       if (retryCount > 0) {
@@ -667,6 +919,10 @@ class ClaudeRelayService {
       )
       throw error
     } finally {
+      // 🧹 清理 bodyStore
+      if (bodyStoreIdNonStream !== null) {
+        this.bodyStore.delete(bodyStoreIdNonStream)
+      }
       // 📬 释放用户消息队列锁（兜底，正常情况下已在请求发送后提前释放）
       if (queueLockAcquired && queueRequestId && selectedAccountId) {
         try {
@@ -706,7 +962,10 @@ class ClaudeRelayService {
     if (!isRealClaudeCode) {
       const claudeCodePrompt = {
         type: 'text',
-        text: this.claudeCodeSystemPrompt
+        text: this.claudeCodeSystemPrompt,
+        cache_control: {
+          type: 'ephemeral'
+        }
       }
 
       if (processedBody.system) {
@@ -1038,21 +1297,18 @@ class ClaudeRelayService {
     // 获取过滤后的客户端 headers
     const filteredHeaders = this._filterClientHeaders(clientHeaders)
 
-    // 判断是否是真实的 Claude Code 请求
-    const isRealClaudeCode = this.isRealClaudeCodeRequest(body)
+    const isRealClaudeCode =
+      requestOptions.isRealClaudeCodeRequest === undefined
+        ? this.isRealClaudeCodeRequest(body)
+        : requestOptions.isRealClaudeCodeRequest === true
 
     // 如果不是真实的 Claude Code 请求，需要使用从账户获取的 Claude Code headers
     let finalHeaders = { ...filteredHeaders }
     let requestPayload = body
 
     if (!isRealClaudeCode) {
-      // 获取该账号存储的 Claude Code headers
       const claudeCodeHeaders = await claudeCodeHeadersService.getAccountHeaders(accountId)
-
       Object.keys(claudeCodeHeaders).forEach((key) => {
-        const lowerKey = key.toLowerCase()
-        delete finalHeaders[key]
-        delete finalHeaders[lowerKey]
         finalHeaders[key] = claudeCodeHeaders[key]
       })
     }
@@ -1075,6 +1331,13 @@ class ClaudeRelayService {
     requestPayload = extensionResult.body
     finalHeaders = extensionResult.headers
 
+    let toolNameMap = null
+    if (!isRealClaudeCode) {
+      toolNameMap = this._transformToolNamesInRequestBody(requestPayload, {
+        useRandomizedToolNames: requestOptions.useRandomizedToolNames === true
+      })
+    }
+
     // 序列化请求体，计算 content-length
     const bodyString = JSON.stringify(requestPayload)
     const contentLength = Buffer.byteLength(bodyString, 'utf8')
@@ -1091,40 +1354,25 @@ class ClaudeRelayService {
     }
 
     // 使用统一 User-Agent 或客户端提供的，最后使用默认值
-    // [ULTRAWORK FIX] Force Claude Code User-Agent to bypass "This credential is only authorized for use with Claude Code" error
-    // The previous logic allowed client headers (ai-sdk/...) to override, which triggers the ban.
-    // We now ENFORCE the official CLI User-Agent.
-    const userAgent = 'claude-code/2.1.2 (darwin-arm64) anthropic-typescript/0.2.29'
-    // const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
-
+    const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
     const acceptHeader = headers['accept'] || 'application/json'
     delete headers['user-agent']
     delete headers['accept']
     headers['User-Agent'] = userAgent
     headers['Accept'] = acceptHeader
 
-    // [ULTRAWORK FIX] Add missing Stainless/CLI headers to fully mimic Claude Code CLI
-    headers['x-app'] = 'cli'
-    headers['x-stainless-package-version'] = '2.1.2'
-    headers['x-stainless-os'] = 'darwin'
-    headers['x-stainless-arch'] = 'arm64'
-    headers['x-stainless-runtime'] = 'node'
-    headers['x-stainless-lang'] = 'js'
-    headers['anthropic-version'] = '2023-06-01'
-    // headers['anthropic-dangerous-direct-browser-access'] = 'true' // REMOVED: This flags us as a browser, contradicting CLI identity
-    // headers['anthropic-dangerous-direct-browser-access'] = 'true' // REMOVED: This flags us as a browser, contradicting CLI identity
-
     logger.info(`🔗 指纹是这个: ${headers['User-Agent']}`)
 
     // 根据模型和客户端传递的 anthropic-beta 动态设置 header
     const modelId = requestPayload?.model || body?.model
-    const clientBetaHeader = clientHeaders?.['anthropic-beta']
+    const clientBetaHeader = this._getHeaderValueCaseInsensitive(clientHeaders, 'anthropic-beta')
     headers['anthropic-beta'] = this._getBetaHeader(modelId, clientBetaHeader)
     return {
       requestPayload,
       bodyString,
       headers,
-      isRealClaudeCode
+      isRealClaudeCode,
+      toolNameMap
     }
   }
 
@@ -1153,7 +1401,7 @@ class ClaudeRelayService {
 
       return { body: nextBody, headers: nextHeaders, abortResponse }
     } catch (error) {
-      logger.warn('⚠️ Failed to apply request identity transform:', error)
+      logger.warn('⚠️ 应用请求身份转换失败:', error)
       return { body, headers: normalizedHeaders }
     }
   }
@@ -1190,7 +1438,8 @@ class ClaudeRelayService {
       return prepared.abortResponse
     }
 
-    const { bodyString, headers } = prepared
+    let { bodyString } = prepared
+    const { headers, isRealClaudeCode, toolNameMap } = prepared
 
     return new Promise((resolve, reject) => {
       // 支持自定义路径（如 count_tokens）
@@ -1240,6 +1489,10 @@ class ClaudeRelayService {
               }
             } else {
               responseBody = responseData.toString('utf8')
+            }
+
+            if (!isRealClaudeCode) {
+              responseBody = this._restoreToolNamesInResponseBody(responseBody, toolNameMap)
             }
 
             const response = {
@@ -1300,6 +1553,8 @@ class ClaudeRelayService {
 
       // 写入请求体
       req.write(bodyString)
+      // 🧹 内存优化：立即清空 bodyString 引用，避免闭包捕获
+      bodyString = null
       req.end()
     })
   }
@@ -1481,7 +1736,12 @@ class ClaudeRelayService {
       // 获取有效的访问token
       const accessToken = await claudeAccountService.getValidAccessToken(accountId)
 
+      const isRealClaudeCodeRequest = this._isActualClaudeCodeRequest(requestBody, clientHeaders)
       const processedBody = this._processRequestBody(requestBody, account)
+      // 🧹 内存优化：存储到 bodyStore，不放入 requestOptions 避免闭包捕获
+      const originalBodyString = JSON.stringify(processedBody)
+      const bodyStoreId = ++this._bodyStoreIdCounter
+      this.bodyStore.set(bodyStoreId, originalBodyString)
 
       // 获取代理配置
       const proxyAgent = await this._getProxyAgent(accountId)
@@ -1503,7 +1763,11 @@ class ClaudeRelayService {
         accountType,
         sessionHash,
         streamTransformer,
-        options,
+        {
+          ...options,
+          bodyStoreId,
+          isRealClaudeCodeRequest
+        },
         isDedicatedOfficialAccount,
         // 📬 新增回调：在收到响应头时释放队列锁
         async () => {
@@ -1566,9 +1830,7 @@ class ClaudeRelayService {
     onResponseStart = null, // 📬 新增：收到响应头时的回调，用于提前释放队列锁
     retryCount = 0 // 🔄 403 重试计数器
   ) {
-    // 🔄 优化：增加重试次数和等待时间，避免临时403导致账户被误标记为blocked
-    const maxRetries = 3 // 最大重试次数
-    const retryDelays = [3000, 5000, 8000] // 指数退避：3s, 5s, 8s
+    const maxRetries = 2 // 最大重试次数
     // 获取账户信息用于统一 User-Agent
     const account = await claudeAccountService.getAccount(accountId)
 
@@ -1594,7 +1856,12 @@ class ClaudeRelayService {
       return prepared.abortResponse
     }
 
-    const { bodyString, headers } = prepared
+    let { bodyString } = prepared
+    const { headers, toolNameMap } = prepared
+    const toolNameStreamTransformer = this._createToolNameStripperStreamTransformer(
+      streamTransformer,
+      toolNameMap
+    )
 
     return new Promise((resolve, reject) => {
       const url = new URL(this.claudeApiUrl)
@@ -1690,21 +1957,34 @@ class ClaudeRelayService {
               !responseStream.headersSent
 
             if (canRetry) {
-              const delay = retryDelays[retryCount] || retryDelays[retryDelays.length - 1]
               logger.warn(
-                `🔄 [Stream] 403 error for account ${accountId}, retry ${retryCount + 1}/${maxRetries} after ${delay / 1000}s`
+                `🔄 [Stream] 403 error for account ${accountId}, retry ${retryCount + 1}/${maxRetries} after 2s`
               )
               // 消费当前响应并销毁请求
               res.resume()
               req.destroy()
 
-              // 等待指数退避时间后递归重试
-              await this._sleep(delay)
+              // 等待 2 秒后递归重试
+              await this._sleep(2000)
 
               try {
                 // 递归调用自身进行重试
+                // 🧹 从 bodyStore 获取字符串用于重试
+                if (
+                  !requestOptions.bodyStoreId ||
+                  !this.bodyStore.has(requestOptions.bodyStoreId)
+                ) {
+                  throw new Error('529 retry requires valid bodyStoreId')
+                }
+                let retryBody
+                try {
+                  retryBody = JSON.parse(this.bodyStore.get(requestOptions.bodyStoreId))
+                } catch (parseError) {
+                  logger.error(`❌ Failed to parse body for 529 retry: ${parseError.message}`)
+                  throw new Error(`529 retry body parse failed: ${parseError.message}`)
+                }
                 const retryResult = await this._makeClaudeStreamRequestWithUsageCapture(
-                  body,
+                  retryBody,
                   accessToken,
                   proxyAgent,
                   clientHeaders,
@@ -1799,11 +2079,48 @@ class ClaudeRelayService {
             errorData += chunk.toString()
           })
 
-          res.on('end', () => {
+          res.on('end', async () => {
             logger.error(
               `❌ Claude API error response (Account: ${account?.name || accountId}):`,
               errorData
             )
+            if (
+              this._isClaudeCodeCredentialError(errorData) &&
+              requestOptions.useRandomizedToolNames !== true &&
+              requestOptions.bodyStoreId &&
+              this.bodyStore.has(requestOptions.bodyStoreId)
+            ) {
+              let retryBody
+              try {
+                retryBody = JSON.parse(this.bodyStore.get(requestOptions.bodyStoreId))
+              } catch (parseError) {
+                logger.error(`❌ Failed to parse body for 403 retry: ${parseError.message}`)
+                reject(new Error(`403 retry body parse failed: ${parseError.message}`))
+                return
+              }
+              try {
+                const retryResult = await this._makeClaudeStreamRequestWithUsageCapture(
+                  retryBody,
+                  accessToken,
+                  proxyAgent,
+                  clientHeaders,
+                  responseStream,
+                  usageCallback,
+                  accountId,
+                  accountType,
+                  sessionHash,
+                  streamTransformer,
+                  { ...requestOptions, useRandomizedToolNames: true },
+                  isDedicatedOfficialAccount,
+                  onResponseStart,
+                  retryCount
+                )
+                resolve(retryResult)
+              } catch (retryError) {
+                reject(retryError)
+              }
+              return
+            }
             if (this._isOrganizationDisabledError(res.statusCode, errorData)) {
               ;(async () => {
                 try {
@@ -1838,39 +2155,21 @@ class ClaudeRelayService {
               }
 
               // 如果有 streamTransformer（如测试请求），使用前端期望的格式
-              if (streamTransformer) {
+              if (toolNameStreamTransformer) {
                 responseStream.write(
                   `data: ${JSON.stringify({ type: 'error', error: errorMessage })}\n\n`
                 )
               } else {
-                // [FIX] standard Anthropic error format to avoid client validation failure
+                // 标准错误格式
                 responseStream.write('event: error\n')
-                try {
-                  const parsed = JSON.parse(errorData)
-                  if (parsed.type === 'error') {
-                    responseStream.write(`data: ${errorData}\n\n`)
-                  } else {
-                    responseStream.write(
-                      `data: ${JSON.stringify({
-                        type: 'error',
-                        error: {
-                          type: 'upstream_error',
-                          message: errorMessage
-                        }
-                      })}\n\n`
-                    )
-                  }
-                } catch {
-                  responseStream.write(
-                    `data: ${JSON.stringify({
-                      type: 'error',
-                      error: {
-                        type: 'upstream_error',
-                        message: errorMessage
-                      }
-                    })}\n\n`
-                  )
-                }
+                responseStream.write(
+                  `data: ${JSON.stringify({
+                    error: 'Claude API error',
+                    status: res.statusCode,
+                    details: errorData,
+                    timestamp: new Date().toISOString()
+                  })}\n\n`
+                )
               }
               responseStream.end()
             }
@@ -1895,6 +2194,11 @@ class ClaudeRelayService {
         let rateLimitDetected = false // 限流检测标志
 
         // 监听数据块，解析SSE并寻找usage信息
+        // 🧹 内存优化：在闭包创建前提取需要的值，避免闭包捕获 body 和 requestOptions
+        // body 和 requestOptions 只在闭包外使用，闭包内只引用基本类型
+        const requestedModel = body?.model || 'unknown'
+        const { isRealClaudeCodeRequest } = requestOptions
+
         res.on('data', (chunk) => {
           try {
             const chunkStr = chunk.toString()
@@ -1910,8 +2214,8 @@ class ClaudeRelayService {
               if (isStreamWritable(responseStream)) {
                 const linesToForward = lines.join('\n') + (lines.length > 0 ? '\n' : '')
                 // 如果有流转换器，应用转换
-                if (streamTransformer) {
-                  const transformed = streamTransformer(linesToForward)
+                if (toolNameStreamTransformer) {
+                  const transformed = toolNameStreamTransformer(linesToForward)
                   if (transformed) {
                     responseStream.write(transformed)
                   }
@@ -2044,8 +2348,8 @@ class ClaudeRelayService {
           try {
             // 处理缓冲区中剩余的数据
             if (buffer.trim() && isStreamWritable(responseStream)) {
-              if (streamTransformer) {
-                const transformed = streamTransformer(buffer)
+              if (toolNameStreamTransformer) {
+                const transformed = toolNameStreamTransformer(buffer)
                 if (transformed) {
                   responseStream.write(transformed)
                 }
@@ -2100,7 +2404,7 @@ class ClaudeRelayService {
 
             // 打印原始的usage数据为JSON字符串，避免嵌套问题
             logger.info(
-              `📊 === Stream Request Usage Summary === Model: ${body.model}, Total Events: ${allUsageData.length}, Usage Data: ${JSON.stringify(allUsageData)}`
+              `📊 === Stream Request Usage Summary === Model: ${requestedModel}, Total Events: ${allUsageData.length}, Usage Data: ${JSON.stringify(allUsageData)}`
             )
 
             // 一般一个请求只会使用一个模型，即使有多个usage事件也应该合并
@@ -2110,7 +2414,7 @@ class ClaudeRelayService {
               output_tokens: totalUsage.output_tokens,
               cache_creation_input_tokens: totalUsage.cache_creation_input_tokens,
               cache_read_input_tokens: totalUsage.cache_read_input_tokens,
-              model: allUsageData[allUsageData.length - 1].model || body.model // 使用最后一个模型或请求模型
+              model: allUsageData[allUsageData.length - 1].model || requestedModel // 使用最后一个模型或请求模型
             }
 
             // 如果有详细的cache_creation数据，合并它们
@@ -2219,15 +2523,15 @@ class ClaudeRelayService {
             }
 
             // 只有真实的 Claude Code 请求才更新 headers（流式请求）
-            if (
-              clientHeaders &&
-              Object.keys(clientHeaders).length > 0 &&
-              this.isRealClaudeCodeRequest(body)
-            ) {
+            if (clientHeaders && Object.keys(clientHeaders).length > 0 && isRealClaudeCodeRequest) {
               await claudeCodeHeadersService.storeAccountHeaders(accountId, clientHeaders)
             }
           }
 
+          // 🧹 清理 bodyStore
+          if (requestOptions.bodyStoreId) {
+            this.bodyStore.delete(requestOptions.bodyStoreId)
+          }
           logger.debug('🌊 Claude stream response with usage capture completed')
           resolve()
         })
@@ -2284,6 +2588,10 @@ class ClaudeRelayService {
           )
           responseStream.end()
         }
+        // 🧹 清理 bodyStore
+        if (requestOptions.bodyStoreId) {
+          this.bodyStore.delete(requestOptions.bodyStoreId)
+        }
         reject(error)
       })
 
@@ -2313,6 +2621,10 @@ class ClaudeRelayService {
           )
           responseStream.end()
         }
+        // 🧹 清理 bodyStore
+        if (requestOptions.bodyStoreId) {
+          this.bodyStore.delete(requestOptions.bodyStoreId)
+        }
         reject(new Error('Request timeout'))
       })
 
@@ -2326,6 +2638,8 @@ class ClaudeRelayService {
 
       // 写入请求体
       req.write(bodyString)
+      // 🧹 内存优化：立即清空 bodyString 引用，避免闭包捕获
+      bodyString = null
       req.end()
     })
   }
@@ -2579,7 +2893,7 @@ class ClaudeRelayService {
 
           // 处理错误事件
           if (data.type === 'error') {
-            const errorMsg = data.error?.message || data.message || 'Unknown error'
+            const errorMsg = data.error?.message || data.message || '未知错误'
             outputLines.push(`data: ${JSON.stringify({ type: 'error', error: errorMsg })}`)
             outputLines.push('')
           }
