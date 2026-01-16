@@ -399,7 +399,9 @@ class AccountGroupService {
         await this.addAccountToGroup(accountId, groupId, accountPlatform)
       }
 
-      logger.success(`✅ Successfully batch set account groups: ${accountId} -> [${groupIds.join(', ')}]`)
+      logger.success(
+        `✅ Successfully batch set account groups: ${accountId} -> [${groupIds.join(', ')}]`
+      )
     } catch (error) {
       logger.error('❌ Failed to batch set account groups:', error)
       throw error

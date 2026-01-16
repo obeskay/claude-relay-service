@@ -105,7 +105,9 @@ class UnifiedOpenAIScheduler {
         account.schedulable = 'true'
       }
       isSchedulable = true
-      logger.info(`✅ OpenAI account ${account.name || accountId} rate limit cleared, scheduling resumed`)
+      logger.info(
+        `✅ OpenAI account ${account.name || accountId} rate limit cleared, scheduling resumed`
+      )
     }
 
     if (hasRateLimitFlag) {
@@ -476,7 +478,9 @@ class UnifiedOpenAIScheduler {
           if (!schedulable) {
             account.schedulable = 'true'
             account.status = 'active'
-            logger.info(`✅ OpenAI-Responses account ${account.name} rate limit cleared, scheduling resumed`)
+            logger.info(
+              `✅ OpenAI-Responses account ${account.name} rate limit cleared, scheduling resumed`
+            )
           }
         }
 

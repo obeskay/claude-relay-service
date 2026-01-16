@@ -1355,7 +1355,9 @@ class DroidRelayService {
             await this._stopDroidAccountScheduling(accountId, statusCode, '所有API Key均已异常')
             await this._clearAccountStickyMapping(normalizedEndpoint, sessionHash, clientApiKeyId)
           } else {
-            logger.info(`ℹ️ Droid account ${accountId} still has ${activeEntries.length} available API keys`)
+            logger.info(
+              `ℹ️ Droid account ${accountId} still has ${activeEntries.length} available API keys`
+            )
           }
         } catch (error) {
           logger.error(`❌ Failed to check available API keys（Account: ${accountId}）：`, error)
@@ -1394,7 +1396,9 @@ class DroidRelayService {
         status: 'error',
         errorMessage: `上游返回 ${statusCode}：${message}`
       })
-      logger.warn(`🚫 Stopped scheduling Droid account ${accountId} (status ${statusCode}, reason: ${message})`)
+      logger.warn(
+        `🚫 Stopped scheduling Droid account ${accountId} (status ${statusCode}, reason: ${message})`
+      )
     } catch (error) {
       logger.error(`❌ 停止调度 Droid 账号failed:${accountId}`, error)
     }

@@ -103,7 +103,10 @@ async function startDeviceAuthorization(proxyConfig = null) {
  */
 async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
   if (!deviceCode) {
-    throw new WorkOSDeviceAuthError('Missing device code, cannot query authorization result', 'missing_device_code')
+    throw new WorkOSDeviceAuthError(
+      'Missing device code, cannot query authorization result',
+      'missing_device_code'
+    )
   }
 
   const form = new URLSearchParams({
@@ -133,7 +136,10 @@ async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
     const data = response.data || {}
 
     if (!data.access_token) {
-      throw new WorkOSDeviceAuthError('WorkOS response missing access_token', 'missing_access_token')
+      throw new WorkOSDeviceAuthError(
+        'WorkOS response missing access_token',
+        'missing_access_token'
+      )
     }
 
     logger.success('🤖 Droid authorization complete, access token obtained', {

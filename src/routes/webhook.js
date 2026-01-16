@@ -410,7 +410,9 @@ router.post('/test-notification', authenticateAdmin, async (req, res) => {
     }
 
     if (result.failed > 0) {
-      logger.warn(`⚠️ Notificación de prueba部分失败: ${result.succeeded}成功, ${result.failed}失败`)
+      logger.warn(
+        `⚠️ Notificación de prueba部分失败: ${result.succeeded}成功, ${result.failed}失败`
+      )
       return res.json({
         success: true,
         message: `Notificación de prueba部分成功: ${result.succeeded}个平台成功, ${result.failed}个平台失败`,

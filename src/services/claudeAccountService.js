@@ -2780,7 +2780,8 @@ class ClaudeAccountService {
           accountData.fiveHourAutoStopped = 'true'
           accountData.fiveHourStoppedAt = nowIso
           // 设置停止原因，供前端显示
-          accountData.stoppedReason = 'El uso de 5 horas está cerca del límite, la programación se ha detenido automáticamente'
+          accountData.stoppedReason =
+            'El uso de 5 horas está cerca del límite, la programación se ha detenido automáticamente'
 
           const canSendWarning = warningCount < maxWarningsPerWindow
           let updatedWarningCount = warningCount
@@ -2802,7 +2803,8 @@ class ClaudeAccountService {
                 platform: 'claude',
                 status: 'warning',
                 errorCode: 'CLAUDE_5H_LIMIT_WARNING',
-                reason: 'El uso de 5 horas está cerca del límite, la programación se ha detenido automáticamente',
+                reason:
+                  'El uso de 5 horas está cerca del límite, la programación se ha detenido automáticamente',
                 timestamp: getISOStringWithTimezone(now)
               })
             } catch (webhookError) {

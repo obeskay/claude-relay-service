@@ -28,12 +28,10 @@ class ClaudeRelayService {
     this.betaHeader = config.claude.betaHeader
     this.systemPrompt = config.claude.systemPrompt
     this.claudeCodeSystemPrompt = "You are Claude Code, Anthropic's official CLI for Claude."
-    this.toolNameSuffix = null
-    this.toolNameSuffixGeneratedAt = 0
-    this.toolNameSuffixTtlMs = 60 * 60 * 1000
   }
 
-  // 🔧 根据模型ID和客户端传递的 anthropic-beta 获取最终的 header
+  // 🔧 Get final header based on model ID and client's anthropic-beta
+  // Ensures oauth-2025-04-20 is always present and deduplicates beta flags
   _getBetaHeader(modelId, clientBetaHeader) {
     const OAUTH_BETA = 'oauth-2025-04-20'
     const CLAUDE_CODE_BETA = 'claude-code-20250219'
@@ -369,7 +367,7 @@ class ClaudeRelayService {
     }
   }
 
-  // 🚀 转发请求到Claude API
+  // 🚀 Forward request to Claude API
   async relayRequest(
     requestBody,
     apiKeyData,
@@ -541,12 +539,14 @@ class ClaudeRelayService {
       // 获取有效的访问token
       const accessToken = await claudeAccountService.getValidAccessToken(accountId)
 
-      const isRealClaudeCodeRequest = this._isActualClaudeCodeRequest(requestBody, clientHeaders)
       const processedBody = this._processRequestBody(requestBody, account)
       // 🧹 内存优化：存储到 bodyStore，避免闭包捕获
       const originalBodyString = JSON.stringify(processedBody)
       bodyStoreIdNonStream = ++this._bodyStoreIdCounter
       this.bodyStore.set(bodyStoreIdNonStream, originalBodyString)
+
+      // Check if this is a real Claude Code request
+      const isRealClaudeCodeRequest = this.isRealClaudeCodeRequest(requestBody)
 
       // 获取代理配置
       const proxyAgent = await this._getProxyAgent(accountId)
@@ -567,8 +567,11 @@ class ClaudeRelayService {
         clientResponse.once('close', handleClientDisconnect)
       }
 
+      // 🔄 403 重试机制：仅对 claude-official 类型账户（OAuth 或 Setup Token）
+      // 优化：增加重试次数和等待时间，避免临时403导致账户被误标记为blocked
       const makeRequestWithRetries = async (requestOptions) => {
-        const maxRetries = this._shouldRetryOn403(accountType) ? 2 : 0
+        const maxRetries = this._shouldRetryOn403(accountType) ? 3 : 0
+        const retryDelays = [3000, 5000, 8000] // 指数退避：3s, 5s, 8s
         let retryCount = 0
         let response
         let shouldRetry = false
@@ -599,11 +602,12 @@ class ClaudeRelayService {
 
           shouldRetry = response.statusCode === 403 && retryCount < maxRetries
           if (shouldRetry) {
+            const delay = retryDelays[retryCount] || retryDelays[retryDelays.length - 1]
             retryCount++
             logger.warn(
-              `🔄 403 error for account ${accountId}, retry ${retryCount}/${maxRetries} after 2s`
+              `🔄 403 error for account ${accountId}, retry ${retryCount}/${maxRetries} after ${delay / 1000}s`
             )
-            await this._sleep(2000)
+            await this._sleep(delay)
           }
         } while (shouldRetry)
 
@@ -613,6 +617,7 @@ class ClaudeRelayService {
       let requestOptions = options
       let { response, retryCount } = await makeRequestWithRetries(requestOptions)
 
+      // If we get a Claude Code credential error, retry with randomized tool names
       if (
         this._isClaudeCodeCredentialError(response.body) &&
         requestOptions.useRandomizedToolNames !== true
@@ -1297,18 +1302,22 @@ class ClaudeRelayService {
     // 获取过滤后的客户端 headers
     const filteredHeaders = this._filterClientHeaders(clientHeaders)
 
-    const isRealClaudeCode =
-      requestOptions.isRealClaudeCodeRequest === undefined
-        ? this.isRealClaudeCodeRequest(body)
-        : requestOptions.isRealClaudeCodeRequest === true
+    // 判断是否是真实的 Claude Code 请求
+    const isRealClaudeCode = this.isRealClaudeCodeRequest(body)
 
     // 如果不是真实的 Claude Code 请求，需要使用从账户获取的 Claude Code headers
     let finalHeaders = { ...filteredHeaders }
     let requestPayload = body
 
     if (!isRealClaudeCode) {
+      // 获取该账号存储的 Claude Code headers
       const claudeCodeHeaders = await claudeCodeHeadersService.getAccountHeaders(accountId)
+
+      // Clean up both original and lowercase versions before assigning new headers
       Object.keys(claudeCodeHeaders).forEach((key) => {
+        const lowerKey = key.toLowerCase()
+        delete finalHeaders[key]
+        delete finalHeaders[lowerKey]
         finalHeaders[key] = claudeCodeHeaders[key]
       })
     }
@@ -1330,13 +1339,6 @@ class ClaudeRelayService {
 
     requestPayload = extensionResult.body
     finalHeaders = extensionResult.headers
-
-    let toolNameMap = null
-    if (!isRealClaudeCode) {
-      toolNameMap = this._transformToolNamesInRequestBody(requestPayload, {
-        useRandomizedToolNames: requestOptions.useRandomizedToolNames === true
-      })
-    }
 
     // 序列化请求体，计算 content-length
     const bodyString = JSON.stringify(requestPayload)
@@ -1361,18 +1363,17 @@ class ClaudeRelayService {
     headers['User-Agent'] = userAgent
     headers['Accept'] = acceptHeader
 
-    logger.info(`🔗 指纹是这个: ${headers['User-Agent']}`)
+    logger.debug(`🔗 Using User-Agent: ${headers['User-Agent']}`)
 
     // 根据模型和客户端传递的 anthropic-beta 动态设置 header
     const modelId = requestPayload?.model || body?.model
-    const clientBetaHeader = this._getHeaderValueCaseInsensitive(clientHeaders, 'anthropic-beta')
+    const clientBetaHeader = clientHeaders?.['anthropic-beta']
     headers['anthropic-beta'] = this._getBetaHeader(modelId, clientBetaHeader)
     return {
       requestPayload,
       bodyString,
       headers,
-      isRealClaudeCode,
-      toolNameMap
+      isRealClaudeCode
     }
   }
 
@@ -1489,10 +1490,6 @@ class ClaudeRelayService {
               }
             } else {
               responseBody = responseData.toString('utf8')
-            }
-
-            if (!isRealClaudeCode) {
-              responseBody = this._restoreToolNamesInResponseBody(responseBody, toolNameMap)
             }
 
             const response = {
@@ -1736,12 +1733,14 @@ class ClaudeRelayService {
       // 获取有效的访问token
       const accessToken = await claudeAccountService.getValidAccessToken(accountId)
 
-      const isRealClaudeCodeRequest = this._isActualClaudeCodeRequest(requestBody, clientHeaders)
       const processedBody = this._processRequestBody(requestBody, account)
       // 🧹 内存优化：存储到 bodyStore，不放入 requestOptions 避免闭包捕获
       const originalBodyString = JSON.stringify(processedBody)
       const bodyStoreId = ++this._bodyStoreIdCounter
       this.bodyStore.set(bodyStoreId, originalBodyString)
+
+      // Check if this is a real Claude Code request
+      const isRealClaudeCodeRequest = this.isRealClaudeCodeRequest(requestBody)
 
       // 获取代理配置
       const proxyAgent = await this._getProxyAgent(accountId)
@@ -1969,22 +1968,8 @@ class ClaudeRelayService {
 
               try {
                 // 递归调用自身进行重试
-                // 🧹 从 bodyStore 获取字符串用于重试
-                if (
-                  !requestOptions.bodyStoreId ||
-                  !this.bodyStore.has(requestOptions.bodyStoreId)
-                ) {
-                  throw new Error('529 retry requires valid bodyStoreId')
-                }
-                let retryBody
-                try {
-                  retryBody = JSON.parse(this.bodyStore.get(requestOptions.bodyStoreId))
-                } catch (parseError) {
-                  logger.error(`❌ Failed to parse body for 529 retry: ${parseError.message}`)
-                  throw new Error(`529 retry body parse failed: ${parseError.message}`)
-                }
                 const retryResult = await this._makeClaudeStreamRequestWithUsageCapture(
-                  retryBody,
+                  body,
                   accessToken,
                   proxyAgent,
                   clientHeaders,
@@ -2084,6 +2069,7 @@ class ClaudeRelayService {
               `❌ Claude API error response (Account: ${account?.name || accountId}):`,
               errorData
             )
+            // If we get a Claude Code credential error, retry with randomized tool names
             if (
               this._isClaudeCodeCredentialError(errorData) &&
               requestOptions.useRandomizedToolNames !== true &&
@@ -2094,8 +2080,10 @@ class ClaudeRelayService {
               try {
                 retryBody = JSON.parse(this.bodyStore.get(requestOptions.bodyStoreId))
               } catch (parseError) {
-                logger.error(`❌ Failed to parse body for 403 retry: ${parseError.message}`)
-                reject(new Error(`403 retry body parse failed: ${parseError.message}`))
+                logger.error(
+                  `❌ Failed to parse body for credential error retry: ${parseError.message}`
+                )
+                reject(new Error(`Credential error retry body parse failed: ${parseError.message}`))
                 return
               }
               try {
@@ -2155,7 +2143,7 @@ class ClaudeRelayService {
               }
 
               // 如果有 streamTransformer（如测试请求），使用前端期望的格式
-              if (toolNameStreamTransformer) {
+              if (streamTransformer) {
                 responseStream.write(
                   `data: ${JSON.stringify({ type: 'error', error: errorMessage })}\n\n`
                 )
@@ -2214,8 +2202,8 @@ class ClaudeRelayService {
               if (isStreamWritable(responseStream)) {
                 const linesToForward = lines.join('\n') + (lines.length > 0 ? '\n' : '')
                 // 如果有流转换器，应用转换
-                if (toolNameStreamTransformer) {
-                  const transformed = toolNameStreamTransformer(linesToForward)
+                if (streamTransformer) {
+                  const transformed = streamTransformer(linesToForward)
                   if (transformed) {
                     responseStream.write(transformed)
                   }
@@ -2348,8 +2336,8 @@ class ClaudeRelayService {
           try {
             // 处理缓冲区中剩余的数据
             if (buffer.trim() && isStreamWritable(responseStream)) {
-              if (toolNameStreamTransformer) {
-                const transformed = toolNameStreamTransformer(buffer)
+              if (streamTransformer) {
+                const transformed = streamTransformer(buffer)
                 if (transformed) {
                   responseStream.write(transformed)
                 }

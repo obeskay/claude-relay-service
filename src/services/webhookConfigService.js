@@ -148,7 +148,9 @@ class WebhookConfigService {
         }
 
         if (!/^[-\d]+$/.test(String(platform.chatId))) {
-          logger.warn('⚠️ Telegram Chat ID should be a number, please confirm the correct ID for channels')
+          logger.warn(
+            '⚠️ Telegram Chat ID should be a number, please confirm the correct ID for channels'
+          )
         }
 
         if (platform.apiBaseUrl) {
@@ -437,7 +439,9 @@ class WebhookConfigService {
 
       await this.saveConfig(config)
 
-      logger.info(`✅ Webhook platform ${platformId} is now ${platform.enabled ? 'enabled' : 'disabled'}`)
+      logger.info(
+        `✅ Webhook platform ${platformId} is now ${platform.enabled ? 'enabled' : 'disabled'}`
+      )
       return platform
     } catch (error) {
       logger.error('Failed to toggle webhook platform status:', error)
