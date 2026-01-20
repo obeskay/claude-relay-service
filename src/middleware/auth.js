@@ -210,6 +210,11 @@ function normalizeRequestPath(value) {
     lower = lower.replace('/v1/v1/', '/v1/')
     logger.api(`🔧 Path normalized (v1 duplication): ${value.split('?')[0]} -> ${lower}`)
   }
+  // 🆕 处理重复的 /api/api 路径
+  if (lower.includes('/api/api/')) {
+    lower = lower.replace('/api/api/', '/api/')
+    logger.api(`🔧 Path normalized (api duplication): ${value.split('?')[0]} -> ${lower}`)
+  }
   const collapsed = lower.replace(/\/{2,}/g, '/')
   if (collapsed.length > 1 && collapsed.endsWith('/')) {
     return collapsed.slice(0, -1)
