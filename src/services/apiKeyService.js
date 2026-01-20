@@ -147,8 +147,10 @@ class ApiKeyService {
       dailyCostLimit = 0,
       totalCostLimit = 0,
       weeklyOpusCostLimit = 0,
+      forcedModel = '',
+      modelMapping = {},
       tags = [],
-      activationDays = 0, // 新增：激活后有效天数（0表示不使用此功能）
+      activationDays = 0,
       activationUnit = 'days', // 新增：激活时间单位 'hours' 或 'days'
       expirationMode = 'fixed', // 新增：过期模式 'fixed'(固定时间) 或 'activation'(首次使用后激活)
       icon = '' // 新增：图标（base64编码）
@@ -185,6 +187,8 @@ class ApiKeyService {
       dailyCostLimit: String(dailyCostLimit || 0),
       totalCostLimit: String(totalCostLimit || 0),
       weeklyOpusCostLimit: String(weeklyOpusCostLimit || 0),
+      forcedModel: forcedModel || '',
+      modelMapping: JSON.stringify(modelMapping || {}),
       tags: JSON.stringify(tags || []),
       activationDays: String(activationDays || 0), // 新增：激活后有效天数
       activationUnit: activationUnit || 'days', // 新增：激活时间单位
@@ -239,6 +243,12 @@ class ApiKeyService {
       dailyCostLimit: parseFloat(keyData.dailyCostLimit || 0),
       totalCostLimit: parseFloat(keyData.totalCostLimit || 0),
       weeklyOpusCostLimit: parseFloat(keyData.weeklyOpusCostLimit || 0),
+      forcedModel: keyData.forcedModel || '',
+      modelMapping: keyData.modelMapping
+        ? typeof keyData.modelMapping === 'string'
+          ? JSON.parse(keyData.modelMapping)
+          : keyData.modelMapping
+        : {},
       tags: JSON.parse(keyData.tags || '[]'),
       activationDays: parseInt(keyData.activationDays || 0),
       activationUnit: keyData.activationUnit || 'days',
@@ -396,6 +406,7 @@ class ApiKeyService {
           dailyCostLimit: parseFloat(keyData.dailyCostLimit || 0),
           totalCostLimit: parseFloat(keyData.totalCostLimit || 0),
           weeklyOpusCostLimit: parseFloat(keyData.weeklyOpusCostLimit || 0),
+          forcedModel: keyData.forcedModel || '', // 新增：强制路由模型
           dailyCost: dailyCost || 0,
           totalCost,
           weeklyOpusCost: (await redis.getWeeklyOpusCost(keyData.id)) || 0,
@@ -525,6 +536,7 @@ class ApiKeyService {
           dailyCostLimit: parseFloat(keyData.dailyCostLimit || 0),
           totalCostLimit: parseFloat(keyData.totalCostLimit || 0),
           weeklyOpusCostLimit: parseFloat(keyData.weeklyOpusCostLimit || 0),
+          forcedModel: keyData.forcedModel || '', // 新增：强制路由模型
           dailyCost: dailyCost || 0,
           totalCost: costStats?.total || 0,
           weeklyOpusCost: (await redis.getWeeklyOpusCost(keyData.id)) || 0,
@@ -574,6 +586,7 @@ class ApiKeyService {
         key.dailyCostLimit = parseFloat(key.dailyCostLimit || 0)
         key.totalCostLimit = parseFloat(key.totalCostLimit || 0)
         key.weeklyOpusCostLimit = parseFloat(key.weeklyOpusCostLimit || 0)
+        key.forcedModel = key.forcedModel || '' // 新增：强制路由模型
         key.dailyCost = (await redis.getDailyCost(key.id)) || 0
         key.weeklyOpusCost = (await redis.getWeeklyOpusCost(key.id)) || 0
         key.activationDays = parseInt(key.activationDays || 0)
@@ -741,6 +754,7 @@ class ApiKeyService {
         'dailyCostLimit',
         'totalCostLimit',
         'weeklyOpusCostLimit',
+        'forcedModel', // 新增：强制路由模型
         'tags',
         'userId', // 新增：用户ID（所有者变更）
         'userUsername', // 新增：用户名（所有者变更）

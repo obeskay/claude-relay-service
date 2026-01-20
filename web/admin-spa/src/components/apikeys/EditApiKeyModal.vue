@@ -387,6 +387,21 @@
             </p>
           </div>
 
+          <div>
+            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >强制模型路由 (可选)</label
+            >
+            <input
+              v-model="form.forcedModel"
+              class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+              placeholder="例如: ccr/glm-4.7"
+              type="text"
+            />
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              启用后，该 Key 的所有请求将强制路由到此模型，忽略客户端请求的模型。
+            </p>
+          </div>
+
           <!-- 激活账号 -->
           <div>
             <div class="mb-3 flex items-center">
@@ -791,6 +806,7 @@ const form = reactive({
   dailyCostLimit: '',
   totalCostLimit: '',
   weeklyOpusCostLimit: '',
+  forcedModel: '', // 新增：强制路由模型
   permissions: [], // 数组格式，空数组表示全部服务
   claudeAccountId: '',
   geminiAccountId: '',
@@ -912,6 +928,7 @@ const updateApiKey = async () => {
         form.weeklyOpusCostLimit !== '' && form.weeklyOpusCostLimit !== null
           ? parseFloat(form.weeklyOpusCostLimit)
           : 0,
+      forcedModel: form.forcedModel || '',
       permissions: form.permissions,
       tags: form.tags
     }
@@ -1232,6 +1249,7 @@ onMounted(async () => {
   form.dailyCostLimit = props.apiKey.dailyCostLimit || ''
   form.totalCostLimit = props.apiKey.totalCostLimit || ''
   form.weeklyOpusCostLimit = props.apiKey.weeklyOpusCostLimit || ''
+  form.forcedModel = props.apiKey.forcedModel || ''
   // 处理权限数据，兼容旧格式（字符串）和新格式（数组）
   // 有效的权限值
   const VALID_PERMS = ['claude', 'gemini', 'openai', 'droid']

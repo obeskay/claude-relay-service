@@ -1356,7 +1356,10 @@ class ClaudeRelayService {
     }
 
     // 使用统一 User-Agent 或客户端提供的，最后使用默认值
-    const userAgent = unifiedUA || headers['user-agent'] || 'claude-cli/1.0.119 (external, cli)'
+    const userAgent =
+      unifiedUA ||
+      headers['user-agent'] ||
+      'claude-code/2.1.2 (darwin-arm64) anthropic-typescript/0.2.29'
     const acceptHeader = headers['accept'] || 'application/json'
     delete headers['user-agent']
     delete headers['accept']

@@ -26,9 +26,8 @@ async function setup() {
     if (!fs.existsSync(path.join(__dirname, '..', '.env'))) {
       const envTemplate = fs.readFileSync(path.join(__dirname, '..', '.env.example'), 'utf8')
 
-      // 生成随机密钥
-      const jwtSecret = crypto.randomBytes(64).toString('hex')
-      const encryptionKey = crypto.randomBytes(32).toString('hex')
+      const jwtSecret = process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex')
+      const encryptionKey = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex')
 
       const envContent = envTemplate
         .replace('your-jwt-secret-here', jwtSecret)

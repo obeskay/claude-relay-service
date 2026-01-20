@@ -485,6 +485,71 @@ const authenticateApiKey = async (req, res, next) => {
       })
     }
 
+    const relayConfig = await claudeRelayConfigService.getConfig()
+    const apiKeyData = validation.keyData
+    const forcedModel = apiKeyData.forcedModel || relayConfig.globalForcedModel
+    const modelMapping = {
+      ...(relayConfig.globalModelMapping || {}),
+      ...(apiKeyData.modelMapping || {})
+    }
+
+    if (req.method === 'POST' && req.body && typeof req.body === 'object' && req.body.model) {
+      const originalModel = req.body.model
+      let targetModel = null
+
+      if (forcedModel) {
+        targetModel = forcedModel
+      } else if (modelMapping[originalModel]) {
+        targetModel = modelMapping[originalModel]
+      } else {
+        for (const pattern in modelMapping) {
+          if (pattern.includes('*')) {
+            const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
+            if (regex.test(originalModel)) {
+              targetModel = modelMapping[pattern]
+              break
+            }
+          }
+        }
+      }
+
+      if (targetModel && targetModel !== originalModel) {
+        req.body.model = targetModel
+        logger.info(`🔄 Model Redirect: ${originalModel} -> ${targetModel} (Key: ${apiKeyData.id})`)
+      }
+    }
+
+    if (req.method === 'POST' && req.body && typeof req.body === 'object' && req.body.model) {
+      const originalModel = req.body.model
+      let targetModel = null
+
+      // 1. Single forced model override (highest priority)
+      if (forcedModel) {
+        targetModel = forcedModel
+      }
+      // 2. Dynamic mapping patterns (sub2api style)
+      else if (modelMapping[originalModel]) {
+        targetModel = modelMapping[originalModel]
+      }
+      // 3. Pattern matching (wildcards)
+      else {
+        for (const pattern in modelMapping) {
+          if (pattern.includes('*')) {
+            const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
+            if (regex.test(originalModel)) {
+              targetModel = modelMapping[pattern]
+              break
+            }
+          }
+        }
+      }
+
+      if (targetModel && targetModel !== originalModel) {
+        req.body.model = targetModel
+        logger.info(`🔄 Model Redirect: ${originalModel} -> ${targetModel} (Key: ${apiKeyData.id})`)
+      }
+    }
+
     const skipKeyRestrictions = isTokenCountRequest(req)
 
     // 🔒 检查客户端限制（使用新的验证器）

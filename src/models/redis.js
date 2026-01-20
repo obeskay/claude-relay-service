@@ -258,6 +258,14 @@ class RedisClient {
 
     const parsed = { ...data }
 
+    if (parsed.modelMapping && typeof parsed.modelMapping === 'string') {
+      try {
+        parsed.modelMapping = JSON.parse(parsed.modelMapping)
+      } catch (e) {
+        parsed.modelMapping = {}
+      }
+    }
+
     // 布尔字段
     const boolFields = ['isActive', 'enableModelRestriction', 'isDeleted']
     for (const field of boolFields) {

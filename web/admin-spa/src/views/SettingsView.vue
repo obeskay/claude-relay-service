@@ -6,7 +6,9 @@
         <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
           {{ $t('settings.pageTitle') }}
         </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">{{ $t('settings.pageDescription') }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
+          {{ $t('settings.pageDescription') }}
+        </p>
       </div>
 
       <!-- 设置分类导航 -->
@@ -48,6 +50,18 @@
             <i class="fas fa-robot mr-2"></i>
             Claude {{ $t('settings.branding.actions.save') }}
           </button>
+          <button
+            :class="[
+              'border-b-2 pb-2 text-sm font-medium transition-colors',
+              activeSection === 'routing'
+                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+            ]"
+            @click="activeSection = 'routing'"
+          >
+            <i class="fas fa-route mr-2"></i>
+            Smart Routing
+          </button>
         </nav>
       </div>
 
@@ -78,7 +92,9 @@
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {{ $t('settings.branding.siteName.label') }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('settings.branding.siteName.description') }}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          {{ $t('settings.branding.siteName.description') }}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -109,7 +125,9 @@
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {{ $t('settings.branding.siteIcon.label') }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('settings.branding.siteIcon.description') }}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          {{ $t('settings.branding.siteIcon.description') }}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -126,7 +144,9 @@
                           :src="oemSettings.siteIconData || oemSettings.siteIcon"
                           @error="handleIconError"
                         />
-                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $t('settings.branding.siteIcon.currentIcon') }}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">{{
+                          $t('settings.branding.siteIcon.currentIcon')
+                        }}</span>
                         <button
                           class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                           @click="removeIcon"
@@ -151,9 +171,9 @@
                           <i class="fas fa-upload mr-2" />
                           {{ $t('settings.branding.siteIcon.uploadButton') }}
                         </button>
-                        <span class="ml-3 text-xs text-gray-500 dark:text-gray-400"
-                          >{{ $t('settings.branding.siteIcon.supportedFormats') }}</span
-                        >
+                        <span class="ml-3 text-xs text-gray-500 dark:text-gray-400">{{
+                          $t('settings.branding.siteIcon.supportedFormats')
+                        }}</span>
                       </div>
                     </div>
                   </td>
@@ -172,7 +192,9 @@
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {{ $t('settings.branding.adminButton.label') }}
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $t('settings.branding.adminButton.description') }}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          {{ $t('settings.branding.adminButton.description') }}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -184,12 +206,47 @@
                           class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                         ></div>
                         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{
-                          hideAdminButton ? $t('settings.branding.adminButton.hideButton') : $t('settings.branding.adminButton.showButton')
+                          hideAdminButton
+                            ? $t('settings.branding.adminButton.hideButton')
+                            : $t('settings.branding.adminButton.showButton')
                         }}</span>
                       </label>
                     </div>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      {{ $t('settings.branding.adminButton.helpText') }}
+                      启用后，当模型负载过高返回 529 错误时，系统会自动将该账户排除调度一段时间
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- 全局强制模型路由 -->
+                <tr class="table-row">
+                  <td class="w-48 whitespace-nowrap px-6 py-4">
+                    <div class="flex items-center">
+                      <div
+                        class="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-rose-600"
+                      >
+                        <i class="fas fa-route text-xs text-white" />
+                      </div>
+                      <div>
+                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          全局强制模型路由
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          重写所有请求的目标模型
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <input
+                      v-model="claudeConfig.globalForcedModel"
+                      class="form-input w-full max-w-md dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                      placeholder="例如: ccr/glm-4.7 (留空禁用)"
+                      type="text"
+                      @change="saveClaudeConfig"
+                    />
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      所有未单独设置强制路由的 API Key 请求都将强制路由到此模型。
                     </p>
                   </td>
                 </tr>
@@ -207,7 +264,11 @@
                         >
                           <div v-if="saving" class="loading-spinner mr-2"></div>
                           <i v-else class="fas fa-save mr-2" />
-                          {{ saving ? $t('settings.loading.saving') : $t('settings.branding.actions.save') }}
+                          {{
+                            saving
+                              ? $t('settings.loading.saving')
+                              : $t('settings.branding.actions.save')
+                          }}
                         </button>
 
                         <button
@@ -225,7 +286,11 @@
                         class="text-sm text-gray-500 dark:text-gray-400"
                       >
                         <i class="fas fa-clock mr-1" />
-                        {{ $t('settings.branding.actions.lastUpdated', { time: formatDateTime(oemSettings.updatedAt) }) }}
+                        {{
+                          $t('settings.branding.actions.lastUpdated', {
+                            time: formatDateTime(oemSettings.updatedAt)
+                          })
+                        }}
                       </div>
                     </div>
                   </td>
@@ -381,7 +446,7 @@
           </div>
         </div>
 
-          <!-- Webhook 设置部分 -->
+        <!-- Webhook 设置部分 -->
         <div v-show="activeSection === 'webhook'">
           <!-- 主开关 -->
           <div
@@ -389,7 +454,9 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $t('settings.webhook.mainSwitch.title') }}</h2>
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  {{ $t('settings.webhook.mainSwitch.title') }}
+                </h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                   {{ $t('settings.webhook.mainSwitch.description') }}
                 </p>
@@ -412,7 +479,9 @@
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
-            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $t('settings.webhook.notificationTypes.title') }}</h2>
+            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+              {{ $t('settings.webhook.notificationTypes.title') }}
+            </h2>
             <div class="space-y-3">
               <div
                 v-for="(enabled, type) in webhookConfig.notificationTypes"
@@ -447,7 +516,9 @@
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
             <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $t('settings.webhook.platforms.title') }}</h2>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                {{ $t('settings.webhook.platforms.title') }}
+              </h2>
               <button
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 @click="showAddPlatformModal = true"
@@ -493,7 +564,12 @@
                         class="flex items-center text-gray-600 dark:text-gray-400"
                       >
                         <i class="fas fa-comments mr-2"></i>
-                        <span class="truncate">Chat ID: {{ platform.chatId || $t('settings.webhook.platforms.fields.notConfigured') }}</span>
+                        <span class="truncate"
+                          >Chat ID:
+                          {{
+                            platform.chatId || $t('settings.webhook.platforms.fields.notConfigured')
+                          }}</span
+                        >
                       </div>
                       <div
                         v-if="platform.type === 'telegram' && platform.botToken"
@@ -644,6 +720,62 @@
 
         <!-- Claude 转发配置部分 -->
         <div v-show="activeSection === 'claude'">
+          <!-- ... existing claude config ... -->
+          <!-- Smart Routing Wizard 部分 -->
+        </div>
+
+        <div v-show="activeSection === 'routing'">
+          <div class="rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  <i class="fas fa-magic mr-2 text-purple-500"></i>
+                  Smart Routing Wizard
+                </h2>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                  Configure intelligent model redirection rules visually.
+                </p>
+              </div>
+              <button 
+                @click="showRoutingWizard = true"
+                class="btn btn-primary px-4 py-2"
+              >
+                Launch Wizard
+              </button>
+            </div>
+
+            <!-- Current Mappings Display -->
+            <div class="space-y-4">
+              <h3 class="text-md font-medium text-gray-700 dark:text-gray-300">Active Global Mappings</h3>
+              <div v-if="Object.keys(claudeConfig.globalModelMapping || {}).length > 0" class="grid gap-3">
+                <div 
+                  v-for="(target, source) in claudeConfig.globalModelMapping" 
+                  :key="source"
+                  class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                >
+                  <div class="flex items-center gap-3">
+                    <span class="font-mono text-sm text-blue-600 dark:text-blue-400">{{ source }}</span>
+                    <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                    <span class="font-mono text-sm text-green-600 dark:text-green-400">{{ target }}</span>
+                  </div>
+                  <button 
+                    @click="removeGlobalMapping(source)"
+                    class="text-red-500 hover:text-red-700 transition-colors"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div v-else class="text-sm text-gray-500 italic">No global mappings configured.</div>
+            </div>
+          </div>
+        </div>
+
+        <SmartRoutingWizard 
+          v-if="showRoutingWizard" 
+          @close="showRoutingWizard = false"
+          @success="handleWizardSuccess"
+        />
           <!-- 加载状态 -->
           <div v-if="claudeConfigLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
@@ -1175,18 +1307,18 @@
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-robot mr-2 text-gray-400"></i>
-                Bot Token
+                {{ $t('settings.webhook.platforms.fields.botToken') }}
                 <span class="ml-1 text-xs text-red-500">*</span>
               </label>
               <input
                 v-model="platformForm.botToken"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="例如：123456789:ABCDEFghijk-xyz"
+                placeholder="123456789:ABCDEFghijk-xyz"
                 required
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                在 Telegram 的 @BotFather 中创建机器人后获得的 Token
+                {{ $t('settings.webhook.platforms.fields.botTokenHelp') }}
               </p>
             </div>
 
@@ -1195,18 +1327,18 @@
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-comments mr-2 text-gray-400"></i>
-                Chat ID
+                {{ $t('settings.webhook.platforms.fields.chatId') }}
                 <span class="ml-1 text-xs text-red-500">*</span>
               </label>
               <input
                 v-model="platformForm.chatId"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="例如：123456789 或 -1001234567890"
+                placeholder="123456789 or -1001234567890"
                 required
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                可使用 @userinfobot、@RawDataBot 或 API 获取聊天/频道的 Chat ID
+                {{ $t('settings.webhook.platforms.fields.chatIdHelp') }}
               </p>
             </div>
 
@@ -1215,17 +1347,17 @@
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-globe mr-2 text-gray-400"></i>
-                API 基础地址
-                <span class="ml-2 text-xs text-gray-500">(可选)</span>
+                {{ $t('settings.webhook.platforms.fields.apiBaseUrl') }}
+                <span class="ml-2 text-xs text-gray-500">({{ $t('common.optional') }})</span>
               </label>
               <input
                 v-model="platformForm.apiBaseUrl"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="默认: https://api.telegram.org"
+                placeholder="https://api.telegram.org"
                 type="url"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                使用自建 Bot API 时可覆盖默认域名，需以 http 或 https 开头
+                {{ $t('settings.webhook.platforms.fields.apiBaseUrlHelp') }}
               </p>
             </div>
 
@@ -1234,17 +1366,17 @@
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-route mr-2 text-gray-400"></i>
-                代理地址
-                <span class="ml-2 text-xs text-gray-500">(可选)</span>
+                {{ $t('settings.webhook.platforms.fields.proxyUrl') }}
+                <span class="ml-2 text-xs text-gray-500">({{ $t('common.optional') }})</span>
               </label>
               <input
                 v-model="platformForm.proxyUrl"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="例如：socks5://user:pass@127.0.0.1:1080"
+                placeholder="socks5://user:pass@127.0.0.1:1080"
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                支持 http、https、socks4/4a/5 代理，留空则直接连接 Telegram 官方 API
+                {{ $t('settings.webhook.platforms.fields.proxyUrlHelp') }}
               </p>
             </div>
 
@@ -1252,7 +1384,7 @@
               class="flex items-start rounded-lg bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
             >
               <i class="fas fa-info-circle mr-2 mt-0.5"></i>
-              <div>机器人需先加入对应群组或频道并授予发送消息权限，通知会以纯文本方式发送。</div>
+              <div>{{ $t('settings.webhook.platforms.telegram.hint') }}</div>
             </div>
           </div>
 
@@ -1264,13 +1396,13 @@
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-key mr-2 text-gray-400"></i>
-                设备密钥 (Device Key)
+                {{ $t('settings.webhook.platforms.fields.deviceKey') }}
                 <span class="ml-1 text-xs text-red-500">*</span>
               </label>
               <input
                 v-model="platformForm.deviceKey"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-mono text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="例如：aBcDeFgHiJkLmNoPqRsTuVwX"
+                placeholder="aBcDeFgHiJkLmNoPqRsTuVwX"
                 required
                 type="text"
               />

@@ -194,27 +194,29 @@ class ClaudeConsoleRelayService {
         // 如果指定了自定义路径（如 /v1/messages/count_tokens）
         // 尝试从 cleanUrl 中提取 base URL
         let baseUrl = cleanUrl
-        
+
         // 1. 如果配置的是完整路径 .../v1/messages，去掉 /v1/messages
         if (baseUrl.endsWith('/v1/messages')) {
-             baseUrl = baseUrl.substring(0, baseUrl.length - '/v1/messages'.length)
-        } 
+          baseUrl = baseUrl.substring(0, baseUrl.length - '/v1/messages'.length)
+        }
         // 2. 如果配置的是 .../v1，去掉 /v1
         else if (baseUrl.endsWith('/v1')) {
-             baseUrl = baseUrl.substring(0, baseUrl.length - '/v1'.length)
+          baseUrl = baseUrl.substring(0, baseUrl.length - '/v1'.length)
         }
 
         // 确保 customPath 以 / 开头
-        const path = options.customPath.startsWith('/') ? options.customPath : `/${options.customPath}`
+        const path = options.customPath.startsWith('/')
+          ? options.customPath
+          : `/${options.customPath}`
         apiEndpoint = `${baseUrl}${path}`
       } else {
         // 默认使用 messages 端点
         if (cleanUrl.endsWith('/v1/messages')) {
-            apiEndpoint = cleanUrl
+          apiEndpoint = cleanUrl
         } else if (cleanUrl.endsWith('/v1')) {
-            apiEndpoint = `${cleanUrl}/messages`
+          apiEndpoint = `${cleanUrl}/messages`
         } else {
-            apiEndpoint = `${cleanUrl}/v1/messages`
+          apiEndpoint = `${cleanUrl}/v1/messages`
         }
       }
 

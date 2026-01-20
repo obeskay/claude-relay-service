@@ -12,7 +12,7 @@
               <i class="fas fa-code-branch text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              {{ isEdit ? '编辑 CCR 账户' : '添加 CCR 账户' }}
+              {{ isEdit ? $t('accounts.form.edit_ccr') : $t('accounts.form.add_ccr') }}
             </h3>
           </div>
           <button
@@ -27,13 +27,13 @@
           <!-- 基本信息 -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >账户名称 *</label
+              >{{ $t('label.name') }} *</label
             >
             <input
               v-model="form.name"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
               :class="{ 'border-red-500': errors.name }"
-              placeholder="为账户设置一个易识别的名称"
+              :placeholder="$t('accounts.form.name_placeholder')"
               required
               type="text"
             />
@@ -42,12 +42,12 @@
 
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >描述 (可选)</label
+              >{{ $t('label.description') }} ({{ $t('common.optional') }})</label
             >
             <textarea
               v-model="form.description"
               class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-              placeholder="账户用途说明..."
+              :placeholder="$t('accounts.form.description_placeholder')"
               rows="3"
             />
           </div>
@@ -61,7 +61,7 @@
                 v-model="form.apiUrl"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 :class="{ 'border-red-500': errors.apiUrl }"
-                placeholder="例如：https://api.example.com/v1/messages"
+                :placeholder="$t('accounts.form.api_url_placeholder')"
                 required
                 type="text"
               />
@@ -69,13 +69,17 @@
             </div>
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >API Key {{ isEdit ? '(留空不更新)' : '*' }}</label
+                >API Key {{ isEdit ? $t('accounts.form.api_key_edit_hint') : '*' }}</label
               >
               <input
                 v-model="form.apiKey"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 :class="{ 'border-red-500': errors.apiKey }"
-                :placeholder="isEdit ? '留空表示不更新' : '必填'"
+                :placeholder="
+                  isEdit
+                    ? $t('accounts.form.api_key_placeholder_edit')
+                    : $t('accounts.form.api_key_placeholder')
+                "
                 :required="!isEdit"
                 type="password"
               />
@@ -85,29 +89,29 @@
 
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >优先级</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                $t('label.priority')
+              }}</label>
               <input
                 v-model.number="form.priority"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 max="100"
                 min="1"
-                placeholder="默认50，数字越小优先级越高"
+                :placeholder="$t('accounts.form.priority_placeholder')"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                建议范围：1-100，数字越小优先级越高
+                {{ $t('accounts.form.priority_hint') }}
               </p>
             </div>
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >自定义 User-Agent (可选)</label
+                >{{ $t('accounts.form.user_agent') }} ({{ $t('common.optional') }})</label
               >
               <input
                 v-model="form.userAgent"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                placeholder="留空则透传客户端 User-Agent"
+                :placeholder="$t('accounts.form.user_agent_placeholder')"
                 type="text"
               />
             </div>
@@ -115,9 +119,9 @@
 
           <!-- 限流设置 -->
           <div>
-            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >限流机制</label
-            >
+            <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+              $t('accounts.form.rate_limit_mechanism')
+            }}</label>
             <div class="mb-3">
               <label class="inline-flex cursor-pointer items-center">
                 <input
@@ -125,24 +129,24 @@
                   class="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                   type="checkbox"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300"
-                  >启用限流机制（429 时暂停调度）</span
-                >
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{
+                  $t('accounts.form.enable_rate_limit')
+                }}</span>
               </label>
             </div>
             <div v-if="enableRateLimit">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >限流时间 (分钟)</label
+                >{{ $t('accounts.form.rate_limit_duration') }} ({{ $t('time.minutes') }})</label
               >
               <input
                 v-model.number="form.rateLimitDuration"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 min="1"
-                placeholder="默认60分钟"
+                :placeholder="$t('accounts.form.rate_limit_duration_placeholder')"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                账号被限流后暂停调度的时间（分钟）
+                {{ $t('accounts.form.rate_limit_duration_hint') }}
               </p>
             </div>
           </div>
@@ -151,43 +155,45 @@
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >每日额度限制 ($)</label
+                >{{ $t('accounts.form.daily_quota') }} ({{ $t('unit.usd') }})</label
               >
               <input
                 v-model.number="form.dailyQuota"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 min="0"
-                placeholder="0 表示不限制"
+                :placeholder="$t('accounts.form.zero_unlimited')"
                 step="0.01"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                设置每日使用额度，0 表示不限制
+                {{ $t('accounts.form.daily_quota_hint') }}
               </p>
             </div>
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >额度重置时间</label
-              >
+              <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
+                $t('accounts.form.quota_reset_time')
+              }}</label>
               <input
                 v-model="form.quotaResetTime"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 placeholder="00:00"
                 type="time"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">每日自动重置额度的时间</p>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {{ $t('accounts.form.quota_reset_time_hint') }}
+              </p>
             </div>
           </div>
 
           <!-- 模型映射表（可选） -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >模型映射表 (可选)</label
+              >{{ $t('accounts.form.model_mapping') }} ({{ $t('common.optional') }})</label
             >
             <div class="mb-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/30">
               <p class="text-xs text-blue-700 dark:text-blue-400">
                 <i class="fas fa-info-circle mr-1" />
-                留空表示支持所有模型且不修改请求。配置映射后，左侧模型会被识别为支持的模型，右侧是实际发送的模型。
+                {{ $t('accounts.form.model_mapping_hint') }}
               </p>
             </div>
             <div class="mb-3 space-y-2">
@@ -199,14 +205,14 @@
                 <input
                   v-model="mapping.from"
                   class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="原始模型名称"
+                  :placeholder="$t('accounts.form.model_mapping_from')"
                   type="text"
                 />
                 <i class="fas fa-arrow-right text-gray-400 dark:text-gray-500" />
                 <input
                   v-model="mapping.to"
                   class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="映射后的模型名称"
+                  :placeholder="$t('accounts.form.model_mapping_to')"
                   type="text"
                 />
                 <button
@@ -223,7 +229,7 @@
               type="button"
               @click="addModelMapping"
             >
-              <i class="fas fa-plus mr-2" /> 添加模型映射
+              <i class="fas fa-plus mr-2" /> {{ $t('accounts.form.add_model_mapping') }}
             </button>
           </div>
 
@@ -239,7 +245,7 @@
               type="button"
               @click="$emit('close')"
             >
-              取消
+              {{ $t('action.cancel') }}
             </button>
             <button
               class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -248,7 +254,15 @@
               @click="submit"
             >
               <div v-if="loading" class="loading-spinner mr-2" />
-              {{ loading ? (isEdit ? '保存中...' : '创建中...') : isEdit ? '保存' : '创建' }}
+              {{
+                loading
+                  ? isEdit
+                    ? $t('status.saving')
+                    : $t('status.creating')
+                  : isEdit
+                    ? $t('action.save')
+                    : $t('action.create')
+              }}
             </button>
           </div>
         </div>
@@ -315,10 +329,11 @@ const removeModelMapping = (index) => {
 
 const validate = () => {
   const e = {}
-  if (!form.value.name || form.value.name.trim().length === 0) e.name = '名称不能为空'
-  if (!form.value.apiUrl || form.value.apiUrl.trim().length === 0) e.apiUrl = 'API URL 不能为空'
+  if (!form.value.name || form.value.name.trim().length === 0) e.name = 'Name cannot be empty'
+  if (!form.value.apiUrl || form.value.apiUrl.trim().length === 0)
+    e.apiUrl = 'API URL cannot be empty'
   if (!isEdit.value && (!form.value.apiKey || form.value.apiKey.trim().length === 0))
-    e.apiKey = 'API Key 不能为空'
+    e.apiKey = 'API Key cannot be empty'
   errors.value = e
   return Object.keys(e).length === 0
 }

@@ -4,7 +4,53 @@
 
   "navigation": {
     "branding": "Branding Settings",
-    "webhook": "Notification Settings"
+    "webhook": "Notification Settings",
+    "claude": "Claude Configuration",
+    "routing": "Smart Routing"
+  },
+
+  "claude": {
+    "globalForcedModel": {
+      "label": "Global Forced Model Routing",
+      "description": "Rewrite target model for all requests",
+      "placeholder": "e.g.: ccr/glm-4.7 (leave empty to disable)",
+      "helpText": "All API Key requests without individual forced routing settings will be forced to route to this model."
+    },
+    "claudeCodeOnly": {
+      "title": "Allow Claude Code Client Only",
+      "description": "Once enabled, all /api/v1/messages and /claude/v1/messages endpoints will enforce Claude Code CLI client validation",
+      "hint": "This setting works in OR logic with API Key level client restrictions: if enabled globally OR in API Key settings, Claude Code validation will be enforced."
+    },
+    "sessionBinding": {
+      "title": "Force Session Binding",
+      "description": "Once enabled, the system will bind the original session ID to the account used for the first time, ensuring context consistency",
+      "ttlDays": "Binding Validity (days)",
+      "ttlHelp": "Validity period after session is bound to account, automatically unbound after expiration",
+      "errorMessage": "Stale Session Contamination Warning",
+      "errorHelp": "Warning message returned to client when a stale sessionId is detected without scheduling record in the system",
+      "howItWorks": "How it works:",
+      "howItWorksDesc": "The system extracts the original session ID from the request (metadata.user_id) and binds it to the first scheduled account. Subsequent requests with the same session ID will be automatically routed to the same account.",
+      "newSessionId": "New Session Identification:",
+      "newSessionIdDesc": "If the sessionId is not in the binding history but the request contains messages.length > 1, the system considers it a contaminated session and rejects the request."
+    },
+    "messageQueue": {
+      "title": "User Message Serial Queue",
+      "description": "Once enabled, user message requests for the same account will be executed serially with delays between requests to prevent triggering upstream rate limits",
+      "delay": "Request Interval (ms)",
+      "delayHelp": "Minimum interval time between user message requests for the same account (0-10000ms)",
+      "timeout": "Queue Timeout (ms)",
+      "timeoutHelp": "Maximum wait time for request in queue, returns 503 error on timeout (1000-300000ms)",
+      "howItWorks": "How it works:",
+      "howItWorksDesc": "The system detects if the role of the last message in the request is 'user'..."
+    }
+  },
+
+  "routing": {
+    "title": "Smart Routing Wizard",
+    "description": "Configure intelligent model redirection rules visually.",
+    "launch": "Launch Wizard",
+    "activeMappings": "Active Global Mappings",
+    "noMappings": "No global mappings configured."
   },
 
   "loading": {
@@ -127,6 +173,13 @@
         "delete": "Delete",
         "test": "Test Notification"
       }
+    },
+    "advanced": {
+      "title": "Advanced Settings",
+      "maxRetries": "Max Retries",
+      "retryDelay": "Retry Delay (ms)",
+      "timeout": "Timeout (ms)",
+      "sendTest": "Send Test Notification"
     }
   },
 

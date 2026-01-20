@@ -28,7 +28,9 @@ const DEFAULT_CONFIG = {
   concurrentRequestQueueMaxRedisFailCount: 5, // 连续 Redis 失败阈值（默认5次）
   // 排队健康检查配置
   concurrentRequestQueueHealthCheckEnabled: true, // 是否启用排队健康检查（默认开启）
-  concurrentRequestQueueHealthThreshold: 0.8, // 健康检查阈值（P90 >= 超时 × 阈值时拒绝新请求）
+  concurrentRequestQueueHealthThreshold: 0.8,
+  globalForcedModel: '',
+  globalModelMapping: {},
   updatedAt: null,
   updatedBy: null
 }

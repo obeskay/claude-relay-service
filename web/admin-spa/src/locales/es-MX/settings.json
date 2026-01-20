@@ -4,7 +4,53 @@
 
   "navigation": {
     "branding": "Configuración de Marca",
-    "webhook": "Configuración de Notificaciones"
+    "webhook": "Configuración de Notificaciones",
+    "claude": "Configuración de Claude",
+    "routing": "Enrutamiento Inteligente"
+  },
+
+  "claude": {
+    "globalForcedModel": {
+      "label": "Enrutamiento Forzado Global de Modelos",
+      "description": "Reescribir el modelo objetivo para todas las solicitudes",
+      "placeholder": "ej: ccr/glm-4.7 (dejar vacío para deshabilitar)",
+      "helpText": "Todas las solicitudes de API Key sin configuraciones de enrutamiento forzado individuales se forzarán a enrutarse a este modelo."
+    },
+    "claudeCodeOnly": {
+      "title": "Permitir Solo Cliente Claude Code",
+      "description": "Una vez habilitado, todos los endpoints /api/v1/messages y /claude/v1/messages aplicarán la validación del cliente Claude Code CLI",
+      "hint": "Esta configuración funciona en lógica OR con restricciones de cliente a nivel de API Key: si se habilita globalmente O en la configuración de API Key, se aplicará la validación de Claude Code."
+    },
+    "sessionBinding": {
+      "title": "Forzar Vinculación de Sesión",
+      "description": "Una vez habilitado, el sistema vinculará el ID de sesión original a la cuenta utilizada por primera vez, asegurando la coherencia del contexto",
+      "ttlDays": "Validez de Vinculación (días)",
+      "ttlHelp": "Período de validez después de que la sesión se vincula a la cuenta, se desvincula automáticamente después de la expiración",
+      "errorMessage": "Advertencia de Contaminación de Sesión Obsoleta",
+      "errorHelp": "Mensaje de advertencia devuelto al cliente cuando se detecta un sessionId obsoleto sin registro de programación en el sistema",
+      "howItWorks": "Cómo funciona:",
+      "howItWorksDesc": "El sistema extrae el ID de sesión original de la solicitud (metadata.user_id) y lo vincula a la primera cuenta programada. Las solicitudes posteriores con el mismo ID de sesión se enrutarán automáticamente a la misma cuenta.",
+      "newSessionId": "Identificación de Nueva Sesión:",
+      "newSessionIdDesc": "Si el sessionId no está en el historial de vinculación pero la solicitud contiene messages.length > 1, el sistema lo considera una sesión contaminada y rechaza la solicitud."
+    },
+    "messageQueue": {
+      "title": "Cola Serial de Mensajes de Usuario",
+      "description": "Una vez habilitado, las solicitudes de mensajes de usuario para la misma cuenta se ejecutarán en serie con retrasos entre solicitudes para evitar activar límites de velocidad ascendentes",
+      "delay": "Intervalo de Solicitud (ms)",
+      "delayHelp": "Tiempo mínimo de intervalo entre solicitudes de mensajes de usuario para la misma cuenta (0-10000ms)",
+      "timeout": "Tiempo de Espera de Cola (ms)",
+      "timeoutHelp": "Tiempo máximo de espera para la solicitud en la cola, devuelve error 503 al agotarse el tiempo (1000-300000ms)",
+      "howItWorks": "Cómo funciona:",
+      "howItWorksDesc": "El sistema detecta si el rol del último mensaje en la solicitud es 'user'..."
+    }
+  },
+
+  "routing": {
+    "title": "Asistente de Enrutamiento Inteligente",
+    "description": "Configure reglas de redirección de modelos inteligentes visualmente.",
+    "launch": "Iniciar Asistente",
+    "activeMappings": "Mapeos Globales Activos",
+    "noMappings": "No hay mapeos globales configurados."
   },
 
   "loading": {
@@ -140,6 +186,13 @@
         "cancel": "Cancelar",
         "requiredFields": "Campos Requeridos"
       }
+    },
+    "advanced": {
+      "title": "Configuración Avanzada",
+      "maxRetries": "Intentos Máximos",
+      "retryDelay": "Retraso de Reintento (ms)",
+      "timeout": "Tiempo de Espera (ms)",
+      "sendTest": "Enviar Notificación de Prueba"
     }
   },
 
