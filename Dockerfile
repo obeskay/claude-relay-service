@@ -1,6 +1,9 @@
 # 🎯 后端依赖阶段 (与前端构建并行)
 FROM node:20-alpine AS backend-deps
 
+# 🔧 安装编译依赖 (heapdump 需要 node-gyp)
+RUN apk add --no-cache python3 make g++
+
 # 📁 设置工作目录
 WORKDIR /app
 
@@ -9,7 +12,7 @@ COPY package*.json ./
 
 # 🔽 安装依赖 (生产环境) - 使用 BuildKit 缓存加速
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --only=production
+    npm ci --omit=dev
 
 # 🎯 前端构建阶段 (与后端依赖并行)
 FROM node:20-alpine AS frontend-builder
