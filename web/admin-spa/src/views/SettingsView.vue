@@ -726,7 +726,7 @@
 
         <div v-show="activeSection === 'routing'">
           <div class="rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80">
-            <div class="flex items-center justify-between mb-6">
+            <div class="mb-6 flex items-center justify-between">
               <div>
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   <i class="fas fa-magic mr-2 text-purple-500"></i>
@@ -736,425 +736,426 @@
                   Configure intelligent model redirection rules visually.
                 </p>
               </div>
-              <button 
-                @click="showRoutingWizard = true"
-                class="btn btn-primary px-4 py-2"
-              >
+              <button @click="showRoutingWizard = true" class="btn btn-primary px-4 py-2">
                 Launch Wizard
               </button>
             </div>
 
             <!-- Current Mappings Display -->
             <div class="space-y-4">
-              <h3 class="text-md font-medium text-gray-700 dark:text-gray-300">Active Global Mappings</h3>
-              <div v-if="Object.keys(claudeConfig.globalModelMapping || {}).length > 0" class="grid gap-3">
-                <div 
-                  v-for="(target, source) in claudeConfig.globalModelMapping" 
+              <h3 class="text-md font-medium text-gray-700 dark:text-gray-300">
+                Active Global Mappings
+              </h3>
+              <div
+                v-if="Object.keys(claudeConfig.globalModelMapping || {}).length > 0"
+                class="grid gap-3"
+              >
+                <div
+                  v-for="(target, source) in claudeConfig.globalModelMapping"
                   :key="source"
-                  class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                  class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700"
                 >
                   <div class="flex items-center gap-3">
-                    <span class="font-mono text-sm text-blue-600 dark:text-blue-400">{{ source }}</span>
-                    <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
-                    <span class="font-mono text-sm text-green-600 dark:text-green-400">{{ target }}</span>
+                    <span class="font-mono text-sm text-blue-600 dark:text-blue-400">{{
+                      source
+                    }}</span>
+                    <i class="fas fa-arrow-right text-xs text-gray-400"></i>
+                    <span class="font-mono text-sm text-green-600 dark:text-green-400">{{
+                      target
+                    }}</span>
                   </div>
-                  <button 
+                  <button
                     @click="removeGlobalMapping(source)"
-                    class="text-red-500 hover:text-red-700 transition-colors"
+                    class="text-red-500 transition-colors hover:text-red-700"
                   >
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
               </div>
-              <div v-else class="text-sm text-gray-500 italic">No global mappings configured.</div>
+              <div v-else class="text-sm italic text-gray-500">No global mappings configured.</div>
             </div>
           </div>
         </div>
 
-        <SmartRoutingWizard 
-          v-if="showRoutingWizard" 
+        <SmartRoutingWizard
+          v-if="showRoutingWizard"
           @close="showRoutingWizard = false"
           @success="handleWizardSuccess"
         />
-          <!-- 加载状态 -->
-          <div v-if="claudeConfigLoading" class="py-12 text-center">
-            <div class="loading-spinner mx-auto mb-4"></div>
-            <p class="text-gray-500 dark:text-gray-400">正在加载配置...</p>
-          </div>
+        <!-- 加载状态 -->
+        <div v-if="claudeConfigLoading" class="py-12 text-center">
+          <div class="loading-spinner mx-auto mb-4"></div>
+          <p class="text-gray-500 dark:text-gray-400">正在加载配置...</p>
+        </div>
 
-          <div v-else>
-            <!-- Claude Code 客户端限制 -->
-            <div
-              class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="flex items-center">
-                    <div
-                      class="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg"
-                    >
-                      <i class="fas fa-terminal"></i>
-                    </div>
-                    <div>
-                      <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                        仅允许 Claude Code 客户端
-                      </h2>
-                      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        启用后，所有
-                        <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
-                          >/api/v1/messages</code
-                        >
-                        和
-                        <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
-                          >/claude/v1/messages</code
-                        >
-                        端点将强制验证 Claude Code CLI 客户端
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <label class="relative inline-flex cursor-pointer items-center">
-                  <input
-                    v-model="claudeConfig.claudeCodeOnlyEnabled"
-                    class="peer sr-only"
-                    type="checkbox"
-                    @change="saveClaudeConfig"
-                  />
-                  <div
-                    class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-orange-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-orange-800"
-                  ></div>
-                </label>
-              </div>
-              <div class="mt-4 rounded-lg bg-amber-50 p-4 dark:bg-amber-900/20">
-                <div class="flex">
-                  <i class="fas fa-info-circle mt-0.5 text-amber-500"></i>
-                  <div class="ml-3">
-                    <p class="text-sm text-amber-700 dark:text-amber-300">
-                      此设置与 API Key 级别的客户端限制是 <strong>OR 逻辑</strong>：全局启用或 API
-                      Key 设置中启用，都会执行 Claude Code 验证。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 全局会话绑定 -->
-            <div
-              class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="flex items-center">
-                    <div
-                      class="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg"
-                    >
-                      <i class="fas fa-link"></i>
-                    </div>
-                    <div>
-                      <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                        强制会话绑定
-                      </h2>
-                      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        启用后，系统会将原始会话 ID 绑定到首次使用的账户，确保上下文的一致性
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <label class="relative inline-flex cursor-pointer items-center">
-                  <input
-                    v-model="claudeConfig.globalSessionBindingEnabled"
-                    class="peer sr-only"
-                    type="checkbox"
-                    @change="saveClaudeConfig"
-                  />
-                  <div
-                    class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-purple-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-purple-800"
-                  ></div>
-                </label>
-              </div>
-
-              <!-- 绑定配置详情（仅在启用时显示） -->
-              <div v-if="claudeConfig.globalSessionBindingEnabled" class="mt-6 space-y-4">
-                <!-- 绑定有效期 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-clock mr-2 text-gray-400"></i>
-                    绑定有效期（天）
-                  </label>
-                  <input
-                    v-model.number="claudeConfig.sessionBindingTtlDays"
-                    class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    max="365"
-                    min="1"
-                    placeholder="30"
-                    type="number"
-                    @change="saveClaudeConfig"
-                  />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    会话绑定到账户后的有效时间，过期后会自动解除绑定
-                  </p>
-                </div>
-
-                <!-- 错误提示消息 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-exclamation-triangle mr-2 text-gray-400"></i>
-                    旧会话污染提示
-                  </label>
-                  <textarea
-                    v-model="claudeConfig.sessionBindingErrorMessage"
-                    class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    placeholder="你的本地session已污染，请清理后使用。"
-                    rows="2"
-                    @change="saveClaudeConfig"
-                  ></textarea>
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    当检测到为旧的sessionId且未在系统中有调度记录时提示，返回给客户端的错误消息
-                  </p>
-                </div>
-              </div>
-
-              <div class="mt-4 rounded-lg bg-purple-50 p-4 dark:bg-purple-900/20">
-                <div class="flex">
-                  <i class="fas fa-lightbulb mt-0.5 text-purple-500"></i>
-                  <div class="ml-3">
-                    <p class="text-sm text-purple-700 dark:text-purple-300">
-                      <strong>工作原理：</strong>系统会提取请求中的原始 session ID （来自
-                      <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
-                        >metadata.user_id</code
-                      >）， 并将其与首次调度的账户绑定。后续使用相同 session ID
-                      的请求将自动路由到同一账户。
-                    </p>
-                    <p class="mt-2 text-sm text-purple-700 dark:text-purple-300">
-                      <strong>新会话识别：</strong>如果绑定会话历史中没有该sessionId但请求中
-                      <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
-                        >messages.length > 1</code
-                      >， 系统会认为这是一个污染的会话并拒绝请求。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 用户消息串行队列 -->
-            <div
-              class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
-            >
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="flex items-center">
-                    <div
-                      class="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 text-white shadow-lg"
-                    >
-                      <i class="fas fa-list-ol"></i>
-                    </div>
-                    <div>
-                      <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                        用户消息串行队列
-                      </h2>
-                      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        启用后，同一账户的用户消息请求将串行执行，并在请求之间添加延迟，防止触发上游限流
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <label class="relative inline-flex cursor-pointer items-center">
-                  <input
-                    v-model="claudeConfig.userMessageQueueEnabled"
-                    class="peer sr-only"
-                    type="checkbox"
-                    @change="saveClaudeConfig"
-                  />
-                  <div
-                    class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-teal-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-teal-800"
-                  ></div>
-                </label>
-              </div>
-
-              <!-- 队列配置详情（仅在启用时显示） -->
-              <div v-if="claudeConfig.userMessageQueueEnabled" class="mt-6 space-y-4">
-                <!-- 请求间隔 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-hourglass-half mr-2 text-gray-400"></i>
-                    请求间隔（毫秒）
-                  </label>
-                  <input
-                    v-model.number="claudeConfig.userMessageQueueDelayMs"
-                    class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    max="10000"
-                    min="0"
-                    placeholder="200"
-                    type="number"
-                    @change="saveClaudeConfig"
-                  />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    同一账户的用户消息请求之间的最小间隔时间（0-10000毫秒）
-                  </p>
-                </div>
-
-                <!-- 队列超时 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-stopwatch mr-2 text-gray-400"></i>
-                    队列超时（毫秒）
-                  </label>
-                  <input
-                    v-model.number="claudeConfig.userMessageQueueTimeoutMs"
-                    class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    max="300000"
-                    min="1000"
-                    placeholder="30000"
-                    type="number"
-                    @change="saveClaudeConfig"
-                  />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    请求在队列中等待的最大时间，超时将返回 503 错误（1000-300000毫秒）
-                  </p>
-                </div>
-              </div>
-
-              <div class="mt-4 rounded-lg bg-teal-50 p-4 dark:bg-teal-900/20">
-                <div class="flex">
-                  <i class="fas fa-info-circle mt-0.5 text-teal-500"></i>
-                  <div class="ml-3">
-                    <p class="text-sm text-teal-700 dark:text-teal-300">
-                      <strong>工作原理：</strong>系统检测请求中最后一条消息的
-                      <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">role</code>
-                      是否为
-                      <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">user</code
-                      >。用户消息请求需要排队串行执行，而工具调用结果、助手消息续传等不受此限制。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 并发请求排队 -->
-            <div
-              class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
-            >
-              <div class="flex items-center justify-between">
+        <div v-else>
+          <!-- Claude Code 客户端限制 -->
+          <div
+            class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
+          >
+            <div class="flex items-center justify-between">
+              <div>
                 <div class="flex items-center">
                   <div
-                    class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg"
+                    class="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-lg"
                   >
-                    <i class="fas fa-layer-group text-xl"></i>
+                    <i class="fas fa-terminal"></i>
                   </div>
-                  <div class="ml-4">
-                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white">
-                      并发请求排队
-                    </h4>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                      当 API Key 并发请求超限时进入队列等待，而非直接拒绝
-                    </p>
-                  </div>
-                </div>
-                <label class="relative inline-flex cursor-pointer items-center">
-                  <input
-                    v-model="claudeConfig.concurrentRequestQueueEnabled"
-                    class="peer sr-only"
-                    type="checkbox"
-                    @change="saveClaudeConfig"
-                  />
-                  <div
-                    class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
-                  ></div>
-                </label>
-              </div>
-
-              <!-- 排队配置详情（仅在启用时显示） -->
-              <div v-if="claudeConfig.concurrentRequestQueueEnabled" class="mt-6 space-y-4">
-                <!-- 固定最小排队数 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-list-ol mr-2 text-gray-400"></i>
-                    固定最小排队数
-                  </label>
-                  <input
-                    v-model.number="claudeConfig.concurrentRequestQueueMaxSize"
-                    class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    max="100"
-                    min="1"
-                    placeholder="3"
-                    type="number"
-                    @change="saveClaudeConfig"
-                  />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    最大排队数的固定最小值（1-100）
-                  </p>
-                </div>
-
-                <!-- 排队数倍数 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-times mr-2 text-gray-400"></i>
-                    排队数倍数
-                  </label>
-                  <input
-                    v-model.number="claudeConfig.concurrentRequestQueueMaxSizeMultiplier"
-                    class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    max="10"
-                    min="0"
-                    placeholder="1"
-                    step="0.5"
-                    type="number"
-                    @change="saveClaudeConfig"
-                  />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    最大排队数 = MAX(倍数 × 并发限制, 固定值)，设为 0 则仅使用固定值
-                  </p>
-                </div>
-
-                <!-- 排队超时时间 -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <i class="fas fa-stopwatch mr-2 text-gray-400"></i>
-                    排队超时时间（毫秒）
-                  </label>
-                  <input
-                    v-model.number="claudeConfig.concurrentRequestQueueTimeoutMs"
-                    class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                    max="300000"
-                    min="5000"
-                    placeholder="10000"
-                    type="number"
-                    @change="saveClaudeConfig"
-                  />
-                  <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    请求在排队中等待的最大时间，超时将返回 429 错误（5秒-5分钟，默认10秒）
-                  </p>
-                </div>
-              </div>
-
-              <div class="mt-4 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
-                <div class="flex">
-                  <i class="fas fa-info-circle mt-0.5 text-blue-500"></i>
-                  <div class="ml-3">
-                    <p class="text-sm text-blue-700 dark:text-blue-300">
-                      <strong>工作原理：</strong>当 API Key 的并发请求超过
-                      <code class="rounded bg-blue-100 px-1 dark:bg-blue-800"
-                        >concurrencyLimit</code
+                  <div>
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      仅允许 Claude Code 客户端
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      启用后，所有
+                      <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
+                        >/api/v1/messages</code
                       >
-                      时，超限请求会进入队列等待而非直接返回 429。适合 Claude Code Agent
-                      并行工具调用场景。
+                      和
+                      <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
+                        >/claude/v1/messages</code
+                      >
+                      端点将强制验证 Claude Code CLI 客户端
                     </p>
                   </div>
                 </div>
               </div>
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="claudeConfig.claudeCodeOnlyEnabled"
+                  class="peer sr-only"
+                  type="checkbox"
+                  @change="saveClaudeConfig"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-orange-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-orange-800"
+                ></div>
+              </label>
+            </div>
+            <div class="mt-4 rounded-lg bg-amber-50 p-4 dark:bg-amber-900/20">
+              <div class="flex">
+                <i class="fas fa-info-circle mt-0.5 text-amber-500"></i>
+                <div class="ml-3">
+                  <p class="text-sm text-amber-700 dark:text-amber-300">
+                    此设置与 API Key 级别的客户端限制是 <strong>OR 逻辑</strong>：全局启用或 API Key
+                    设置中启用，都会执行 Claude Code 验证。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 全局会话绑定 -->
+          <div
+            class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="flex items-center">
+                  <div
+                    class="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg"
+                  >
+                    <i class="fas fa-link"></i>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      强制会话绑定
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      启用后，系统会将原始会话 ID 绑定到首次使用的账户，确保上下文的一致性
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="claudeConfig.globalSessionBindingEnabled"
+                  class="peer sr-only"
+                  type="checkbox"
+                  @change="saveClaudeConfig"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-purple-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-purple-800"
+                ></div>
+              </label>
             </div>
 
-            <!-- 配置更新信息 -->
-            <div
-              v-if="claudeConfig.updatedAt"
-              class="rounded-lg bg-gray-50 p-4 text-sm text-gray-500 dark:bg-gray-700/50 dark:text-gray-400"
-            >
-              <i class="fas fa-history mr-2"></i>
-              最后更新：{{ formatDateTime(claudeConfig.updatedAt) }}
-              <span v-if="claudeConfig.updatedBy" class="ml-2">
-                由 <strong>{{ claudeConfig.updatedBy }}</strong> 修改
-              </span>
+            <!-- 绑定配置详情（仅在启用时显示） -->
+            <div v-if="claudeConfig.globalSessionBindingEnabled" class="mt-6 space-y-4">
+              <!-- 绑定有效期 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-clock mr-2 text-gray-400"></i>
+                  绑定有效期（天）
+                </label>
+                <input
+                  v-model.number="claudeConfig.sessionBindingTtlDays"
+                  class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  max="365"
+                  min="1"
+                  placeholder="30"
+                  type="number"
+                  @change="saveClaudeConfig"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  会话绑定到账户后的有效时间，过期后会自动解除绑定
+                </p>
+              </div>
+
+              <!-- 错误提示消息 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-exclamation-triangle mr-2 text-gray-400"></i>
+                  旧会话污染提示
+                </label>
+                <textarea
+                  v-model="claudeConfig.sessionBindingErrorMessage"
+                  class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  placeholder="你的本地session已污染，请清理后使用。"
+                  rows="2"
+                  @change="saveClaudeConfig"
+                ></textarea>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  当检测到为旧的sessionId且未在系统中有调度记录时提示，返回给客户端的错误消息
+                </p>
+              </div>
             </div>
+
+            <div class="mt-4 rounded-lg bg-purple-50 p-4 dark:bg-purple-900/20">
+              <div class="flex">
+                <i class="fas fa-lightbulb mt-0.5 text-purple-500"></i>
+                <div class="ml-3">
+                  <p class="text-sm text-purple-700 dark:text-purple-300">
+                    <strong>工作原理：</strong>系统会提取请求中的原始 session ID （来自
+                    <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
+                      >metadata.user_id</code
+                    >）， 并将其与首次调度的账户绑定。后续使用相同 session ID
+                    的请求将自动路由到同一账户。
+                  </p>
+                  <p class="mt-2 text-sm text-purple-700 dark:text-purple-300">
+                    <strong>新会话识别：</strong>如果绑定会话历史中没有该sessionId但请求中
+                    <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
+                      >messages.length > 1</code
+                    >， 系统会认为这是一个污染的会话并拒绝请求。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 用户消息串行队列 -->
+          <div
+            class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="flex items-center">
+                  <div
+                    class="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 text-white shadow-lg"
+                  >
+                    <i class="fas fa-list-ol"></i>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      用户消息串行队列
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      启用后，同一账户的用户消息请求将串行执行，并在请求之间添加延迟，防止触发上游限流
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="claudeConfig.userMessageQueueEnabled"
+                  class="peer sr-only"
+                  type="checkbox"
+                  @change="saveClaudeConfig"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-teal-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-teal-800"
+                ></div>
+              </label>
+            </div>
+
+            <!-- 队列配置详情（仅在启用时显示） -->
+            <div v-if="claudeConfig.userMessageQueueEnabled" class="mt-6 space-y-4">
+              <!-- 请求间隔 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-hourglass-half mr-2 text-gray-400"></i>
+                  请求间隔（毫秒）
+                </label>
+                <input
+                  v-model.number="claudeConfig.userMessageQueueDelayMs"
+                  class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  max="10000"
+                  min="0"
+                  placeholder="200"
+                  type="number"
+                  @change="saveClaudeConfig"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  同一账户的用户消息请求之间的最小间隔时间（0-10000毫秒）
+                </p>
+              </div>
+
+              <!-- 队列超时 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-stopwatch mr-2 text-gray-400"></i>
+                  队列超时（毫秒）
+                </label>
+                <input
+                  v-model.number="claudeConfig.userMessageQueueTimeoutMs"
+                  class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  max="300000"
+                  min="1000"
+                  placeholder="30000"
+                  type="number"
+                  @change="saveClaudeConfig"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  请求在队列中等待的最大时间，超时将返回 503 错误（1000-300000毫秒）
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-lg bg-teal-50 p-4 dark:bg-teal-900/20">
+              <div class="flex">
+                <i class="fas fa-info-circle mt-0.5 text-teal-500"></i>
+                <div class="ml-3">
+                  <p class="text-sm text-teal-700 dark:text-teal-300">
+                    <strong>工作原理：</strong>系统检测请求中最后一条消息的
+                    <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">role</code>
+                    是否为
+                    <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">user</code
+                    >。用户消息请求需要排队串行执行，而工具调用结果、助手消息续传等不受此限制。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 并发请求排队 -->
+          <div
+            class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div
+                  class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg"
+                >
+                  <i class="fas fa-layer-group text-xl"></i>
+                </div>
+                <div class="ml-4">
+                  <h4 class="text-lg font-semibold text-gray-900 dark:text-white">并发请求排队</h4>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    当 API Key 并发请求超限时进入队列等待，而非直接拒绝
+                  </p>
+                </div>
+              </div>
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input
+                  v-model="claudeConfig.concurrentRequestQueueEnabled"
+                  class="peer sr-only"
+                  type="checkbox"
+                  @change="saveClaudeConfig"
+                />
+                <div
+                  class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
+                ></div>
+              </label>
+            </div>
+
+            <!-- 排队配置详情（仅在启用时显示） -->
+            <div v-if="claudeConfig.concurrentRequestQueueEnabled" class="mt-6 space-y-4">
+              <!-- 固定最小排队数 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-list-ol mr-2 text-gray-400"></i>
+                  固定最小排队数
+                </label>
+                <input
+                  v-model.number="claudeConfig.concurrentRequestQueueMaxSize"
+                  class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  max="100"
+                  min="1"
+                  placeholder="3"
+                  type="number"
+                  @change="saveClaudeConfig"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  最大排队数的固定最小值（1-100）
+                </p>
+              </div>
+
+              <!-- 排队数倍数 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-times mr-2 text-gray-400"></i>
+                  排队数倍数
+                </label>
+                <input
+                  v-model.number="claudeConfig.concurrentRequestQueueMaxSizeMultiplier"
+                  class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  max="10"
+                  min="0"
+                  placeholder="1"
+                  step="0.5"
+                  type="number"
+                  @change="saveClaudeConfig"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  最大排队数 = MAX(倍数 × 并发限制, 固定值)，设为 0 则仅使用固定值
+                </p>
+              </div>
+
+              <!-- 排队超时时间 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <i class="fas fa-stopwatch mr-2 text-gray-400"></i>
+                  排队超时时间（毫秒）
+                </label>
+                <input
+                  v-model.number="claudeConfig.concurrentRequestQueueTimeoutMs"
+                  class="mt-1 block w-full max-w-xs rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  max="300000"
+                  min="5000"
+                  placeholder="10000"
+                  type="number"
+                  @change="saveClaudeConfig"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  请求在排队中等待的最大时间，超时将返回 429 错误（5秒-5分钟，默认10秒）
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+              <div class="flex">
+                <i class="fas fa-info-circle mt-0.5 text-blue-500"></i>
+                <div class="ml-3">
+                  <p class="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>工作原理：</strong>当 API Key 的并发请求超过
+                    <code class="rounded bg-blue-100 px-1 dark:bg-blue-800">concurrencyLimit</code>
+                    时，超限请求会进入队列等待而非直接返回 429。适合 Claude Code Agent
+                    并行工具调用场景。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 配置更新信息 -->
+          <div
+            v-if="claudeConfig.updatedAt"
+            class="rounded-lg bg-gray-50 p-4 text-sm text-gray-500 dark:bg-gray-700/50 dark:text-gray-400"
+          >
+            <i class="fas fa-history mr-2"></i>
+            最后更新：{{ formatDateTime(claudeConfig.updatedAt) }}
+            <span v-if="claudeConfig.updatedBy" class="ml-2">
+              由 <strong>{{ claudeConfig.updatedBy }}</strong> 修改
+            </span>
           </div>
         </div>
       </div>
