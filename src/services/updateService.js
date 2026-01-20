@@ -33,7 +33,12 @@ class UpdateService {
       const status = await this.checkGitHub()
 
       if (client) {
-        await client.set(UPDATE_STATUS_CACHE_KEY, JSON.stringify(status), 'PX', UPDATE_CHECK_INTERVAL_MS)
+        await client.set(
+          UPDATE_STATUS_CACHE_KEY,
+          JSON.stringify(status),
+          'PX',
+          UPDATE_CHECK_INTERVAL_MS
+        )
       }
 
       return status
@@ -50,10 +55,9 @@ class UpdateService {
   async checkGitHub() {
     try {
       const repo = getConfiguredRepo()
-      const response = await axios.get(
-        `https://api.github.com/repos/${repo}/releases/latest`,
-        { timeout: 5000 }
-      )
+      const response = await axios.get(`https://api.github.com/repos/${repo}/releases/latest`, {
+        timeout: 5000
+      })
 
       const latestVersion = response.data.tag_name.replace(/^v/, '')
       const hasUpdate = this.compareVersions(latestVersion, this.currentVersion)
@@ -84,8 +88,12 @@ class UpdateService {
     for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
       const n1 = p1[i] || 0
       const n2 = p2[i] || 0
-      if (n1 > n2) return true
-      if (n1 < n2) return false
+      if (n1 > n2) {
+        return true
+      }
+      if (n1 < n2) {
+        return false
+      }
     }
     return false
   }

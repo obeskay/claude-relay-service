@@ -26,7 +26,7 @@ const pg = new Pool({
 })
 
 // ENCRYPTION_KEY from current system (for OAuth token decryption)
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY
+const { ENCRYPTION_KEY } = process.env
 
 /**
  * AES-256-CBC decryption (from claude-relay-service utils)
@@ -82,7 +82,9 @@ async function migrateAPIKeys() {
     const hash = hashKey.replace('api_key_hash:', '')
     const keyId = await redis.client.get(hashKey)
 
-    if (!keyId) continue
+    if (!keyId) {
+      continue
+    }
 
     // Get full API key data
     const keyData = await redis.hgetall(`api_key:${keyId}`)

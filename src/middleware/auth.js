@@ -509,7 +509,7 @@ const authenticateApiKey = async (req, res, next) => {
       } else {
         for (const pattern in modelMapping) {
           if (pattern.includes('*')) {
-            const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
+            const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`)
             if (regex.test(originalModel)) {
               targetModel = modelMapping[pattern]
               break
@@ -540,7 +540,7 @@ const authenticateApiKey = async (req, res, next) => {
       else {
         for (const pattern in modelMapping) {
           if (pattern.includes('*')) {
-            const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
+            const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`)
             if (regex.test(originalModel)) {
               targetModel = modelMapping[pattern]
               break
