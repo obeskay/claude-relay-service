@@ -142,7 +142,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import { apiClient } from '@/services/api' // Assuming this exists
 
 const scope = ref('global')
 const sourceModel = ref('*')

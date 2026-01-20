@@ -718,12 +718,6 @@
           </div>
         </div>
 
-        <!-- Claude 转发配置部分 -->
-        <div v-show="activeSection === 'claude'">
-          <!-- ... existing claude config ... -->
-          <!-- Smart Routing Wizard 部分 -->
-        </div>
-
         <div v-show="activeSection === 'routing'">
           <div class="rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80">
             <div class="flex items-center justify-between mb-6">
@@ -769,13 +763,15 @@
               <div v-else class="text-sm text-gray-500 italic">No global mappings configured.</div>
             </div>
           </div>
+
+          <SmartRoutingWizard
+            v-if="showRoutingWizard"
+            @close="showRoutingWizard = false"
+            @success="handleWizardSuccess"
+          />
         </div>
 
-        <SmartRoutingWizard 
-          v-if="showRoutingWizard" 
-          @close="showRoutingWizard = false"
-          @success="handleWizardSuccess"
-        />
+        <div v-show="activeSection === 'claude'">
           <!-- 加载状态 -->
           <div v-if="claudeConfigLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
@@ -801,13 +797,9 @@
                       </h2>
                       <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                         启用后，所有
-                        <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
-                          >/api/v1/messages</code
-                        >
+                        <code class="rounded bg-gray-100 px-1 dark:bg-gray-700">/api/v1/messages</code>
                         和
-                        <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
-                          >/claude/v1/messages</code
-                        >
+                        <code class="rounded bg-gray-100 px-1 dark:bg-gray-700">/claude/v1/messages</code>
                         端点将强制验证 Claude Code CLI 客户端
                       </p>
                     </div>
@@ -920,16 +912,14 @@
                   <div class="ml-3">
                     <p class="text-sm text-purple-700 dark:text-purple-300">
                       <strong>工作原理：</strong>系统会提取请求中的原始 session ID （来自
-                      <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
-                        >metadata.user_id</code
-                      >）， 并将其与首次调度的账户绑定。后续使用相同 session ID
+                       <code class="rounded bg-purple-100 px-1 dark:bg-purple-800">metadata.user_id</code>），
+                       并将其与首次调度的账户绑定。后续使用相同 session ID
                       的请求将自动路由到同一账户。
                     </p>
                     <p class="mt-2 text-sm text-purple-700 dark:text-purple-300">
                       <strong>新会话识别：</strong>如果绑定会话历史中没有该sessionId但请求中
-                      <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
-                        >messages.length > 1</code
-                      >， 系统会认为这是一个污染的会话并拒绝请求。
+                       <code class="rounded bg-purple-100 px-1 dark:bg-purple-800">messages.length > 1</code>，
+                       系统会认为这是一个污染的会话并拒绝请求。
                     </p>
                   </div>
                 </div>
@@ -1022,8 +1012,8 @@
                       <strong>工作原理：</strong>系统检测请求中最后一条消息的
                       <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">role</code>
                       是否为
-                      <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">user</code
-                      >。用户消息请求需要排队串行执行，而工具调用结果、助手消息续传等不受此限制。
+                      <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">user</code>。
+                      用户消息请求需要排队串行执行，而工具调用结果、助手消息续传等不受此限制。
                     </p>
                   </div>
                 </div>
@@ -1133,9 +1123,7 @@
                   <div class="ml-3">
                     <p class="text-sm text-blue-700 dark:text-blue-300">
                       <strong>工作原理：</strong>当 API Key 的并发请求超过
-                      <code class="rounded bg-blue-100 px-1 dark:bg-blue-800"
-                        >concurrencyLimit</code
-                      >
+                      <code class="rounded bg-blue-100 px-1 dark:bg-blue-800">concurrencyLimit</code>
                       时，超限请求会进入队列等待而非直接返回 429。适合 Claude Code Agent
                       并行工具调用场景。
                     </p>
