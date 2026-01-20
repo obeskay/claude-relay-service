@@ -196,6 +196,16 @@ class Application {
         this.app.set('trust proxy', 1)
       }
 
+      // 🆕 全局路径规范化中间件：处理重复的 /v1/v1 路径
+      this.app.use((req, res, next) => {
+        if (req.url.includes('/v1/v1/')) {
+          const oldUrl = req.url
+          req.url = req.url.replace('/v1/v1/', '/v1/')
+          logger.api(`🔧 Global path normalized (v1 duplication): ${oldUrl} -> ${req.url}`)
+        }
+        next()
+      })
+
       // 调试中间件 - 拦截所有 /admin-next 请求
       this.app.use((req, res, next) => {
         if (req.path.startsWith('/admin-next')) {

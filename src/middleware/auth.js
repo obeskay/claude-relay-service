@@ -204,7 +204,12 @@ function normalizeRequestPath(value) {
   if (!value) {
     return '/'
   }
-  const lower = value.split('?')[0].toLowerCase()
+  let lower = value.split('?')[0].toLowerCase()
+  // 🆕 处理重复的 /v1/v1 路径（可能是客户端 BaseURL 配置错误导致）
+  if (lower.includes('/v1/v1/')) {
+    lower = lower.replace('/v1/v1/', '/v1/')
+    logger.api(`🔧 Path normalized (v1 duplication): ${value.split('?')[0]} -> ${lower}`)
+  }
   const collapsed = lower.replace(/\/{2,}/g, '/')
   if (collapsed.length > 1 && collapsed.endsWith('/')) {
     return collapsed.slice(0, -1)

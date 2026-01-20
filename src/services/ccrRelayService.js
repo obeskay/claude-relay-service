@@ -143,16 +143,36 @@ class CcrRelayService {
       }
 
       // 构建完整的API URL
+      // 构建完整的API URL
       const cleanUrl = account.apiUrl.replace(/\/$/, '') // 移除末尾斜杠
       let apiEndpoint
 
       if (options.customPath) {
-        // 如果指定了自定义路径（如 count_tokens），使用它
-        const baseUrl = cleanUrl.replace(/\/v1\/messages$/, '') // 移除已有的 /v1/messages
-        apiEndpoint = `${baseUrl}${options.customPath}`
+        // 如果指定了自定义路径（如 /v1/messages/count_tokens）
+        // 尝试从 cleanUrl 中提取 base URL
+        let baseUrl = cleanUrl
+        
+        // 1. 如果配置的是完整路径 .../v1/messages，去掉 /v1/messages
+        if (baseUrl.endsWith('/v1/messages')) {
+             baseUrl = baseUrl.substring(0, baseUrl.length - '/v1/messages'.length)
+        } 
+        // 2. 如果配置的是 .../v1，去掉 /v1
+        else if (baseUrl.endsWith('/v1')) {
+             baseUrl = baseUrl.substring(0, baseUrl.length - '/v1'.length)
+        }
+
+        // 确保 customPath 以 / 开头
+        const path = options.customPath.startsWith('/') ? options.customPath : `/${options.customPath}`
+        apiEndpoint = `${baseUrl}${path}`
       } else {
         // 默认使用 messages 端点
-        apiEndpoint = cleanUrl.endsWith('/v1/messages') ? cleanUrl : `${cleanUrl}/v1/messages`
+        if (cleanUrl.endsWith('/v1/messages')) {
+            apiEndpoint = cleanUrl
+        } else if (cleanUrl.endsWith('/v1')) {
+            apiEndpoint = `${cleanUrl}/messages`
+        } else {
+            apiEndpoint = `${cleanUrl}/v1/messages`
+        }
       }
 
       logger.debug(`🎯 Final API endpoint: ${apiEndpoint}`)
