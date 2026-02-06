@@ -6,25 +6,23 @@
           class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
           @click="goBack"
         >
-          ← {{ t('common.back') }}
+          ← 返回
         </button>
         <div>
           <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
-            {{ t('accounts.timeline_title') }}
+            账户请求详情时间线
           </p>
           <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
             {{ accountDisplayName }}
           </h2>
           <p class="text-xs text-gray-500 dark:text-gray-400">ID: {{ accountId }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">
-            {{ t('accounts.channel') }}: {{ platformDisplayName }}
-          </p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">渠道：{{ platformDisplayName }}</p>
         </div>
       </div>
       <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
         <i class="fas fa-clock text-blue-500" />
         <span v-if="dateRangeHint">{{ dateRangeHint }}</span>
-        <span v-else>{{ t('accounts.show_records', { count: 5000 }) }}</span>
+        <span v-else>显示近 5000 条记录</span>
       </div>
     </div>
 
@@ -32,9 +30,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">
-          {{ t('accounts.field.total_requests') }}
-        </p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">总请求</p>
         <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
           {{ formatNumber(summary.totalRequests) }}
         </p>
@@ -42,9 +38,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">
-          {{ t('accounts.field.total_tokens') }}
-        </p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">总 Token</p>
         <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
           {{ formatNumber(summary.totalTokens) }}
         </p>
@@ -52,9 +46,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">
-          {{ t('accounts.field.total_cost') }}
-        </p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">总费用</p>
         <p class="mt-1 text-2xl font-bold text-yellow-600 dark:text-yellow-400">
           {{ formatCost(summary.totalCost) }}
         </p>
@@ -309,15 +301,13 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { apiClient } from '@/config/api'
-import { showToast } from '@/utils/toast'
-import { formatNumber } from '@/utils/format'
+import { getAccountUsageRecordsByIdApi } from '@/utils/http_apis'
+import { showToast, formatNumber, formatDate } from '@/utils/tools'
 import RecordDetailModal from '@/components/apikeys/RecordDetailModal.vue'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+
 const accountId = computed(() => route.params.accountId)
 const platform = computed(() => route.query.platform)
 const loading = ref(false)
@@ -376,11 +366,6 @@ const dateRangeHint = computed(() => {
   if (!filters.dateRange || filters.dateRange.length !== 2) return ''
   return `${formatDate(filters.dateRange[0])} ~ ${formatDate(filters.dateRange[1])}`
 })
-
-const formatDate = (value) => {
-  if (!value) return '--'
-  return dayjs(value).format('YYYY-MM-DD HH:mm:ss')
-}
 
 const formatCost = (value) => {
   const num = typeof value === 'number' ? value : 0
@@ -446,9 +431,7 @@ const syncResponseState = (data) => {
 const fetchRecords = async (page = pagination.currentPage) => {
   loading.value = true
   try {
-    const response = await apiClient.get(`/admin/accounts/${accountId.value}/usage-records`, {
-      params: buildParams(page)
-    })
+    const response = await getAccountUsageRecordsByIdApi(accountId.value, buildParams(page))
     syncResponseState(response.data || {})
   } catch (error) {
     showToast(`加载请求记录失败：${error.message || '未知错误'}`, 'error')
@@ -501,8 +484,9 @@ const exportCsv = async () => {
     const maxPages = 50 // 50 * 200 = 10000，超过后端 5000 上限已足够
 
     while (page <= totalPages && page <= maxPages) {
-      const response = await apiClient.get(`/admin/accounts/${accountId.value}/usage-records`, {
-        params: { ...buildParams(page), pageSize: 200 }
+      const response = await getAccountUsageRecordsByIdApi(accountId.value, {
+        ...buildParams(page),
+        pageSize: 200
       })
       const payload = response.data || {}
       aggregated.push(...(payload.records || []))

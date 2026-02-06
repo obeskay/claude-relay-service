@@ -4,11 +4,9 @@
     <div class="wide-card-title mb-6">
       <h2 class="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-200">
         <i class="fas fa-chart-line mr-3" />
-        {{ t('apistats.input.query_title') }}
+        使用统计查询
       </h2>
-      <p class="text-base text-gray-600 dark:text-gray-400">
-        {{ t('apistats.input.query_subtitle') }}
-      </p>
+      <p class="text-base text-gray-600 dark:text-gray-400">查询您的 API Key 使用情况和统计数据</p>
     </div>
 
     <!-- 输入区域 -->
@@ -18,9 +16,7 @@
         <!-- API Key 标签 -->
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
           <i class="fas fa-key mr-2" />
-          {{
-            multiKeyMode ? t('apistats.input.api_keys_label') : t('apistats.input.api_key_label')
-          }}
+          {{ multiKeyMode ? '输入您的 API Keys（每行一个或用逗号分隔）' : '输入您的 API Key' }}
         </label>
 
         <!-- 模式切换和查询按钮组 -->
@@ -32,20 +28,20 @@
             <button
               class="mode-switch-btn"
               :class="{ active: !multiKeyMode }"
-              :title="t('apistats.input.mode_single_title')"
+              title="单一模式"
               @click="multiKeyMode = false"
             >
               <i class="fas fa-key" />
-              <span class="ml-2 hidden sm:inline">{{ t('apistats.input.mode_single') }}</span>
+              <span class="ml-2 hidden sm:inline">单一</span>
             </button>
             <button
               class="mode-switch-btn"
               :class="{ active: multiKeyMode }"
-              :title="t('apistats.input.mode_aggregated_title')"
+              title="聚合模式"
               @click="multiKeyMode = true"
             >
               <i class="fas fa-layer-group" />
-              <span class="ml-2 hidden sm:inline">{{ t('apistats.input.mode_aggregated') }}</span>
+              <span class="ml-2 hidden sm:inline">聚合</span>
               <span
                 v-if="multiKeyMode && parsedApiKeys.length > 0"
                 class="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-semibold"
@@ -61,15 +57,23 @@
         <!-- API Key 输入 -->
         <div class="lg:col-span-3">
           <!-- 单 Key 模式输入框 -->
-          <input
-            v-if="!multiKeyMode"
-            v-model="apiKey"
-            class="wide-card-input w-full"
-            :disabled="loading"
-            :placeholder="t('apistats.input.single_placeholder')"
-            type="password"
-            @keyup.enter="queryStats"
-          />
+          <div v-if="!multiKeyMode" class="relative">
+            <input
+              v-model="apiKey"
+              class="wide-card-input w-full pr-10"
+              :disabled="loading"
+              placeholder="请输入您的 API Key (cr_...)"
+              :type="showPassword ? 'text' : 'password'"
+              @keyup.enter="queryStats"
+            />
+            <button
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              type="button"
+              @click="showPassword = !showPassword"
+            >
+              <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" />
+            </button>
+          </div>
 
           <!-- 多 Key 模式输入框 -->
           <div v-else class="relative">
@@ -77,14 +81,14 @@
               v-model="apiKey"
               class="wide-card-input w-full resize-y"
               :disabled="loading"
-              :placeholder="t('apistats.input.multi_placeholder')"
+              placeholder="请输入您的 API Keys，支持以下格式：&#10;cr_xxx&#10;cr_yyy&#10;或&#10;cr_xxx, cr_yyy"
               rows="4"
               @keyup.ctrl.enter="queryStats"
             />
             <button
               v-if="apiKey && !loading"
               class="absolute right-2 top-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-              :title="t('apistats.input.clear_input')"
+              title="清空输入"
               @click="clearInput"
             >
               <i class="fas fa-times-circle" />
@@ -101,7 +105,7 @@
           >
             <i v-if="loading" class="fas fa-spinner loading-spinner" />
             <i v-else class="fas fa-search" />
-            {{ loading ? t('apistats.input.querying_stats') : t('apistats.input.query_stats') }}
+            {{ loading ? '查询中...' : '查询统计' }}
           </button>
         </div>
       </div>
@@ -111,8 +115,8 @@
         <i class="fas fa-shield-alt mr-2" />
         {{
           multiKeyMode
-            ? t('apistats.input.security_notice_multi')
-            : t('apistats.input.security_notice_single')
+            ? '您的 API Keys 仅用于查询统计数据，不会被存储。聚合模式下部分个体化信息将不显示。'
+            : '您的 API Key 仅用于查询自己的统计数据，不会被存储或用于其他用途'
         }}
       </div>
 
@@ -122,22 +126,22 @@
         class="mt-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
       >
         <i class="fas fa-lightbulb mr-2" />
-        <span>{{ t('apistats.input.multi_hint') }}</span>
+        <span>提示：最多支持同时查询 30 个 API Keys。使用 Ctrl+Enter 快速查询。</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useI18n } from 'vue-i18n'
 import { useApiStatsStore } from '@/stores/apistats'
 
-const { t } = useI18n()
 const apiStatsStore = useApiStatsStore()
 const { apiKey, loading, multiKeyMode } = storeToRefs(apiStatsStore)
 const { queryStats, clearInput } = apiStatsStore
+
+const showPassword = ref(false)
 
 // 解析输入的 API Keys
 const parsedApiKeys = computed(() => {
@@ -268,11 +272,11 @@ const hasValidInput = computed(() => {
 }
 
 :global(.dark) .wide-card-input:focus {
-  border-color: #60a5fa;
+  border-color: var(--primary-color);
   box-shadow:
-    0 0 0 3px rgba(96, 165, 250, 0.15),
+    0 0 0 3px rgba(var(--primary-rgb), 0.15),
     0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  background: rgba(31, 41, 55, 0.95);
+  background: var(--glass-strong-color);
   color: #f3f4f6;
 }
 
@@ -295,18 +299,18 @@ const hasValidInput = computed(() => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
   box-shadow:
-    0 10px 15px -3px rgba(102, 126, 234, 0.3),
-    0 4px 6px -2px rgba(102, 126, 234, 0.05);
+    0 10px 15px -3px rgba(var(--primary-rgb), 0.3),
+    0 4px 6px -2px rgba(var(--primary-rgb), 0.05);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow:
-    0 20px 25px -5px rgba(102, 126, 234, 0.3),
-    0 10px 10px -5px rgba(102, 126, 234, 0.1);
+    0 20px 25px -5px rgba(var(--primary-rgb), 0.3),
+    0 10px 10px -5px rgba(var(--primary-rgb), 0.1);
 }
 
 .btn-primary:disabled {
@@ -328,8 +332,8 @@ const hasValidInput = computed(() => {
 }
 
 :global(.dark) .security-notice {
-  background: rgba(31, 41, 55, 0.8) !important;
-  border: 1px solid rgba(75, 85, 99, 0.5) !important;
+  background: var(--glass-strong-color) !important;
+  border: 1px solid var(--border-color) !important;
   color: #d1d5db !important;
 }
 
@@ -340,8 +344,8 @@ const hasValidInput = computed(() => {
 }
 
 :global(.dark) .security-notice:hover {
-  background: rgba(31, 41, 55, 0.9) !important;
-  border-color: rgba(75, 85, 99, 0.6) !important;
+  background: var(--glass-strong-color) !important;
+  border-color: var(--border-color) !important;
   color: #e5e7eb !important;
 }
 
@@ -377,7 +381,7 @@ const hasValidInput = computed(() => {
 }
 
 :global(.dark) .mode-switch-group {
-  background: #1f2937;
+  background: var(--bg-gradient-start);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
@@ -398,7 +402,7 @@ const hasValidInput = computed(() => {
 }
 
 :global(.dark) .mode-switch-btn {
-  color: #9ca3af;
+  color: var(--text-secondary);
 }
 
 .mode-switch-btn:hover:not(.active) {
@@ -413,12 +417,12 @@ const hasValidInput = computed(() => {
 
 .mode-switch-btn.active {
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  box-shadow: 0 2px 4px rgba(var(--primary-rgb), 0.2);
 }
 
 .mode-switch-btn.active:hover {
-  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 6px rgba(var(--primary-rgb), 0.3);
 }
 
 .mode-switch-btn i {

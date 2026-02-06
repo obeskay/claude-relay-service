@@ -783,7 +783,7 @@
 
 <script setup>
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
-import { showToast } from '@/utils/toast'
+import { showToast } from '@/utils/tools'
 import { useAccountsStore } from '@/stores/accounts'
 import { useI18n } from 'vue-i18n'
 

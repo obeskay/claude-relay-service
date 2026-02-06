@@ -9,6 +9,7 @@ const ClientValidator = require('../validators/clientValidator')
 const ClaudeCodeValidator = require('../validators/clients/claudeCodeValidator')
 const claudeRelayConfigService = require('../services/claudeRelayConfigService')
 const { calculateWaitTimeStats } = require('../utils/statsHelper')
+const { isClaudeFamilyModel } = require('../utils/modelHelper')
 
 // 工具函数
 function sleep(ms) {
@@ -461,7 +462,7 @@ const authenticateApiKey = async (req, res, next) => {
     }
 
     if (!apiKey) {
-      logger.security(`🔒 Missing API key attempt from ${req.ip || 'unknown'}`)
+      logger.security(`Missing API key attempt from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Missing API key',
         message:
@@ -471,7 +472,7 @@ const authenticateApiKey = async (req, res, next) => {
 
     // 基本API Key格式验证
     if (typeof apiKey !== 'string' || apiKey.length < 10 || apiKey.length > 512) {
-      logger.security(`🔒 Invalid API key format from ${req.ip || 'unknown'}`)
+      logger.security(`Invalid API key format from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Invalid API key format',
         message: 'API key format is invalid'
@@ -483,7 +484,7 @@ const authenticateApiKey = async (req, res, next) => {
 
     if (!validation.valid) {
       const clientIP = req.ip || req.connection?.remoteAddress || 'unknown'
-      logger.security(`🔒 Invalid API key attempt: ${validation.error} from ${clientIP}`)
+      logger.security(`Invalid API key attempt: ${validation.error} from ${clientIP}`)
       return res.status(401).json({
         error: 'Invalid API key',
         message: validation.error
@@ -728,8 +729,7 @@ const authenticateApiKey = async (req, res, next) => {
         // 3. 排队功能未启用，直接返回 429（保持现有行为）
         if (!queueConfig.concurrentRequestQueueEnabled) {
           logger.security(
-            `🚦 Concurrency limit exceeded for key: ${validation.keyData.id} (${
-              validation.keyData.name
+            `🚦 Concurrency limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
             }), current: ${currentConcurrency - 1}, limit: ${concurrencyLimit}`
           )
           // 建议客户端在短暂延迟后重试（并发场景下通常很快会有槽位释放）
@@ -761,9 +761,9 @@ const authenticateApiKey = async (req, res, next) => {
           const currentQueueCount = overloadCheck.currentQueueCount || 0
           logger.api(
             `🚨 Queue overloaded for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-              `P90=${overloadCheck.estimatedWaitMs}ms, timeout=${overloadCheck.timeoutMs}ms, ` +
-              `threshold=${overloadCheck.threshold}, samples=${overloadCheck.sampleCount}, ` +
-              `concurrency=${concurrencyLimit}, queue=${currentQueueCount}/${maxQueueSize}`
+            `P90=${overloadCheck.estimatedWaitMs}ms, timeout=${overloadCheck.timeoutMs}ms, ` +
+            `threshold=${overloadCheck.threshold}, samples=${overloadCheck.sampleCount}, ` +
+            `concurrency=${concurrencyLimit}, queue=${currentQueueCount}/${maxQueueSize}`
           )
           // 记录被拒绝的过载统计
           redis
@@ -801,7 +801,7 @@ const authenticateApiKey = async (req, res, next) => {
             queueIncremented = false
             logger.api(
               `🚦 Concurrency queue full for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-                `queue: ${newQueueCount - 1}, maxQueue: ${maxQueueSize}`
+              `queue: ${newQueueCount - 1}, maxQueue: ${maxQueueSize}`
             )
             // 队列已满，建议客户端在排队超时时间后重试
             const retryAfterSeconds = Math.ceil(queueConfig.concurrentRequestQueueTimeoutMs / 1000)
@@ -821,7 +821,7 @@ const authenticateApiKey = async (req, res, next) => {
           // 6. 已成功进入排队，记录统计并开始等待槽位
           logger.api(
             `⏳ Request entering queue for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-              `queue position: ${newQueueCount}`
+            `queue position: ${newQueueCount}`
           )
           redis
             .incrConcurrencyQueueStats(validation.keyData.id, 'entered')
@@ -914,7 +914,7 @@ const authenticateApiKey = async (req, res, next) => {
           // 8. 排队成功，slot.acquired 表示已在 waitForConcurrencySlot 中获取到槽位
           logger.api(
             `✅ Queue wait completed for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-              `waited: ${slot.waitTimeMs}ms`
+            `waited: ${slot.waitTimeMs}ms`
           )
           hasConcurrencySlot = true
           setTemporaryConcurrencyCleanup()
@@ -929,8 +929,8 @@ const authenticateApiKey = async (req, res, next) => {
           if (res.destroyed || res.writableEnded || postQueueSocket?.destroyed) {
             logger.warn(
               `⚠️ Client no longer waiting after queue for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-                `waited: ${slot.waitTimeMs}ms | destroyed: ${res.destroyed}, ` +
-                `writableEnded: ${res.writableEnded}, socketDestroyed: ${postQueueSocket?.destroyed}`
+              `waited: ${slot.waitTimeMs}ms | destroyed: ${res.destroyed}, ` +
+              `writableEnded: ${res.writableEnded}, socketDestroyed: ${postQueueSocket?.destroyed}`
             )
             // 释放刚获取的槽位
             hasConcurrencySlot = false
@@ -954,10 +954,10 @@ const authenticateApiKey = async (req, res, next) => {
           if (socketIdentityChanged) {
             logger.error(
               `❌ [Queue] Socket identity changed during queue wait! ` +
-                `key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-                `waited: ${slot.waitTimeMs}ms | ` +
-                `tokenMatch: ${queueData?.queueToken === savedToken}, ` +
-                `socketMatch: ${queueData?.originalSocket === savedSocket}`
+              `key: ${validation.keyData.id} (${validation.keyData.name}), ` +
+              `waited: ${slot.waitTimeMs}ms | ` +
+              `tokenMatch: ${queueData?.queueToken === savedToken}, ` +
+              `socketMatch: ${queueData?.originalSocket === savedSocket}`
             )
             // 释放刚获取的槽位
             hasConcurrencySlot = false
@@ -1227,8 +1227,7 @@ const authenticateApiKey = async (req, res, next) => {
           const remainingMinutes = Math.ceil((resetTime - now) / 60000)
 
           logger.security(
-            `💰 Rate limit exceeded (cost) for key: ${validation.keyData.id} (${
-              validation.keyData.name
+            `💰 Rate limit exceeded (cost) for key: ${validation.keyData.id} (${validation.keyData.name
             }), cost: $${currentCost.toFixed(2)}/$${rateLimitCost}`
           )
 
@@ -1269,24 +1268,26 @@ const authenticateApiKey = async (req, res, next) => {
 
       if (dailyCost >= dailyCostLimit) {
         logger.security(
-          `💰 Daily cost limit exceeded for key: ${validation.keyData.id} (${
-            validation.keyData.name
+          `💰 Daily cost limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
           }), cost: $${dailyCost.toFixed(2)}/$${dailyCostLimit}`
         )
 
-        return res.status(429).json({
-          error: 'Daily cost limit exceeded',
-          message: `Se ha alcanzado el límite de costo diario ($${dailyCostLimit})`,
+        // Usar 402 Payment Required en lugar de 429 para evitar reintentos automáticos
+        return res.status(402).json({
+          error: {
+            type: 'insufficient_quota',
+            message: `Se ha alcanzado el límite de costo diario ($${dailyCostLimit})`,
+            code: 'daily_cost_limit_exceeded'
+          },
           currentCost: dailyCost,
           costLimit: dailyCostLimit,
-          resetAt: new Date(new Date().setHours(24, 0, 0, 0)).toISOString() // 明天0点重置
+          resetAt: new Date(new Date().setHours(24, 0, 0, 0)).toISOString()
         })
       }
 
       // 记录当前费用使用情况
       logger.api(
-        `💰 Cost usage for key: ${validation.keyData.id} (${
-          validation.keyData.name
+        `💰 Cost usage for key: ${validation.keyData.id} (${validation.keyData.name
         }), current: $${dailyCost.toFixed(2)}/$${dailyCostLimit}`
       )
     }
@@ -1298,41 +1299,42 @@ const authenticateApiKey = async (req, res, next) => {
 
       if (totalCost >= totalCostLimit) {
         logger.security(
-          `💰 Total cost limit exceeded for key: ${validation.keyData.id} (${
-            validation.keyData.name
+          `💰 Total cost limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
           }), cost: $${totalCost.toFixed(2)}/$${totalCostLimit}`
         )
 
-        return res.status(429).json({
-          error: 'Total cost limit exceeded',
-          message: `Se ha alcanzado el límite de costo total ($${totalCostLimit})`,
+        // Usar 402 Payment Required en lugar de 429 para evitar reintentos automáticos
+        return res.status(402).json({
+          error: {
+            type: 'insufficient_quota',
+            message: `Se ha alcanzado el límite de costo total ($${totalCostLimit})`,
+            code: 'total_cost_limit_exceeded'
+          },
           currentCost: totalCost,
           costLimit: totalCostLimit
         })
       }
 
       logger.api(
-        `💰 Total cost usage for key: ${validation.keyData.id} (${
-          validation.keyData.name
+        `💰 Total cost usage for key: ${validation.keyData.id} (${validation.keyData.name
         }), current: $${totalCost.toFixed(2)}/$${totalCostLimit}`
       )
     }
 
-    // 检查 Opus 周费用限制（仅对 Opus 模型生效）
+    // 检查 Claude 周费用限制
     const weeklyOpusCostLimit = validation.keyData.weeklyOpusCostLimit || 0
     if (weeklyOpusCostLimit > 0) {
       // 从请求中获取模型信息
       const requestBody = req.body || {}
       const model = requestBody.model || ''
 
-      // 判断是否为 Opus 模型
-      if (model && model.toLowerCase().includes('claude-opus')) {
+      // 判断是否为 Claude 模型
+      if (isClaudeFamilyModel(model)) {
         const weeklyOpusCost = validation.keyData.weeklyOpusCost || 0
 
         if (weeklyOpusCost >= weeklyOpusCostLimit) {
           logger.security(
-            `💰 Weekly Opus cost limit exceeded for key: ${validation.keyData.id} (${
-              validation.keyData.name
+            `💰 Weekly Claude cost limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
             }), cost: $${weeklyOpusCost.toFixed(2)}/$${weeklyOpusCostLimit}`
           )
 
@@ -1344,19 +1346,22 @@ const authenticateApiKey = async (req, res, next) => {
           resetDate.setDate(now.getDate() + daysUntilMonday)
           resetDate.setHours(0, 0, 0, 0)
 
-          return res.status(429).json({
-            error: 'Weekly Opus cost limit exceeded',
-            message: `Se ha alcanzado el límite de costo semanal del modelo Opus ($${weeklyOpusCostLimit})`,
+          // Usar 402 Payment Required en lugar de 429 para evitar reintentos automáticos
+          return res.status(402).json({
+            error: {
+              type: 'insufficient_quota',
+              message: `Se ha alcanzado el límite de costo semanal del modelo Opus ($${weeklyOpusCostLimit})`,
+              code: 'weekly_opus_cost_limit_exceeded'
+            },
             currentCost: weeklyOpusCost,
             costLimit: weeklyOpusCostLimit,
-            resetAt: resetDate.toISOString() // 下周一重置
+            resetAt: resetDate.toISOString()
           })
         }
 
-        // 记录当前 Opus 费用使用情况
+        // 记录当前 Claude 费用使用情况
         logger.api(
-          `💰 Opus weekly cost usage for key: ${validation.keyData.id} (${
-            validation.keyData.name
+          `💰 Claude weekly cost usage for key: ${validation.keyData.id} (${validation.keyData.name
           }), current: $${weeklyOpusCost.toFixed(2)}/$${weeklyOpusCostLimit}`
         )
       }
@@ -1385,10 +1390,8 @@ const authenticateApiKey = async (req, res, next) => {
       dailyCostLimit: validation.keyData.dailyCostLimit,
       dailyCost: validation.keyData.dailyCost,
       totalCostLimit: validation.keyData.totalCostLimit,
-      totalCost: validation.keyData.totalCost,
-      usage: validation.keyData.usage
+      totalCost: validation.keyData.totalCost
     }
-    req.usage = validation.keyData.usage
 
     const authDuration = Date.now() - startTime
     const userAgent = req.headers['user-agent'] || 'No User-Agent'
@@ -1436,7 +1439,7 @@ const authenticateAdmin = async (req, res, next) => {
       req.headers['x-admin-token']
 
     if (!token) {
-      logger.security(`🔒 Missing admin token attempt from ${req.ip || 'unknown'}`)
+      logger.security(`Missing admin token attempt from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Missing admin token',
         message: 'Please provide an admin token'
@@ -1445,7 +1448,7 @@ const authenticateAdmin = async (req, res, next) => {
 
     // 基本token格式验证
     if (typeof token !== 'string' || token.length < 32 || token.length > 512) {
-      logger.security(`🔒 Invalid admin token format from ${req.ip || 'unknown'}`)
+      logger.security(`Invalid admin token format from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Invalid admin token format',
         message: 'Admin token format is invalid'
@@ -1461,7 +1464,7 @@ const authenticateAdmin = async (req, res, next) => {
     ])
 
     if (!adminSession || Object.keys(adminSession).length === 0) {
-      logger.security(`🔒 Invalid admin token attempt from ${req.ip || 'unknown'}`)
+      logger.security(`Invalid admin token attempt from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Invalid admin token',
         message: 'Invalid or expired admin session'
@@ -1519,7 +1522,7 @@ const authenticateAdmin = async (req, res, next) => {
     }
 
     const authDuration = Date.now() - startTime
-    logger.security(`🔐 Admin authenticated: ${adminSession.username} in ${authDuration}ms`)
+    logger.security(`Admin authenticated: ${adminSession.username} in ${authDuration}ms`)
 
     return next()
   } catch (error) {
@@ -1550,7 +1553,7 @@ const authenticateUser = async (req, res, next) => {
       req.headers['x-user-token']
 
     if (!sessionToken) {
-      logger.security(`🔒 Missing user session token attempt from ${req.ip || 'unknown'}`)
+      logger.security(`Missing user session token attempt from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Missing user session token',
         message: 'Please login to access this resource'
@@ -1559,7 +1562,7 @@ const authenticateUser = async (req, res, next) => {
 
     // 基本token格式验证
     if (typeof sessionToken !== 'string' || sessionToken.length < 32 || sessionToken.length > 128) {
-      logger.security(`🔒 Invalid user session token format from ${req.ip || 'unknown'}`)
+      logger.security(`Invalid user session token format from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Invalid session token format',
         message: 'Session token format is invalid'
@@ -1570,7 +1573,7 @@ const authenticateUser = async (req, res, next) => {
     const sessionValidation = await userService.validateUserSession(sessionToken)
 
     if (!sessionValidation) {
-      logger.security(`🔒 Invalid user session token attempt from ${req.ip || 'unknown'}`)
+      logger.security(`Invalid user session token attempt from ${req.ip || 'unknown'}`)
       return res.status(401).json({
         error: 'Invalid session token',
         message: 'Invalid or expired user session'
@@ -1661,7 +1664,7 @@ const authenticateUserOrAdmin = async (req, res, next) => {
             req.userType = 'admin'
 
             const authDuration = Date.now() - startTime
-            logger.security(`🔐 Admin authenticated: ${adminSession.username} in ${authDuration}ms`)
+            logger.security(`Admin authenticated: ${adminSession.username} in ${authDuration}ms`)
             return next()
           }
         }
@@ -1702,7 +1705,7 @@ const authenticateUserOrAdmin = async (req, res, next) => {
     }
 
     // 如果都失败了，返回未授权
-    logger.security(`🔒 Authentication failed from ${req.ip || 'unknown'}`)
+    logger.security(`Authentication failed from ${req.ip || 'unknown'}`)
     return res.status(401).json({
       error: 'Authentication required',
       message: 'Please login as user or admin to access this resource'

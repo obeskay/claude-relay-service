@@ -4,10 +4,10 @@
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
           <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-            {{ t('apiKeys.page.title') }}
+            API Keys 管理
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-            {{ t('apiKeys.page.subtitle') }}
+            管理和监控您的 API 密钥
           </p>
         </div>
 
@@ -23,7 +23,7 @@
               ]"
               @click="activeTab = 'active'"
             >
-              {{ t('apiKeys.tab.active') }}
+              活跃 API Keys
               <span
                 v-if="apiKeys.length > 0"
                 class="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-100"
@@ -40,7 +40,7 @@
               ]"
               @click="loadDeletedApiKeys"
             >
-              {{ t('apiKeys.tab.deleted') }}
+              已删除 API Keys
               <span
                 v-if="deletedApiKeys.length > 0"
                 class="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-100"
@@ -68,7 +68,7 @@
                   icon="fa-calendar-alt"
                   icon-color="text-blue-500"
                   :options="timeRangeDropdownOptions"
-                  :placeholder="t('apiKeys.filter.time_range')"
+                  placeholder="选择时间范围"
                   @change="handleTimeRangeChange"
                 />
               </div>
@@ -80,12 +80,12 @@
                   :clearable="true"
                   :default-time="defaultTime"
                   :disabled-date="disabledDate"
-                  :end-placeholder="t('filter.end_date')"
+                  end-placeholder="结束日期"
                   format="YYYY-MM-DD HH:mm:ss"
                   :model-value="globalDateFilter.customRange"
-                  :range-separator="t('filter.to')"
+                  range-separator="至"
                   size="small"
-                  :start-placeholder="t('filter.start_date')"
+                  start-placeholder="开始日期"
                   style="width: 320px; height: 38px"
                   type="datetimerange"
                   :unlink-panels="false"
@@ -94,7 +94,7 @@
                 />
               </div>
 
-              <!-- Label Filter -->
+              <!-- 标签筛选器 -->
               <div class="group relative min-w-[140px]">
                 <div
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -105,7 +105,7 @@
                     icon="fa-tags"
                     icon-color="text-purple-500"
                     :options="tagOptions"
-                    :placeholder="t('apiKeys.filter.all_tags')"
+                    placeholder="所有标签"
                   />
                   <span
                     v-if="selectedTagFilter"
@@ -128,7 +128,7 @@
                     icon-color="text-orange-500"
                     :multiple="true"
                     :options="modelOptions"
-                    :placeholder="t('common.allModels')"
+                    placeholder="所有模型"
                   />
                   <span
                     v-if="selectedModels.length > 0"
@@ -147,7 +147,7 @@
                     icon="fa-filter"
                     icon-color="text-cyan-500"
                     :options="searchModeOptions"
-                    :placeholder="t('apiKeys.filter.search_type')"
+                    placeholder="选择搜索类型"
                   />
                 </div>
                 <div class="group relative flex-1">
@@ -160,10 +160,10 @@
                       class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 pl-9 text-sm text-gray-700 placeholder-gray-400 shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 dark:hover:border-gray-500"
                       :placeholder="
                         searchMode === 'bindingAccount'
-                          ? t('apiKeys.filter.search_placeholder_account')
+                          ? '搜索所属账号...'
                           : isLdapEnabled
-                            ? t('apiKeys.filter.search_placeholder_name_owner')
-                            : t('apiKeys.filter.search_placeholder_name')
+                            ? '搜索名称或所有者...'
+                            : '搜索名称...'
                       "
                       type="text"
                     />
@@ -197,7 +197,7 @@
                     apiKeysLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                   ]"
                 />
-                <span class="relative">{{ t('apiKeys.action.refresh') }}</span>
+                <span class="relative">刷新</span>
               </button>
 
               <!-- 选择/取消选择按钮 -->
@@ -206,9 +206,7 @@
                 @click="toggleSelectionMode"
               >
                 <i :class="showCheckboxes ? 'fas fa-times' : 'fas fa-check-square'"></i>
-                <span>{{
-                  showCheckboxes ? t('apiKeys.action.deselect') : t('apiKeys.action.select')
-                }}</span>
+                <span>{{ showCheckboxes ? '取消选择' : '选择' }}</span>
               </button>
 
               <!-- 导出数据按钮 -->
@@ -220,10 +218,22 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-file-excel relative text-emerald-500" />
-                <span class="relative">{{ t('apiKeys.action.export') }}</span>
+                <span class="relative">导出数据</span>
               </button>
 
-              <!-- 批量{{ t('common.action.edit') }}按钮 - 移到刷新按钮旁边 -->
+              <!-- 管理标签按钮 -->
+              <button
+                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-500 sm:w-auto"
+                @click="showTagManagementModal = true"
+              >
+                <div
+                  class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
+                ></div>
+                <i class="fas fa-tags relative text-purple-500" />
+                <span class="relative">管理标签</span>
+              </button>
+
+              <!-- 批量编辑按钮 - 移到刷新按钮旁边 -->
               <button
                 v-if="selectedApiKeys.length > 0"
                 class="group relative flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow-sm transition-all duration-200 hover:border-blue-300 hover:bg-blue-100 hover:shadow-md dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 sm:w-auto"
@@ -233,9 +243,7 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-edit relative text-blue-600 dark:text-blue-400" />
-                <span class="relative">{{
-                  t('apiKeys.action.edit_selected', { count: selectedApiKeys.length })
-                }}</span>
+                <span class="relative">编辑选中 ({{ selectedApiKeys.length }})</span>
               </button>
 
               <!-- 批量删除按钮 - 移到刷新按钮旁边 -->
@@ -248,9 +256,7 @@
                   class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                 ></div>
                 <i class="fas fa-trash relative text-red-600 dark:text-red-400" />
-                <span class="relative">{{
-                  t('apiKeys.action.delete_selected', { count: selectedApiKeys.length })
-                }}</span>
+                <span class="relative">删除选中 ({{ selectedApiKeys.length }})</span>
               </button>
 
               <!-- 创建按钮 -->
@@ -259,14 +265,14 @@
                 @click.stop="openCreateApiKeyModal"
               >
                 <i class="fas fa-plus"></i>
-                <span>{{ t('apiKeys.action.create_new') }}</span>
+                <span>创建新 Key</span>
               </button>
             </div>
           </div>
 
           <div v-if="apiKeysLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4" />
-            <p class="text-gray-500 dark:text-gray-400">{{ t('apiKeys.loading.keys') }}</p>
+            <p class="text-gray-500 dark:text-gray-400">正在加载 API Keys...</p>
           </div>
 
           <div v-else-if="apiKeys.length === 0" class="py-12 text-center">
@@ -275,8 +281,8 @@
             >
               <i class="fas fa-key text-xl text-gray-400" />
             </div>
-            <p class="text-lg text-gray-500 dark:text-gray-400">{{ t('apiKeys.empty.no_keys') }}</p>
-            <p class="mt-2 text-sm text-gray-400">{{ t('apiKeys.empty.create_first') }}</p>
+            <p class="text-lg text-gray-500 dark:text-gray-400">暂无 API Keys</p>
+            <p class="mt-2 text-sm text-gray-400">点击上方按钮创建您的第一个 API Key</p>
           </div>
 
           <!-- 桌面端表格视图 -->
@@ -306,7 +312,7 @@
                       :class="shouldShowCheckboxes ? 'left-[50px]' : 'left-0'"
                       @click="sortApiKeys('name')"
                     >
-                      {{ t('apiKeys.table.name') }}
+                      名称
                       <i
                         v-if="apiKeysSortBy === 'name'"
                         :class="[
@@ -320,18 +326,18 @@
                     <th
                       class="min-w-[140px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      {{ t('apiKeys.table.account') }}
+                      所属账号
                     </th>
                     <th
                       class="min-w-[100px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      {{ t('apiKeys.table.tags') }}
+                      标签
                     </th>
                     <th
                       class="min-w-[80px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('status')"
                     >
-                      {{ t('apiKeys.table.status') }}
+                      状态
                       <i
                         v-if="apiKeysSortBy === 'status'"
                         :class="[
@@ -351,7 +357,7 @@
                       :title="costSortTooltip"
                       @click="sortApiKeys('cost')"
                     >
-                      {{ t('apiKeys.table.cost') }}
+                      费用
                       <i
                         v-if="apiKeysSortBy === 'cost'"
                         :class="[
@@ -366,7 +372,7 @@
                     <th
                       class="min-w-[180px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      {{ t('apiKeys.table.limit') }}
+                      限制
                     </th>
                     <th
                       class="min-w-[80px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
@@ -376,13 +382,13 @@
                     <th
                       class="min-w-[80px] px-3 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      {{ t('apiKeys.table.requests') }}
+                      请求数
                     </th>
                     <th
                       class="min-w-[100px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('lastUsedAt')"
                     >
-                      {{ t('apiKeys.table.last_used') }}
+                      最后使用
                       <i
                         v-if="apiKeysSortBy === 'lastUsedAt'"
                         :class="[
@@ -397,7 +403,7 @@
                       class="min-w-[100px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('createdAt')"
                     >
-                      {{ t('apiKeys.table.created_at') }}
+                      创建时间
                       <i
                         v-if="apiKeysSortBy === 'createdAt'"
                         :class="[
@@ -412,7 +418,7 @@
                       class="min-w-[100px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                       @click="sortApiKeys('expiresAt')"
                     >
-                      {{ t('apiKeys.table.expires_at') }}
+                      过期时间
                       <i
                         v-if="apiKeysSortBy === 'expiresAt'"
                         :class="[
@@ -426,21 +432,18 @@
                     <th
                       class="operations-column sticky right-0 min-w-[120px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                     >
-                      {{ t('apiKeys.table.operations') }}
+                      操作
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(key, index) in paginatedApiKeys" :key="key.id">
+                  <template v-for="key in paginatedApiKeys" :key="key.id">
                     <!-- API Key 主行 - 添加斑马条纹和增强分隔 -->
                     <tr
                       :class="[
-                        'table-row transition-all duration-150',
-                        index % 2 === 0
-                          ? 'bg-white dark:bg-gray-800/40'
-                          : 'bg-gray-50/70 dark:bg-gray-700/30',
+                        'table-row',
                         'border-b-2 border-gray-200/80 dark:border-gray-700/50',
-                        'hover:bg-blue-50/60 hover:shadow-sm dark:hover:bg-blue-900/20'
+                        'hover:shadow-sm'
                       ]"
                     >
                       <td
@@ -464,8 +467,9 @@
                         <div class="min-w-0">
                           <!-- 名称 -->
                           <div
-                            class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
-                            :title="key.name"
+                            class="cursor-pointer truncate text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+                            title="点击复制"
+                            @click.stop="copyText(key.name)"
                           >
                             {{ key.name }}
                           </div>
@@ -488,7 +492,7 @@
                             class="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500"
                           >
                             <i class="fas fa-spinner fa-spin mr-1"></i>
-                            {{ t('common.status.loading') }}
+                            加载中...
                           </div>
                           <!-- 账号数据已加载或无绑定 -->
                           <template v-else>
@@ -558,7 +562,7 @@
                                 {{ getDroidBindingInfo(key) }}
                               </span>
                             </div>
-                            <!-- {{ t('apiKeys.account.shared_pool') }} -->
+                            <!-- 共享池 -->
                             <div
                               v-if="
                                 !key.claudeAccountId &&
@@ -571,7 +575,7 @@
                               class="text-xs text-gray-500 dark:text-gray-400"
                             >
                               <i class="fas fa-share-alt mr-1" />
-                              {{ t('apiKeys.account.shared_pool') }}
+                              共享池
                             </div>
                           </template>
                         </div>
@@ -589,7 +593,7 @@
                           <span
                             v-if="!key.tags || key.tags.length === 0"
                             class="text-xs text-gray-400"
-                            >{{ t('apiKeys.tags.no_tags') }}</span
+                            >无标签</span
                           >
                         </div>
                       </td>
@@ -608,7 +612,7 @@
                               key.isActive ? 'bg-green-500' : 'bg-red-500'
                             ]"
                           />
-                          {{ key.isActive ? t('apiKeys.status.active') : t('apiKeys.status.disabled') }}
+                          {{ key.isActive ? '活跃' : '禁用' }}
                         </span>
                       </td>
                       <!-- 费用 -->
@@ -662,7 +666,7 @@
                             <LimitProgressBar
                               v-if="key.dailyCostLimit > 0"
                               :current="getCachedStats(key.id)?.dailyCost || 0"
-                              :label="t('apiKeys.limit.daily')"
+                              label="每日限制"
                               :limit="key.dailyCostLimit"
                               type="daily"
                               variant="compact"
@@ -672,7 +676,7 @@
                             <LimitProgressBar
                               v-else-if="key.totalCostLimit > 0"
                               :current="getCachedStats(key.id)?.allTimeCost || 0"
-                              :label="t('apiKeys.limit.total')"
+                              label="总费用限制"
                               :limit="key.totalCostLimit"
                               type="total"
                               variant="compact"
@@ -691,7 +695,7 @@
                               <!-- 费用进度条 -->
                               <LimitProgressBar
                                 :current="getCachedStats(key.id)?.currentWindowCost || 0"
-                                :label="t('apiKeys.limit.window_cost')"
+                                label="窗口费用"
                                 :limit="key.rateLimitCost"
                                 type="window"
                                 variant="compact"
@@ -715,7 +719,7 @@
                                       ? formatWindowTime(
                                           getCachedStats(key.id)?.windowRemainingSeconds || 0
                                         )
-                                      : t('apiKeys.limit.not_activated')
+                                      : '未激活'
                                   }}
                                 </span>
                               </div>
@@ -727,7 +731,7 @@
                               class="flex items-center justify-center gap-1.5 py-2 text-gray-500 dark:text-gray-400"
                             >
                               <i class="fas fa-infinity text-base" />
-                              <span class="text-xs font-medium">{{ t('apiKeys.limit.no_limit') }}</span>
+                              <span class="text-xs font-medium">无限制</span>
                             </div>
                           </template>
                         </div>
@@ -799,14 +803,14 @@
                           >
                             {{ formatLastUsed(key.lastUsedAt) }}
                           </span>
-                          <span v-else class="text-gray-400" style="font-size: 13px">{{ t('apiKeys.time.never_used') }}</span>
+                          <span v-else class="text-gray-400" style="font-size: 13px">从未使用</span>
                           <!-- 最后使用账号 loading 状态 -->
                           <span
                             v-if="key.lastUsedAt && isLastUsageLoading(key.id)"
                             class="mt-1 text-xs text-gray-400 dark:text-gray-500"
                           >
                             <i class="fas fa-spinner fa-spin mr-1"></i>
-                            {{ t('common.status.loading') }}
+                            加载中...
                           </span>
                           <span
                             v-else-if="hasLastUsageAccount(key)"
@@ -822,7 +826,7 @@
                             </span>
                           </span>
                           <span v-else class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                            {{ t('apiKeys.account.no_usage') }}
+                            暂无使用账号
                           </span>
                         </div>
                       </td>
@@ -837,14 +841,14 @@
                         class="whitespace-nowrap px-3 py-3 text-sm text-gray-700 dark:text-gray-300"
                       >
                         <div class="inline-flex items-center gap-1.5">
-                          <!-- {{ t('apiKeys.limit.not_activated') }}状态 -->
+                          <!-- 未激活状态 -->
                           <span
                             v-if="key.expirationMode === 'activation' && !key.isActivated"
                             class="inline-flex items-center text-blue-600 dark:text-blue-400"
                             style="font-size: 13px"
                           >
                             <i class="fas fa-pause-circle mr-1 text-xs" />
-                            {{ t('apiKeys.limit.not_activated') }} (
+                            未激活 (
                             {{ key.activationDays || (key.activationUnit === 'hours' ? 24 : 30)
                             }}{{ key.activationUnit === 'hours' ? '小时' : '天' }})
                           </span>
@@ -857,7 +861,7 @@
                               @click.stop="startEditExpiry(key)"
                             >
                               <i class="fas fa-exclamation-circle mr-1 text-xs" />
-                              {{ t('apiKeys.status.expired') }}
+                              已过期
                             </span>
                             <span
                               v-else-if="isApiKeyExpiringSoon(key.expiresAt)"
@@ -877,7 +881,7 @@
                               {{ formatExpireDate(key.expiresAt) }}
                             </span>
                           </span>
-                          <!-- {{ t('apiKeys.status.never_expires') }} -->
+                          <!-- 永不过期 -->
                           <span
                             v-else
                             class="inline-flex cursor-pointer items-center text-gray-400 hover:underline dark:text-gray-500"
@@ -885,7 +889,7 @@
                             @click.stop="startEditExpiry(key)"
                           >
                             <i class="fas fa-infinity mr-1 text-xs" />
-                            {{ t('apiKeys.status.never_expires') }}
+                            永不过期
                           </span>
                         </div>
                       </td>
@@ -897,16 +901,16 @@
                         <div class="hidden gap-1 2xl:flex">
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-purple-600 transition-colors hover:bg-purple-50 hover:text-purple-900 dark:hover:bg-purple-900/20"
-                            :title="t('apiKeys.tooltip.stats')"
+                            title="查看详细统计"
                             @click="showUsageDetails(key)"
                           >
                             <i class="fas fa-chart-line" />
-                            <span class="ml-1">{{ t('common.action.details') }}</span>
+                            <span class="ml-1">详情</span>
                           </button>
                           <button
                             v-if="key && key.id"
                             class="rounded px-2 py-1 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900 dark:hover:bg-indigo-900/20"
-                            :title="t('apiKeys.tooltip.models')"
+                            title="模型使用分布"
                             @click="toggleApiKeyModelStats(key.id)"
                           >
                             <i
@@ -915,15 +919,15 @@
                                 expandedApiKeys[key.id] ? 'fa-chevron-up' : 'fa-chevron-down'
                               ]"
                             />
-                            <span class="ml-1">{{ t('common.models') }}</span>
+                            <span class="ml-1">模型</span>
                           </button>
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-900 dark:hover:bg-blue-900/20"
-                            :title="t('apiKeys.tooltip.edit')"
+                            title="编辑"
                             @click="openEditApiKeyModal(key)"
                           >
                             <i class="fas fa-edit" />
-                            <span class="ml-1">{{ t('common.action.edit') }}</span>
+                            <span class="ml-1">编辑</span>
                           </button>
                           <button
                             v-if="
@@ -932,11 +936,11 @@
                                 isApiKeyExpiringSoon(key.expiresAt))
                             "
                             class="rounded px-2 py-1 text-xs font-medium text-green-600 transition-colors hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20"
-                            :title="t('apiKeys.tooltip.renew')"
+                            title="续期"
                             @click="openRenewApiKeyModal(key)"
                           >
                             <i class="fas fa-clock" />
-                            <span class="ml-1">{{ t('common.action.renew') }}</span>
+                            <span class="ml-1">续期</span>
                           </button>
                           <button
                             :class="[
@@ -945,19 +949,19 @@
                                 : 'text-green-600 hover:bg-green-50 hover:text-green-900 dark:hover:bg-green-900/20',
                               'rounded px-2 py-1 text-xs font-medium transition-colors'
                             ]"
-                            :title="key.isActive ? t('apiKeys.tooltip.disable') : t('apiKeys.tooltip.activate')"
+                            :title="key.isActive ? '禁用' : '激活'"
                             @click="toggleApiKeyStatus(key)"
                           >
                             <i :class="['fas', key.isActive ? 'fa-ban' : 'fa-check-circle']" />
-                            <span class="ml-1">{{ key.isActive ? t('common.action.disable') : t('common.action.activate') }}</span>
+                            <span class="ml-1">{{ key.isActive ? '禁用' : '激活' }}</span>
                           </button>
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900 dark:hover:bg-red-900/20"
-                            :title="t('apiKeys.tooltip.delete')"
+                            title="删除"
                             @click="deleteApiKey(key.id)"
                           >
                             <i class="fas fa-trash" />
-                            <span class="ml-1">{{ t('common.action.delete') }}</span>
+                            <span class="ml-1">删除</span>
                           </button>
                         </div>
                         <!-- 小屏幕：常用按钮 + 下拉菜单 -->
@@ -965,7 +969,7 @@
                           <!-- 始终显示的快捷按钮 -->
                           <button
                             class="rounded px-2 py-1 text-xs font-medium text-purple-600 transition-colors hover:bg-purple-50 hover:text-purple-900 dark:hover:bg-purple-900/20"
-                            :title="t('apiKeys.tooltip.stats')"
+                            title="查看详细统计"
                             @click="showUsageDetails(key)"
                           >
                             <i class="fas fa-chart-line" />
@@ -973,7 +977,7 @@
                           <button
                             v-if="key && key.id"
                             class="rounded px-2 py-1 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900 dark:hover:bg-indigo-900/20"
-                            :title="t('apiKeys.tooltip.models')"
+                            title="模型使用分布"
                             @click="toggleApiKeyModelStats(key.id)"
                           >
                             <i
@@ -1271,7 +1275,11 @@
                     @change="updateSelectAllState"
                   />
                   <div>
-                    <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    <h4
+                      class="cursor-pointer text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+                      title="点击复制"
+                      @click.stop="copyText(key.name)"
+                    >
                       {{ key.name }}
                     </h4>
                     <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
@@ -1293,7 +1301,7 @@
                       key.isActive ? 'bg-green-500' : 'bg-red-500'
                     ]"
                   />
-                  {{ key.isActive ? t('apiKeys.status.active') : t('apiKeys.status.disabled') }}
+                  {{ key.isActive ? '活跃' : '已停用' }}
                 </span>
               </div>
 
@@ -1362,7 +1370,7 @@
                     {{ getDroidBindingInfo(key) }}
                   </span>
                 </div>
-                <!-- 无绑定时显示{{ t('apiKeys.account.shared_pool') }} -->
+                <!-- 无绑定时显示共享池 -->
                 <div
                   v-if="
                     !key.claudeAccountId &&
@@ -1375,7 +1383,7 @@
                   class="text-xs text-gray-500 dark:text-gray-400"
                 >
                   <i class="fas fa-share-alt mr-1" />
-                  使用{{ t('apiKeys.account.shared_pool') }}
+                  使用共享池
                 </div>
                 <!-- 显示所有者信息 -->
                 <div v-if="isLdapEnabled && key.ownerDisplayName" class="text-xs text-red-600">
@@ -1439,7 +1447,7 @@
                     <div class="flex items-center justify-between">
                       <span>最后使用</span>
                       <span class="font-medium text-gray-700 dark:text-gray-300">
-                        {{ key.lastUsedAt ? formatLastUsed(key.lastUsedAt) : t('apiKeys.time.never_used') }}
+                        {{ key.lastUsedAt ? formatLastUsed(key.lastUsedAt) : '从未使用' }}
                       </span>
                     </div>
                     <div class="mt-1 flex items-center justify-between">
@@ -1450,7 +1458,7 @@
                         class="text-gray-400 dark:text-gray-500"
                       >
                         <i class="fas fa-spinner fa-spin mr-1"></i>
-                        {{ t('common.status.loading') }}
+                        加载中...
                       </span>
                       <span
                         v-else-if="hasLastUsageAccount(key)"
@@ -1466,16 +1474,14 @@
                           ({{ getLastUsageTypeLabel(key) }})
                         </span>
                       </span>
-                      <span v-else class="text-gray-400 dark:text-gray-500">{{
-                        t('apiKeys.empty.no_account_used')
-                      }}</span>
+                      <span v-else class="text-gray-400 dark:text-gray-500">暂无使用账号</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- Limit Progress Bar -->
+                <!-- 限制进度条 -->
                 <div class="space-y-2">
-                  <!-- Loading State - Skeleton (shown only if cost limits exist) -->
+                  <!-- 加载中状态 - 骨架屏（仅在有费用限制配置时显示） -->
                   <template
                     v-if="
                       isStatsLoading(key.id) &&
@@ -1493,23 +1499,23 @@
                       />
                     </div>
                   </template>
-                  <!-- Loaded State -->
+                  <!-- 已加载状态 -->
                   <template v-else>
-                    <!-- Daily Cost Limit -->
+                    <!-- 每日费用限制 -->
                     <LimitProgressBar
                       v-if="key.dailyCostLimit > 0"
                       :current="getCachedStats(key.id)?.dailyCost || 0"
-                      :label="t('apiKeys.limit_bar.daily_cost')"
+                      label="每日限制"
                       :limit="key.dailyCostLimit"
                       type="daily"
                       variant="compact"
                     />
 
-                    <!-- Total Cost Limit (shown when no daily limit) -->
+                    <!-- 总费用限制（无每日限制时展示） -->
                     <LimitProgressBar
                       v-else-if="key.totalCostLimit > 0"
                       :current="getCachedStats(key.id)?.allTimeCost || 0"
-                      :label="t('apiKeys.limit.total')"
+                      label="总费用限制"
                       :limit="key.totalCostLimit"
                       type="total"
                       variant="compact"
@@ -1528,7 +1534,7 @@
                       <!-- 费用进度条 -->
                       <LimitProgressBar
                         :current="getCachedStats(key.id)?.currentWindowCost || 0"
-                        :label="t('apiKeys.limit.window_cost')"
+                        label="窗口费用"
                         :limit="key.rateLimitCost"
                         type="window"
                         variant="compact"
@@ -1552,19 +1558,19 @@
                               ? formatWindowTime(
                                   getCachedStats(key.id)?.windowRemainingSeconds || 0
                                 )
-                              : t('apiKeys.limit.not_activated')
+                              : '未激活'
                           }}
                         </span>
                       </div>
                     </div>
 
-                    <!-- {{ t('apiKeys.limit.no_limit') }}显示 -->
+                    <!-- 无限制显示 -->
                     <div
                       v-else
                       class="flex items-center justify-center gap-1.5 py-2 text-gray-500 dark:text-gray-400"
                     >
                       <i class="fas fa-infinity text-base" />
-                      <span class="text-xs font-medium">{{ t('apiKeys.limit.no_limit') }}</span>
+                      <span class="text-xs font-medium">无限制</span>
                     </div>
                   </template>
                 </div>
@@ -1584,11 +1590,11 @@
                         isApiKeyExpiringSoon(key.expiresAt) ? 'font-semibold text-orange-600' : ''
                       "
                     >
-                      {{ key.expiresAt ? formatDate(key.expiresAt) : t('apiKeys.status.never_expires') }}
+                      {{ key.expiresAt ? formatDate(key.expiresAt) : '永不过期' }}
                     </span>
                     <button
                       class="inline-flex h-5 w-5 items-center justify-center rounded text-gray-300 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-900/20"
-                      :title="t('common.action.edit') + '过期时间'"
+                      title="编辑过期时间"
                       @click.stop="startEditExpiry(key)"
                     >
                       <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1622,14 +1628,14 @@
                   @click="showUsageDetails(key)"
                 >
                   <i class="fas fa-chart-line" />
-                  {{ t('apiKeys.action.view_stats') }}
+                  查看详情
                 </button>
                 <button
                   class="flex-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs text-gray-600 transition-colors hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="openEditApiKeyModal(key)"
                 >
                   <i class="fas fa-edit mr-1" />
-                  {{ t('common.action.edit') }}
+                  编辑
                 </button>
                 <button
                   v-if="
@@ -1640,7 +1646,7 @@
                   @click="openRenewApiKeyModal(key)"
                 >
                   <i class="fas fa-clock mr-1" />
-                  {{ t('common.action.renew') }}
+                  续期
                 </button>
                 <button
                   :class="[
@@ -1652,7 +1658,7 @@
                   @click="toggleApiKeyStatus(key)"
                 >
                   <i :class="['fas', key.isActive ? 'fa-ban' : 'fa-check-circle', 'mr-1']" />
-                  {{ key.isActive ? t('common.action.disable') : t('common.action.activate') }}
+                  {{ key.isActive ? '禁用' : '激活' }}
                 </button>
                 <button
                   class="rounded-lg bg-red-50 px-3 py-1.5 text-xs text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50"
@@ -1862,8 +1868,9 @@
                           </div>
                           <div class="min-w-0">
                             <div
-                              class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
-                              :title="key.name"
+                              class="cursor-pointer truncate text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+                              title="点击复制"
+                              @click.stop="copyText(key.name)"
                             >
                               {{ key.name }}
                             </div>
@@ -1906,10 +1913,10 @@
                               Gemini
                             </span>
                           </div>
-                          <!-- {{ t('apiKeys.account.shared_pool') }} -->
+                          <!-- 共享池 -->
                           <div v-else class="text-xs text-gray-500 dark:text-gray-400">
                             <i class="fas fa-share-alt mr-1" />
-                            {{ t('apiKeys.account.shared_pool') }}
+                            共享池
                           </div>
                         </div>
                       </td>
@@ -2005,14 +2012,14 @@
                           >
                             {{ formatLastUsed(key.lastUsedAt) }}
                           </span>
-                          <span v-else class="text-gray-400" style="font-size: 13px">{{ t('apiKeys.time.never_used') }}</span>
+                          <span v-else class="text-gray-400" style="font-size: 13px">从未使用</span>
                           <!-- 最后使用账号 loading 状态 -->
                           <span
                             v-if="key.lastUsedAt && isLastUsageLoading(key.id)"
                             class="mt-1 text-xs text-gray-400 dark:text-gray-500"
                           >
                             <i class="fas fa-spinner fa-spin mr-1"></i>
-                            {{ t('common.status.loading') }}
+                            加载中...
                           </span>
                           <span
                             v-else-if="hasLastUsageAccount(key)"
@@ -2028,7 +2035,7 @@
                             </span>
                           </span>
                           <span v-else class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                            {{ t('apiKeys.account.no_usage') }}
+                            暂无使用账号
                           </span>
                         </div>
                       </td>
@@ -2107,7 +2114,7 @@
       @success="handleBatchEditSuccess"
     />
 
-    <!-- 过期时间{{ t('common.action.edit') }}弹窗 -->
+    <!-- 过期时间编辑弹窗 -->
     <ExpiryEditModal
       ref="expiryEditModalRef"
       :api-key="editingExpiryKey || { id: null, expiresAt: null, name: '' }"
@@ -2122,16 +2129,32 @@
       @close="showUsageDetailModal = false"
       @open-timeline="openTimeline"
     />
+
+    <TagManagementModal
+      :show="showTagManagementModal"
+      @close="showTagManagementModal = false"
+      @updated="loadApiKeys"
+    />
+
+    <ConfirmModal
+      :cancel-text="confirmModalConfig.cancelText"
+      :confirm-text="confirmModalConfig.confirmText"
+      :message="confirmModalConfig.message"
+      :show="showConfirmModal"
+      :title="confirmModalConfig.title"
+      :type="confirmModalConfig.type"
+      @cancel="handleCancel"
+      @confirm="handleConfirm"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { showToast } from '@/utils/toast'
-import { apiClient } from '@/config/api'
-import { useClientsStore } from '@/stores/clients'
+import { showToast, copyText, formatNumber, formatDate } from '@/utils/tools'
+
+import * as httpApis from '@/utils/http_apis'
 import { useAuthStore } from '@/stores/auth'
 import * as XLSX from 'xlsx-js-style'
 import CreateApiKeyModal from '@/components/apikeys/CreateApiKeyModal.vue'
@@ -2142,14 +2165,14 @@ import BatchApiKeyModal from '@/components/apikeys/BatchApiKeyModal.vue'
 import BatchEditApiKeyModal from '@/components/apikeys/BatchEditApiKeyModal.vue'
 import ExpiryEditModal from '@/components/apikeys/ExpiryEditModal.vue'
 import UsageDetailModal from '@/components/apikeys/UsageDetailModal.vue'
+import TagManagementModal from '@/components/apikeys/TagManagementModal.vue'
 import LimitProgressBar from '@/components/apikeys/LimitProgressBar.vue'
 import CustomDropdown from '@/components/common/CustomDropdown.vue'
 import ActionDropdown from '@/components/common/ActionDropdown.vue'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 // 响应式数据
-const { t } = useI18n()
 const router = useRouter()
-const clientsStore = useClientsStore()
 const authStore = useAuthStore()
 const apiKeys = ref([])
 
@@ -2162,6 +2185,7 @@ const selectAllChecked = ref(false)
 const isIndeterminate = ref(false)
 const showCheckboxes = ref(false)
 const apiKeysLoading = ref(false)
+const apiKeyStatsTimeRange = ref('today')
 
 // 全局日期筛选器
 const globalDateFilter = reactive({
@@ -2190,11 +2214,11 @@ const toggleSelectionMode = () => {
 
 // 时间范围下拉选项
 const timeRangeDropdownOptions = computed(() => [
-  { value: 'today', label: t('apiKeys.filter.today'), icon: 'fa-calendar-day' },
-  { value: '7days', label: t('apiKeys.filter.last_7_days'), icon: 'fa-calendar-week' },
-  { value: '30days', label: t('apiKeys.filter.last_30_days'), icon: 'fa-calendar-alt' },
-  { value: 'all', label: t('apiKeys.filter.all_time'), icon: 'fa-infinity' },
-  { value: 'custom', label: t('apiKeys.filter.custom'), icon: 'fa-calendar-check' }
+  { value: 'today', label: '今日', icon: 'fa-calendar-day' },
+  { value: '7days', label: '最近7天', icon: 'fa-calendar-week' },
+  { value: '30days', label: '最近30天', icon: 'fa-calendar-alt' },
+  { value: 'all', label: '全部时间', icon: 'fa-infinity' },
+  { value: 'custom', label: '自定义范围', icon: 'fa-calendar-check' }
 ])
 
 // Tab management
@@ -2260,12 +2284,12 @@ const availableModels = ref([])
 const searchKeyword = ref('')
 const searchMode = ref('apiKey')
 const searchModeOptions = computed(() => [
-  { value: 'apiKey', label: t('apiKeys.filter.search_name'), icon: 'fa-key' },
-  { value: 'bindingAccount', label: t('apiKeys.filter.search_account'), icon: 'fa-id-badge' }
+  { value: 'apiKey', label: '按Key名称', icon: 'fa-key' },
+  { value: 'bindingAccount', label: '按所属账号', icon: 'fa-id-badge' }
 ])
 
 const tagOptions = computed(() => {
-  const options = [{ value: '', label: t('apiKeys.filter.all_tags'), icon: 'fa-asterisk' }]
+  const options = [{ value: '', label: '所有标签', icon: 'fa-asterisk' }]
   availableTags.value.forEach((tag) => {
     options.push({ value: tag, label: tag, icon: 'fa-tag' })
   })
@@ -2310,10 +2334,44 @@ const showRenewApiKeyModal = ref(false)
 const showNewApiKeyModal = ref(false)
 const showBatchApiKeyModal = ref(false)
 const showBatchEditModal = ref(false)
+const showTagManagementModal = ref(false)
 const editingApiKey = ref(null)
 const renewingApiKey = ref(null)
 const newApiKeyData = ref(null)
 const batchApiKeyData = ref([])
+
+// ConfirmModal 状态
+const showConfirmModal = ref(false)
+const confirmModalConfig = ref({
+  title: '',
+  message: '',
+  type: 'primary',
+  confirmText: '确认',
+  cancelText: '取消'
+})
+const confirmResolve = ref(null)
+
+const showConfirm = (
+  title,
+  message,
+  confirmText = '确认',
+  cancelText = '取消',
+  type = 'primary'
+) => {
+  return new Promise((resolve) => {
+    confirmModalConfig.value = { title, message, confirmText, cancelText, type }
+    confirmResolve.value = resolve
+    showConfirmModal.value = true
+  })
+}
+const handleConfirm = () => {
+  showConfirmModal.value = false
+  confirmResolve.value?.(true)
+}
+const handleCancel = () => {
+  showConfirmModal.value = false
+  confirmResolve.value?.(false)
+}
 
 // 计算排序后的API Keys（现在由后端处理，这里直接返回）
 const sortedApiKeys = computed(() => {
@@ -2407,15 +2465,15 @@ const loadAccounts = async (forceRefresh = false) => {
       droidData,
       groupsData
     ] = await Promise.all([
-      apiClient.get('/admin/claude-accounts'),
-      apiClient.get('/admin/claude-console-accounts'),
-      apiClient.get('/admin/gemini-accounts'),
-      apiClient.get('/admin/gemini-api-accounts'), // 加载 Gemini-API 账号
-      apiClient.get('/admin/openai-accounts'),
-      apiClient.get('/admin/openai-responses-accounts'), // 加载 OpenAI-Responses 账号
-      apiClient.get('/admin/bedrock-accounts'),
-      apiClient.get('/admin/droid-accounts'),
-      apiClient.get('/admin/account-groups')
+      httpApis.getClaudeAccountsApi(),
+      httpApis.getClaudeConsoleAccountsApi(),
+      httpApis.getGeminiAccountsApi(),
+      httpApis.getGeminiApiAccountsApi(),
+      httpApis.getOpenAIAccountsApi(),
+      httpApis.getOpenAIResponsesAccountsApi(),
+      httpApis.getBedrockAccountsApi(),
+      httpApis.getDroidAccountsApi(),
+      httpApis.getAccountGroupsApi()
     ])
 
     // 合并Claude OAuth账户和Claude Console账户
@@ -2521,7 +2579,7 @@ const loadAccounts = async (forceRefresh = false) => {
 // 加载已使用的模型列表
 const loadUsedModels = async () => {
   try {
-    const data = await apiClient.get('/admin/api-keys/used-models')
+    const data = await httpApis.getApiKeyUsedModelsApi()
     if (data.success) {
       availableModels.value = data.data || []
     }
@@ -2610,7 +2668,7 @@ const loadApiKeys = async (clearStatsCache = true) => {
       params.set('timeRange', globalDateFilter.preset)
     }
 
-    const data = await apiClient.get(`/admin/api-keys?${params.toString()}`)
+    const data = await httpApis.getApiKeysWithParamsApi(params.toString())
     if (data.success) {
       // 更新数据
       apiKeys.value = data.data?.items || []
@@ -2664,7 +2722,7 @@ const loadPageStats = async () => {
     endDate = globalDateFilter.customEnd
   }
 
-  // Filter keys needing stats loading (uncached or time range changed)
+  // 筛选出需要加载的 keys（未缓存或时间范围变化）
   const keysNeedStats = currentPageKeys.filter((key) => {
     const cached = statsCache.value.get(key.id)
     if (!cached) return true
@@ -2677,7 +2735,7 @@ const loadPageStats = async () => {
 
   if (keysNeedStats.length === 0) return
 
-  // Mark as loading
+  // 标记为加载中
   const keyIds = keysNeedStats.map((k) => k.id)
   keyIds.forEach((id) => statsLoading.value.add(id))
 
@@ -2691,10 +2749,10 @@ const loadPageStats = async () => {
       requestBody.endDate = endDate
     }
 
-    const response = await apiClient.post('/admin/api-keys/batch-stats', requestBody)
+    const response = await httpApis.getApiKeysBatchStatsApi(requestBody)
 
     if (response.success && response.data) {
-      // Update cache
+      // 更新缓存
       for (const [keyId, stats] of Object.entries(response.data)) {
         statsCache.value.set(keyId, {
           stats,
@@ -2706,8 +2764,8 @@ const loadPageStats = async () => {
       }
     }
   } catch (error) {
-    console.error('Failed to load stats:', error)
-    // Do not show toast to avoid disturbing user
+    console.error('加载统计数据失败:', error)
+    // 不显示 toast，避免打扰用户
   } finally {
     keyIds.forEach((id) => statsLoading.value.delete(id))
   }
@@ -2745,7 +2803,7 @@ const loadPageLastUsage = async () => {
   keyIds.forEach((id) => lastUsageLoading.value.add(id))
 
   try {
-    const response = await apiClient.post('/admin/api-keys/batch-last-usage', { keyIds })
+    const response = await httpApis.getApiKeysBatchLastUsageApi({ keyIds })
 
     if (response.success && response.data) {
       // 更新缓存
@@ -2776,7 +2834,7 @@ const loadDeletedApiKeys = async () => {
   activeTab.value = 'deleted'
   deletedApiKeysLoading.value = true
   try {
-    const data = await apiClient.get('/admin/api-keys/deleted')
+    const data = await httpApis.getDeletedApiKeysApi()
     if (data.success) {
       deletedApiKeys.value = data.apiKeys || []
     }
@@ -2855,7 +2913,7 @@ let costSortStatusTimer = null
 // 获取费用排序索引状态
 const fetchCostSortStatus = async () => {
   try {
-    const data = await apiClient.get('/admin/api-keys/cost-sort-status')
+    const data = await httpApis.getApiKeysCostSortStatusApi()
     if (data.success) {
       costSortStatus.value = data.data || {}
 
@@ -2886,10 +2944,6 @@ const scheduleNextCostSortStatusRefresh = () => {
 }
 
 // 格式化数字
-const formatNumber = (num) => {
-  if (!num && num !== 0) return '0'
-  return num.toLocaleString('zh-CN')
-}
 
 // 格式化Token数量
 const formatTokenCount = (count) => {
@@ -3189,22 +3243,18 @@ const loadApiKeyModelStats = async (keyId, forceReload = false) => {
   const filter = getApiKeyDateFilter(keyId)
 
   try {
-    let url = `/admin/api-keys/${keyId}/model-stats`
-    const params = new URLSearchParams()
+    const params = {}
 
     if (filter.customStart && filter.customEnd) {
-      params.append('startDate', filter.customStart)
-      params.append('endDate', filter.customEnd)
-      params.append('period', 'custom')
+      params.startDate = filter.customStart
+      params.endDate = filter.customEnd
+      params.period = 'custom'
     } else {
-      const period =
+      params.period =
         filter.preset === 'today' ? 'daily' : filter.preset === '7days' ? 'daily' : 'monthly'
-      params.append('period', period)
     }
 
-    url += '?' + params.toString()
-
-    const data = await apiClient.get(url)
+    const data = await httpApis.getApiKeyModelStatsApi(keyId, params)
     if (data.success) {
       apiKeyModelStats.value[keyId] = data.data || []
     }
@@ -3735,7 +3785,7 @@ const openCreateApiKeyModal = () => {
   }
 }
 
-// 打开{{ t('common.action.edit') }}模态框
+// 打开编辑模态框
 const openEditApiKeyModal = (apiKey) => {
   // 使用缓存的账号数据（如果需要最新数据，用户可以点击"刷新账号"按钮）
   editingApiKey.value = apiKey
@@ -3746,7 +3796,7 @@ const openEditApiKeyModal = (apiKey) => {
   }
 }
 
-// 打开{{ t('common.action.renew') }}模态框
+// 打开续期模态框
 const openRenewApiKeyModal = (apiKey) => {
   renewingApiKey.value = apiKey
   showRenewApiKeyModal.value = true
@@ -3771,7 +3821,7 @@ const handleBatchCreateSuccess = (data) => {
 // 打开批量编辑模态框
 const openBatchEditModal = () => {
   if (selectedApiKeys.value.length === 0) {
-    showToast('请先选择要' + t('common.action.edit') + '的 API Keys', 'warning')
+    showToast('请先选择要编辑的 API Keys', 'warning')
     return
   }
 
@@ -3783,7 +3833,7 @@ const openBatchEditModal = () => {
   }
 }
 
-// 处理批量{{ t('common.action.edit') }}成功
+// 处理批量编辑成功
 const handleBatchEditSuccess = () => {
   showBatchEditModal.value = false
   // 清空选中状态
@@ -3792,7 +3842,7 @@ const handleBatchEditSuccess = () => {
   loadApiKeys()
 }
 
-// 处理{{ t('common.action.edit') }}成功
+// 处理编辑成功
 const handleEditSuccess = () => {
   showEditApiKeyModal.value = false
   showToast('API Key 更新成功', 'success')
@@ -3802,7 +3852,7 @@ const handleEditSuccess = () => {
 // 处理续期成功
 const handleRenewSuccess = () => {
   showRenewApiKeyModal.value = false
-  showToast('API Key ' + t('common.action.renew') + '成功', 'success')
+  showToast('API Key 续期成功', 'success')
   loadApiKeys()
 }
 
@@ -3811,7 +3861,7 @@ const getApiKeyActions = (key) => {
   const actions = [
     {
       key: 'edit',
-      label: t('common.action.edit'),
+      label: '编辑',
       icon: 'fa-edit',
       color: 'blue',
       handler: () => openEditApiKeyModal(key)
@@ -3822,7 +3872,7 @@ const getApiKeyActions = (key) => {
   if (key.expiresAt && (isApiKeyExpired(key.expiresAt) || isApiKeyExpiringSoon(key.expiresAt))) {
     actions.push({
       key: 'renew',
-      label: t('common.action.renew'),
+      label: '续期',
       icon: 'fa-clock',
       color: 'green',
       handler: () => openRenewApiKeyModal(key)
@@ -3856,27 +3906,19 @@ const toggleApiKeyStatus = async (key) => {
 
   // 禁用时需要二次确认
   if (key.isActive) {
-    if (window.showConfirm) {
-      confirmed = await window.showConfirm(
-        '禁用 API Key',
-        `确定要禁用 API Key "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`,
-        '确定禁用',
-        '取消'
-      )
-    } else {
-      // 降级方案
-      confirmed = confirm(
-        `确定要禁用 API Key "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`
-      )
-    }
+    confirmed = await showConfirm(
+      '禁用 API Key',
+      `确定要禁用 API Key "${key.name}" 吗？禁用后所有使用此 Key 的请求将返回 401 错误。`,
+      '确定禁用',
+      '取消',
+      'warning'
+    )
   }
 
   if (!confirmed) return
 
   try {
-    const data = await apiClient.put(`/admin/api-keys/${key.id}`, {
-      isActive: !key.isActive
-    })
+    const data = await httpApis.updateApiKeyApi(key.id, { isActive: !key.isActive })
 
     if (data.success) {
       showToast(`API Key 已${key.isActive ? '禁用' : '激活'}`, 'success')
@@ -3896,24 +3938,18 @@ const toggleApiKeyStatus = async (key) => {
 // 更新API Key图标
 // 删除API Key
 const deleteApiKey = async (keyId) => {
-  let confirmed = false
-
-  if (window.showConfirm) {
-    confirmed = await window.showConfirm(
-      '删除 API Key',
-      '确定要删除这个 API Key 吗？此操作不可恢复。',
-      '确定删除',
-      '取消'
-    )
-  } else {
-    // 降级方案
-    confirmed = confirm('确定要删除这个 API Key 吗？此操作不可恢复。')
-  }
+  const confirmed = await showConfirm(
+    '删除 API Key',
+    '确定要删除这个 API Key 吗？此操作不可恢复。',
+    '确定删除',
+    '取消',
+    'danger'
+  )
 
   if (!confirmed) return
 
   try {
-    const data = await apiClient.delete(`/admin/api-keys/${keyId}`)
+    const data = await httpApis.deleteApiKeyApi(keyId)
     if (data.success) {
       showToast('API Key 已删除', 'success')
       // 从选中列表中移除
@@ -3933,24 +3969,18 @@ const deleteApiKey = async (keyId) => {
 
 // 恢复API Key
 const restoreApiKey = async (keyId) => {
-  let confirmed = false
-
-  if (window.showConfirm) {
-    confirmed = await window.showConfirm(
-      '恢复 API Key',
-      '确定要恢复这个 API Key 吗？恢复后可以重新使用。',
-      '确定恢复',
-      '取消'
-    )
-  } else {
-    // 降级方案
-    confirmed = confirm('确定要恢复这个 API Key 吗？恢复后可以重新使用。')
-  }
+  const confirmed = await showConfirm(
+    '恢复 API Key',
+    '确定要恢复这个 API Key 吗？恢复后可以重新使用。',
+    '确定恢复',
+    '取消',
+    'primary'
+  )
 
   if (!confirmed) return
 
   try {
-    const data = await apiClient.post(`/admin/api-keys/${keyId}/restore`)
+    const data = await httpApis.restoreApiKeyApi(keyId)
     if (data.success) {
       showToast('API Key 已成功恢复', 'success')
       // 刷新已删除列表
@@ -3967,24 +3997,18 @@ const restoreApiKey = async (keyId) => {
 
 // 彻底删除API Key
 const permanentDeleteApiKey = async (keyId) => {
-  let confirmed = false
-
-  if (window.showConfirm) {
-    confirmed = await window.showConfirm(
-      '彻底删除 API Key',
-      '确定要彻底删除这个 API Key 吗？此操作不可恢复，所有相关数据将被永久删除。',
-      '确定彻底删除',
-      '取消'
-    )
-  } else {
-    // 降级方案
-    confirmed = confirm('确定要彻底删除这个 API Key 吗？此操作不可恢复，所有相关数据将被永久删除。')
-  }
+  const confirmed = await showConfirm(
+    '彻底删除 API Key',
+    '确定要彻底删除这个 API Key 吗？此操作不可恢复，所有相关数据将被永久删除。',
+    '确定彻底删除',
+    '取消',
+    'danger'
+  )
 
   if (!confirmed) return
 
   try {
-    const data = await apiClient.delete(`/admin/api-keys/${keyId}/permanent`)
+    const data = await httpApis.permanentDeleteApiKeyApi(keyId)
     if (data.success) {
       showToast('API Key 已彻底删除', 'success')
       // 刷新已删除列表
@@ -4005,24 +4029,18 @@ const clearAllDeletedApiKeys = async () => {
     return
   }
 
-  let confirmed = false
-
-  if (window.showConfirm) {
-    confirmed = await window.showConfirm(
-      '清空所有已删除的 API Keys',
-      `确定要彻底删除全部 ${count} 个已删除的 API Keys 吗？此操作不可恢复，所有相关数据将被永久删除。`,
-      '确定清空全部',
-      '取消'
-    )
-  } else {
-    // 降级方案
-    confirmed = confirm(`确定要彻底删除全部 ${count} 个已删除的 API Keys 吗？此操作不可恢复。`)
-  }
+  const confirmed = await showConfirm(
+    '清空所有已删除的 API Keys',
+    `确定要彻底删除全部 ${count} 个已删除的 API Keys 吗？此操作不可恢复，所有相关数据将被永久删除。`,
+    '确定清空全部',
+    '取消',
+    'danger'
+  )
 
   if (!confirmed) return
 
   try {
-    const data = await apiClient.delete('/admin/api-keys/deleted/clear-all')
+    const data = await httpApis.clearAllDeletedApiKeysApi()
     if (data.success) {
       showToast(data.message || '已清空所有已删除的 API Keys', 'success')
 
@@ -4051,23 +4069,20 @@ const batchDeleteApiKeys = async () => {
     return
   }
 
-  let confirmed = false
-  const message = `确定要删除选中的 ${selectedCount} 个 API Key 吗？此操作不可恢复。`
-
-  if (window.showConfirm) {
-    confirmed = await window.showConfirm('批量删除 API Keys', message, '确定删除', '取消')
-  } else {
-    confirmed = confirm(message)
-  }
+  const confirmed = await showConfirm(
+    '批量删除 API Keys',
+    `确定要删除选中的 ${selectedCount} 个 API Key 吗？此操作不可恢复。`,
+    '确定删除',
+    '取消',
+    'danger'
+  )
 
   if (!confirmed) return
 
   const keyIds = [...selectedApiKeys.value]
 
   try {
-    const data = await apiClient.delete('/admin/api-keys/batch', {
-      data: { keyIds }
-    })
+    const data = await httpApis.batchDeleteApiKeysApi({ keyIds })
 
     if (data.success) {
       const { successCount, failedCount, errors } = data.data
@@ -4133,12 +4148,12 @@ const updateSelectAllState = () => {
   }
 }
 
-// 开始{{ t('common.action.edit') }}过期时间
+// 开始编辑过期时间
 const startEditExpiry = (apiKey) => {
   editingExpiryKey.value = apiKey
 }
 
-// 关闭过期时间{{ t('common.action.edit') }}
+// 关闭过期时间编辑
 const closeExpiryEdit = () => {
   editingExpiryKey.value = null
 }
@@ -4147,7 +4162,7 @@ const closeExpiryEdit = () => {
 const handleSaveExpiry = async ({ keyId, expiresAt, activateNow }) => {
   try {
     // 使用新的PATCH端点来修改过期时间
-    const data = await apiClient.patch(`/admin/api-keys/${keyId}/expiration`, {
+    const data = await httpApis.updateApiKeyExpirationApi(keyId, {
       expiresAt: expiresAt || null,
       activateNow: activateNow || false
     })
@@ -4183,21 +4198,6 @@ const handleSaveExpiry = async ({ keyId, expiresAt, activateNow }) => {
       expiryEditModalRef.value.resetSaving()
     }
   }
-}
-
-// 格式化日期时间
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date
-    .toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-    .replace(/\//g, '-')
 }
 
 // 格式化时间窗口倒计时
@@ -4261,7 +4261,10 @@ const showUsageDetails = (apiKey) => {
   const enrichedApiKey = {
     ...apiKey,
     dailyCost: cachedStats?.dailyCost ?? apiKey.dailyCost ?? 0,
+    weeklyOpusCost: cachedStats?.weeklyOpusCost ?? apiKey.weeklyOpusCost ?? 0,
     currentWindowCost: cachedStats?.currentWindowCost ?? apiKey.currentWindowCost ?? 0,
+    currentWindowRequests: cachedStats?.currentWindowRequests ?? apiKey.currentWindowRequests ?? 0,
+    currentWindowTokens: cachedStats?.currentWindowTokens ?? apiKey.currentWindowTokens ?? 0,
     windowRemainingSeconds: cachedStats?.windowRemainingSeconds ?? apiKey.windowRemainingSeconds,
     windowStartTime: cachedStats?.windowStartTime ?? apiKey.windowStartTime ?? null,
     windowEndTime: cachedStats?.windowEndTime ?? apiKey.windowEndTime ?? null,
@@ -4311,7 +4314,7 @@ const openTimeline = (keyId) => {
 
 // 格式化最后使用时间
 const formatLastUsed = (dateString) => {
-  if (!dateString) return t('apiKeys.time.never_used')
+  if (!dateString) return '从未使用'
   const date = new Date(dateString)
   const now = new Date()
   const diff = now - date
@@ -4467,40 +4470,34 @@ const exportToExcel = () => {
         过期时间: key.expiresAt ? formatDate(key.expiresAt) : '',
 
         // 权限配置
-        服务权限:
-          key.permissions === 'all'
-            ? '全部服务'
-            : key.permissions === 'claude'
-              ? '仅Claude'
-              : key.permissions === 'gemini'
-                ? '仅Gemini'
-                : key.permissions === 'openai'
-                  ? '仅OpenAI'
-                  : key.permissions === 'droid'
-                    ? '仅Droid'
-                    : key.permissions || '',
+        服务权限: (() => {
+          const p = key.permissions
+          if (!p || p === 'all') return '全部服务'
+          if (Array.isArray(p)) return p.length === 0 ? '全部服务' : p.join(', ')
+          return p
+        })(),
 
         // 限制配置
-        令牌限制: key.tokenLimit === '0' || key.tokenLimit === 0 ? t('apiKeys.limit.no_limit') : key.tokenLimit || '',
+        令牌限制: key.tokenLimit === '0' || key.tokenLimit === 0 ? '无限制' : key.tokenLimit || '',
         并发限制:
           key.concurrencyLimit === '0' || key.concurrencyLimit === 0
-            ? t('apiKeys.limit.no_limit')
+            ? '无限制'
             : key.concurrencyLimit || '',
         '速率窗口(分钟)':
           key.rateLimitWindow === '0' || key.rateLimitWindow === 0
-            ? t('apiKeys.limit.no_limit')
+            ? '无限制'
             : key.rateLimitWindow || '',
         速率请求限制:
           key.rateLimitRequests === '0' || key.rateLimitRequests === 0
-            ? t('apiKeys.limit.no_limit')
+            ? '无限制'
             : key.rateLimitRequests || '',
         '日费用限制($)':
           key.dailyCostLimit === '0' || key.dailyCostLimit === 0
-            ? t('apiKeys.limit.no_limit')
+            ? '无限制'
             : `$${key.dailyCostLimit}` || '',
         '总费用限制($)':
           key.totalCostLimit === '0' || key.totalCostLimit === 0
-            ? t('apiKeys.limit.no_limit')
+            ? '无限制'
             : `$${key.totalCostLimit}` || '',
 
         // 账户绑定
@@ -4535,7 +4532,7 @@ const exportToExcel = () => {
         Token数: formatTokenCount(periodTokens),
         输入Token: formatTokenCount(periodInputTokens),
         输出Token: formatTokenCount(periodOutputTokens),
-        最后使用时间: key.lastUsedAt ? formatDate(key.lastUsedAt) : t('apiKeys.time.never_used'),
+        最后使用时间: key.lastUsedAt ? formatDate(key.lastUsedAt) : '从未使用',
         最后使用账号: getLastUsageFullName(key),
         最后使用类型: getLastUsageTypeLabel(key)
       }
@@ -4683,7 +4680,7 @@ const exportToExcel = () => {
           }
         } else if (header === '最后使用时间') {
           cellStyle.alignment = { horizontal: 'right', vertical: 'center' }
-          if (value === t('apiKeys.time.never_used')) {
+          if (value === '从未使用') {
             cellStyle.font = { ...cellStyle.font, color: { rgb: '999999' }, italic: true }
           }
         } else if (header && header.includes('费用')) {
@@ -4735,52 +4732,75 @@ const exportToExcel = () => {
   }
 }
 
-let filterDebounceTimer = null
-const FILTER_DEBOUNCE_MS = 150
-const SEARCH_DEBOUNCE_MS = 300
-
-const debouncedLoadApiKeys = (clearCache = false, debounceMs = FILTER_DEBOUNCE_MS) => {
-  if (filterDebounceTimer) {
-    clearTimeout(filterDebounceTimer)
-  }
-  filterDebounceTimer = setTimeout(() => {
-    loadApiKeys(clearCache)
-  }, debounceMs)
-}
-
-watch(
-  [selectedTagFilter, selectedModels, searchMode],
-  () => {
-    currentPage.value = 1
-    selectedApiKeys.value = []
-    updateSelectAllState()
-    debouncedLoadApiKeys(false)
-  },
-  { deep: true }
-)
-
-watch(searchKeyword, () => {
+// 监听筛选条件变化，重置页码和选中状态
+// 监听筛选条件变化（不包括搜索），清空选中状态
+watch([selectedTagFilter, apiKeyStatsTimeRange], () => {
   currentPage.value = 1
-  debouncedLoadApiKeys(false, SEARCH_DEBOUNCE_MS)
+  // 清空选中状态
+  selectedApiKeys.value = []
+  updateSelectAllState()
 })
 
+// 搜索防抖定时器
+let searchDebounceTimer = null
+
+// 监听搜索关键词变化，使用防抖重新加载数据
+watch(searchKeyword, () => {
+  // 清除之前的定时器
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+  // 设置防抖（300ms）
+  searchDebounceTimer = setTimeout(() => {
+    currentPage.value = 1
+    loadApiKeys(false) // 不清除统计缓存
+  }, 300)
+})
+
+// 监听搜索模式变化，重新加载数据
+watch(searchMode, () => {
+  currentPage.value = 1
+  loadApiKeys(false)
+})
+
+// 监听标签筛选变化，重新加载数据
+watch(selectedTagFilter, () => {
+  currentPage.value = 1
+  loadApiKeys(false)
+})
+
+// 监听模型筛选变化
+watch(selectedModels, () => {
+  currentPage.value = 1
+  loadApiKeys(false)
+})
+
+// 监听排序变化，重新加载数据
 watch([apiKeysSortBy, apiKeysSortOrder], () => {
-  debouncedLoadApiKeys(false)
+  loadApiKeys(false)
 })
 
+// 监听分页变化，重新加载数据
 watch([currentPage, pageSize], ([newPage, newPageSize], [oldPage, oldPageSize]) => {
+  // 只有页码或每页数量真正变化时才重新加载
   if (newPage !== oldPage || newPageSize !== oldPageSize) {
     loadApiKeys(false)
   }
   updateSelectAllState()
-  if (newPageSize !== oldPageSize) {
-    localStorage.setItem('apiKeysPageSize', newPageSize.toString())
-  }
 })
 
+// 监听每页显示条数变化，保存到 localStorage
+watch(pageSize, (newSize) => {
+  localStorage.setItem('apiKeysPageSize', newSize.toString())
+})
+
+// 监听API Keys数据变化，清理无效的选中状态
 watch(apiKeys, () => {
   const validIds = new Set(apiKeys.value.map((key) => key.id))
+
+  // 过滤出仍然有效的选中项
   selectedApiKeys.value = selectedApiKeys.value.filter((id) => validIds.has(id))
+
   updateSelectAllState()
 })
 
@@ -4789,7 +4809,8 @@ onMounted(async () => {
   fetchCostSortStatus()
 
   // 先加载 API Keys（优先显示列表）
-  await Promise.all([clientsStore.loadSupportedClients(), loadApiKeys(), loadUsedModels()])
+  // supported-clients 由 Create/Edit 模态框按需加载，无需预加载
+  await Promise.all([loadApiKeys(), loadUsedModels()])
 
   // 初始化全选状态
   updateSelectAllState()
@@ -4798,14 +4819,11 @@ onMounted(async () => {
   loadAccounts()
 })
 
+// 组件卸载时清理定时器
 onUnmounted(() => {
   if (costSortStatusTimer) {
     clearTimeout(costSortStatusTimer)
     costSortStatusTimer = null
-  }
-  if (filterDebounceTimer) {
-    clearTimeout(filterDebounceTimer)
-    filterDebounceTimer = null
   }
 })
 </script>
@@ -4863,27 +4881,41 @@ onUnmounted(() => {
 }
 
 .dark .table-container::-webkit-scrollbar-track {
-  background: #374151;
+  background: var(--bg-gradient-mid);
 }
 
 .dark .table-container::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: var(--bg-gradient-end);
 }
 
 .dark .table-container::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: var(--text-secondary);
 }
 
-.table-row {
-  transition: background-color 0.2s ease;
+/* 统一 hover 背景 - 所有 td 使用主题色 */
+.table-container tbody tr:hover > td {
+  background-color: rgba(var(--primary-rgb), 0.06) !important;
 }
 
-.table-row:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+.dark .table-container tbody tr:hover > td {
+  background-color: rgba(var(--primary-rgb), 0.16) !important;
 }
 
-.dark .table-row:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+/* 所有 td 的斑马纹背景 */
+.table-container tbody tr:nth-child(odd) > td {
+  background-color: #ffffff;
+}
+
+.table-container tbody tr:nth-child(even) > td {
+  background-color: #f9fafb;
+}
+
+.dark .table-container tbody tr:nth-child(odd) > td {
+  background-color: var(--bg-gradient-start);
+}
+
+.dark .table-container tbody tr:nth-child(even) > td {
+  background-color: var(--bg-gradient-mid);
 }
 
 /* 固定操作列在右侧，兼容浅色和深色模式 */
@@ -4900,33 +4932,7 @@ onUnmounted(() => {
 }
 
 .dark .table-container thead .operations-column {
-  background: linear-gradient(to bottom, #374151, #1f2937);
-}
-
-/* tbody 中的操作列背景处理 - 使用纯色避免滚动时重叠 */
-.table-container tbody tr:nth-child(odd) .operations-column {
-  background-color: #ffffff;
-}
-
-.table-container tbody tr:nth-child(even) .operations-column {
-  background-color: #f9fafb;
-}
-
-.dark .table-container tbody tr:nth-child(odd) .operations-column {
-  background-color: #1f2937;
-}
-
-.dark .table-container tbody tr:nth-child(even) .operations-column {
-  background-color: #374151;
-}
-
-/* hover 状态下的操作列背景 */
-.table-container tbody tr:hover .operations-column {
-  background-color: #eff6ff;
-}
-
-.dark .table-container tbody tr:hover .operations-column {
-  background-color: #1e3a5f;
+  background: linear-gradient(to bottom, var(--bg-gradient-mid), var(--bg-gradient-start));
 }
 
 .table-container tbody .operations-column {
@@ -4953,39 +4959,7 @@ onUnmounted(() => {
 
 .dark .table-container thead .checkbox-column,
 .dark .table-container thead .name-column {
-  background: linear-gradient(to bottom, #374151, #1f2937);
-}
-
-/* tbody 中的左侧固定列背景处理 - 使用纯色避免滚动时重叠 */
-.table-container tbody tr:nth-child(odd) .checkbox-column,
-.table-container tbody tr:nth-child(odd) .name-column {
-  background-color: #ffffff;
-}
-
-.table-container tbody tr:nth-child(even) .checkbox-column,
-.table-container tbody tr:nth-child(even) .name-column {
-  background-color: #f9fafb;
-}
-
-.dark .table-container tbody tr:nth-child(odd) .checkbox-column,
-.dark .table-container tbody tr:nth-child(odd) .name-column {
-  background-color: #1f2937;
-}
-
-.dark .table-container tbody tr:nth-child(even) .checkbox-column,
-.dark .table-container tbody tr:nth-child(even) .name-column {
-  background-color: #374151;
-}
-
-/* hover 状态下的左侧固定列背景 */
-.table-container tbody tr:hover .checkbox-column,
-.table-container tbody tr:hover .name-column {
-  background-color: #eff6ff;
-}
-
-.dark .table-container tbody tr:hover .checkbox-column,
-.dark .table-container tbody tr:hover .name-column {
-  background-color: #1e3a5f;
+  background: linear-gradient(to bottom, var(--bg-gradient-mid), var(--bg-gradient-start));
 }
 
 /* 名称列右侧阴影（分隔效果） */
