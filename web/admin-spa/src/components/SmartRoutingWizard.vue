@@ -142,7 +142,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { apiClient } from '@/services/api' // Assuming this exists
+// import { apiClient } from '@/services/api' // Commented out - file does not exist
 
 const scope = ref('global')
 const sourceModel = ref('*')
