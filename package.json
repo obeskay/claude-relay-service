@@ -1,7 +1,7 @@
 {
   "name": "claude-relay-service",
   "version": "1.0.0",
-  "description": "Claude Code API relay service with multi-account management, OpenAI compatibility, and API key authentication",
+  "description": "Servicio de relay de API de Claude con gestión multi-cuenta, compatibilidad con OpenAI y autenticación por API key",
   "main": "src/app.js",
   "scripts": {
     "start": "npm run lint && node src/app.js",
@@ -38,6 +38,8 @@
     "migrate:apikey-expiry": "node scripts/migrate-apikey-expiry.js",
     "migrate:apikey-expiry:dry": "node scripts/migrate-apikey-expiry.js --dry-run",
     "migrate:fix-usage-stats": "node scripts/fix-usage-stats.js",
+    "migrate:dry-run": "node scripts/migrate-users.js --dry-run",
+    "migrate:users": "bash scripts/migrate-users.sh",
     "data:export": "node scripts/data-transfer.js export",
     "data:import": "node scripts/data-transfer.js import",
     "data:export:sanitized": "node scripts/data-transfer.js export --sanitize",
@@ -45,7 +47,14 @@
     "data:export:encrypted": "node scripts/data-transfer-enhanced.js export --decrypt=false",
     "data:import:enhanced": "node scripts/data-transfer-enhanced.js import",
     "data:debug": "node scripts/debug-redis-keys.js",
-    "test:pricing-fallback": "node scripts/test-pricing-fallback.js"
+    "test:pricing-fallback": "node scripts/test-pricing-fallback.js",
+    "pi:init": "node init-telegram.js",
+    "pi:dev": "node pi-agent/index.js",
+    "pi:start": "NODE_ENV=production node pi-agent/index.js",
+    "pi:health": "node pi-agent/health-check.js",
+    "pi:metrics": "node pi-agent/metrics.js",
+    "pi:test-alert": "node pi-agent/test-alert.js",
+    "pi:logs": "tail -f logs/pi-agent.log"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.861.0",
@@ -99,6 +108,14 @@
     "claude-code",
     "anthropic"
   ],
-  "author": "Claude Relay Service",
-  "license": "MIT"
+  "author": "Claude Relay Service - Fork Personalizado",
+  "license": "MIT",
+  "homepage": "https://github.com/tu-usuario/claude-relay-service#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tu-usuario/claude-relay-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tu-usuario/claude-relay-service/issues"
+  }
 }

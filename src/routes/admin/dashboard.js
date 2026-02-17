@@ -16,15 +16,15 @@ const config = require('../../../config/config')
 
 const router = express.Router()
 
-// 📊 系统统计
+// 📊 系统Estadística
 
-// 获取系统概览
+// Obtener系统概览
 router.get('/dashboard', authenticateAdmin, async (req, res) => {
   try {
-    // 先检查是否有全局预聚合数据
+    // 先Verificar是否有全局预聚合Datos
     const globalStats = await redis.getGlobalStats()
 
-    // 根据是否有全局统计决定查询策略
+    // 根据是否有全局Estadística决定ConsultaPolítica
     let apiKeys = null
     let apiKeyCount = null
 
@@ -54,14 +54,14 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       redis.getRealtimeSystemMetrics()
     ])
 
-    // 有全局统计时只获取计数，否则拉全量
+    // 有全局Estadística时只Obtener计数，否则拉全量
     if (globalStats) {
       apiKeyCount = await redis.getApiKeyCount()
     } else {
       apiKeys = await apiKeyService.getAllApiKeysFast()
     }
 
-    // 处理Bedrock账户数据
+    // ProcesarBedrockCuentaDatos
     const bedrockAccounts = bedrockAccountsResult.success ? bedrockAccountsResult.data : []
     const normalizeBoolean = (value) => value === true || value === 'true'
     const isRateLimitedFlag = (status) => {
@@ -77,7 +77,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       return false
     }
 
-    // 通用账户统计函数 - 单次遍历完成所有统计
+    // 通用CuentaEstadísticaFunción - 单次遍历Completado所有Estadística
     const countAccountStats = (accounts, opts = {}) => {
       const { isStringType = false, checkGeminiRateLimit = false } = opts
       let normal = 0,
@@ -113,7 +113,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       return { normal, abnormal, paused, rateLimited }
     }
 
-    // Droid 账户统计（特殊逻辑）
+    // Droid CuentaEstadística（特殊逻辑）
     let normalDroidAccounts = 0,
       abnormalDroidAccounts = 0,
       pausedDroidAccounts = 0,
@@ -135,7 +135,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 计算使用统计
+    // Calcular使用Estadística
     let totalTokensUsed = 0,
       totalRequestsUsed = 0,
       totalInputTokensUsed = 0,
@@ -147,7 +147,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       totalApiKeys = 0
 
     if (globalStats) {
-      // 使用预聚合数据（快速路径）
+      // 使用预聚合Datos（快速Ruta）
       totalRequestsUsed = globalStats.requests
       totalInputTokensUsed = globalStats.inputTokens
       totalOutputTokensUsed = globalStats.outputTokens
@@ -158,7 +158,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       totalApiKeys = apiKeyCount.total
       activeApiKeys = apiKeyCount.active
     } else {
-      // 回退到遍历（兼容旧数据）
+      // Retirada到遍历（兼容旧Datos）
       totalApiKeys = apiKeys.length
       for (const key of apiKeys) {
         const usage = key.usage?.total
@@ -177,7 +177,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 各平台账户统计（单次遍历）
+    // 各平台CuentaEstadística（单次遍历）
     const claudeStats = countAccountStats(claudeAccounts)
     const claudeConsoleStats = countAccountStats(claudeConsoleAccounts)
     const geminiStats = countAccountStats(geminiAccounts, { checkGeminiRateLimit: true })
@@ -190,7 +190,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       overview: {
         totalApiKeys,
         activeApiKeys,
-        // 总账户统计（所有平台）
+        // 总CuentaEstadística（所有平台）
         totalAccounts:
           claudeAccounts.length +
           claudeConsoleAccounts.length +
@@ -234,7 +234,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
           openaiResponsesStats.rateLimited +
           ccrStats.rateLimited +
           rateLimitedDroidAccounts,
-        // 各平台详细统计
+        // 各平台详细Estadística
         accountsByPlatform: {
           claude: {
             total: claudeAccounts.length,
@@ -293,7 +293,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
             rateLimited: rateLimitedDroidAccounts
           }
         },
-        // 保留旧字段以兼容
+        // 保留旧Campo以兼容
         activeAccounts:
           claudeStats.normal +
           claudeConsoleStats.normal +
@@ -334,7 +334,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
         rpm: realtimeMetrics.realtimeRPM,
         tpm: realtimeMetrics.realtimeTPM,
         windowMinutes: realtimeMetrics.windowMinutes,
-        isHistorical: realtimeMetrics.windowMinutes === 0 // 标识是否使用了历史数据
+        isHistorical: realtimeMetrics.windowMinutes === 0 // 标识是否使用了历史Datos
       },
       systemHealth: {
         redisConnected: redis.isConnected,
@@ -353,7 +353,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取所有临时不可用账户状态
+// Obtener所有临时不可用Cuenta状态
 router.get('/temp-unavailable', authenticateAdmin, async (req, res) => {
   try {
     const statuses = await upstreamErrorHelper.getAllTempUnavailable()
@@ -364,12 +364,12 @@ router.get('/temp-unavailable', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取使用统计
+// Obtener使用Estadística
 router.get('/usage-stats', authenticateAdmin, async (req, res) => {
   try {
     const { period = 'daily' } = req.query // daily, monthly
 
-    // 获取基础API Key统计
+    // Obtener基础API KeyEstadística
     const apiKeys = await apiKeyService.getAllApiKeysFast()
 
     const stats = apiKeys.map((key) => ({
@@ -385,10 +385,10 @@ router.get('/usage-stats', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取按模型的使用统计和费用
+// Obtener按模型的使用Estadística和费用
 router.get('/model-stats', authenticateAdmin, async (req, res) => {
   try {
-    const { period = 'daily', startDate, endDate } = req.query // daily, monthly, 支持自定义时间范围
+    const { period = 'daily', startDate, endDate } = req.query // daily, monthly, Soportar自定义Tiempo范围
     const today = redis.getDateStringInTimezone()
     const tzDate = redis.getDateInTimezone()
     const currentMonth = `${tzDate.getUTCFullYear()}-${String(tzDate.getUTCMonth() + 1).padStart(
@@ -400,11 +400,11 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
       `📊 Getting global model stats, period: ${period}, startDate: ${startDate}, endDate: ${endDate}, today: ${today}, currentMonth: ${currentMonth}`
     )
 
-    // 收集所有需要扫描的日期
+    // 收集所有需要扫描的Fecha
     const datePatterns = []
 
     if (startDate && endDate) {
-      // 自定义日期范围
+      // 自定义Fecha范围
       const start = new Date(startDate)
       const end = new Date(endDate)
 
@@ -426,7 +426,7 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
 
       logger.info(`📊 Generated ${datePatterns.length} search patterns for date range`)
     } else {
-      // 使用默认的period
+      // 使用Predeterminado的period
       const pattern =
         period === 'daily'
           ? `usage:model:daily:*:${today}`
@@ -434,7 +434,7 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
       datePatterns.push({ dateStr: period === 'daily' ? today : currentMonth, pattern })
     }
 
-    // 按日期集合扫描，串行避免并行触发多次全库 SCAN
+    // 按Fecha集合扫描，串Fila避免并Fila触发多次全库 SCAN
     const allResults = []
     for (const { pattern } of datePatterns) {
       const results = await redis.scanAndGetAllChunked(pattern)
@@ -443,13 +443,13 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
 
     logger.info(`📊 Found ${allResults.length} matching keys in total`)
 
-    // 模型名标准化函数（与redis.js保持一致）
+    // 模型名标准化Función（与redis.js保持一致）
     const normalizeModelName = (model) => {
       if (!model || model === 'unknown') {
         return model
       }
 
-      // 对于Bedrock模型，去掉区域前缀进行统一
+      // 对于Bedrock模型，去掉区域前缀进Fila统一
       if (model.includes('.anthropic.') || model.includes('.claude')) {
         let normalized = model.replace(/^[a-z0-9-]+\./, '')
         normalized = normalized.replace('anthropic.', '')
@@ -460,11 +460,11 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
       return model.replace(/-v\d+:\d+$|:latest$/, '')
     }
 
-    // 聚合相同模型的数据
+    // 聚合相同模型的Datos
     const modelStatsMap = new Map()
 
     for (const { key, data } of allResults) {
-      // 支持 daily 和 monthly 两种格式
+      // Soportar daily 和 monthly 两种Formato
       const match =
         key.match(/usage:model:daily:(.+):\d{4}-\d{2}-\d{2}$/) ||
         key.match(/usage:model:monthly:(.+):\d{4}-\d{2}$/)
@@ -498,7 +498,7 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 转换为数组并计算费用
+    // Convertir为Arreglo并Calcular费用
     const modelStats = []
 
     for (const [model, stats] of modelStatsMap) {
@@ -509,7 +509,7 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
         cache_read_input_tokens: stats.cacheReadTokens
       }
 
-      // 计算费用
+      // Calcular费用
       const costData = CostCalculator.calculateCost(usage, model)
 
       modelStats.push({
@@ -539,7 +539,7 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 按总费用排序
+    // 按总费用Ordenar
     modelStats.sort((a, b) => b.costs.total - a.costs.total)
 
     logger.info(
@@ -556,7 +556,7 @@ router.get('/model-stats', authenticateAdmin, async (req, res) => {
 
 // 🔧 系统管理
 
-// 清理过期数据
+// Limpiar过期Datos
 router.post('/cleanup', authenticateAdmin, async (req, res) => {
   try {
     const [expiredKeys, errorAccounts] = await Promise.all([

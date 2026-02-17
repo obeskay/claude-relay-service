@@ -25,53 +25,53 @@ class WebhookService {
   }
 
   /**
-   * 发送通知到所有启用的平台
+   * 发送通知到所有Habilitar的平台
    */
   async sendNotification(type, data) {
     try {
       const config = await webhookConfigService.getConfig()
 
-      // 检查是否启用webhook
+      // Verificar是否Habilitarwebhook
       if (!config.enabled) {
-        logger.debug('Webhook通知已禁用')
+        logger.debug('Webhook通知已Deshabilitar')
         return
       }
 
-      // 检查通知类型是否启用（test类型始终允许发送）
+      // Verificar通知Tipo是否Habilitar（testTipo始终允许发送）
       if (type !== 'test' && config.notificationTypes && !config.notificationTypes[type]) {
-        logger.debug(`通知类型 ${type} 已禁用`)
+        logger.debug(`通知Tipo ${type} 已Deshabilitar`)
         return
       }
 
-      // 获取启用的平台
+      // ObtenerHabilitar的平台
       const enabledPlatforms = await webhookConfigService.getEnabledPlatforms()
       if (enabledPlatforms.length === 0) {
-        logger.debug('没有启用的webhook平台')
+        logger.debug('没有Habilitar的webhook平台')
         return
       }
 
       logger.info(`📢 发送 ${type} 通知到 ${enabledPlatforms.length} 个平台`)
 
-      // 并发发送到所有平台
+      // Concurrencia发送到所有平台
       const promises = enabledPlatforms.map((platform) =>
         this.sendToPlatform(platform, type, data, config.retrySettings)
       )
 
       const results = await Promise.allSettled(promises)
 
-      // 记录结果
+      // Registro结果
       const succeeded = results.filter((r) => r.status === 'fulfilled').length
       const failed = results.filter((r) => r.status === 'rejected').length
 
       if (failed > 0) {
-        logger.warn(`⚠️ Webhook通知: ${succeeded}成功, ${failed}失败`)
+        logger.warn(`⚠️ Webhook通知: ${succeeded}Éxito, ${failed}Falló`)
       } else {
-        logger.info(`✅ 所有webhook通知发送成功`)
+        logger.info(`✅ 所有webhook通知发送Éxito`)
       }
 
       return { succeeded, failed }
     } catch (error) {
-      logger.error('发送webhook通知失败:', error)
+      logger.error('发送webhook通知Falló:', error)
       throw error
     }
   }
@@ -83,19 +83,19 @@ class WebhookService {
     try {
       const handler = this.platformHandlers[platform.type]
       if (!handler) {
-        throw new Error(`不支持的平台类型: ${platform.type}`)
+        throw new Error(`不Soportar的平台Tipo: ${platform.type}`)
       }
 
-      // 使用平台特定的处理器
+      // 使用平台特定的Procesar器
       await this.retryWithBackoff(
         () => handler(platform, type, data),
         retrySettings?.maxRetries || 3,
         retrySettings?.retryDelay || 1000
       )
 
-      logger.info(`✅ 成功发送到 ${platform.name || platform.type}`)
+      logger.info(`✅ Éxito发送到 ${platform.name || platform.type}`)
     } catch (error) {
-      logger.error(`❌ 发送到 ${platform.name || platform.type} 失败:`, error.message)
+      logger.error(`❌ 发送到 ${platform.name || platform.type} Falló:`, error.message)
       throw error
     }
   }
@@ -131,7 +131,7 @@ class WebhookService {
       }
     }
 
-    // 如果启用签名
+    // 如果HabilitarFirma
     if (platform.enableSign && platform.secret) {
       const timestamp = Date.now()
       const sign = this.generateDingTalkSign(platform.secret, timestamp)
@@ -166,7 +166,7 @@ class WebhookService {
       }
     }
 
-    // 如果启用签名
+    // 如果HabilitarFirma
     if (platform.enableSign && platform.secret) {
       const timestamp = Math.floor(Date.now() / 1000)
       const sign = this.generateFeishuSign(platform.secret, timestamp)
@@ -210,7 +210,7 @@ class WebhookService {
    * 自定义webhook
    */
   async sendToCustom(platform, type, data) {
-    // 使用通用格式
+    // 使用通用Formato
     const payload = {
       type,
       service: 'claude-relay-service',
@@ -249,7 +249,7 @@ class WebhookService {
       axiosOptions
     )
     if (!response || response.ok !== true) {
-      throw new Error(`Telegram API Error: ${response?.description || '未知错误'}`)
+      throw new Error(`Telegram API Error: ${response?.description || '未知Error'}`)
     }
   }
 
@@ -267,7 +267,7 @@ class WebhookService {
       badge: 1
     }
 
-    // 添加可选参数
+    // 添加OpcionalParámetro
     if (platform.icon) {
       payload.icon = platform.icon
     }
@@ -285,7 +285,7 @@ class WebhookService {
    */
   async sendToSMTP(platform, type, data) {
     try {
-      // 创建SMTP传输器
+      // CrearSMTP传输器
       const transporter = nodemailer.createTransport({
         host: platform.host,
         port: platform.port || 587,
@@ -294,9 +294,9 @@ class WebhookService {
           user: platform.user,
           pass: platform.pass
         },
-        // 可选的TLS配置
+        // Opcional的TLSConfiguración
         tls: platform.ignoreTLS ? { rejectUnauthorized: false } : undefined,
-        // 连接超时
+        // ConexiónTiempo de espera agotado
         connectionTimeout: platform.timeout || 10000
       })
 
@@ -316,17 +316,17 @@ class WebhookService {
 
       // 发送邮件
       const info = await transporter.sendMail(mailOptions)
-      logger.info(`✅ 邮件发送成功: ${info.messageId}`)
+      logger.info(`✅ 邮件发送Éxito: ${info.messageId}`)
 
       return info
     } catch (error) {
-      logger.error('SMTP邮件发送失败:', error)
+      logger.error('SMTP邮件发送Falló:', error)
       throw error
     }
   }
 
   /**
-   * 发送HTTP请求
+   * 发送HTTPSolicitud
    */
   async sendHttpRequest(url, payload, timeout, axiosOptions = {}) {
     const headers = {
@@ -349,7 +349,7 @@ class WebhookService {
   }
 
   /**
-   * 重试机制
+   * Reintentar机制
    */
   async retryWithBackoff(fn, maxRetries, baseDelay) {
     let lastError
@@ -362,7 +362,7 @@ class WebhookService {
 
         if (i < maxRetries - 1) {
           const delay = baseDelay * Math.pow(2, i) // 指数退避
-          logger.debug(`🔄 重试 ${i + 1}/${maxRetries}，等待 ${delay}ms`)
+          logger.debug(`🔄 Reintentar ${i + 1}/${maxRetries}，等待 ${delay}ms`)
           await new Promise((resolve) => setTimeout(resolve, delay))
         }
       }
@@ -372,7 +372,7 @@ class WebhookService {
   }
 
   /**
-   * 生成钉钉签名
+   * Generar钉钉Firma
    */
   generateDingTalkSign(secret, timestamp) {
     const stringToSign = `${timestamp}\n${secret}`
@@ -382,7 +382,7 @@ class WebhookService {
   }
 
   /**
-   * 生成飞书签名
+   * Generar飞书Firma
    */
   generateFeishuSign(secret, timestamp) {
     const stringToSign = `${timestamp}\n${secret}`
@@ -392,7 +392,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化企业微信消息
+   * Formato化企业微信消息
    */
   formatMessageForWechatWork(type, data) {
     const title = this.getNotificationTitle(type)
@@ -405,7 +405,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化钉钉消息
+   * Formato化钉钉消息
    */
   formatMessageForDingTalk(type, data) {
     const details = this.formatNotificationDetails(data)
@@ -417,14 +417,14 @@ class WebhookService {
   }
 
   /**
-   * 格式化飞书消息
+   * Formato化飞书消息
    */
   formatMessageForFeishu(type, data) {
     return this.formatNotificationDetails(data)
   }
 
   /**
-   * 格式化Slack消息
+   * Formato化Slack消息
    */
   formatMessageForSlack(type, data) {
     const title = this.getNotificationTitle(type)
@@ -445,19 +445,19 @@ class WebhookService {
     try {
       const parsed = new URL(baseUrl)
       if (!['http:', 'https:'].includes(parsed.protocol)) {
-        throw new Error('Telegram API 基础地址必须使用 http 或 https 协议')
+        throw new Error('Telegram API 基础地址必须使用 http 或 https Protocolo')
       }
 
-      // 移除结尾的 /
+      // Eliminación结尾的 /
       return parsed.href.replace(/\/$/, '')
     } catch (error) {
-      logger.warn(`⚠️ Telegram API 基础地址无效，将使用默认值: ${error.message}`)
+      logger.warn(`⚠️ Telegram API 基础地址无效，将使用PredeterminadoValor: ${error.message}`)
       return defaultBase
     }
   }
 
   /**
-   * 构建 Telegram 请求的 axios 选项（代理等）
+   * Construir Telegram Solicitud的 axios 选项（Proxy等）
    */
   buildTelegramAxiosOptions(platform) {
     const options = {}
@@ -478,10 +478,10 @@ class WebhookService {
           options.httpsAgent = agent
           options.proxy = false
         } else {
-          logger.warn(`⚠️ 不支持的Telegram代理协议: ${protocol}`)
+          logger.warn(`⚠️ 不Soportar的TelegramProxyProtocolo: ${protocol}`)
         }
       } catch (error) {
-        logger.warn(`⚠️ Telegram代理配置无效，将忽略: ${error.message}`)
+        logger.warn(`⚠️ TelegramProxyConfiguración无效，将忽略: ${error.message}`)
       }
     }
 
@@ -489,7 +489,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化 Telegram 消息
+   * Formato化 Telegram 消息
    */
   formatMessageForTelegram(type, data) {
     const title = this.getNotificationTitle(type)
@@ -511,7 +511,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化Discord消息
+   * Formato化Discord消息
    */
   formatMessageForDiscord(type, data) {
     const title = this.getNotificationTitle(type)
@@ -530,7 +530,7 @@ class WebhookService {
   }
 
   /**
-   * 获取通知标题
+   * Obtener通知标题
    */
   getNotificationTitle(type) {
     const titles = {
@@ -546,7 +546,7 @@ class WebhookService {
   }
 
   /**
-   * 获取Bark通知级别
+   * ObtenerBark通知级别
    */
   getBarkLevel(type) {
     const levels = {
@@ -562,7 +562,7 @@ class WebhookService {
   }
 
   /**
-   * 获取Bark声音
+   * ObtenerBark声音
    */
   getBarkSound(type) {
     const sounds = {
@@ -578,7 +578,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化Bark消息
+   * Formato化Bark消息
    */
   formatMessageForBark(type, data) {
     const lines = []
@@ -615,7 +615,7 @@ class WebhookService {
       lines.push(`使用率: ${data.usage}%`)
     }
 
-    // 添加服务标识和时间戳
+    // 添加Servicio标识和Tiempo戳
     lines.push(`\nServicio: Claude Relay Service`)
     lines.push(`Tiempo: ${new Date().toLocaleString('zh-CN', { timeZone: this.timezone })}`)
 
@@ -623,7 +623,7 @@ class WebhookService {
   }
 
   /**
-   * 构建通知详情数据
+   * Construir通知详情Datos
    */
   buildNotificationDetails(data) {
     const details = []
@@ -657,7 +657,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化邮件HTML内容
+   * Formato化邮件HTML内容
    */
   formatMessageForEmail(type, data) {
     const title = this.getNotificationTitle(type)
@@ -674,7 +674,7 @@ class WebhookService {
           <div style="background: white; padding: 16px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     `
 
-    // 使用统一的详情数据渲染
+    // 使用统一的详情Datos渲染
     details.forEach((detail) => {
       if (detail.isCode) {
         content += `<p><strong>${detail.label}:</strong> <code style="background: #f1f3f4; padding: 2px 6px; border-radius: 4px;">${detail.value}</code></p>`
@@ -699,7 +699,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化邮件纯文本内容
+   * Formato化邮件纯文本内容
    */
   formatMessageForEmailText(type, data) {
     const title = this.getNotificationTitle(type)
@@ -709,7 +709,7 @@ class WebhookService {
     let content = `${title}\n`
     content += `=====================================\n\n`
 
-    // 使用统一的详情数据渲染
+    // 使用统一的详情Datos渲染
     details.forEach((detail) => {
       content += `${detail.label}: ${detail.value}\n`
     })
@@ -723,7 +723,7 @@ class WebhookService {
   }
 
   /**
-   * 获取状态颜色
+   * Obtener状态颜色
    */
   getStatusColor(status) {
     const colors = {
@@ -738,7 +738,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化通知详情
+   * Formato化通知详情
    */
   formatNotificationDetails(data) {
     const lines = []
@@ -787,7 +787,7 @@ class WebhookService {
   }
 
   /**
-   * 格式化Discord字段
+   * Formato化DiscordCampo
    */
   formatNotificationFields(data) {
     const fields = []
@@ -820,7 +820,7 @@ class WebhookService {
   }
 
   /**
-   * 获取飞书卡片颜色
+   * Obtener飞书卡片颜色
    */
   getFeishuCardColor(type) {
     const colors = {
@@ -836,7 +836,7 @@ class WebhookService {
   }
 
   /**
-   * 获取Slack emoji
+   * ObtenerSlack emoji
    */
   getSlackEmoji(type) {
     const emojis = {
@@ -852,7 +852,7 @@ class WebhookService {
   }
 
   /**
-   * 获取Discord颜色
+   * ObtenerDiscord颜色
    */
   getDiscordColor(type) {
     const colors = {
@@ -868,7 +868,7 @@ class WebhookService {
   }
 
   /**
-   * 测试webhook连接
+   * ProbarwebhookConexión
    */
   async testWebhook(platform) {
     try {

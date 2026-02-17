@@ -1,24 +1,24 @@
 /**
- * 费用排序索引服务
+ * 费用OrdenarÍndiceServicio
  *
- * 为 API Keys 提供按费用排序的功能，使用 Redis Sorted Set 预计算排序索引
- * 支持 today/7days/30days/all 四种固定时间范围的预计算索引
- * 支持 custom 时间范围的实时计算
+ * 为 API Keys 提供按费用Ordenar的功能，使用 Redis Sorted Set 预CalcularOrdenarÍndice
+ * Soportar today/7days/30days/all 四种固定Tiempo范围的预CalcularÍndice
+ * Soportar custom Tiempo范围的实时Calcular
  *
  * 设计原则：
- * - 只计算未删除的 API Key
- * - 使用原子操作避免竞态条件
- * - 提供增量更新接口供 API Key 创建/删除时调用
+ * - 只Calcular未Eliminar的 API Key
+ * - 使用原子Operación避免竞态Condición
+ * - 提供增量ActualizarInterfaz供 API Key Crear/Eliminar时调用
  */
 
 const redis = require('../models/redis')
 const logger = require('../utils/logger')
 
 // ============================================================================
-// 常量配置
+// 常量Configuración
 // ============================================================================
 
-/** 时间范围更新间隔配置（省资源模式） */
+/** Tiempo范围Actualizar间隔Configuración（省资源模式） */
 const UPDATE_INTERVALS = {
   today: 10 * 60 * 1000, // 10分钟
   '7days': 30 * 60 * 1000, // 30分钟
@@ -26,30 +26,30 @@ const UPDATE_INTERVALS = {
   all: 2 * 60 * 60 * 1000 // 2小时
 }
 
-/** 支持的时间范围列表 */
+/** Soportar的Tiempo范围ColumnaTabla */
 const VALID_TIME_RANGES = ['today', '7days', '30days', 'all']
 
-/** 分布式锁超时时间（秒） */
+/** 分布式锁Tiempo de espera agotadoTiempo（秒） */
 const LOCK_TTL = 300
 
-/** 批处理大小 */
+/** 批Procesar大小 */
 const BATCH_SIZE = 100
 
 // ============================================================================
-// Redis Key 生成器（集中管理 key 格式）
+// Redis Key Generar器（集中管理 key Formato）
 // ============================================================================
 
 const RedisKeys = {
-  /** 费用排序索引 Sorted Set */
+  /** 费用OrdenarÍndice Sorted Set */
   rankKey: (timeRange) => `cost_rank:${timeRange}`,
 
-  /** 临时索引 key（用于原子替换） */
+  /** 临时Índice key（用于原子Reemplazo） */
   tempRankKey: (timeRange) => `cost_rank:${timeRange}:temp:${Date.now()}`,
 
-  /** 索引元数据 Hash */
+  /** Índice元Datos Hash */
   metaKey: (timeRange) => `cost_rank_meta:${timeRange}`,
 
-  /** 更新锁 */
+  /** Actualizar锁 */
   lockKey: (timeRange) => `cost_rank_lock:${timeRange}`,
 
   /** 每日费用 */
@@ -60,7 +60,7 @@ const RedisKeys = {
 }
 
 // ============================================================================
-// CostRankService 类
+// CostRankService Clase
 // ============================================================================
 
 class CostRankService {
@@ -74,11 +74,11 @@ class CostRankService {
   // --------------------------------------------------------------------------
 
   /**
-   * 初始化服务：启动定时任务
-   * 幂等设计：多次调用只会初始化一次
+   * InicializarServicio：启动Tarea programada
+   * 幂等设计：多次调用只会Inicializar一次
    */
   async initialize() {
-    // 先清理可能存在的旧定时器（支持热重载）
+    // 先Limpiar可能存在的旧定时器（Soportar热重载）
     this._clearAllTimers()
 
     if (this.isInitialized) {
@@ -88,12 +88,12 @@ class CostRankService {
     logger.info('🔄 Initializing CostRankService...')
 
     try {
-      // 启动时立即更新所有索引（异步，不阻塞启动）
+      // 启动时立即Actualizar所有Índice（Asíncrono，不Bloqueante启动）
       this.updateAllRanks().catch((err) => {
         logger.error('Failed to initialize cost ranks:', err)
       })
 
-      // 设置定时更新
+      // Establecer定时Actualizar
       for (const [timeRange, interval] of Object.entries(UPDATE_INTERVALS)) {
         this.timers[timeRange] = setInterval(() => {
           this.updateRank(timeRange).catch((err) => {
@@ -111,7 +111,7 @@ class CostRankService {
   }
 
   /**
-   * 关闭服务：清理定时器
+   * 关闭Servicio：Limpiar定时器
    */
   shutdown() {
     this._clearAllTimers()
@@ -120,7 +120,7 @@ class CostRankService {
   }
 
   /**
-   * 清理所有定时器
+   * Limpiar所有定时器
    * @private
    */
   _clearAllTimers() {
@@ -131,11 +131,11 @@ class CostRankService {
   }
 
   // --------------------------------------------------------------------------
-  // 索引更新（全量）
+  // ÍndiceActualizar（全量）
   // --------------------------------------------------------------------------
 
   /**
-   * 更新所有时间范围的索引
+   * Actualizar所有Tiempo范围的Índice
    */
   async updateAllRanks() {
     for (const timeRange of VALID_TIME_RANGES) {
@@ -148,8 +148,8 @@ class CostRankService {
   }
 
   /**
-   * 更新指定时间范围的排序索引
-   * @param {string} timeRange - 时间范围
+   * Actualizar指定Tiempo范围的OrdenarÍndice
+   * @param {string} timeRange - Tiempo范围
    */
   async updateRank(timeRange) {
     const client = redis.getClient()
@@ -162,7 +162,7 @@ class CostRankService {
     const rankKey = RedisKeys.rankKey(timeRange)
     const metaKey = RedisKeys.metaKey(timeRange)
 
-    // 获取分布式锁
+    // Obtener分布式锁
     const acquired = await client.set(lockKey, '1', 'NX', 'EX', LOCK_TTL)
     if (!acquired) {
       logger.debug(`Skipping ${timeRange} rank update - another update in progress`)
@@ -172,29 +172,29 @@ class CostRankService {
     const startTime = Date.now()
 
     try {
-      // 标记为更新中
+      // 标记为Actualizar中
       await client.hset(metaKey, 'status', 'updating')
 
-      // 1. 获取所有未删除的 API Key IDs
+      // 1. Obtener所有未Eliminar的 API Key IDs
       const keyIds = await this._getActiveApiKeyIds()
 
       if (keyIds.length === 0) {
-        // 无数据时清空索引
+        // 无Datos时清空Índice
         await client.del(rankKey)
         await this._updateMeta(client, metaKey, startTime, 0)
         return
       }
 
-      // 2. 计算日期范围
+      // 2. CalcularFecha范围
       const dateRange = this._getDateRange(timeRange)
 
-      // 3. 分批计算费用
+      // 3. 分批Calcular费用
       const costs = await this._calculateCostsInBatches(keyIds, dateRange)
 
-      // 4. 原子更新索引（使用临时 key + RENAME 避免竞态条件）
+      // 4. 原子ActualizarÍndice（使用临时 key + RENAME 避免竞态Condición）
       await this._atomicUpdateIndex(client, rankKey, costs)
 
-      // 5. 更新元数据
+      // 5. Actualizar元Datos
       await this._updateMeta(client, metaKey, startTime, keyIds.length)
 
       logger.info(
@@ -210,7 +210,7 @@ class CostRankService {
   }
 
   /**
-   * 原子更新索引（避免竞态条件）
+   * 原子ActualizarÍndice（避免竞态Condición）
    * @private
    */
   async _atomicUpdateIndex(client, rankKey, costs) {
@@ -219,30 +219,30 @@ class CostRankService {
       return
     }
 
-    // 使用临时 key 构建新索引
+    // 使用临时 key Construir新Índice
     const tempKey = `${rankKey}:temp:${Date.now()}`
 
     try {
-      // 构建 ZADD 参数
+      // Construir ZADD Parámetro
       const members = []
       costs.forEach((cost, keyId) => {
         members.push(cost, keyId)
       })
 
-      // 写入临时 key
+      // Escribir临时 key
       await client.zadd(tempKey, ...members)
 
-      // 原子替换（RENAME 是原子操作）
+      // 原子Reemplazo（RENAME 是原子Operación）
       await client.rename(tempKey, rankKey)
     } catch (error) {
-      // 清理临时 key
+      // Limpiar临时 key
       await client.del(tempKey).catch(() => {})
       throw error
     }
   }
 
   /**
-   * 更新元数据
+   * Actualizar元Datos
    * @private
    */
   async _updateMeta(client, metaKey, startTime, keyCount) {
@@ -255,11 +255,11 @@ class CostRankService {
   }
 
   // --------------------------------------------------------------------------
-  // 索引增量更新（供外部调用）
+  // Índice增量Actualizar（供外部调用）
   // --------------------------------------------------------------------------
 
   /**
-   * 添加 API Key 到所有索引（创建 API Key 时调用）
+   * 添加 API Key 到所有Índice（Crear API Key 时调用）
    * @param {string} keyId - API Key ID
    */
   async addKeyToIndexes(keyId) {
@@ -271,7 +271,7 @@ class CostRankService {
     try {
       const pipeline = client.pipeline()
 
-      // 将新 Key 添加到所有索引，初始分数为 0
+      // 将新 Key 添加到所有Índice，初始分数为 0
       for (const timeRange of VALID_TIME_RANGES) {
         pipeline.zadd(RedisKeys.rankKey(timeRange), 0, keyId)
       }
@@ -284,7 +284,7 @@ class CostRankService {
   }
 
   /**
-   * 从所有索引中移除 API Key（删除 API Key 时调用）
+   * 从所有Índice中Eliminación API Key（Eliminar API Key 时调用）
    * @param {string} keyId - API Key ID
    */
   async removeKeyFromIndexes(keyId) {
@@ -296,7 +296,7 @@ class CostRankService {
     try {
       const pipeline = client.pipeline()
 
-      // 从所有索引中移除
+      // 从所有Índice中Eliminación
       for (const timeRange of VALID_TIME_RANGES) {
         pipeline.zrem(RedisKeys.rankKey(timeRange), keyId)
       }
@@ -309,16 +309,16 @@ class CostRankService {
   }
 
   // --------------------------------------------------------------------------
-  // 查询接口
+  // ConsultaInterfaz
   // --------------------------------------------------------------------------
 
   /**
-   * 获取排序后的 keyId 列表
-   * @param {string} timeRange - 时间范围
-   * @param {string} sortOrder - 排序方向 'asc' | 'desc'
+   * ObtenerOrdenar后的 keyId ColumnaTabla
+   * @param {string} timeRange - Tiempo范围
+   * @param {string} sortOrder - Ordenar方向 'asc' | 'desc'
    * @param {number} offset - 偏移量
-   * @param {number} limit - 限制数量，-1 表示全部
-   * @returns {Promise<string[]>} keyId 列表
+   * @param {number} limit - Límite数量，-1 Tabla示全部
+   * @returns {Promise<string[]>} keyId ColumnaTabla
    */
   async getSortedKeyIds(timeRange, sortOrder = 'desc', offset = 0, limit = -1) {
     const client = redis.getClient()
@@ -337,8 +337,8 @@ class CostRankService {
   }
 
   /**
-   * 获取 Key 的费用分数
-   * @param {string} timeRange - 时间范围
+   * Obtener Key 的费用分数
+   * @param {string} timeRange - Tiempo范围
    * @param {string} keyId - API Key ID
    * @returns {Promise<number>} 费用
    */
@@ -353,9 +353,9 @@ class CostRankService {
   }
 
   /**
-   * 批量获取多个 Key 的费用分数
-   * @param {string} timeRange - 时间范围
-   * @param {string[]} keyIds - API Key ID 列表
+   * 批量Obtener多个 Key 的费用分数
+   * @param {string} timeRange - Tiempo范围
+   * @param {string[]} keyIds - API Key ID ColumnaTabla
    * @returns {Promise<Map<string, number>>} keyId -> cost
    */
   async getBatchKeyCosts(timeRange, keyIds) {
@@ -382,8 +382,8 @@ class CostRankService {
   }
 
   /**
-   * 获取所有排序索引的状态
-   * @returns {Promise<Object>} 各时间范围的状态
+   * Obtener所有OrdenarÍndice的状态
+   * @returns {Promise<Object>} 各Tiempo范围的状态
    */
   async getRankStatus() {
     const client = redis.getClient()
@@ -391,7 +391,7 @@ class CostRankService {
       return {}
     }
 
-    // 使用 Pipeline 批量获取
+    // 使用 Pipeline 批量Obtener
     const pipeline = client.pipeline()
     for (const timeRange of VALID_TIME_RANGES) {
       pipeline.hgetall(RedisKeys.metaKey(timeRange))
@@ -422,8 +422,8 @@ class CostRankService {
   }
 
   /**
-   * 强制刷新指定时间范围的索引
-   * @param {string} timeRange - 时间范围，不传则刷新全部
+   * 强制刷新指定Tiempo范围的Índice
+   * @param {string} timeRange - Tiempo范围，不传则刷新全部
    */
   async forceRefresh(timeRange = null) {
     if (timeRange) {
@@ -434,13 +434,13 @@ class CostRankService {
   }
 
   // --------------------------------------------------------------------------
-  // Custom 时间范围实时计算
+  // Custom Tiempo范围实时Calcular
   // --------------------------------------------------------------------------
 
   /**
-   * 计算 custom 时间范围的费用（实时计算，排除已删除的 Key）
-   * @param {string} startDate - 开始日期 YYYY-MM-DD
-   * @param {string} endDate - 结束日期 YYYY-MM-DD
+   * Calcular custom Tiempo范围的费用（实时Calcular，Excluir已Eliminar的 Key）
+   * @param {string} startDate - IniciandoFecha YYYY-MM-DD
+   * @param {string} endDate - 结束Fecha YYYY-MM-DD
    * @returns {Promise<Map<string, number>>} keyId -> cost
    */
   async calculateCustomRangeCosts(startDate, endDate) {
@@ -452,14 +452,14 @@ class CostRankService {
     logger.info(`📊 Calculating custom range costs: ${startDate} to ${endDate}`)
     const startTime = Date.now()
 
-    // 1. 获取所有未删除的 API Key IDs
+    // 1. Obtener所有未Eliminar的 API Key IDs
     const keyIds = await this._getActiveApiKeyIds()
 
     if (keyIds.length === 0) {
       return new Map()
     }
 
-    // 2. 分批计算费用
+    // 2. 分批Calcular费用
     const costs = await this._calculateCostsInBatches(keyIds, { startDate, endDate })
 
     const duration = Date.now() - startTime
@@ -469,30 +469,30 @@ class CostRankService {
   }
 
   // --------------------------------------------------------------------------
-  // 私有辅助方法
+  // 私有辅助Método
   // --------------------------------------------------------------------------
 
   /**
-   * 获取所有未删除的 API Key IDs
+   * Obtener所有未Eliminar的 API Key IDs
    * @private
    * @returns {Promise<string[]>}
    */
   async _getActiveApiKeyIds() {
-    // 使用现有的 scanApiKeyIds 获取所有 ID
+    // 使用现有的 scanApiKeyIds Obtener所有 ID
     const allKeyIds = await redis.scanApiKeyIds()
 
     if (allKeyIds.length === 0) {
       return []
     }
 
-    // 批量获取 API Key 数据，过滤已删除的
+    // 批量Obtener API Key Datos，Filtrar已Eliminar的
     const allKeys = await redis.batchGetApiKeys(allKeyIds)
 
     return allKeys.filter((k) => !k.isDeleted).map((k) => k.id)
   }
 
   /**
-   * 分批计算费用
+   * 分批Calcular费用
    * @private
    */
   async _calculateCostsInBatches(keyIds, dateRange) {
@@ -508,7 +508,7 @@ class CostRankService {
   }
 
   /**
-   * 批量计算费用
+   * 批量Calcular费用
    * @private
    */
   async _calculateBatchCosts(keyIds, dateRange) {
@@ -516,7 +516,7 @@ class CostRankService {
     const costs = new Map()
 
     if (dateRange.useTotal) {
-      // 'all' 时间范围：直接读取 total cost
+      // 'all' Tiempo范围：直接Leer total cost
       const pipeline = client.pipeline()
       keyIds.forEach((keyId) => {
         pipeline.get(RedisKeys.totalCost(keyId))
@@ -528,7 +528,7 @@ class CostRankService {
         costs.set(keyId, err ? 0 : parseFloat(value || 0))
       })
     } else {
-      // 特定日期范围：汇总每日费用
+      // 特定Fecha范围：汇总每日费用
       const dates = this._getDatesBetween(dateRange.startDate, dateRange.endDate)
 
       const pipeline = client.pipeline()
@@ -556,7 +556,7 @@ class CostRankService {
   }
 
   /**
-   * 获取日期范围配置
+   * ObtenerFecha范围Configuración
    * @private
    */
   _getDateRange(timeRange) {
@@ -584,7 +584,7 @@ class CostRankService {
   }
 
   /**
-   * 获取两个日期之间的所有日期
+   * Obtener两个Fecha之间的所有Fecha
    * @private
    */
   _getDatesBetween(startDate, endDate) {

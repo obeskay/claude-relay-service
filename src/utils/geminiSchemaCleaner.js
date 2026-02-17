@@ -95,7 +95,7 @@ function cleanJsonSchemaForGemini(schema) {
     return { type: 'object', properties: {} }
   }
 
-  // $ref：Gemini/Antigravity 不支持，转换为 hint
+  // $ref：Gemini/Antigravity 不Soportar，Convertir为 hint
   if (typeof schema.$ref === 'string' && schema.$ref) {
     return {
       type: 'object',
@@ -104,7 +104,7 @@ function cleanJsonSchemaForGemini(schema) {
     }
   }
 
-  // anyOf / oneOf：选择最可能的 schema，保留类型提示
+  // anyOf / oneOf：选择最可能的 schema，保留Tipo提示
   const anyOf = Array.isArray(schema.anyOf) ? schema.anyOf : null
   const oneOf = Array.isArray(schema.oneOf) ? schema.oneOf : null
   const alts = anyOf && anyOf.length ? anyOf : oneOf && oneOf.length ? oneOf : null
@@ -195,7 +195,7 @@ function cleanJsonSchemaForGemini(schema) {
     }
   }
 
-  // type（flatten 数组 type）
+  // type（flatten Arreglo type）
   const { type: normalizedType, hint: typeHint } = normalizeType(schema.type)
   if (normalizedType) {
     result.type = normalizedType
@@ -213,7 +213,7 @@ function cleanJsonSchemaForGemini(schema) {
     result.description = appendHint(result.description || '', constraintHints.join(', '))
   }
 
-  // additionalProperties：Gemini/Antigravity 不接受布尔值，直接删除并用 hint 记录
+  // additionalProperties：Gemini/Antigravity 不接受布尔Valor，直接Eliminar并用 hint Registro
   if (schema.additionalProperties === false) {
     result.description = appendHint(result.description || '', 'No extra properties allowed')
   }
@@ -238,7 +238,7 @@ function cleanJsonSchemaForGemini(schema) {
     result.items = cleanJsonSchemaForGemini(schema.items)
   }
 
-  // required（最后再清理无效字段）
+  // required（最后再Limpiar无效Campo）
   if (Array.isArray(schema.required) && result.properties) {
     const req = schema.required.filter(
       (r) =>
@@ -249,7 +249,7 @@ function cleanJsonSchemaForGemini(schema) {
     }
   }
 
-  // 只保留 Gemini 兼容字段：其他（$schema/$id/$defs/definitions/format/constraints/pattern...）一律丢弃
+  // 只保留 Gemini 兼容Campo：其他（$schema/$id/$defs/definitions/format/constraints/pattern...）一律丢弃
 
   if (!result.type) {
     result.type = result.properties ? 'object' : result.items ? 'array' : 'object'

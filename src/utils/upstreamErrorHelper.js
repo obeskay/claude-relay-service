@@ -2,16 +2,16 @@ const logger = require('./logger')
 
 const TEMP_UNAVAILABLE_PREFIX = 'temp_unavailable'
 
-// 默认 TTL（秒）
+// Predeterminado TTL（秒）
 const DEFAULT_TTL = {
   server_error: 300, // 5xx: 5分钟
   overload: 600, // 529: 10分钟
   auth_error: 1800, // 401/403: 30分钟
-  timeout: 300, // 504/网络超时: 5分钟
-  rate_limit: 300 // 429: 5分钟（优先使用响应头解析值）
+  timeout: 300, // 504/网络Tiempo de espera agotado: 5分钟
+  rate_limit: 300 // 429: 5分钟（优先使用Respuesta头AnalizarValor）
 }
 
-// 延迟加载配置，避免循环依赖
+// 延迟加载Configuración，避免Bucle依赖
 let _configCache = null
 const getConfig = () => {
   if (!_configCache) {
@@ -35,7 +35,7 @@ const getTtlConfig = () => {
   }
 }
 
-// 延迟加载 redis，避免循环依赖
+// 延迟加载 redis，避免Bucle依赖
 let _redis = null
 const getRedis = () => {
   if (!_redis) {
@@ -44,7 +44,7 @@ const getRedis = () => {
   return _redis
 }
 
-// 根据 HTTP 状态码分类错误类型
+// 根据 HTTP 状态码分ClaseErrorTipo
 const classifyError = (statusCode) => {
   if (statusCode === 529) {
     return 'overload'
@@ -64,13 +64,13 @@ const classifyError = (statusCode) => {
   return null
 }
 
-// 解析 429 响应头中的重置时间（返回秒数）
+// Analizar 429 Respuesta头中的重置Tiempo（Retornar秒数）
 const parseRetryAfter = (headers) => {
   if (!headers) {
     return null
   }
 
-  // 标准 Retry-After 头（秒数或 HTTP 日期）
+  // 标准 Retry-After 头（秒数或 HTTP Fecha）
   const retryAfter = headers['retry-after']
   if (retryAfter) {
     const seconds = parseInt(retryAfter, 10)
@@ -86,7 +86,7 @@ const parseRetryAfter = (headers) => {
     }
   }
 
-  // Anthropic 限流重置头（ISO 时间）
+  // Anthropic 限流重置头（ISO Tiempo）
   const anthropicReset = headers['anthropic-ratelimit-unified-reset']
   if (anthropicReset) {
     const date = new Date(anthropicReset)
@@ -110,7 +110,7 @@ const parseRetryAfter = (headers) => {
   return null
 }
 
-// 标记账户为临时不可用
+// 标记Cuenta为临时不可用
 const markTempUnavailable = async (accountId, accountType, statusCode, customTtl = null) => {
   try {
     const errorType = classifyError(statusCode)
@@ -148,7 +148,7 @@ const markTempUnavailable = async (accountId, accountType, statusCode, customTtl
   }
 }
 
-// 检查账户是否临时不可用
+// VerificarCuenta是否临时不可用
 const isTempUnavailable = async (accountId, accountType) => {
   try {
     const redis = getRedis()
@@ -176,7 +176,7 @@ const clearTempUnavailable = async (accountId, accountType) => {
   }
 }
 
-// 批量查询所有临时不可用状态（用于前端展示）
+// 批量Consulta所有临时不可用状态（用于前端展示）
 const getAllTempUnavailable = async () => {
   try {
     const redis = getRedis()
@@ -229,7 +229,7 @@ const getAllTempUnavailable = async () => {
   }
 }
 
-// 清洗上游错误数据，去除内部路由标识（如 [codex/codex]）
+// 清洗上游ErrorDatos，去除内部Ruta标识（如 [codex/codex]）
 const sanitizeErrorForClient = (errorData) => {
   if (!errorData || typeof errorData !== 'object') {
     return errorData

@@ -28,12 +28,12 @@
                 <i class="fas fa-info text-sm text-white" />
               </div>
               <div>
-                <h4 class="mb-1 font-semibold text-gray-800">API Key 信息</h4>
+                <h4 class="mb-1 font-semibold text-gray-800">API Key Información</h4>
                 <p class="text-sm text-gray-700">
                   {{ apiKey.name }}
                 </p>
                 <p class="mt-1 text-xs text-gray-600">
-                  当前过期时间：{{
+                  当anterior过期时间：{{
                     apiKey.expiresAt ? formatExpireDate(apiKey.expiresAt) : '永不过期'
                   }}
                 </p>
@@ -54,7 +54,7 @@
               <option value="180d">延长 180 天</option>
               <option value="365d">延长 365 天</option>
               <option value="custom">自定义日期</option>
-              <option value="permanent">设为永不过期</option>
+              <option value="permanent">设para永不过期</option>
             </select>
             <div v-if="form.renewDuration === 'custom'" class="mt-3">
               <input
@@ -66,7 +66,7 @@
               />
             </div>
             <p v-if="form.newExpiresAt" class="mt-2 text-xs text-gray-500">
-              新的过期时间：{{ formatExpireDate(form.newExpiresAt) }}
+              新过期时间：{{ formatExpireDate(form.newExpiresAt) }}
             </p>
           </div>
         </div>
@@ -77,7 +77,7 @@
             type="button"
             @click="$emit('close')"
           >
-            取消
+            Cancelar
           </button>
           <button
             class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -87,7 +87,7 @@
           >
             <div v-if="loading" class="loading-spinner mr-2" />
             <i v-else class="fas fa-clock mr-2" />
-            {{ loading ? '续期中...' : '确认续期' }}
+            {{ loading ? '续期en...' : 'Confirmar续期' }}
           </button>
         </div>
       </div>
@@ -121,11 +121,11 @@ const form = reactive({
 // 计算最小日期时间
 const minDateTime = computed(() => {
   const now = new Date()
-  // 如果有当前过期时间且未过期，从当前过期时间开始
+  // 如果有当anterior过期时间且未过期，de当anterior过期时间开始
   if (props.apiKey.expiresAt && new Date(props.apiKey.expiresAt) > now) {
     return new Date(props.apiKey.expiresAt).toISOString().slice(0, 16)
   }
-  // 否则从现在开始
+  // 否则de现en开始
   now.setMinutes(now.getMinutes() + 1)
   return now.toISOString().slice(0, 16)
 })
@@ -142,7 +142,7 @@ const formatExpireDate = (dateString) => {
   })
 }
 
-// 更新续期后的过期时间
+// Actualizar续期siguiente过期时间
 const updateRenewExpireAt = () => {
   if (!form.renewDuration) {
     form.newExpiresAt = null
@@ -158,7 +158,7 @@ const updateRenewExpireAt = () => {
     return
   }
 
-  // 计算新的过期时间
+  // 计算新过期时间
   const baseDate =
     props.apiKey.expiresAt && new Date(props.apiKey.expiresAt) > new Date()
       ? new Date(props.apiKey.expiresAt)
@@ -190,7 +190,7 @@ const updateRenewExpireAt = () => {
   }
 }
 
-// 更新自定义续期时间
+// Actualizar自定义续期时间
 const updateCustomRenewExpireAt = () => {
   if (form.customExpireDate) {
     form.newExpiresAt = new Date(form.customExpireDate).toISOString()
@@ -209,14 +209,14 @@ const renewApiKey = async () => {
     const result = await httpApis.updateApiKeyApi(props.apiKey.id, data)
 
     if (result.success) {
-      showToast('API Key 续期成功', 'success')
+      showToast('API Key 续期Exitoso', 'success')
       emit('success')
       emit('close')
     } else {
-      showToast(result.message || '续期失败', 'error')
+      showToast(result.message || '续期Fallido', 'error')
     }
   } catch (error) {
-    showToast('续期失败', 'error')
+    showToast('续期Fallido', 'error')
   } finally {
     loading.value = false
   }

@@ -20,7 +20,7 @@
             <div>
               <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">修改过期时间</h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                为 "{{ apiKey.name || 'API Key' }}" 设置新的过期时间
+                para "{{ apiKey.name || 'API Key' }}" Configuración新过期时间
               </p>
             </div>
           </div>
@@ -33,25 +33,25 @@
         </div>
 
         <div class="space-y-6">
-          <!-- 当前状态显示 -->
+          <!-- 当anteriorEstado显示 -->
           <div
             class="rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 p-4 dark:border-gray-600 dark:from-gray-700 dark:to-gray-800"
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="mb-1 text-xs font-medium text-gray-600 dark:text-gray-400">当前状态</p>
+                <p class="mb-1 text-xs font-medium text-gray-600 dark:text-gray-400">当anteriorEstado</p>
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  <!-- 未激活状态 -->
+                  <!-- 未激活Estado -->
                   <template v-if="apiKey.expirationMode === 'activation' && !apiKey.isActivated">
                     <i class="fas fa-pause-circle mr-1 text-blue-500" />
                     未激活
                     <span class="ml-2 text-xs font-normal text-gray-600">
-                      (激活后
+                      (激活siguiente
                       {{ apiKey.activationDays || (apiKey.activationUnit === 'hours' ? 24 : 30) }}
                       {{ apiKey.activationUnit === 'hours' ? '小时' : '天' }}过期)
                     </span>
                   </template>
-                  <!-- 已设置过期时间 -->
+                  <!-- 已Configuración过期时间 -->
                   <template v-else-if="apiKey.expiresAt">
                     {{ formatExpireDate(apiKey.expiresAt) }}
                     <span
@@ -84,29 +84,29 @@
             </div>
           </div>
 
-          <!-- 激活按钮（仅在未激活状态显示） -->
+          <!-- 激活按钮（仅en未激活Estado显示） -->
           <div v-if="apiKey.expirationMode === 'activation' && !apiKey.isActivated" class="mb-4">
             <button
               class="w-full rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700 hover:shadow-lg"
               @click="handleActivateNow"
             >
               <i class="fas fa-rocket mr-2" />
-              立即激活 (激活后
+              立即激活 (激活siguiente
               {{ apiKey.activationDays || (apiKey.activationUnit === 'hours' ? 24 : 30) }}
               {{ apiKey.activationUnit === 'hours' ? '小时' : '天' }}过期)
             </button>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
               <i class="fas fa-info-circle mr-1" />
-              点击立即激活此 API Key，激活后将在
+              点击立即激活此 API Key，激活siguiente将en
               {{ apiKey.activationDays || (apiKey.activationUnit === 'hours' ? 24 : 30) }}
-              {{ apiKey.activationUnit === 'hours' ? '小时' : '天' }}后过期
+              {{ apiKey.activationUnit === 'hours' ? '小时' : '天' }}siguiente过期
             </p>
           </div>
 
           <!-- 快捷选项 -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择新的期限</label
+              >选择新期限</label
             >
             <div class="mb-3 grid grid-cols-3 gap-2">
               <button
@@ -140,7 +140,7 @@
           <!-- 自定义日期选择 -->
           <div v-if="localForm.expireDuration === 'custom'" class="animate-fadeIn">
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择日期和时间</label
+              >选择日期y时间</label
             >
             <input
               v-model="localForm.customExpireDate"
@@ -150,11 +150,11 @@
               @change="updateCustomExpiryPreview"
             />
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              选择一个未来的日期和时间作为过期时间
+              选择一 未来日期y时间作para过期时间
             </p>
           </div>
 
-          <!-- 预览新的过期时间 -->
+          <!-- Vista previa新过期时间 -->
           <div
             v-if="localForm.expiresAt !== apiKey.expiresAt"
             class="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 dark:border-blue-700 dark:from-blue-900/20 dark:to-indigo-900/20"
@@ -163,7 +163,7 @@
               <div>
                 <p class="mb-1 text-xs font-medium text-blue-700 dark:text-blue-400">
                   <i class="fas fa-arrow-right mr-1" />
-                  新的过期时间
+                  新过期时间
                 </p>
                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">
                   <template v-if="localForm.expiresAt">
@@ -190,13 +190,13 @@
             </div>
           </div>
 
-          <!-- 操作按钮 -->
+          <!-- Operación按钮 -->
           <div class="flex gap-3 pt-2">
             <button
               class="flex-1 rounded-lg bg-gray-100 px-4 py-2.5 font-semibold text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               @click="$emit('close')"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="btn btn-primary flex-1 px-4 py-2.5 font-semibold"
@@ -205,7 +205,7 @@
             >
               <div v-if="saving" class="loading-spinner mr-2" />
               <i v-else class="fas fa-save mr-2" />
-              {{ saving ? '保存中...' : '保存更改' }}
+              {{ saving ? 'Guardaren...' : 'Guardar更改' }}
             </button>
           </div>
         </div>
@@ -245,22 +245,22 @@ const emit = defineEmits(['close', 'save'])
 
 const saving = ref(false)
 
-// ConfirmModal 状态
+// ConfirmModal Estado
 const showConfirmModal = ref(false)
 const confirmModalConfig = ref({
   title: '',
   message: '',
   type: 'primary',
-  confirmText: '确认',
-  cancelText: '取消'
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar'
 })
 const confirmResolve = ref(null)
 
 const showConfirm = (
   title,
   message,
-  confirmText = '确认',
-  cancelText = '取消',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   type = 'primary'
 ) => {
   return new Promise((resolve) => {
@@ -304,7 +304,7 @@ const minDateTime = computed(() => {
   return now.toISOString().slice(0, 16)
 })
 
-// 监听显示状态，初始化表单
+// 监听显示Estado，初始化表单
 watch(
   () => props.show,
   (newVal) => {
@@ -378,7 +378,7 @@ const selectQuickOption = (value) => {
   }
 }
 
-// 更新自定义过期时间
+// Actualizar自定义过期时间
 const updateCustomExpiryPreview = () => {
   if (localForm.customExpireDate) {
     localForm.expiresAt = new Date(localForm.customExpireDate).toISOString()
@@ -404,7 +404,7 @@ const isExpired = (dateString) => {
   return new Date(dateString) < new Date()
 }
 
-// 获取过期状态
+// 获取过期Estado
 const getExpiryStatus = (expiresAt) => {
   if (!expiresAt) return null
 
@@ -420,23 +420,23 @@ const getExpiryStatus = (expiresAt) => {
     }
   } else if (diffDays <= 7) {
     return {
-      text: `${diffDays} 天后过期`,
+      text: `${diffDays} 天siguiente过期`,
       class: 'text-orange-600'
     }
   } else if (diffDays <= 30) {
     return {
-      text: `${diffDays} 天后过期`,
+      text: `${diffDays} 天siguiente过期`,
       class: 'text-yellow-600'
     }
   } else {
     return {
-      text: `${Math.ceil(diffDays / 30)} 个月后过期`,
+      text: `${Math.ceil(diffDays / 30)}  月siguiente过期`,
       class: 'text-green-600'
     }
   }
 }
 
-// 保存
+// Guardar
 const handleSave = () => {
   saving.value = true
   emit('save', {
@@ -449,9 +449,9 @@ const handleSave = () => {
 const handleActivateNow = async () => {
   const confirmed = await showConfirm(
     '激活 API Key',
-    `确定要立即激活此 API Key 吗？激活后将在 ${props.apiKey.activationDays || (props.apiKey.activationUnit === 'hours' ? 24 : 30)} ${props.apiKey.activationUnit === 'hours' ? '小时' : '天'}后自动过期。`,
-    '确定激活',
-    '取消',
+    `Confirmar要立即激活此 API Key 吗？激活siguiente将en ${props.apiKey.activationDays || (props.apiKey.activationUnit === 'hours' ? 24 : 30)} ${props.apiKey.activationUnit === 'hours' ? '小时' : '天'}siguiente自动过期。`,
+    'Confirmar激活',
+    'Cancelar',
     'warning'
   )
 
@@ -466,7 +466,7 @@ const handleActivateNow = async () => {
   })
 }
 
-// 重置保存状态
+// RestablecerGuardarEstado
 const resetSaving = () => {
   saving.value = false
 }

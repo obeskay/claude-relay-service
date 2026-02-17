@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4 sm:mb-6">
-    <!-- 移动端下拉选择器 -->
+    <!-- 移动端abajo拉选择器 -->
     <div class="block rounded-xl bg-white/10 p-2 backdrop-blur-sm dark:bg-gray-800/20 sm:hidden">
       <select
         class="focus:ring-primary-color w-full rounded-lg bg-white/90 px-4 py-3 font-semibold text-gray-700 focus:outline-none focus:ring-2 dark:bg-gray-800/90 dark:text-gray-200 dark:focus:ring-indigo-400"
@@ -13,7 +13,7 @@
       </select>
     </div>
 
-    <!-- 桌面端标签栏 -->
+    <!-- 桌面端Etiqueta栏 -->
     <div
       class="hidden flex-wrap gap-2 rounded-2xl bg-white/10 p-2 backdrop-blur-sm dark:bg-gray-800/20 sm:flex"
     >
@@ -54,23 +54,23 @@ const authStore = useAuthStore()
 // 根据 LDAP 配置动态生成 tabs
 const tabs = computed(() => {
   const baseTabs = [
-    { key: 'dashboard', name: '仪表板', shortName: '仪表板', icon: 'fas fa-tachometer-alt' },
+    { key: 'dashboard', name: 'Panel', shortName: 'Panel', icon: 'fas fa-tachometer-alt' },
     { key: 'apiKeys', name: 'API Keys', shortName: 'API', icon: 'fas fa-key' },
-    { key: 'accounts', name: '账户管理', shortName: '账户', icon: 'fas fa-user-circle' },
-    { key: 'quotaCards', name: '额度卡', shortName: '额度卡', icon: 'fas fa-ticket-alt' }
+    { key: 'accounts', name: 'Cuentas', shortName: 'Cuentas', icon: 'fas fa-user-circle' },
+    { key: 'quotaCards', name: 'Tarjetas de cupo', shortName: 'Cupos', icon: 'fas fa-ticket-alt' }
   ]
 
-  // 只有在 LDAP 启用时才显示用户管理
+  // Solo mostrar gestión de usuarios cuando LDAP esté habilitado
   if (authStore.oemSettings?.ldapEnabled) {
     baseTabs.push({
       key: 'userManagement',
-      name: '用户管理',
-      shortName: '用户',
+      name: 'Usuarios',
+      shortName: 'Usuarios',
       icon: 'fas fa-users'
     })
   }
 
-  baseTabs.push({ key: 'settings', name: '系统设置', shortName: '设置', icon: 'fas fa-cogs' })
+  baseTabs.push({ key: 'settings', name: 'Configuración', shortName: 'Config', icon: 'fas fa-cogs' })
 
   return baseTabs
 })

@@ -1,6 +1,6 @@
 /**
- * 账户定时测试调度服务
- * 使用 node-cron 支持 crontab 表达式，为每个账户创建独立的定时任务
+ * Cuenta定时Probar调度Servicio
+ * 使用 node-cron Soportar crontab Tabla达式，为每个CuentaCrear独立的Tarea programada
  */
 
 const cron = require('node-cron')
@@ -9,24 +9,24 @@ const logger = require('../utils/logger')
 
 class AccountTestSchedulerService {
   constructor() {
-    // 存储每个账户的 cron 任务: Map<string, { task: ScheduledTask, cronExpression: string }>
+    // 存储每个Cuenta的 cron 任务: Map<string, { task: ScheduledTask, cronExpression: string }>
     this.scheduledTasks = new Map()
-    // 定期刷新配置的间隔 (毫秒)
+    // 定期刷新Configuración的间隔 (毫秒)
     this.refreshIntervalMs = 60 * 1000
     this.refreshInterval = null
-    // 当前正在测试的账户
+    // 当前En progresoProbar的Cuenta
     this.testingAccounts = new Set()
     // 是否已启动
     this.isStarted = false
   }
 
   /**
-   * 验证 cron 表达式是否有效
-   * @param {string} cronExpression - cron 表达式
+   * Validar cron Tabla达式是否有效
+   * @param {string} cronExpression - cron Tabla达式
    * @returns {boolean}
    */
   validateCronExpression(cronExpression) {
-    // 长度检查（防止 DoS）
+    // 长度Verificar（防止 DoS）
     if (!cronExpression || cronExpression.length > 100) {
       return false
     }
@@ -45,10 +45,10 @@ class AccountTestSchedulerService {
     this.isStarted = true
     logger.info('🚀 Starting account test scheduler service (node-cron mode)')
 
-    // 初始化所有已配置账户的定时任务
+    // Inicializar所有已ConfiguraciónCuenta的Tarea programada
     await this._refreshAllTasks()
 
-    // 定期刷新配置，以便动态添加/修改的配置能生效
+    // 定期刷新Configuración，以便动态添加/修改的Configuración能生效
     this.refreshInterval = setInterval(() => {
       this._refreshAllTasks()
     }, this.refreshIntervalMs)
@@ -79,7 +79,7 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 刷新所有账户的定时任务
+   * 刷新所有Cuenta的Tarea programada
    * @private
    */
   async _refreshAllTasks() {
@@ -87,7 +87,7 @@ class AccountTestSchedulerService {
       const platforms = ['claude', 'gemini', 'openai']
       const activeAccountKeys = new Set()
 
-      // 并行加载所有平台的配置
+      // 并Fila加载所有平台的Configuración
       const allEnabledAccounts = await Promise.all(
         platforms.map((platform) =>
           redis
@@ -100,7 +100,7 @@ class AccountTestSchedulerService {
         )
       )
 
-      // 展平平台数据
+      // 展平平台Datos
       const flatAccounts = allEnabledAccounts.flat()
 
       for (const { accountId, cronExpression, model, platform } of flatAccounts) {
@@ -114,25 +114,25 @@ class AccountTestSchedulerService {
         const accountKey = `${platform}:${accountId}`
         activeAccountKeys.add(accountKey)
 
-        // 检查是否需要更新任务
+        // Verificar是否需要Actualizar任务
         const existingTask = this.scheduledTasks.get(accountKey)
         if (existingTask) {
-          // 如果 cron 表达式和模型都没变，不需要更新
+          // 如果 cron Tabla达式和模型都没变，不需要Actualizar
           if (existingTask.cronExpression === cronExpression && existingTask.model === model) {
             continue
           }
-          // 配置变了，停止旧任务
+          // Configuración变了，停止旧任务
           existingTask.task.stop()
           logger.info(`🔄 Updating cron task for ${accountKey}: ${cronExpression}, model: ${model}`)
         } else {
           logger.info(`➕ Creating cron task for ${accountKey}: ${cronExpression}, model: ${model}`)
         }
 
-        // 创建新的 cron 任务
+        // Crear新的 cron 任务
         this._createCronTask(accountId, platform, cronExpression, model)
       }
 
-      // 清理已删除或禁用的账户任务
+      // Limpiar已Eliminar或Deshabilitar的Cuenta任务
       for (const [accountKey, taskInfo] of this.scheduledTasks.entries()) {
         if (!activeAccountKeys.has(accountKey)) {
           taskInfo.task.stop()
@@ -146,17 +146,17 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 为单个账户创建 cron 任务
+   * 为单个CuentaCrear cron 任务
    * @param {string} accountId
    * @param {string} platform
    * @param {string} cronExpression
-   * @param {string} model - 测试使用的模型
+   * @param {string} model - Probar使用的模型
    * @private
    */
   _createCronTask(accountId, platform, cronExpression, model) {
     const accountKey = `${platform}:${accountId}`
 
-    // 验证 cron 表达式
+    // Validar cron Tabla达式
     if (!this.validateCronExpression(cronExpression)) {
       logger.error(`❌ Invalid cron expression for ${accountKey}: ${cronExpression}`)
       return
@@ -183,16 +183,16 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 执行单个账户测试
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型
-   * @param {string} model - 测试使用的模型
+   * Ejecutar单个CuentaProbar
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo
+   * @param {string} model - Probar使用的模型
    * @private
    */
   async _runAccountTest(accountId, platform, model) {
     const accountKey = `${platform}:${accountId}`
 
-    // 避免重复测试
+    // 避免重复Probar
     if (this.testingAccounts.has(accountKey)) {
       logger.debug(`⏳ Account ${accountKey} is already being tested, skipping`)
       return
@@ -207,7 +207,7 @@ class AccountTestSchedulerService {
 
       let testResult
 
-      // 根据平台调用对应的测试方法
+      // 根据平台调用对应的ProbarMétodo
       switch (platform) {
         case 'claude':
           testResult = await this._testClaudeAccount(accountId, model)
@@ -226,13 +226,13 @@ class AccountTestSchedulerService {
           }
       }
 
-      // 保存测试结果
+      // 保存Probar结果
       await redis.saveAccountTestResult(accountId, platform, testResult)
 
-      // 更新最后测试时间
+      // Actualizar最后ProbarTiempo
       await redis.setAccountLastTestTime(accountId, platform)
 
-      // 记录日志
+      // RegistroRegistro
       if (testResult.success) {
         logger.info(
           `✅ Scheduled test passed for ${platform} account ${accountId} (${testResult.latencyMs}ms)`
@@ -263,9 +263,9 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 测试 Claude 账户
+   * Probar Claude Cuenta
    * @param {string} accountId
-   * @param {string} model - 测试使用的模型
+   * @param {string} model - Probar使用的模型
    * @private
    */
   async _testClaudeAccount(accountId, model) {
@@ -274,13 +274,13 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 测试 Gemini 账户
+   * Probar Gemini Cuenta
    * @param {string} _accountId
    * @param {string} _model
    * @private
    */
   async _testGeminiAccount(_accountId, _model) {
-    // Gemini 测试暂时返回未实现
+    // Gemini Probar暂时Retornar未实现
     return {
       success: false,
       error: 'Gemini scheduled test not implemented yet',
@@ -289,13 +289,13 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 测试 OpenAI 账户
+   * Probar OpenAI Cuenta
    * @param {string} _accountId
    * @param {string} _model
    * @private
    */
   async _testOpenAIAccount(_accountId, _model) {
-    // OpenAI 测试暂时返回未实现
+    // OpenAI Probar暂时Retornar未实现
     return {
       success: false,
       error: 'OpenAI scheduled test not implemented yet',
@@ -304,11 +304,11 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 手动触发账户测试
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型
-   * @param {string} model - 测试使用的模型
-   * @returns {Promise<Object>} 测试结果
+   * 手动触发CuentaProbar
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo
+   * @param {string} model - Probar使用的模型
+   * @returns {Promise<Object>} Probar结果
    */
   async triggerTest(accountId, platform, model = 'claude-sonnet-4-5-20250929') {
     logger.info(`🎯 Manual test triggered for ${platform} account: ${accountId} (model: ${model})`)
@@ -316,19 +316,19 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 获取账户测试历史
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型
-   * @returns {Promise<Array>} 测试历史
+   * ObtenerCuentaProbar历史
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo
+   * @returns {Promise<Array>} Probar历史
    */
   async getTestHistory(accountId, platform) {
     return await redis.getAccountTestHistory(accountId, platform)
   }
 
   /**
-   * 获取账户测试配置
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型
+   * ObtenerCuentaProbarConfiguración
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo
    * @returns {Promise<Object|null>}
    */
   async getTestConfig(accountId, platform) {
@@ -336,14 +336,14 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 设置账户测试配置
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型
-   * @param {Object} testConfig - 测试配置 { enabled: boolean, cronExpression: string, model: string }
+   * EstablecerCuentaProbarConfiguración
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo
+   * @param {Object} testConfig - ProbarConfiguración { enabled: boolean, cronExpression: string, model: string }
    * @returns {Promise<void>}
    */
   async setTestConfig(accountId, platform, testConfig) {
-    // 验证 cron 表达式
+    // Validar cron Tabla达式
     if (testConfig.cronExpression && !this.validateCronExpression(testConfig.cronExpression)) {
       throw new Error(`Invalid cron expression: ${testConfig.cronExpression}`)
     }
@@ -353,14 +353,14 @@ class AccountTestSchedulerService {
       `📝 Test config updated for ${platform} account ${accountId}: enabled=${testConfig.enabled}, cronExpression=${testConfig.cronExpression}, model=${testConfig.model}`
     )
 
-    // 立即刷新任务，使配置立即生效
+    // 立即刷新任务，使Configuración立即生效
     if (this.isStarted) {
       await this._refreshAllTasks()
     }
   }
 
   /**
-   * 更新单个账户的定时任务（配置变更时调用）
+   * Actualizar单个Cuenta的Tarea programada（Configuración变更时调用）
    * @param {string} accountId
    * @param {string} platform
    */
@@ -379,7 +379,7 @@ class AccountTestSchedulerService {
       this.scheduledTasks.delete(accountKey)
     }
 
-    // 如果启用且有有效的 cron 表达式，创建新任务
+    // 如果Habilitar且有有效的 cron Tabla达式，Crear新任务
     if (testConfig?.enabled && testConfig?.cronExpression) {
       this._createCronTask(accountId, platform, testConfig.cronExpression, testConfig.model)
       logger.info(
@@ -389,7 +389,7 @@ class AccountTestSchedulerService {
   }
 
   /**
-   * 获取调度器状态
+   * Obtener调度器状态
    * @returns {Object}
    */
   getStatus() {

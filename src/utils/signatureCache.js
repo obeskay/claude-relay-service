@@ -1,9 +1,9 @@
 /**
- * Signature Cache - 签名缓存模块
+ * Signature Cache - FirmaCachéMódulo
  *
- * 用于缓存 Antigravity thinking block 的 thoughtSignature。
- * Claude Code 客户端可能剥离非标准字段，导致多轮对话时签名丢失。
- * 此模块按 sessionId + thinkingText 存储签名，便于后续请求恢复。
+ * 用于Caché Antigravity thinking block 的 thoughtSignature。
+ * Claude Code Cliente可能剥离非标准Campo，导致多轮对话时Firma丢失。
+ * 此Módulo按 sessionId + thinkingText 存储Firma，便于后续SolicitudRestauración。
  *
  * 参考实现：
  * - CLIProxyAPI: internal/cache/signature_cache.go
@@ -13,17 +13,17 @@
 const crypto = require('crypto')
 const logger = require('./logger')
 
-// 配置常量
+// Configuración常量
 const SIGNATURE_CACHE_TTL_MS = 60 * 60 * 1000 // 1 小时（同 CLIProxyAPI）
-const MAX_ENTRIES_PER_SESSION = 100 // 每会话最大缓存条目
-const MIN_SIGNATURE_LENGTH = 50 // 最小有效签名长度
+const MAX_ENTRIES_PER_SESSION = 100 // 每Sesión最大Caché条目
+const MIN_SIGNATURE_LENGTH = 50 // 最小有效Firma长度
 const TEXT_HASH_LENGTH = 16 // 文本哈希长度（SHA256 前 16 位）
 
-// 主缓存：sessionId -> Map<textHash, { signature, timestamp }>
+// 主Caché：sessionId -> Map<textHash, { signature, timestamp }>
 const signatureCache = new Map()
 
 /**
- * 生成文本内容的稳定哈希值
+ * Generar文本内容的稳定哈希Valor
  * @param {string} text - 待哈希的文本
  * @returns {string} 16 字符的十六进制哈希
  */
@@ -36,9 +36,9 @@ function hashText(text) {
 }
 
 /**
- * 获取或创建会话缓存
- * @param {string} sessionId - 会话 ID
- * @returns {Map} 会话的签名缓存 Map
+ * Obtener或CrearSesiónCaché
+ * @param {string} sessionId - Sesión ID
+ * @returns {Map} Sesión的FirmaCaché Map
  */
 function getOrCreateSessionCache(sessionId) {
   if (!signatureCache.has(sessionId)) {
@@ -48,17 +48,17 @@ function getOrCreateSessionCache(sessionId) {
 }
 
 /**
- * 检查签名是否有效
- * @param {string} signature - 待检查的签名
- * @returns {boolean} 签名是否有效
+ * VerificarFirma是否有效
+ * @param {string} signature - 待Verificar的Firma
+ * @returns {boolean} Firma是否有效
  */
 function isValidSignature(signature) {
   return typeof signature === 'string' && signature.length >= MIN_SIGNATURE_LENGTH
 }
 
 /**
- * 缓存 thinking 签名
- * @param {string} sessionId - 会话 ID
+ * Caché thinking Firma
+ * @param {string} sessionId - Sesión ID
  * @param {string} thinkingText - thinking 内容文本
  * @param {string} signature - thoughtSignature
  */
@@ -78,7 +78,7 @@ function cacheSignature(sessionId, thinkingText, signature) {
     return
   }
 
-  // 淘汰策略：超过限制时删除最老的 1/4 条目
+  // 淘汰Política：超过Límite时Eliminar最老的 1/4 条目
   if (sessionCache.size >= MAX_ENTRIES_PER_SESSION) {
     const entries = Array.from(sessionCache.entries())
     entries.sort((a, b) => a[1].timestamp - b[1].timestamp)
@@ -102,10 +102,10 @@ function cacheSignature(sessionId, thinkingText, signature) {
 }
 
 /**
- * 获取缓存的签名
- * @param {string} sessionId - 会话 ID
+ * ObtenerCaché的Firma
+ * @param {string} sessionId - Sesión ID
  * @param {string} thinkingText - thinking 内容文本
- * @returns {string|null} 缓存的签名，未找到或过期则返回 null
+ * @returns {string|null} Caché的Firma，未找到或过期则Retornar null
  */
 function getCachedSignature(sessionId, thinkingText) {
   if (!sessionId || !thinkingText) {
@@ -127,7 +127,7 @@ function getCachedSignature(sessionId, thinkingText) {
     return null
   }
 
-  // 检查是否过期
+  // Verificar是否过期
   if (Date.now() - entry.timestamp > SIGNATURE_CACHE_TTL_MS) {
     sessionCache.delete(textHash)
     logger.debug(`[SignatureCache] Entry expired for hash ${textHash}`)
@@ -141,8 +141,8 @@ function getCachedSignature(sessionId, thinkingText) {
 }
 
 /**
- * 清除会话缓存
- * @param {string} sessionId - 要清除的会话 ID，为空则清除全部
+ * 清除SesiónCaché
+ * @param {string} sessionId - 要清除的Sesión ID，为空则清除全部
  */
 function clearSignatureCache(sessionId = null) {
   if (sessionId) {
@@ -155,7 +155,7 @@ function clearSignatureCache(sessionId = null) {
 }
 
 /**
- * 获取缓存统计信息（调试用）
+ * ObtenerCachéEstadísticaInformación（Depurar用）
  * @returns {Object} { sessionCount, totalEntries }
  */
 function getCacheStats() {
@@ -175,7 +175,7 @@ module.exports = {
   clearSignatureCache,
   getCacheStats,
   isValidSignature,
-  // 内部函数导出（用于测试或扩展）
+  // 内部Función导出（用于Probar或Extensión）
   hashText,
   MIN_SIGNATURE_LENGTH,
   MAX_ENTRIES_PER_SESSION,

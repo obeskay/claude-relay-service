@@ -77,7 +77,7 @@ const getLocale = () => {
       return stored
     }
   }
-  return 'en'
+  return 'es-MX'
 }
 
 const i18n = createI18n({

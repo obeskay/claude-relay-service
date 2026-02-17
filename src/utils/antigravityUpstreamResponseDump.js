@@ -54,16 +54,16 @@ function safeJsonStringify(payload, maxBytes) {
 }
 
 /**
- * 记录 Antigravity 上游 API 的响应
- * @param {Object} responseInfo - 响应信息
- * @param {string} responseInfo.requestId - 请求 ID
- * @param {string} responseInfo.model - 模型名称
+ * Registro Antigravity 上游 API 的Respuesta
+ * @param {Object} responseInfo - RespuestaInformación
+ * @param {string} responseInfo.requestId - Solicitud ID
+ * @param {string} responseInfo.model - 模型Nombre
  * @param {number} responseInfo.statusCode - HTTP 状态码
  * @param {string} responseInfo.statusText - HTTP 状态文本
- * @param {Object} responseInfo.headers - 响应头
- * @param {string} responseInfo.responseType - 响应类型 (stream/non-stream/error)
- * @param {Object} responseInfo.summary - 响应摘要
- * @param {Object} responseInfo.error - 错误信息（如果有）
+ * @param {Object} responseInfo.headers - Respuesta头
+ * @param {string} responseInfo.responseType - RespuestaTipo (stream/non-stream/error)
+ * @param {Object} responseInfo.summary - Respuesta摘要
+ * @param {Object} responseInfo.error - ErrorInformación（如果有）
  */
 async function dumpAntigravityUpstreamResponse(responseInfo) {
   if (!isEnabled()) {
@@ -100,7 +100,7 @@ async function dumpAntigravityUpstreamResponse(responseInfo) {
 }
 
 /**
- * 记录 SSE 流中的每个事件（用于详细调试）
+ * Registro SSE 流中的每个Evento（用于详细Depurar）
  */
 async function dumpAntigravityStreamEvent(eventInfo) {
   if (!isEnabled()) {
@@ -123,12 +123,12 @@ async function dumpAntigravityStreamEvent(eventInfo) {
   try {
     await safeRotatingAppend(filename, line)
   } catch (e) {
-    // 静默处理，避免日志过多
+    // 静默Procesar，避免Registro过多
   }
 }
 
 /**
- * 记录流式响应的最终摘要
+ * Registro流式Respuesta的最终摘要
  */
 async function dumpAntigravityStreamSummary(summaryInfo) {
   if (!isEnabled()) {

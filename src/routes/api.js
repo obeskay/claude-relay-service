@@ -58,19 +58,19 @@ function queueRateLimitUpdate(
 }
 
 /**
- * 判断是否为旧会话（污染的会话）
- * Claude Code 发送的请求特点：
- * - messages 数组通常只有 1 个元素
- * - 历史对话记录嵌套在单个 message 的 content 数组中
- * - content 数组中包含 <system-reminder> 开头的系统注入内容
+ * 判断是否为旧Sesión（污染的Sesión）
+ * Claude Code 发送的Solicitud特点：
+ * - messages Arreglo通常只有 1 个元素
+ * - 历史对话Registro嵌套在单个 message 的 content Arreglo中
+ * - content Arreglo中Incluir <system-reminder> 开头的系统注入内容
  *
- * 污染会话的特征：
+ * 污染Sesión的特征：
  * 1. messages.length > 1
- * 2. messages.length === 1 但 content 中有多个用户输入
- * 3. "warmup" 请求：单条简单消息 + 无 tools（真正新会话会带 tools）
+ * 2. messages.length === 1 但 content 中有多个Usuario输入
+ * 3. "warmup" Solicitud：单条简单消息 + 无 tools（真正新Sesión会带 tools）
  *
- * @param {Object} body - 请求体
- * @returns {boolean} 是否为旧会话
+ * @param {Object} body - Solicitud体
+ * @returns {boolean} 是否为旧Sesión
  */
 function isOldSession(body) {
   const messages = body?.messages
@@ -80,12 +80,12 @@ function isOldSession(body) {
     return false
   }
 
-  // 1. 多条消息 = 旧会话
+  // 1. 多条消息 = 旧Sesión
   if (messages.length > 1) {
     return true
   }
 
-  // 2. 单条消息，分析 content
+  // 2. 单条消息，Analizar content
   const firstMessage = messages[0]
   const content = firstMessage?.content
 
@@ -93,13 +93,13 @@ function isOldSession(body) {
     return false
   }
 
-  // 如果 content 是字符串，只有一条输入，需要检查 tools
+  // 如果 content 是Cadena，只有一条输入，需要Verificar tools
   if (typeof content === 'string') {
-    // 有 tools = 正常新会话，无 tools = 可疑
+    // 有 tools = 正常新Sesión，无 tools = 可疑
     return !tools || tools.length === 0
   }
 
-  // 如果 content 是数组，统计非 system-reminder 的元素
+  // 如果 content 是Arreglo，Estadística非 system-reminder 的元素
   if (Array.isArray(content)) {
     const userInputs = content.filter((item) => {
       if (item.type !== 'text') {
@@ -110,12 +110,12 @@ function isOldSession(body) {
       return !text.trimStart().startsWith('<system-reminder>')
     })
 
-    // 多个用户输入 = 旧会话
+    // 多个Usuario输入 = 旧Sesión
     if (userInputs.length > 1) {
       return true
     }
 
-    // Warmup 检测：单个消息 + 无 tools = 旧会话
+    // Warmup 检测：单个消息 + 无 tools = 旧Sesión
     if (userInputs.length === 1 && (!tools || tools.length === 0)) {
       return true
     }
@@ -124,7 +124,7 @@ function isOldSession(body) {
   return false
 }
 
-// 🔧 共享的消息处理函数
+// 🔧 共享的消息ProcesarFunción
 async function handleMessagesRequest(req, res) {
   try {
     const startTime = Date.now()
@@ -139,18 +139,18 @@ async function handleMessagesRequest(req, res) {
           type: 'permission_error',
           message:
             requiredService === 'gemini'
-              ? '此 API Key 无权访问 Gemini 服务'
-              : '此 API Key 无权访问 Claude 服务'
+              ? '此 API Key 无权访问 Gemini Servicio'
+              : '此 API Key 无权访问 Claude Servicio'
         }
       })
     }
 
-    // 🔄 并发满额重试标志：最多重试一次（使用req对象存储状态）
+    // 🔄 Concurrencia满额Reintentar标志：最多Reintentar一次（使用reqObjeto存储状态）
     if (req._concurrencyRetryAttempted === undefined) {
       req._concurrencyRetryAttempted = false
     }
 
-    // 严格的输入验证
+    // 严格的输入Validar
     if (!req.body || typeof req.body !== 'object') {
       return res.status(400).json({
         error: 'Invalid request',
@@ -172,7 +172,7 @@ async function handleMessagesRequest(req, res) {
       })
     }
 
-    // 模型限制（黑名单）校验：统一在此处处理（去除供应商前缀）
+    // 模型Límite（黑名单）校验：统一在此处Procesar（去除供应商前缀）
     if (
       req.apiKey.enableModelRestriction &&
       Array.isArray(req.apiKey.restrictedModels) &&
@@ -183,7 +183,7 @@ async function handleMessagesRequest(req, res) {
         return res.status(403).json({
           error: {
             type: 'forbidden',
-            message: '暂无该模型访问权限'
+            message: '暂无该模型访问Permiso'
           }
         })
       }
@@ -202,21 +202,21 @@ async function handleMessagesRequest(req, res) {
       stream: req.body?.stream === true
     })
 
-    // /v1/messages 的扩展：按路径强制分流到 Gemini OAuth 账户（避免 model 前缀混乱）
+    // /v1/messages 的Extensión：按Ruta强制分流到 Gemini OAuth Cuenta（避免 model 前缀混乱）
     if (forcedVendor === 'gemini-cli' || forcedVendor === 'antigravity') {
       const baseModel = (req.body.model || '').trim()
       return await handleAnthropicMessagesToGemini(req, res, { vendor: forcedVendor, baseModel })
     }
 
-    // 检查是否为流式请求
+    // Verificar是否为流式Solicitud
     const isStream = req.body.stream === true
 
-    // 临时修复新版本客户端，删除context_management字段，避免报错
+    // 临时Corrección新VersiónCliente，Eliminarcontext_managementCampo，避免报错
     // if (req.body.context_management) {
     //   delete req.body.context_management
     // }
 
-    // 遍历tools数组，删除input_examples字段
+    // 遍历toolsArreglo，Eliminarinput_examplesCampo
     // if (req.body.tools && Array.isArray(req.body.tools)) {
     //   req.body.tools.forEach((tool) => {
     //     if (tool && typeof tool === 'object' && tool.input_examples) {
@@ -230,7 +230,7 @@ async function handleMessagesRequest(req, res) {
     )
 
     if (isStream) {
-      // 🔍 检查客户端连接是否仍然有效（可能在并发排队等待期间断开）
+      // 🔍 VerificarClienteConexión是否仍然有效（可能在Concurrencia排队等待期间断开）
       if (res.destroyed || res.socket?.destroyed || res.writableEnded) {
         logger.warn(
           `⚠️ Client disconnected before stream response could start for key: ${req.apiKey?.name || 'unknown'}`
@@ -238,19 +238,19 @@ async function handleMessagesRequest(req, res) {
         return undefined
       }
 
-      // 流式响应 - 只使用官方真实usage数据
+      // 流式Respuesta - 只使用官方真实usageDatos
       res.setHeader('Content-Type', 'text/event-stream')
       res.setHeader('Cache-Control', 'no-cache')
       res.setHeader('Connection', 'keep-alive')
       res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('X-Accel-Buffering', 'no') // 禁用 Nginx 缓冲
-      // ⚠️ 检查 headers 是否已发送（可能在排队心跳时已设置）
+      res.setHeader('X-Accel-Buffering', 'no') // Deshabilitar Nginx 缓冲
+      // ⚠️ Verificar headers 是否已发送（可能在排队Latido时已Establecer）
       if (!res.headersSent) {
         res.setHeader('Content-Type', 'text/event-stream')
         res.setHeader('Cache-Control', 'no-cache')
-        // ⚠️ 关键修复：尊重 auth.js 提前设置的 Connection: close
-        // 当并发队列功能启用时，auth.js 会设置 Connection: close 来禁用 Keep-Alive
-        // 这里只在没有设置过 Connection 头时才设置 keep-alive
+        // ⚠️ 关键Corrección：尊重 auth.js 提前Establecer的 Connection: close
+        // 当ConcurrenciaCola功能Habilitar时，auth.js 会Establecer Connection: close 来Deshabilitar Keep-Alive
+        // 这里只在没有Establecer过 Connection 头时才Establecer keep-alive
         const existingConnection = res.getHeader('Connection')
         if (!existingConnection) {
           res.setHeader('Connection', 'keep-alive')
@@ -260,26 +260,26 @@ async function handleMessagesRequest(req, res) {
           )
         }
         res.setHeader('Access-Control-Allow-Origin', '*')
-        res.setHeader('X-Accel-Buffering', 'no') // 禁用 Nginx 缓冲
+        res.setHeader('X-Accel-Buffering', 'no') // Deshabilitar Nginx 缓冲
       } else {
         logger.debug(
           `📤 [STREAM] Headers already sent, skipping setHeader for key: ${req.apiKey?.name || 'unknown'}`
         )
       }
 
-      // 禁用 Nagle 算法，确保数据立即发送
+      // Deshabilitar Nagle 算法，确保Datos立即发送
       if (res.socket && typeof res.socket.setNoDelay === 'function') {
         res.socket.setNoDelay(true)
       }
 
-      // 流式响应不需要额外处理，中间件已经设置了监听器
+      // 流式Respuesta不需要额外Procesar，Middleware已经Establecer了Escucha
 
       let usageDataCaptured = false
 
-      // 生成会话哈希用于sticky会话
+      // GenerarSesión哈希用于stickySesión
       const sessionHash = sessionHelper.generateSessionHash(req.body)
 
-      // 🔒 全局会话绑定验证
+      // 🔒 全局Sesión绑定Validar
       let forcedAccount = null
       let needSessionBinding = false
       let originalSessionIdForBinding = null
@@ -308,7 +308,7 @@ async function handleMessagesRequest(req, res) {
               })
             }
 
-            // 如果已有绑定，使用绑定的账户
+            // 如果已有绑定，使用绑定的Cuenta
             if (validation.binding) {
               forcedAccount = validation.binding
               logger.api(
@@ -316,7 +316,7 @@ async function handleMessagesRequest(req, res) {
               )
             }
 
-            // 标记需要在调度成功后建立绑定
+            // 标记需要在调度Éxito后建立绑定
             if (validation.isNewSession) {
               needSessionBinding = true
               originalSessionIdForBinding = originalSessionId
@@ -326,10 +326,10 @@ async function handleMessagesRequest(req, res) {
         }
       } catch (error) {
         logger.error('❌ Error in global session binding check:', error)
-        // 配置服务出错时不阻断请求
+        // ConfiguraciónServicio出错时不阻断Solicitud
       }
 
-      // 使用统一调度选择账号（传递请求的模型）
+      // 使用统一调度选择账号（传递Solicitud的模型）
       const requestedModel = req.body.model
       let accountId
       let accountType
@@ -342,7 +342,7 @@ async function handleMessagesRequest(req, res) {
         )
         ;({ accountId, accountType } = selection)
       } catch (error) {
-        // 处理会话绑定账户不可用的错误
+        // ProcesarSesión绑定Cuenta不可用的Error
         if (error.code === 'SESSION_BINDING_ACCOUNT_UNAVAILABLE') {
           const errorMessage = await claudeRelayConfigService.getSessionBindingErrorMessage()
           return res.status(403).json({
@@ -369,23 +369,23 @@ async function handleMessagesRequest(req, res) {
         throw error
       }
 
-      // 🔗 在成功调度后建立会话绑定（仅 claude-official 类型）
-      // claude-official 只接受：1) 新会话 2) 已绑定的会话
+      // 🔗 在Éxito调度后建立Sesión绑定（仅 claude-official Tipo）
+      // claude-official 只接受：1) 新Sesión 2) 已绑定的Sesión
       if (
         needSessionBinding &&
         originalSessionIdForBinding &&
         accountId &&
         accountType === 'claude-official'
       ) {
-        // 🆕 允许新 session ID 创建绑定（支持 Claude Code /clear 等场景）
-        // 信任客户端的 session ID 作为新会话的标识，不再检查请求内容
+        // 🆕 允许新 session ID Crear绑定（Soportar Claude Code /clear 等场景）
+        // 信任Cliente的 session ID 作为新Sesión的标识，不再VerificarSolicitud内容
         logger.info(
           `🔗 Creating new session binding: sessionId=${originalSessionIdForBinding}, ` +
             `messages.length=${req.body?.messages?.length}, tools.length=${req.body?.tools?.length || 0}, ` +
             `accountId=${accountId}, accountType=${accountType}`
         )
 
-        // 创建绑定
+        // Crear绑定
         try {
           await claudeRelayConfigService.setOriginalSessionBinding(
             originalSessionIdForBinding,
@@ -397,7 +397,7 @@ async function handleMessagesRequest(req, res) {
         }
       }
 
-      // 🔥 预热请求拦截检查（在转发之前）
+      // 🔥 预热Solicitud拦截Verificar（在转发之前）
       if (accountType === 'claude-official' || accountType === 'claude-console') {
         const account =
           accountType === 'claude-official'
@@ -414,10 +414,10 @@ async function handleMessagesRequest(req, res) {
         }
       }
 
-      // 根据账号类型选择对应的转发服务并调用
+      // 根据账号Tipo选择对应的转发Servicio并调用
       if (accountType === 'claude-official') {
-        // 官方Claude账号使用原有的转发服务（会自己选择账号）
-        // 🧹 内存优化：提取需要的值，避免闭包捕获整个 req 对象
+        // 官方Claude账号使用原有的转发Servicio（会自己选择账号）
+        // 🧹 内存Optimización：提取需要的Valor，避免闭包捕获整个 req Objeto
         const _apiKeyId = req.apiKey.id
         const _rateLimitInfo = req.rateLimitInfo
         const _requestBody = req.body // 传递后清除引用
@@ -430,7 +430,7 @@ async function handleMessagesRequest(req, res) {
           res,
           _headers,
           (usageData) => {
-            // 回调函数：当检测到完整usage数据时记录真实token使用量
+            // 回调Función：当检测到完整usageDatos时Registro真实token使用量
             logger.info(
               '🎯 Usage callback triggered with complete data:',
               JSON.stringify(usageData, null, 2)
@@ -443,7 +443,7 @@ async function handleMessagesRequest(req, res) {
             ) {
               const inputTokens = usageData.input_tokens || 0
               const outputTokens = usageData.output_tokens || 0
-              // 兼容处理：如果有详细的 cache_creation 对象，使用它；否则使用总的 cache_creation_input_tokens
+              // 兼容Procesar：如果有详细的 cache_creation Objeto，使用它；否则使用总的 cache_creation_input_tokens
               let cacheCreateTokens = usageData.cache_creation_input_tokens || 0
               let ephemeral5mTokens = 0
               let ephemeral1hTokens = 0
@@ -451,17 +451,17 @@ async function handleMessagesRequest(req, res) {
               if (usageData.cache_creation && typeof usageData.cache_creation === 'object') {
                 ephemeral5mTokens = usageData.cache_creation.ephemeral_5m_input_tokens || 0
                 ephemeral1hTokens = usageData.cache_creation.ephemeral_1h_input_tokens || 0
-                // 总的缓存创建 tokens 是两者之和
+                // 总的CachéCrear tokens 是两者之和
                 cacheCreateTokens = ephemeral5mTokens + ephemeral1hTokens
               }
 
               const cacheReadTokens = usageData.cache_read_input_tokens || 0
               const model = usageData.model || 'unknown'
 
-              // 记录真实的token使用量（包含模型信息和所有4种token以及账户ID）
+              // Registro真实的token使用量（Incluir模型Información和所有4种token以及CuentaID）
               const { accountId: usageAccountId } = usageData
 
-              // 构建 usage 对象以传递给 recordUsage
+              // Construir usage Objeto以传递给 recordUsage
               const usageObject = {
                 input_tokens: inputTokens,
                 output_tokens: outputTokens,
@@ -469,7 +469,7 @@ async function handleMessagesRequest(req, res) {
                 cache_read_input_tokens: cacheReadTokens
               }
 
-              // 如果有详细的缓存创建数据，添加到 usage 对象中
+              // 如果有详细的CachéCrearDatos，添加到 usage Objeto中
               if (ephemeral5mTokens > 0 || ephemeral1hTokens > 0) {
                 usageObject.cache_creation = {
                   ephemeral_5m_input_tokens: ephemeral5mTokens,
@@ -510,8 +510,8 @@ async function handleMessagesRequest(req, res) {
           }
         )
       } else if (accountType === 'claude-console') {
-        // Claude Console账号使用Console转发服务（需要传递accountId）
-        // 🧹 内存优化：提取需要的值
+        // Claude Console账号使用Console转发Servicio（需要传递accountId）
+        // 🧹 内存Optimización：提取需要的Valor
         const _apiKeyIdConsole = req.apiKey.id
         const _rateLimitInfoConsole = req.rateLimitInfo
         const _requestBodyConsole = req.body
@@ -524,7 +524,7 @@ async function handleMessagesRequest(req, res) {
           res,
           _headersConsole,
           (usageData) => {
-            // 回调函数：当检测到完整usage数据时记录真实token使用量
+            // 回调Función：当检测到完整usageDatos时Registro真实token使用量
             logger.info(
               '🎯 Usage callback triggered with complete data:',
               JSON.stringify(usageData, null, 2)
@@ -537,7 +537,7 @@ async function handleMessagesRequest(req, res) {
             ) {
               const inputTokens = usageData.input_tokens || 0
               const outputTokens = usageData.output_tokens || 0
-              // 兼容处理：如果有详细的 cache_creation 对象，使用它；否则使用总的 cache_creation_input_tokens
+              // 兼容Procesar：如果有详细的 cache_creation Objeto，使用它；否则使用总的 cache_creation_input_tokens
               let cacheCreateTokens = usageData.cache_creation_input_tokens || 0
               let ephemeral5mTokens = 0
               let ephemeral1hTokens = 0
@@ -545,17 +545,17 @@ async function handleMessagesRequest(req, res) {
               if (usageData.cache_creation && typeof usageData.cache_creation === 'object') {
                 ephemeral5mTokens = usageData.cache_creation.ephemeral_5m_input_tokens || 0
                 ephemeral1hTokens = usageData.cache_creation.ephemeral_1h_input_tokens || 0
-                // 总的缓存创建 tokens 是两者之和
+                // 总的CachéCrear tokens 是两者之和
                 cacheCreateTokens = ephemeral5mTokens + ephemeral1hTokens
               }
 
               const cacheReadTokens = usageData.cache_read_input_tokens || 0
               const model = usageData.model || 'unknown'
 
-              // 记录真实的token使用量（包含模型信息和所有4种token以及账户ID）
+              // Registro真实的token使用量（Incluir模型Información和所有4种token以及CuentaID）
               const usageAccountId = usageData.accountId
 
-              // 构建 usage 对象以传递给 recordUsage
+              // Construir usage Objeto以传递给 recordUsage
               const usageObject = {
                 input_tokens: inputTokens,
                 output_tokens: outputTokens,
@@ -563,7 +563,7 @@ async function handleMessagesRequest(req, res) {
                 cache_read_input_tokens: cacheReadTokens
               }
 
-              // 如果有详细的缓存创建数据，添加到 usage 对象中
+              // 如果有详细的CachéCrearDatos，添加到 usage Objeto中
               if (ephemeral5mTokens > 0 || ephemeral1hTokens > 0) {
                 usageObject.cache_creation = {
                   ephemeral_5m_input_tokens: ephemeral5mTokens,
@@ -611,8 +611,8 @@ async function handleMessagesRequest(req, res) {
           accountId
         )
       } else if (accountType === 'bedrock') {
-        // Bedrock账号使用Bedrock转发服务
-        // 🧹 内存优化：提取需要的值
+        // Bedrock账号使用Bedrock转发Servicio
+        // 🧹 内存Optimización：提取需要的Valor
         const _apiKeyIdBedrock = req.apiKey.id
         const _rateLimitInfoBedrock = req.rateLimitInfo
         const _requestBodyBedrock = req.body
@@ -629,7 +629,7 @@ async function handleMessagesRequest(req, res) {
             res
           )
 
-          // 记录Bedrock使用统计
+          // RegistroBedrock使用Estadística
           if (result.usage) {
             const inputTokens = result.usage.input_tokens || 0
             const outputTokens = result.usage.output_tokens || 0
@@ -676,8 +676,8 @@ async function handleMessagesRequest(req, res) {
           return undefined
         }
       } else if (accountType === 'ccr') {
-        // CCR账号使用CCR转发服务（需要传递accountId）
-        // 🧹 内存优化：提取需要的值
+        // CCR账号使用CCR转发Servicio（需要传递accountId）
+        // 🧹 内存Optimización：提取需要的Valor
         const _apiKeyIdCcr = req.apiKey.id
         const _rateLimitInfoCcr = req.rateLimitInfo
         const _requestBodyCcr = req.body
@@ -690,7 +690,7 @@ async function handleMessagesRequest(req, res) {
           res,
           _headersCcr,
           (usageData) => {
-            // 回调函数：当检测到完整usage数据时记录真实token使用量
+            // 回调Función：当检测到完整usageDatos时Registro真实token使用量
             logger.info(
               '🎯 CCR usage callback triggered with complete data:',
               JSON.stringify(usageData, null, 2)
@@ -703,7 +703,7 @@ async function handleMessagesRequest(req, res) {
             ) {
               const inputTokens = usageData.input_tokens || 0
               const outputTokens = usageData.output_tokens || 0
-              // 兼容处理：如果有详细的 cache_creation 对象，使用它；否则使用总的 cache_creation_input_tokens
+              // 兼容Procesar：如果有详细的 cache_creation Objeto，使用它；否则使用总的 cache_creation_input_tokens
               let cacheCreateTokens = usageData.cache_creation_input_tokens || 0
               let ephemeral5mTokens = 0
               let ephemeral1hTokens = 0
@@ -711,17 +711,17 @@ async function handleMessagesRequest(req, res) {
               if (usageData.cache_creation && typeof usageData.cache_creation === 'object') {
                 ephemeral5mTokens = usageData.cache_creation.ephemeral_5m_input_tokens || 0
                 ephemeral1hTokens = usageData.cache_creation.ephemeral_1h_input_tokens || 0
-                // 总的缓存创建 tokens 是两者之和
+                // 总的CachéCrear tokens 是两者之和
                 cacheCreateTokens = ephemeral5mTokens + ephemeral1hTokens
               }
 
               const cacheReadTokens = usageData.cache_read_input_tokens || 0
               const model = usageData.model || 'unknown'
 
-              // 记录真实的token使用量（包含模型信息和所有4种token以及账户ID）
+              // Registro真实的token使用量（Incluir模型Información和所有4种token以及CuentaID）
               const usageAccountId = usageData.accountId
 
-              // 构建 usage 对象以传递给 recordUsage
+              // Construir usage Objeto以传递给 recordUsage
               const usageObject = {
                 input_tokens: inputTokens,
                 output_tokens: outputTokens,
@@ -729,7 +729,7 @@ async function handleMessagesRequest(req, res) {
                 cache_read_input_tokens: cacheReadTokens
               }
 
-              // 如果有详细的缓存创建数据，添加到 usage 对象中
+              // 如果有详细的CachéCrearDatos，添加到 usage Objeto中
               if (ephemeral5mTokens > 0 || ephemeral1hTokens > 0) {
                 usageObject.cache_creation = {
                   ephemeral_5m_input_tokens: ephemeral5mTokens,
@@ -772,16 +772,16 @@ async function handleMessagesRequest(req, res) {
         )
       }
 
-      // 流式请求完成后 - 如果没有捕获到usage数据，记录警告但不进行估算
+      // 流式SolicitudCompletado后 - 如果没有捕获到usageDatos，RegistroAdvertencia但不进Fila估算
       setTimeout(() => {
         if (!usageDataCaptured) {
           logger.warn(
             '⚠️ No usage data captured from SSE stream - no statistics recorded (official data only)'
           )
         }
-      }, 1000) // 1秒后检查
+      }, 1000) // 1秒后Verificar
     } else {
-      // 🧹 内存优化：提取需要的值，避免后续回调捕获整个 req
+      // 🧹 内存Optimización：提取需要的Valor，避免后续回调捕获整个 req
       const _apiKeyIdNonStream = req.apiKey.id
       const _apiKeyNameNonStream = req.apiKey.name
       const _rateLimitInfoNonStream = req.rateLimitInfo
@@ -789,7 +789,7 @@ async function handleMessagesRequest(req, res) {
       const _apiKeyNonStream = req.apiKey
       const _headersNonStream = req.headers
 
-      // 🔍 检查客户端连接是否仍然有效（可能在并发排队等待期间断开）
+      // 🔍 VerificarClienteConexión是否仍然有效（可能在Concurrencia排队等待期间断开）
       if (res.destroyed || res.socket?.destroyed || res.writableEnded) {
         logger.warn(
           `⚠️ Client disconnected before non-stream request could start for key: ${_apiKeyNameNonStream || 'unknown'}`
@@ -797,13 +797,13 @@ async function handleMessagesRequest(req, res) {
         return undefined
       }
 
-      // 非流式响应 - 只使用官方真实usage数据
+      // 非流式Respuesta - 只使用官方真实usageDatos
       logger.info('📄 Starting non-streaming request', {
         apiKeyId: _apiKeyIdNonStream,
         apiKeyName: _apiKeyNameNonStream
       })
 
-      // 📊 监听 socket 事件以追踪连接状态变化
+      // 📊 监听 socket Evento以RastreoConexión状态变化
       const nonStreamSocket = res.socket
       let _clientClosedConnection = false
       let _socketCloseTime = null
@@ -836,7 +836,7 @@ async function handleMessagesRequest(req, res) {
         nonStreamSocket.once('close', onSocketClose)
         nonStreamSocket.once('error', onSocketError)
 
-        // 清理监听器（在响应结束后）
+        // LimpiarEscucha（在Respuesta结束后）
         res.once('finish', () => {
           nonStreamSocket.removeListener('end', onSocketEnd)
           nonStreamSocket.removeListener('close', onSocketClose)
@@ -844,10 +844,10 @@ async function handleMessagesRequest(req, res) {
         })
       }
 
-      // 生成会话哈希用于sticky会话
+      // GenerarSesión哈希用于stickySesión
       const sessionHash = sessionHelper.generateSessionHash(req.body)
 
-      // 🔒 全局会话绑定验证（非流式）
+      // 🔒 全局Sesión绑定Validar（非流式）
       let forcedAccountNonStream = null
       let needSessionBindingNonStream = false
       let originalSessionIdForBindingNonStream = null
@@ -896,7 +896,7 @@ async function handleMessagesRequest(req, res) {
         logger.error('❌ Error in global session binding check (non-stream):', error)
       }
 
-      // 使用统一调度选择账号（传递请求的模型）
+      // 使用统一调度选择账号（传递Solicitud的模型）
       const requestedModel = req.body.model
       let accountId
       let accountType
@@ -930,23 +930,23 @@ async function handleMessagesRequest(req, res) {
         throw error
       }
 
-      // 🔗 在成功调度后建立会话绑定（非流式，仅 claude-official 类型）
-      // claude-official 只接受：1) 新会话 2) 已绑定的会话
+      // 🔗 在Éxito调度后建立Sesión绑定（非流式，仅 claude-official Tipo）
+      // claude-official 只接受：1) 新Sesión 2) 已绑定的Sesión
       if (
         needSessionBindingNonStream &&
         originalSessionIdForBindingNonStream &&
         accountId &&
         accountType === 'claude-official'
       ) {
-        // 🆕 允许新 session ID 创建绑定（支持 Claude Code /clear 等场景）
-        // 信任客户端的 session ID 作为新会话的标识，不再检查请求内容
+        // 🆕 允许新 session ID Crear绑定（Soportar Claude Code /clear 等场景）
+        // 信任Cliente的 session ID 作为新Sesión的标识，不再VerificarSolicitud内容
         logger.info(
           `🔗 Creating new session binding (non-stream): sessionId=${originalSessionIdForBindingNonStream}, ` +
             `messages.length=${req.body?.messages?.length}, tools.length=${req.body?.tools?.length || 0}, ` +
             `accountId=${accountId}, accountType=${accountType}`
         )
 
-        // 创建绑定
+        // Crear绑定
         try {
           await claudeRelayConfigService.setOriginalSessionBinding(
             originalSessionIdForBindingNonStream,
@@ -958,7 +958,7 @@ async function handleMessagesRequest(req, res) {
         }
       }
 
-      // 🔥 预热请求拦截检查（非流式，在转发之前）
+      // 🔥 预热Solicitud拦截Verificar（非流式，在转发之前）
       if (accountType === 'claude-official' || accountType === 'claude-console') {
         const account =
           accountType === 'claude-official'
@@ -973,23 +973,23 @@ async function handleMessagesRequest(req, res) {
         }
       }
 
-      // 根据账号类型选择对应的转发服务
+      // 根据账号Tipo选择对应的转发Servicio
       let response
       logger.debug(`[DEBUG] Request query params: ${JSON.stringify(req.query)}`)
       logger.debug(`[DEBUG] Request URL: ${req.url}`)
       logger.debug(`[DEBUG] Request path: ${req.path}`)
 
       if (accountType === 'claude-official') {
-        // 官方Claude账号使用原有的转发服务
+        // 官方Claude账号使用原有的转发Servicio
         response = await claudeRelayService.relayRequest(
           _requestBodyNonStream,
           _apiKeyNonStream,
-          req, // clientRequest 用于断开检测，保留但服务层已优化
+          req, // clientRequest 用于断开检测，保留但Servicio层已Optimización
           res,
           _headersNonStream
         )
       } else if (accountType === 'claude-console') {
-        // Claude Console账号使用Console转发服务
+        // Claude Console账号使用Console转发Servicio
         logger.debug(
           `[DEBUG] Calling claudeConsoleRelayService.relayRequest with accountId: ${accountId}`
         )
@@ -1002,7 +1002,7 @@ async function handleMessagesRequest(req, res) {
           accountId
         )
       } else if (accountType === 'bedrock') {
-        // Bedrock账号使用Bedrock转发服务
+        // Bedrock账号使用Bedrock转发Servicio
         try {
           const bedrockAccountResult = await bedrockAccountService.getAccount(accountId)
           if (!bedrockAccountResult.success) {
@@ -1015,7 +1015,7 @@ async function handleMessagesRequest(req, res) {
             _headersNonStream
           )
 
-          // 构建标准响应格式
+          // Construir标准RespuestaFormato
           response = {
             statusCode: result.success ? 200 : 500,
             headers: { 'Content-Type': 'application/json' },
@@ -1023,7 +1023,7 @@ async function handleMessagesRequest(req, res) {
             accountId
           }
 
-          // 如果成功，添加使用统计到响应数据中
+          // 如果Éxito，添加使用Estadística到RespuestaDatos中
           if (result.success && result.usage) {
             const responseData = JSON.parse(response.body)
             responseData.usage = result.usage
@@ -1039,7 +1039,7 @@ async function handleMessagesRequest(req, res) {
           }
         }
       } else if (accountType === 'ccr') {
-        // CCR账号使用CCR转发服务
+        // CCR账号使用CCR转发Servicio
         logger.debug(`[DEBUG] Calling ccrRelayService.relayRequest with accountId: ${accountId}`)
         response = await ccrRelayService.relayRequest(
           _requestBodyNonStream,
@@ -1057,8 +1057,8 @@ async function handleMessagesRequest(req, res) {
         bodyLength: response.body ? response.body.length : 0
       })
 
-      // 🔍 检查客户端连接是否仍然有效
-      // 在长时间请求过程中，客户端可能已经断开连接（超时、用户取消等）
+      // 🔍 VerificarClienteConexión是否仍然有效
+      // 在长TiempoSolicitud过程中，Cliente可能已经断开Conexión（Tiempo de espera agotado、Usuario取消等）
       if (res.destroyed || res.socket?.destroyed || res.writableEnded) {
         logger.warn(
           `⚠️ Client disconnected before non-stream response could be sent for key: ${req.apiKey?.name || 'unknown'}`
@@ -1068,7 +1068,7 @@ async function handleMessagesRequest(req, res) {
 
       res.status(response.statusCode)
 
-      // 设置响应头，避免 Content-Length 和 Transfer-Encoding 冲突
+      // EstablecerRespuesta头，避免 Content-Length 和 Transfer-Encoding 冲突
       const skipHeaders = ['content-encoding', 'transfer-encoding', 'content-length']
       Object.keys(response.headers).forEach((key) => {
         if (!skipHeaders.includes(key.toLowerCase())) {
@@ -1078,13 +1078,13 @@ async function handleMessagesRequest(req, res) {
 
       let usageRecorded = false
 
-      // 尝试解析JSON响应并提取usage信息
+      // 尝试AnalizarJSONRespuesta并提取usageInformación
       try {
         const jsonData = JSON.parse(response.body)
 
         logger.info('📊 Parsed Claude API response:', JSON.stringify(jsonData, null, 2))
 
-        // 从Claude API响应中提取usage信息（完整的token分类体系）
+        // 从Claude APIRespuesta中提取usageInformación（完整的token分Clase体系）
         if (
           jsonData.usage &&
           jsonData.usage.input_tokens !== undefined &&
@@ -1099,7 +1099,7 @@ async function handleMessagesRequest(req, res) {
           const { baseModel: usageBaseModel } = parseVendorPrefixedModel(rawModel)
           const model = usageBaseModel || rawModel
 
-          // 记录真实的token使用量（包含模型信息和所有4种token以及账户ID）
+          // Registro真实的token使用量（Incluir模型Información和所有4种token以及CuentaID）
           const { accountId: responseAccountId } = response
           await apiKeyService.recordUsage(
             _apiKeyIdNonStream,
@@ -1134,16 +1134,16 @@ async function handleMessagesRequest(req, res) {
           logger.warn('⚠️ No usage data found in Claude API JSON response')
         }
 
-        // 使用 Express 内建的 res.json() 发送响应（简单可靠）
+        // 使用 Express 内建的 res.json() 发送Respuesta（简单可靠）
         res.json(jsonData)
       } catch (parseError) {
         logger.warn('⚠️ Failed to parse Claude API response as JSON:', parseError.message)
         logger.info('📄 Raw response body:', response.body)
-        // 使用 Express 内建的 res.send() 发送响应（简单可靠）
+        // 使用 Express 内建的 res.send() 发送Respuesta（简单可靠）
         res.send(response.body)
       }
 
-      // 如果没有记录usage，只记录警告，不进行估算
+      // 如果没有Registrousage，只RegistroAdvertencia，不进Fila估算
       if (!usageRecorded) {
         logger.warn(
           '⚠️ No usage data recorded for non-stream request - no statistics recorded (official data only)'
@@ -1157,7 +1157,7 @@ async function handleMessagesRequest(req, res) {
   } catch (error) {
     let handledError = error
 
-    // 🔄 并发满额降级处理：捕获CONSOLE_ACCOUNT_CONCURRENCY_FULL错误
+    // 🔄 Concurrencia满额DegradaciónProcesar：捕获CONSOLE_ACCOUNT_CONCURRENCY_FULLError
     if (
       handledError.code === 'CONSOLE_ACCOUNT_CONCURRENCY_FULL' &&
       !req._concurrencyRetryAttempted
@@ -1167,19 +1167,19 @@ async function handleMessagesRequest(req, res) {
         `⚠️ Console account ${handledError.accountId} concurrency full, attempting fallback to other accounts...`
       )
 
-      // 只有在响应头未发送时才能重试
+      // 只有在Respuesta头未发送时才能Reintentar
       if (!res.headersSent) {
         try {
-          // 清理粘性会话映射（如果存在）
+          // Limpiar粘性Sesión映射（如果存在）
           const sessionHash = sessionHelper.generateSessionHash(req.body)
           await unifiedClaudeScheduler.clearSessionMapping(sessionHash)
 
           logger.info('🔄 Session mapping cleared, retrying handleMessagesRequest...')
 
-          // 递归重试整个请求处理（会选择新账户）
+          // 递归Reintentar整个SolicitudProcesar（会选择新Cuenta）
           return await handleMessagesRequest(req, res)
         } catch (retryError) {
-          // 重试失败
+          // ReintentarFalló
           if (retryError.code === 'CONSOLE_ACCOUNT_CONCURRENCY_FULL') {
             logger.error('❌ All Console accounts reached concurrency limit after retry')
             return res.status(503).json({
@@ -1188,11 +1188,11 @@ async function handleMessagesRequest(req, res) {
                 'All available Claude Console accounts have reached their concurrency limit. Please try again later.'
             })
           }
-          // 其他错误继续向下处理
+          // 其他Error继续向下Procesar
           handledError = retryError
         }
       } else {
-        // 响应头已发送，无法重试
+        // Respuesta头已发送，无法Reintentar
         logger.error('❌ Cannot retry concurrency full error - response headers already sent')
         if (!res.destroyed && !res.finished) {
           res.end()
@@ -1201,7 +1201,7 @@ async function handleMessagesRequest(req, res) {
       }
     }
 
-    // 🚫 第二次并发满额错误：已经重试过，直接返回503
+    // 🚫 第二次Concurrencia满额Error：已经Reintentar过，直接Retornar503
     if (
       handledError.code === 'CONSOLE_ACCOUNT_CONCURRENCY_FULL' &&
       req._concurrencyRetryAttempted
@@ -1226,9 +1226,9 @@ async function handleMessagesRequest(req, res) {
       stack: handledError.stack
     })
 
-    // 确保在任何情况下都能返回有效的JSON响应
+    // 确保在任何情况下都能Retornar有效的JSONRespuesta
     if (!res.headersSent) {
-      // 根据错误类型设置适当的状态码
+      // 根据ErrorTipoEstablecer适当的状态码
       let statusCode = 500
       let errorType = 'Relay service error'
 
@@ -1258,7 +1258,7 @@ async function handleMessagesRequest(req, res) {
         timestamp: new Date().toISOString()
       })
     } else {
-      // 如果响应头已经发送，尝试结束响应
+      // 如果Respuesta头已经发送，尝试结束Respuesta
       if (!res.destroyed && !res.finished) {
         res.end()
       }
@@ -1267,24 +1267,24 @@ async function handleMessagesRequest(req, res) {
   }
 }
 
-// 🚀 Claude API messages 端点 - /api/v1/messages
+// 🚀 Claude API messages Endpoint - /api/v1/messages
 router.post('/v1/messages', authenticateApiKey, handleMessagesRequest)
 
-// 🚀 Claude API messages 端点 - /claude/v1/messages (别名)
+// 🚀 Claude API messages Endpoint - /claude/v1/messages (别名)
 router.post('/claude/v1/messages', authenticateApiKey, handleMessagesRequest)
 
-// 📋 模型列表端点 - 支持 Claude, OpenAI, Gemini
+// 📋 模型ColumnaTablaEndpoint - Soportar Claude, OpenAI, Gemini
 router.get('/v1/models', authenticateApiKey, async (req, res) => {
   try {
-    // Claude Code / Anthropic baseUrl 的分流：/antigravity/api/v1/models 返回 Antigravity 实时模型列表
-    //（通过 v1internal:fetchAvailableModels），避免依赖静态 modelService 列表。
+    // Claude Code / Anthropic baseUrl 的分流：/antigravity/api/v1/models Retornar Antigravity 实时模型ColumnaTabla
+    //（通过 v1internal:fetchAvailableModels），避免依赖静态 modelService ColumnaTabla。
     const forcedVendor = req._anthropicVendor || null
     if (forcedVendor === 'antigravity') {
       if (!apiKeyService.hasPermission(req.apiKey?.permissions, 'gemini')) {
         return res.status(403).json({
           error: {
             type: 'permission_error',
-            message: '此 API Key 无权访问 Gemini 服务'
+            message: '此 API Key 无权访问 Gemini Servicio'
           }
         })
       }
@@ -1326,7 +1326,7 @@ router.get('/v1/models', authenticateApiKey, async (req, res) => {
         account.refreshToken
       )
 
-      // 可选：根据 API Key 的模型限制过滤（黑名单语义）
+      // Opcional：根据 API Key 的模型LímiteFiltrar（黑名单语义）
       let filteredModels = models
       if (req.apiKey.enableModelRestriction && req.apiKey.restrictedModels?.length > 0) {
         filteredModels = models.filter((model) => !req.apiKey.restrictedModels.includes(model.id))
@@ -1337,13 +1337,13 @@ router.get('/v1/models', authenticateApiKey, async (req, res) => {
 
     const modelService = require('../services/modelService')
 
-    // 从 modelService 获取所有支持的模型
+    // 从 modelService Obtener所有Soportar的模型
     const models = modelService.getAllModels()
 
-    // 可选：根据 API Key 的模型限制过滤
+    // Opcional：根据 API Key 的模型LímiteFiltrar
     let filteredModels = models
     if (req.apiKey.enableModelRestriction && req.apiKey.restrictedModels?.length > 0) {
-      // 将 restrictedModels 视为黑名单：过滤掉受限模型
+      // 将 restrictedModels 视为黑名单：Filtrar掉受限模型
       filteredModels = models.filter((model) => !req.apiKey.restrictedModels.includes(model.id))
     }
 
@@ -1360,7 +1360,7 @@ router.get('/v1/models', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 🏥 健康检查端点
+// 🏥 Verificación de saludEndpoint
 router.get('/health', async (req, res) => {
   try {
     const healthStatus = await claudeRelayService.healthCheck()
@@ -1382,7 +1382,7 @@ router.get('/health', async (req, res) => {
   }
 })
 
-// 📊 API Key状态检查端点 - /api/v1/key-info
+// 📊 API Key状态VerificarEndpoint - /api/v1/key-info
 router.get('/v1/key-info', authenticateApiKey, async (req, res) => {
   try {
     const usage = await apiKeyService.getUsageStats(req.apiKey.id)
@@ -1405,7 +1405,7 @@ router.get('/v1/key-info', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 📈 使用统计端点 - /api/v1/usage
+// 📈 使用EstadísticaEndpoint - /api/v1/usage
 router.get('/v1/usage', authenticateApiKey, async (req, res) => {
   try {
     const usage = await apiKeyService.getUsageStats(req.apiKey.id)
@@ -1414,7 +1414,7 @@ router.get('/v1/usage', authenticateApiKey, async (req, res) => {
       usage,
       limits: {
         tokens: req.apiKey.tokenLimit,
-        requests: 0 // 请求限制已移除
+        requests: 0 // SolicitudLímite已Eliminación
       },
       timestamp: new Date().toISOString()
     })
@@ -1427,10 +1427,10 @@ router.get('/v1/usage', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 👤 用户信息端点 - Claude Code 客户端需要
+// 👤 UsuarioInformaciónEndpoint - Claude Code Cliente需要
 router.get('/v1/me', authenticateApiKey, async (req, res) => {
   try {
-    // 返回基础用户信息
+    // Retornar基础UsuarioInformación
     res.json({
       id: `user_${req.apiKey.id}`,
       type: 'user',
@@ -1446,7 +1446,7 @@ router.get('/v1/me', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 💰 余额/限制端点 - Claude Code 客户端需要
+// 💰 余额/LímiteEndpoint - Claude Code Cliente需要
 router.get('/v1/organizations/:org_id/usage', authenticateApiKey, async (req, res) => {
   try {
     const usage = await apiKeyService.getUsageStats(req.apiKey.id)
@@ -1469,9 +1469,9 @@ router.get('/v1/organizations/:org_id/usage', authenticateApiKey, async (req, re
   }
 })
 
-// 🔢 Token计数端点 - count_tokens beta API
+// 🔢 Token计数Endpoint - count_tokens beta API
 router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) => {
-  // 按路径强制分流到 Gemini OAuth 账户（避免 model 前缀混乱）
+  // 按Ruta强制分流到 Gemini OAuth Cuenta（避免 model 前缀混乱）
   const forcedVendor = req._anthropicVendor || null
   const requiredService =
     forcedVendor === 'gemini-cli' || forcedVendor === 'antigravity' ? 'gemini' : 'claude'
@@ -1492,7 +1492,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
     return await handleAnthropicCountTokensToGemini(req, res, { vendor: forcedVendor })
   }
 
-  // 🔗 会话绑定验证（与 messages 端点保持一致）
+  // 🔗 Sesión绑定Validar（与 messages Endpoint保持一致）
   const originalSessionId = claudeRelayConfigService.extractOriginalSessionId(req.body)
   const sessionValidation = await claudeRelayConfigService.validateNewSession(
     req.body,
@@ -1511,7 +1511,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
     })
   }
 
-  // 🔗 检测旧会话（污染的会话）- 仅对需要绑定的新会话检查
+  // 🔗 检测旧Sesión（污染的Sesión）- 仅对需要绑定的新SesiónVerificar
   if (sessionValidation.isNewSession && originalSessionId) {
     if (isOldSession(req.body)) {
       const cfg = await claudeRelayConfigService.getConfig()
@@ -1521,7 +1521,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
       return res.status(400).json({
         error: {
           type: 'session_binding_error',
-          message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。'
+          message: cfg.sessionBindingErrorMessage || '你的本地session已污染，请Limpiar后使用。'
         }
       })
     }
@@ -1565,7 +1565,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
       })
     }
 
-    // 🔍 claude-console 账户特殊处理：检查 count_tokens 端点是否可用
+    // 🔍 claude-console Cuenta特殊Procesar：Verificar count_tokens Endpoint是否可用
     if (accountType === 'claude-console') {
       const isUnavailable = await claudeConsoleAccountService.isCountTokensUnavailable(accountId)
       if (isUnavailable) {
@@ -1601,12 +1601,12 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
             relayOptions
           )
 
-    // 🔍 claude-console 账户：检测上游 404 响应并标记
+    // 🔍 claude-console Cuenta：检测上游 404 Respuesta并标记
     if (accountType === 'claude-console' && response.statusCode === 404) {
       logger.warn(
         `⚠️ count_tokens endpoint returned 404 for Claude Console account ${accountId}, marking as unavailable`
       )
-      // 标记失败不应影响 fallback 响应
+      // 标记Falló不应影响 fallback Respuesta
       try {
         await claudeConsoleAccountService.markCountTokensUnavailable(accountId)
       } catch (markError) {
@@ -1647,7 +1647,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
     try {
       const result = await processRequest()
 
-      // 🔍 处理 fallback 响应（claude-console 账户 count_tokens 不可用）
+      // 🔍 Procesar fallback Respuesta（claude-console Cuenta count_tokens 不可用）
       if (result && result.fallbackResponse) {
         if (!res.headersSent) {
           return res.status(200).json({ input_tokens: 0 })
@@ -1699,7 +1699,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
         return res.status(error.httpStatus).json(error.errorPayload)
       }
 
-      // 客户端断开连接不是错误，使用 INFO 级别
+      // Cliente断开Conexión不是Error，使用 INFO 级别
       if (error.message === 'Client disconnected') {
         logger.info('🔌 Client disconnected during token count request')
         if (!res.headersSent) {
@@ -1729,7 +1729,7 @@ router.post('/v1/messages/count_tokens', authenticateApiKey, async (req, res) =>
   }
 })
 
-// Claude Code 客户端遥测端点 - 返回成功响应避免 404 日志
+// Claude Code Cliente遥测Endpoint - RetornarÉxitoRespuesta避免 404 Registro
 router.post('/api/event_logging/batch', (req, res) => {
   res.status(200).json({ success: true })
 })

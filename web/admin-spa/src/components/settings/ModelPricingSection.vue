@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 状态卡片 -->
+    <!-- Tarjeta de estado -->
     <div
       class="mb-6 rounded-xl border border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 dark:border-gray-700 dark:from-blue-900/20 dark:to-indigo-900/20"
     >
@@ -13,10 +13,10 @@
           </div>
           <div>
             <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-              模型总数:
+              Total de modelos:
               <span class="font-bold text-blue-600 dark:text-blue-400">{{ modelCount }}</span>
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">上次更新: {{ lastUpdated }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Última actualización: {{ lastUpdated }}</p>
           </div>
         </div>
         <button
@@ -30,19 +30,19 @@
           @click="handleRefresh"
         >
           <i :class="['fas', refreshing ? 'fa-spinner fa-spin' : 'fa-sync-alt']" />
-          {{ refreshing ? '刷新中...' : '立即刷新' }}
+          {{ refreshing ? 'Actualizando...' : 'Actualizar ahora' }}
         </button>
       </div>
     </div>
 
-    <!-- 搜索 + 平台筛选 -->
+    <!-- Búsqueda + Filtrado por plataforma -->
     <div class="mb-4 flex flex-wrap items-center gap-3">
       <div class="relative flex-1">
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           v-model="searchQuery"
           class="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-700 placeholder-gray-400 transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
-          placeholder="搜索模型名称..."
+          placeholder="Buscar nombre del modelo..."
           type="text"
         />
       </div>
@@ -63,10 +63,10 @@
       </div>
     </div>
 
-    <!-- 加载状态 -->
+    <!-- Estado de carga -->
     <div v-if="loading" class="py-12 text-center">
       <i class="fas fa-spinner fa-spin mb-4 text-2xl text-blue-500" />
-      <p class="text-gray-500 dark:text-gray-400">加载价格数据中...</p>
+      <p class="text-gray-500 dark:text-gray-400">Cargando datos de precios...</p>
     </div>
 
     <!-- 表格 -->
@@ -78,7 +78,7 @@
               class="cursor-pointer px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               @click="toggleSort('name')"
             >
-              模型名称
+              Nombre del modelo
               <i
                 v-if="sortField === 'name'"
                 :class="['fas ml-1', sortAsc ? 'fa-sort-up' : 'fa-sort-down']"
@@ -88,7 +88,7 @@
               class="cursor-pointer px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               @click="toggleSort('input')"
             >
-              输入 $/MTok
+              Entrada $/MTok
               <i
                 v-if="sortField === 'input'"
                 :class="['fas ml-1', sortAsc ? 'fa-sort-up' : 'fa-sort-down']"
@@ -98,7 +98,7 @@
               class="cursor-pointer px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               @click="toggleSort('output')"
             >
-              输出 $/MTok
+              Salida $/MTok
               <i
                 v-if="sortField === 'output'"
                 :class="['fas ml-1', sortAsc ? 'fa-sort-up' : 'fa-sort-down']"
@@ -107,17 +107,17 @@
             <th
               class="hidden px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 md:table-cell"
             >
-              缓存创建
+              Crear caché
             </th>
             <th
               class="hidden px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 md:table-cell"
             >
-              缓存读取
+              Leer caché
             </th>
             <th
               class="hidden px-3 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 lg:table-cell"
             >
-              上下文窗口
+              Ventana de contexto
             </th>
           </tr>
         </thead>
@@ -160,16 +160,16 @@
           <tr v-if="sortedModels.length === 0">
             <td class="px-3 py-8 text-center text-gray-500 dark:text-gray-400" colspan="6">
               <i class="fas fa-search mb-2 text-2xl text-gray-300 dark:text-gray-600" />
-              <p>没有匹配的模型</p>
+              <p>No hay modelos coincidentes</p>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- 模型数量统计 -->
+    <!-- Estadísticas de cantidad de modelos -->
     <div v-if="!loading" class="mt-3 text-right text-xs text-gray-400 dark:text-gray-500">
-      显示 {{ sortedModels.length }} / {{ allModels.length }} 个模型
+      Mostrando {{ sortedModels.length }} / {{ allModels.length }} modelos
     </div>
   </div>
 </template>
@@ -183,7 +183,7 @@ import {
 } from '@/utils/http_apis'
 import { showToast } from '@/utils/tools'
 
-// ========== 状态 ==========
+// ========== Estado ==========
 const loading = ref(false)
 const refreshing = ref(false)
 const pricingData = ref({})
@@ -194,19 +194,19 @@ const sortField = ref('name')
 const sortAsc = ref(true)
 
 const platformTabs = [
-  { key: 'all', label: '全部' },
+  { key: 'all', label: 'Todos' },
   { key: 'claude', label: 'Claude' },
   { key: 'gemini', label: 'Gemini' },
   { key: 'openai', label: 'OpenAI' },
-  { key: 'other', label: '其他' }
+  { key: 'other', label: 'Otros' }
 ]
 
-// ========== 计算属性 ==========
+// ========== Propiedades computadas ==========
 const modelCount = computed(() => Object.keys(pricingData.value).length)
 
 const lastUpdated = computed(() => {
-  if (!pricingStatus.value.lastUpdated) return '未知'
-  return new Date(pricingStatus.value.lastUpdated).toLocaleString('zh-CN')
+  if (!pricingStatus.value.lastUpdated) return 'Desconocido'
+  return new Date(pricingStatus.value.lastUpdated).toLocaleString('es-MX')
 })
 
 const allModels = computed(() =>
@@ -224,7 +224,7 @@ const allModels = computed(() =>
 const filteredModels = computed(() => {
   let models = allModels.value
 
-  // 平台筛选
+  // Filtrado por plataforma
   if (activePlatform.value !== 'all') {
     const platformFilters = {
       claude: (n) => n.includes('claude'),
@@ -248,7 +248,7 @@ const filteredModels = computed(() => {
     if (filter) models = models.filter((m) => filter(m.name.toLowerCase()))
   }
 
-  // 搜索筛选
+  // Filtrado por búsqueda
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase()
     models = models.filter((m) => m.name.toLowerCase().includes(q))
@@ -276,7 +276,7 @@ const sortedModels = computed(() => {
   return models
 })
 
-// ========== 方法 ==========
+// ========== Métodos ==========
 const detectProvider = (name) => {
   const n = name.toLowerCase()
   if (n.includes('claude')) return 'Anthropic'
@@ -327,12 +327,12 @@ const loadData = async () => {
   if (pricingResult.success) {
     pricingData.value = pricingResult.data
   } else {
-    showToast(pricingResult.message || '加载模型价格失败', 'error')
+    showToast(pricingResult.message || 'Error al cargar precios de modelos', 'error')
   }
   if (statusResult.success) {
     pricingStatus.value = statusResult.data
   } else {
-    showToast(statusResult.message || '获取价格状态失败', 'error')
+    showToast(statusResult.message || 'Error al obtener estado de precios', 'error')
   }
   loading.value = false
 }
@@ -341,10 +341,10 @@ const handleRefresh = async () => {
   refreshing.value = true
   const result = await refreshModelPricingApi()
   if (result.success) {
-    showToast('价格数据已刷新', 'success')
+    showToast('Datos de precios actualizados', 'success')
     await loadData()
   } else {
-    showToast(result.message || '刷新失败', 'error')
+    showToast(result.message || 'Error al actualizar', 'error')
   }
   refreshing.value = false
 }

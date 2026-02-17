@@ -8,33 +8,33 @@ const config = require('../../../config/config')
 
 const router = express.Router()
 
-// 有效的权限值列表
+// 有效的PermisoValorColumnaTabla
 const VALID_PERMISSIONS = ['claude', 'gemini', 'openai', 'droid']
 
 /**
- * 验证权限数组格式
- * @param {any} permissions - 权限值（可以是数组或其他）
- * @returns {string|null} - 返回错误消息，null 表示验证通过
+ * ValidarPermisoArregloFormato
+ * @param {any} permissions - PermisoValor（可以是Arreglo或其他）
+ * @returns {string|null} - RetornarError消息，null Tabla示Validar通过
  */
 function validatePermissions(permissions) {
-  // 空值或未定义表示全部服务
+  // 空Valor或未定义Tabla示全部Servicio
   if (permissions === undefined || permissions === null || permissions === '') {
     return null
   }
-  // 兼容旧格式字符串
+  // 兼容旧FormatoCadena
   if (typeof permissions === 'string') {
     if (permissions === 'all' || VALID_PERMISSIONS.includes(permissions)) {
       return null
     }
     return `Invalid permissions value. Must be an array of: ${VALID_PERMISSIONS.join(', ')}`
   }
-  // 新格式数组
+  // 新FormatoArreglo
   if (Array.isArray(permissions)) {
-    // 空数组表示全部服务
+    // 空ArregloTabla示全部Servicio
     if (permissions.length === 0) {
       return null
     }
-    // 验证数组中的每个值
+    // ValidarArreglo中的每个Valor
     for (const perm of permissions) {
       if (!VALID_PERMISSIONS.includes(perm)) {
         return `Invalid permission value "${perm}". Valid values are: ${VALID_PERMISSIONS.join(', ')}`
@@ -46,9 +46,9 @@ function validatePermissions(permissions) {
 }
 
 /**
- * 验证 serviceRates 格式
- * @param {any} serviceRates - 服务倍率对象
- * @returns {string|null} - 返回错误消息，null 表示验证通过
+ * Validar serviceRates Formato
+ * @param {any} serviceRates - Servicio倍率Objeto
+ * @returns {string|null} - RetornarError消息，null Tabla示Validar通过
  */
 function validateServiceRates(serviceRates) {
   if (serviceRates === undefined || serviceRates === null) {
@@ -66,9 +66,9 @@ function validateServiceRates(serviceRates) {
   return null
 }
 
-// 👥 用户管理 (用于API Key分配)
+// 👥 Usuario管理 (用于API Key分配)
 
-// 获取所有用户列表（用于API Key分配）
+// Obtener所有UsuarioColumnaTabla（用于API Key分配）
 router.get('/users', authenticateAdmin, async (req, res) => {
   try {
     const userService = require('../../services/userService')
@@ -130,7 +130,7 @@ router.get('/users', authenticateAdmin, async (req, res) => {
 
 // 🔑 API Keys 管理
 
-// 调试：获取API Key费用详情
+// Depurar：ObtenerAPI Key费用详情
 router.get('/api-keys/:keyId/cost-debug', authenticateAdmin, async (req, res) => {
   try {
     const { keyId } = req.params
@@ -138,7 +138,7 @@ router.get('/api-keys/:keyId/cost-debug', authenticateAdmin, async (req, res) =>
     const dailyCost = await redis.getDailyCost(keyId)
     const today = redis.getDateStringInTimezone()
 
-    // 获取所有相关的Redis键
+    // Obtener所有相关的Redis键
     const costKeys = await redis.scanKeys(`usage:cost:*:${keyId}:*`)
     const costValues = await redis.batchGetChunked(costKeys)
     const keyValues = {}
@@ -161,7 +161,7 @@ router.get('/api-keys/:keyId/cost-debug', authenticateAdmin, async (req, res) =>
   }
 })
 
-// 获取所有被使用过的模型列表
+// Obtener所有被使用过的模型ColumnaTabla
 router.get('/api-keys/used-models', authenticateAdmin, async (req, res) => {
   try {
     const models = await redis.getAllUsedModels()
@@ -172,39 +172,39 @@ router.get('/api-keys/used-models', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取所有API Keys
+// Obtener所有API Keys
 router.get('/api-keys', authenticateAdmin, async (req, res) => {
   try {
     const {
-      // 分页参数
+      // 分页Parámetro
       page = 1,
       pageSize = 20,
-      // 搜索参数
+      // 搜索Parámetro
       searchMode = 'apiKey',
       search = '',
-      // 筛选参数
+      // 筛选Parámetro
       tag = '',
       isActive = '',
       models = '', // 模型筛选（逗号分隔）
-      // 排序参数
+      // OrdenarParámetro
       sortBy = 'createdAt',
       sortOrder = 'desc',
-      // 费用排序参数
-      costTimeRange = '7days', // 费用排序的时间范围
-      costStartDate = '', // custom 时间范围的开始日期
-      costEndDate = '', // custom 时间范围的结束日期
-      // 兼容旧参数（不再用于费用计算，仅标记）
+      // 费用OrdenarParámetro
+      costTimeRange = '7days', // 费用Ordenar的Tiempo范围
+      costStartDate = '', // custom Tiempo范围的IniciandoFecha
+      costEndDate = '', // custom Tiempo范围的结束Fecha
+      // 兼容旧Parámetro（不再用于费用Calcular，仅标记）
       timeRange = 'all'
     } = req.query
 
-    // 解析模型筛选参数
+    // Analizar模型筛选Parámetro
     const modelFilter = models ? models.split(',').filter((m) => m.trim()) : []
 
-    // 验证分页参数
+    // Validar分页Parámetro
     const pageNum = Math.max(1, parseInt(page) || 1)
     const pageSizeNum = [10, 20, 50, 100].includes(parseInt(pageSize)) ? parseInt(pageSize) : 20
 
-    // 验证排序参数（新增 cost 排序）
+    // ValidarOrdenarParámetro（Nueva característica cost Ordenar）
     const validSortFields = [
       'name',
       'createdAt',
@@ -217,10 +217,10 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
     const validSortBy = validSortFields.includes(sortBy) ? sortBy : 'createdAt'
     const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc'
 
-    // 获取用户服务来补充owner信息
+    // ObtenerUsuarioServicio来补充ownerInformación
     const userService = require('../../services/userService')
 
-    // 如果是绑定账号搜索模式，先刷新账户名称缓存
+    // 如果是绑定账号搜索模式，先刷新CuentaNombreCaché
     if (searchMode === 'bindingAccount' && search) {
       const accountNameCacheService = require('../../services/accountNameCacheService')
       await accountNameCacheService.refreshIfNeeded()
@@ -229,24 +229,24 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
     let result
     let costSortStatus = null
 
-    // 如果是费用排序
+    // 如果是费用Ordenar
     if (validSortBy === 'cost') {
       const costRankService = require('../../services/costRankService')
 
-      // 验证费用排序的时间范围
+      // Validar费用Ordenar的Tiempo范围
       const validCostTimeRanges = ['today', '7days', '30days', 'all', 'custom']
       const effectiveCostTimeRange = validCostTimeRanges.includes(costTimeRange)
         ? costTimeRange
         : '7days'
 
-      // 如果是 custom 时间范围，使用实时计算
+      // 如果是 custom Tiempo范围，使用实时Calcular
       if (effectiveCostTimeRange === 'custom') {
-        // 验证日期参数
+        // ValidarFechaParámetro
         if (!costStartDate || !costEndDate) {
           return res.status(400).json({
             success: false,
             error: 'INVALID_DATE_RANGE',
-            message: '自定义时间范围需要提供 costStartDate 和 costEndDate 参数'
+            message: '自定义Tiempo范围需要提供 costStartDate 和 costEndDate Parámetro'
           })
         }
 
@@ -256,7 +256,7 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
           return res.status(400).json({
             success: false,
             error: 'INVALID_DATE_FORMAT',
-            message: '日期格式无效'
+            message: 'FechaFormato无效'
           })
         }
 
@@ -264,23 +264,23 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
           return res.status(400).json({
             success: false,
             error: 'INVALID_DATE_RANGE',
-            message: '开始日期不能晚于结束日期'
+            message: 'IniciandoFecha不能晚于结束Fecha'
           })
         }
 
-        // 限制最大范围为 365 天
+        // Límite最大范围为 365 天
         const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
         if (daysDiff > 365) {
           return res.status(400).json({
             success: false,
             error: 'DATE_RANGE_TOO_LARGE',
-            message: '日期范围不能超过365天'
+            message: 'Fecha范围不能超过365天'
           })
         }
 
         logger.info(`📊 Cost sort with custom range: ${costStartDate} to ${costEndDate}`)
 
-        // 实时计算费用排序
+        // 实时Calcular费用Ordenar
         result = await getApiKeysSortedByCostCustom({
           page: pageNum,
           pageSize: pageSizeNum,
@@ -299,23 +299,23 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
           isRealTimeCalculation: true
         }
       } else {
-        // 使用预计算索引
+        // 使用预CalcularÍndice
         const rankStatus = await costRankService.getRankStatus()
         costSortStatus = rankStatus[effectiveCostTimeRange]
 
-        // 检查索引是否就绪
+        // VerificarÍndice是否就绪
         if (!costSortStatus || costSortStatus.status !== 'ready') {
           return res.status(503).json({
             success: false,
             error: 'RANK_NOT_READY',
-            message: `费用排序索引 (${effectiveCostTimeRange}) 正在更新中，请稍后重试`,
+            message: `费用OrdenarÍndice (${effectiveCostTimeRange}) En progresoActualizar中，请稍后Reintentar`,
             costSortStatus: costSortStatus || { status: 'unknown' }
           })
         }
 
         logger.info(`📊 Cost sort using precomputed index: ${effectiveCostTimeRange}`)
 
-        // 使用预计算索引排序
+        // 使用预CalcularÍndiceOrdenar
         result = await getApiKeysSortedByCostPrecomputed({
           page: pageNum,
           pageSize: pageSizeNum,
@@ -331,7 +331,7 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
         costSortStatus.isRealTimeCalculation = false
       }
     } else {
-      // 原有的非费用排序逻辑
+      // 原有的非费用Ordenar逻辑
       result = await redis.getApiKeysPaginated({
         page: pageNum,
         pageSize: pageSizeNum,
@@ -345,12 +345,12 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 为每个API Key添加owner的displayName（批量获取优化）
+    // 为每个API Key添加owner的displayName（批量ObtenerOptimización）
     const userIdsToFetch = [...new Set(result.items.filter((k) => k.userId).map((k) => k.userId))]
     const userMap = new Map()
 
     if (userIdsToFetch.length > 0) {
-      // 批量获取用户信息
+      // 批量ObtenerUsuarioInformación
       const users = await Promise.all(
         userIdsToFetch.map((id) => userService.getUserById(id, false).catch(() => null))
       )
@@ -372,13 +372,13 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
           apiKey.createdBy === 'admin' ? 'Admin' : apiKey.createdBy || 'Admin'
       }
 
-      // 初始化空的 usage 对象（费用通过 batch-stats 接口获取）
+      // Inicializar空的 usage Objeto（费用通过 batch-stats InterfazObtener）
       if (!apiKey.usage) {
         apiKey.usage = { total: { requests: 0, tokens: 0, cost: 0, formattedCost: '$0.00' } }
       }
     }
 
-    // 返回分页数据
+    // Retornar分页Datos
     const responseData = {
       success: true,
       data: {
@@ -386,11 +386,11 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
         pagination: result.pagination,
         availableTags: result.availableTags
       },
-      // 标记当前请求的时间范围（供前端参考）
+      // 标记当前Solicitud的Tiempo范围（供前端参考）
       timeRange
     }
 
-    // 如果是费用排序，附加排序状态
+    // 如果是费用Ordenar，附加Ordenar状态
     if (costSortStatus) {
       responseData.data.costSortStatus = costSortStatus
     }
@@ -403,7 +403,7 @@ router.get('/api-keys', authenticateAdmin, async (req, res) => {
 })
 
 /**
- * 使用预计算索引进行费用排序的分页查询
+ * 使用预CalcularÍndice进Fila费用Ordenar的分页Consulta
  */
 async function getApiKeysSortedByCostPrecomputed(options) {
   const {
@@ -419,7 +419,7 @@ async function getApiKeysSortedByCostPrecomputed(options) {
   } = options
   const costRankService = require('../../services/costRankService')
 
-  // 1. 获取排序后的全量 keyId 列表
+  // 1. ObtenerOrdenar后的全量 keyId ColumnaTabla
   const rankedKeyIds = await costRankService.getSortedKeyIds(costTimeRange, sortOrder)
 
   if (rankedKeyIds.length === 0) {
@@ -430,14 +430,14 @@ async function getApiKeysSortedByCostPrecomputed(options) {
     }
   }
 
-  // 2. 批量获取 API Key 基础数据
+  // 2. 批量Obtener API Key 基础Datos
   const allKeys = await redis.batchGetApiKeys(rankedKeyIds)
 
-  // 3. 保持排序顺序（使用 Map 优化查找）
+  // 3. 保持Ordenar顺序（使用 Map Optimización查找）
   const keyMap = new Map(allKeys.map((k) => [k.id, k]))
   let orderedKeys = rankedKeyIds.map((id) => keyMap.get(id)).filter((k) => k && !k.isDeleted)
 
-  // 4. 应用筛选条件
+  // 4. 应用筛选Condición
   // 状态筛选
   if (isActive !== '' && isActive !== undefined && isActive !== null) {
     const activeValue = isActive === 'true' || isActive === true
@@ -489,7 +489,7 @@ async function getApiKeysSortedByCostPrecomputed(options) {
   const start = (validPage - 1) * pageSize
   const items = orderedKeys.slice(start, start + pageSize)
 
-  // 7. 为当前页的 Keys 附加费用数据
+  // 7. 为当前页的 Keys 附加费用Datos
   const keyCosts = await costRankService.getBatchKeyCosts(
     costTimeRange,
     items.map((k) => k.id)
@@ -511,7 +511,7 @@ async function getApiKeysSortedByCostPrecomputed(options) {
 }
 
 /**
- * 使用实时计算进行 custom 时间范围的费用排序
+ * 使用实时Calcular进Fila custom Tiempo范围的费用Ordenar
  */
 async function getApiKeysSortedByCostCustom(options) {
   const {
@@ -528,7 +528,7 @@ async function getApiKeysSortedByCostCustom(options) {
   } = options
   const costRankService = require('../../services/costRankService')
 
-  // 1. 实时计算所有 Keys 的费用
+  // 1. 实时Calcular所有 Keys 的费用
   const costs = await costRankService.calculateCustomRangeCosts(startDate, endDate)
 
   if (costs.size === 0) {
@@ -539,20 +539,20 @@ async function getApiKeysSortedByCostCustom(options) {
     }
   }
 
-  // 2. 转换为数组并排序
+  // 2. Convertir为Arreglo并Ordenar
   const sortedEntries = [...costs.entries()].sort((a, b) =>
     sortOrder === 'desc' ? b[1] - a[1] : a[1] - b[1]
   )
   const rankedKeyIds = sortedEntries.map(([keyId]) => keyId)
 
-  // 3. 批量获取 API Key 基础数据
+  // 3. 批量Obtener API Key 基础Datos
   const allKeys = await redis.batchGetApiKeys(rankedKeyIds)
 
-  // 4. 保持排序顺序
+  // 4. 保持Ordenar顺序
   const keyMap = new Map(allKeys.map((k) => [k.id, k]))
   let orderedKeys = rankedKeyIds.map((id) => keyMap.get(id)).filter((k) => k && !k.isDeleted)
 
-  // 5. 应用筛选条件
+  // 5. 应用筛选Condición
   // 状态筛选
   if (isActive !== '' && isActive !== undefined && isActive !== null) {
     const activeValue = isActive === 'true' || isActive === true
@@ -604,7 +604,7 @@ async function getApiKeysSortedByCostCustom(options) {
   const start = (validPage - 1) * pageSize
   const items = orderedKeys.slice(start, start + pageSize)
 
-  // 8. 为当前页的 Keys 附加费用数据
+  // 8. 为当前页的 Keys 附加费用Datos
   for (const key of items) {
     key._cost = costs.get(key.id) || 0
   }
@@ -621,7 +621,7 @@ async function getApiKeysSortedByCostCustom(options) {
   }
 }
 
-// 获取费用排序索引状态
+// Obtener费用OrdenarÍndice状态
 router.get('/api-keys/cost-sort-status', authenticateAdmin, async (req, res) => {
   try {
     const costRankService = require('../../services/costRankService')
@@ -637,7 +637,7 @@ router.get('/api-keys/cost-sort-status', authenticateAdmin, async (req, res) => 
   }
 })
 
-// 获取 API Key 索引状态
+// Obtener API Key Índice状态
 router.get('/api-keys/index-status', authenticateAdmin, async (req, res) => {
   try {
     const apiKeyIndexService = require('../../services/apiKeyIndexService')
@@ -653,7 +653,7 @@ router.get('/api-keys/index-status', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 手动重建 API Key 索引
+// 手动重建 API Key Índice
 router.post('/api-keys/index-rebuild', authenticateAdmin, async (req, res) => {
   try {
     const apiKeyIndexService = require('../../services/apiKeyIndexService')
@@ -663,19 +663,19 @@ router.post('/api-keys/index-rebuild', authenticateAdmin, async (req, res) => {
       return res.status(409).json({
         success: false,
         error: 'INDEX_BUILDING',
-        message: '索引正在重建中，请稍后再试',
+        message: 'ÍndiceEn progreso重建中，请稍后再试',
         progress: status.progress
       })
     }
 
-    // 异步重建，不等待完成
+    // Asíncrono重建，不等待Completado
     apiKeyIndexService.rebuildIndexes().catch((err) => {
       logger.error('❌ Failed to rebuild API Key index:', err)
     })
 
     return res.json({
       success: true,
-      message: 'API Key 索引重建已开始'
+      message: 'API Key Índice重建已Iniciando'
     })
   } catch (error) {
     logger.error('❌ Failed to trigger API Key index rebuild:', error)
@@ -687,32 +687,32 @@ router.post('/api-keys/index-rebuild', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 强制刷新费用排序索引
+// 强制刷新费用OrdenarÍndice
 router.post('/api-keys/cost-sort-refresh', authenticateAdmin, async (req, res) => {
   try {
     const { timeRange } = req.body
     const costRankService = require('../../services/costRankService')
 
-    // 验证时间范围
+    // ValidarTiempo范围
     if (timeRange) {
       const validTimeRanges = ['today', '7days', '30days', 'all']
       if (!validTimeRanges.includes(timeRange)) {
         return res.status(400).json({
           success: false,
           error: 'INVALID_TIME_RANGE',
-          message: '无效的时间范围，可选值：today, 7days, 30days, all'
+          message: '无效的Tiempo范围，OpcionalValor：today, 7days, 30days, all'
         })
       }
     }
 
-    // 异步刷新，不等待完成
+    // Asíncrono刷新，不等待Completado
     costRankService.forceRefresh(timeRange || null).catch((err) => {
       logger.error('❌ Failed to refresh cost rank:', err)
     })
 
     return res.json({
       success: true,
-      message: timeRange ? `费用排序索引 (${timeRange}) 刷新已开始` : '所有费用排序索引刷新已开始'
+      message: timeRange ? `费用OrdenarÍndice (${timeRange}) 刷新已Iniciando` : '所有费用OrdenarÍndice刷新已Iniciando'
     })
   } catch (error) {
     logger.error('❌ Failed to trigger cost sort refresh:', error)
@@ -724,14 +724,14 @@ router.post('/api-keys/cost-sort-refresh', authenticateAdmin, async (req, res) =
   }
 })
 
-// 获取支持的客户端列表（使用新的验证器）
+// ObtenerSoportar的ClienteColumnaTabla（使用新的Validar器）
 router.get('/supported-clients', authenticateAdmin, async (req, res) => {
   try {
-    // 使用新的 ClientValidator 获取所有可用客户端
+    // 使用新的 ClientValidator Obtener所有可用Cliente
     const ClientValidator = require('../../validators/clientValidator')
     const availableClients = ClientValidator.getAvailableClients()
 
-    // 格式化返回数据
+    // Formato化RetornarDatos
     const clients = availableClients.map((client) => ({
       id: client.id,
       name: client.name,
@@ -749,7 +749,7 @@ router.get('/supported-clients', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取已存在的标签列表
+// Obtener已存在的标签ColumnaTabla
 router.get('/api-keys/tags', authenticateAdmin, async (req, res) => {
   try {
     const tags = await apiKeyService.getAllTags()
@@ -762,7 +762,7 @@ router.get('/api-keys/tags', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取标签详情（含使用数量）
+// Obtener标签详情（含使用数量）
 router.get('/api-keys/tags/details', authenticateAdmin, async (req, res) => {
   try {
     const tagDetails = await apiKeyService.getTagsWithCount()
@@ -774,12 +774,12 @@ router.get('/api-keys/tags/details', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 创建新标签
+// Crear新标签
 router.post('/api-keys/tags', authenticateAdmin, async (req, res) => {
   try {
     const { name } = req.body
     if (!name || !name.trim()) {
-      return res.status(400).json({ error: '标签名称不能为空' })
+      return res.status(400).json({ error: '标签Nombre不能为空' })
     }
 
     const result = await apiKeyService.createTag(name.trim())
@@ -788,14 +788,14 @@ router.post('/api-keys/tags', authenticateAdmin, async (req, res) => {
     }
 
     logger.info(`🏷️ Created new tag: ${name}`)
-    return res.json({ success: true, message: '标签创建成功' })
+    return res.json({ success: true, message: '标签CrearÉxito' })
   } catch (error) {
     logger.error('❌ Failed to create tag:', error)
     return res.status(500).json({ error: 'Failed to create tag', message: error.message })
   }
 })
 
-// 删除标签（从所有 API Key 中移除）
+// Eliminar标签（从所有 API Key 中Eliminación）
 router.delete('/api-keys/tags/:tagName', authenticateAdmin, async (req, res) => {
   try {
     const { tagName } = req.params
@@ -850,24 +850,24 @@ router.put('/api-keys/tags/:tagName', authenticateAdmin, async (req, res) => {
 })
 
 /**
- * 获取账户绑定的 API Key 数量统计
+ * ObtenerCuenta绑定的 API Key 数量Estadística
  * GET /admin/accounts/binding-counts
  *
- * 返回每种账户类型的绑定数量统计，用于账户列表页面显示"绑定: X 个API Key"
- * 这是一个轻量级接口，只返回计数而不是完整的 API Key 数据
+ * Retornar每种CuentaTipo的绑定数量Estadística，用于CuentaColumnaTablaPágina显示"绑定: X 个API Key"
+ * 这是一个轻量级Interfaz，只Retornar计数而不是完整的 API Key Datos
  */
 router.get('/accounts/binding-counts', authenticateAdmin, async (req, res) => {
   try {
-    // 使用优化的分页方法获取所有非删除的 API Keys（只需要绑定字段）
+    // 使用Optimización的分页MétodoObtener所有非Eliminar的 API Keys（只需要绑定Campo）
     const result = await redis.getApiKeysPaginated({
       page: 1,
-      pageSize: 10000, // 获取所有
+      pageSize: 10000, // Obtener所有
       excludeDeleted: true
     })
 
     const apiKeys = result.items
 
-    // 初始化统计对象
+    // InicializarEstadísticaObjeto
     const bindingCounts = {
       claudeAccountId: {},
       claudeConsoleAccountId: {},
@@ -879,52 +879,52 @@ router.get('/accounts/binding-counts', authenticateAdmin, async (req, res) => {
       ccrAccountId: {}
     }
 
-    // 遍历一次，统计每个账户的绑定数量
+    // 遍历一次，Estadística每个Cuenta的绑定数量
     for (const key of apiKeys) {
-      // Claude 账户
+      // Claude Cuenta
       if (key.claudeAccountId) {
         const id = key.claudeAccountId
         bindingCounts.claudeAccountId[id] = (bindingCounts.claudeAccountId[id] || 0) + 1
       }
 
-      // Claude Console 账户
+      // Claude Console Cuenta
       if (key.claudeConsoleAccountId) {
         const id = key.claudeConsoleAccountId
         bindingCounts.claudeConsoleAccountId[id] =
           (bindingCounts.claudeConsoleAccountId[id] || 0) + 1
       }
 
-      // Gemini 账户（包括 api: 前缀的 Gemini-API 账户）
+      // Gemini Cuenta（包括 api: 前缀的 Gemini-API Cuenta）
       if (key.geminiAccountId) {
         const id = key.geminiAccountId
         bindingCounts.geminiAccountId[id] = (bindingCounts.geminiAccountId[id] || 0) + 1
       }
 
-      // OpenAI 账户（包括 responses: 前缀的 OpenAI-Responses 账户）
+      // OpenAI Cuenta（包括 responses: 前缀的 OpenAI-Responses Cuenta）
       if (key.openaiAccountId) {
         const id = key.openaiAccountId
         bindingCounts.openaiAccountId[id] = (bindingCounts.openaiAccountId[id] || 0) + 1
       }
 
-      // Azure OpenAI 账户
+      // Azure OpenAI Cuenta
       if (key.azureOpenaiAccountId) {
         const id = key.azureOpenaiAccountId
         bindingCounts.azureOpenaiAccountId[id] = (bindingCounts.azureOpenaiAccountId[id] || 0) + 1
       }
 
-      // Bedrock 账户
+      // Bedrock Cuenta
       if (key.bedrockAccountId) {
         const id = key.bedrockAccountId
         bindingCounts.bedrockAccountId[id] = (bindingCounts.bedrockAccountId[id] || 0) + 1
       }
 
-      // Droid 账户
+      // Droid Cuenta
       if (key.droidAccountId) {
         const id = key.droidAccountId
         bindingCounts.droidAccountId[id] = (bindingCounts.droidAccountId[id] || 0) + 1
       }
 
-      // CCR 账户
+      // CCR Cuenta
       if (key.ccrAccountId) {
         const id = key.ccrAccountId
         bindingCounts.ccrAccountId[id] = (bindingCounts.ccrAccountId[id] || 0) + 1
@@ -943,21 +943,21 @@ router.get('/accounts/binding-counts', authenticateAdmin, async (req, res) => {
 })
 
 /**
- * 批量获取指定 Keys 的统计数据和费用
+ * 批量Obtener指定 Keys 的EstadísticaDatos和费用
  * POST /admin/api-keys/batch-stats
  *
- * 用于 API Keys 列表页面异步加载统计数据
+ * 用于 API Keys ColumnaTablaPáginaAsíncrono加载EstadísticaDatos
  */
 router.post('/api-keys/batch-stats', authenticateAdmin, async (req, res) => {
   try {
     const {
-      keyIds, // 必需：API Key ID 数组
-      timeRange = 'all', // 时间范围：all, today, 7days, monthly, custom
-      startDate, // custom 时必需
-      endDate // custom 时必需
+      keyIds, // Requerido：API Key ID Arreglo
+      timeRange = 'all', // Tiempo范围：all, today, 7days, monthly, custom
+      startDate, // custom 时Requerido
+      endDate // custom 时Requerido
     } = req.body
 
-    // 参数验证
+    // ParámetroValidar
     if (!Array.isArray(keyIds) || keyIds.length === 0) {
       return res.status(400).json({
         success: false,
@@ -965,7 +965,7 @@ router.post('/api-keys/batch-stats', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 限制单次最多处理 100 个 Key
+    // Límite单次最多Procesar 100 个 Key
     if (keyIds.length > 100) {
       return res.status(400).json({
         success: false,
@@ -973,7 +973,7 @@ router.post('/api-keys/batch-stats', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 验证 custom 时间范围的参数
+    // Validar custom Tiempo范围的Parámetro
     if (timeRange === 'custom') {
       if (!startDate || !endDate) {
         return res.status(400).json({
@@ -995,7 +995,7 @@ router.post('/api-keys/batch-stats', authenticateAdmin, async (req, res) => {
           error: 'startDate must be before or equal to endDate'
         })
       }
-      // 限制最大范围为 365 天
+      // Límite最大范围为 365 天
       const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
       if (daysDiff > 365) {
         return res.status(400).json({
@@ -1012,7 +1012,7 @@ router.post('/api-keys/batch-stats', authenticateAdmin, async (req, res) => {
 
     const stats = {}
 
-    // 并行计算每个 Key 的统计数据
+    // 并FilaCalcular每个 Key 的EstadísticaDatos
     await Promise.all(
       keyIds.map(async (keyId) => {
         try {
@@ -1055,23 +1055,23 @@ router.post('/api-keys/batch-stats', authenticateAdmin, async (req, res) => {
 })
 
 /**
- * 计算单个 Key 的统计数据
+ * Calcular单个 Key 的EstadísticaDatos
  * @param {string} keyId - API Key ID
- * @param {string} timeRange - 时间范围
- * @param {string} startDate - 开始日期 (custom 模式)
- * @param {string} endDate - 结束日期 (custom 模式)
- * @returns {Object} 统计数据
+ * @param {string} timeRange - Tiempo范围
+ * @param {string} startDate - IniciandoFecha (custom 模式)
+ * @param {string} endDate - 结束Fecha (custom 模式)
+ * @returns {Object} EstadísticaDatos
  */
 async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
   const client = redis.getClientSafe()
   const tzDate = redis.getDateInTimezone()
   const today = redis.getDateStringInTimezone()
 
-  // 构建搜索模式
+  // Construir搜索模式
   const searchPatterns = []
 
   if (timeRange === 'custom' && startDate && endDate) {
-    // 自定义日期范围
+    // 自定义Fecha范围
     const start = new Date(startDate)
     const end = new Date(endDate)
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
@@ -1093,7 +1093,7 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     const currentMonth = `${tzDate.getUTCFullYear()}-${String(tzDate.getUTCMonth() + 1).padStart(2, '0')}`
     searchPatterns.push(`usage:${keyId}:model:monthly:*:${currentMonth}`)
   } else {
-    // all - 获取所有数据（日和月数据都查）
+    // all - Obtener所有Datos（日和月Datos都查）
     searchPatterns.push(`usage:${keyId}:model:daily:*`)
     searchPatterns.push(`usage:${keyId}:model:monthly:*`)
   }
@@ -1109,14 +1109,14 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     } while (cursor !== '0')
   }
 
-  // 去重（避免日数据和月数据重复计算）
+  // 去重（避免日Datos和月Datos重复Calcular）
   const uniqueKeys = [...new Set(allKeys)]
 
-  // 获取实时限制数据（窗口数据不受时间范围筛选影响，始终获取当前窗口状态）
+  // Obtener实时LímiteDatos（窗口Datos不受Tiempo范围筛选影响，始终Obtener当前窗口状态）
   let dailyCost = 0
-  let weeklyOpusCost = 0 // 字段名沿用 weeklyOpusCost*，语义为"Claude 周费用"
+  let weeklyOpusCost = 0 // Campo名沿用 weeklyOpusCost*，语义为"Claude 周费用"
   let currentWindowCost = 0
-  let currentWindowRequests = 0 // 当前窗口请求次数
+  let currentWindowRequests = 0 // 当前窗口Solicitud次数
   let currentWindowTokens = 0 // 当前窗口 Token 使用量
   let windowRemainingSeconds = null
   let windowStartTime = null
@@ -1124,30 +1124,30 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
   let allTimeCost = 0
 
   try {
-    // 先获取 API Key 配置，判断是否需要查询限制相关数据
+    // 先Obtener API Key Configuración，判断是否需要ConsultaLímite相关Datos
     const apiKey = await redis.getApiKey(keyId)
     const rateLimitWindow = parseInt(apiKey?.rateLimitWindow) || 0
     const dailyCostLimit = parseFloat(apiKey?.dailyCostLimit) || 0
     const totalCostLimit = parseFloat(apiKey?.totalCostLimit) || 0
     const weeklyOpusCostLimit = parseFloat(apiKey?.weeklyOpusCostLimit) || 0
 
-    // 只在启用了每日费用限制时查询
+    // 只在Habilitar了每日费用Límite时Consulta
     if (dailyCostLimit > 0) {
       dailyCost = await redis.getDailyCost(keyId)
     }
 
-    // 只在启用了总费用限制时查询
+    // 只在Habilitar了总费用Límite时Consulta
     if (totalCostLimit > 0) {
       const totalCostKey = `usage:cost:total:${keyId}`
       allTimeCost = parseFloat((await client.get(totalCostKey)) || '0')
     }
 
-    // 只在启用了 Claude 周费用限制时查询（字段名沿用 weeklyOpusCostLimit）
+    // 只在Habilitar了 Claude 周费用Límite时Consulta（Campo名沿用 weeklyOpusCostLimit）
     if (weeklyOpusCostLimit > 0) {
       weeklyOpusCost = await redis.getWeeklyOpusCost(keyId)
     }
 
-    // 只在启用了窗口限制时查询窗口数据（移到早期返回之前，确保窗口数据始终被获取）
+    // 只在Habilitar了窗口Límite时Consulta窗口Datos（移到早期Retornar之前，确保窗口Datos始终被Obtener）
     if (rateLimitWindow > 0) {
       const requestCountKey = `rate_limit:requests:${keyId}`
       const tokenCountKey = `rate_limit:tokens:${keyId}`
@@ -1158,12 +1158,12 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
       currentWindowTokens = parseInt((await client.get(tokenCountKey)) || '0')
       currentWindowCost = parseFloat((await client.get(costCountKey)) || '0')
 
-      // 获取窗口开始时间和计算剩余时间
+      // Obtener窗口IniciandoTiempo和Calcular剩余Tiempo
       const windowStart = await client.get(windowStartKey)
       if (windowStart) {
         const now = Date.now()
         windowStartTime = parseInt(windowStart)
-        const windowDuration = rateLimitWindow * 60 * 1000 // 转换为毫秒
+        const windowDuration = rateLimitWindow * 60 * 1000 // Convertir为毫秒
         windowEndTime = windowStartTime + windowDuration
 
         // 如果窗口还有效
@@ -1179,13 +1179,13 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
       }
     }
 
-    // 🔧 FIX: 对于 "全部时间" 时间范围，直接使用 allTimeCost
-    // 因为 usage:*:model:daily:* 键有 30 天 TTL，旧数据已经过期
+    // 🔧 FIX: 对于 "全部Tiempo" Tiempo范围，直接使用 allTimeCost
+    // 因为 usage:*:model:daily:* 键有 30 天 TTL，旧Datos已经过期
     if (timeRange === 'all' && allTimeCost > 0) {
-      logger.debug(`📊 使用 allTimeCost 计算 timeRange='all': ${allTimeCost}`)
+      logger.debug(`📊 使用 allTimeCost Calcular timeRange='all': ${allTimeCost}`)
 
       return {
-        requests: 0, // 旧数据详情不可用
+        requests: 0, // 旧Datos详情不可用
         tokens: 0,
         inputTokens: 0,
         outputTokens: 0,
@@ -1193,7 +1193,7 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
         cacheReadTokens: 0,
         cost: allTimeCost,
         formattedCost: CostCalculator.formatCost(allTimeCost),
-        // 实时限制数据（始终返回，不受时间范围影响）
+        // 实时LímiteDatos（始终Retornar，不受Tiempo范围影响）
         dailyCost,
         weeklyOpusCost,
         currentWindowCost,
@@ -1206,10 +1206,10 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
       }
     }
   } catch (error) {
-    logger.warn(`⚠️ 获取实时限制数据失败 (key: ${keyId}):`, error.message)
+    logger.warn(`⚠️ Obtener实时LímiteDatosFalló (key: ${keyId}):`, error.message)
   }
 
-  // 如果没有使用数据，返回零值但包含窗口数据
+  // 如果没有使用Datos，Retornar零Valor但Incluir窗口Datos
   if (uniqueKeys.length === 0) {
     return {
       requests: 0,
@@ -1220,7 +1220,7 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
       cacheReadTokens: 0,
       cost: 0,
       formattedCost: '$0.00',
-      // 实时限制数据（始终返回，不受时间范围影响）
+      // 实时LímiteDatos（始终Retornar，不受Tiempo范围影响）
       dailyCost,
       weeklyOpusCost,
       currentWindowCost,
@@ -1233,18 +1233,18 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     }
   }
 
-  // 使用 Pipeline 批量获取数据
+  // 使用 Pipeline 批量ObtenerDatos
   const pipeline = client.pipeline()
   for (const key of uniqueKeys) {
     pipeline.hgetall(key)
   }
   const results = await pipeline.exec()
 
-  // 汇总计算
+  // 汇总Calcular
   const modelStatsMap = new Map()
   let totalRequests = 0
 
-  // 用于去重：先统计月数据，避免与日数据重复
+  // 用于去重：先Estadística月Datos，避免与日Datos重复
   const dailyKeyPattern = /usage:.+:model:daily:(.+):\d{4}-\d{2}-\d{2}$/
   const monthlyKeyPattern = /usage:.+:model:monthly:(.+):\d{4}-\d{2}$/
   const currentMonth = `${tzDate.getUTCFullYear()}-${String(tzDate.getUTCMonth() + 1).padStart(2, '0')}`
@@ -1259,7 +1259,7 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     let model = null
     let isMonthly = false
 
-    // 提取模型名称
+    // 提取模型Nombre
     const dailyMatch = key.match(dailyKeyPattern)
     const monthlyMatch = key.match(monthlyKeyPattern)
 
@@ -1274,11 +1274,11 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
       continue
     }
 
-    // 跳过当前月的月数据
+    // 跳过当前月的月Datos
     if (isMonthly && key.includes(`:${currentMonth}`)) {
       continue
     }
-    // 跳过非当前月的日数据
+    // 跳过非当前月的日Datos
     if (!isMonthly && !key.includes(`:${currentMonth}-`)) {
       continue
     }
@@ -1305,7 +1305,7 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     totalRequests += parseInt(data.totalRequests) || parseInt(data.requests) || 0
   }
 
-  // 计算费用
+  // Calcular费用
   let totalCost = 0
   let inputTokens = 0
   let outputTokens = 0
@@ -1341,7 +1341,7 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     cacheReadTokens,
     cost: totalCost,
     formattedCost: CostCalculator.formatCost(totalCost),
-    // 实时限制数据
+    // 实时LímiteDatos
     dailyCost,
     weeklyOpusCost,
     currentWindowCost,
@@ -1350,21 +1350,21 @@ async function calculateKeyStats(keyId, timeRange, startDate, endDate) {
     windowRemainingSeconds,
     windowStartTime,
     windowEndTime,
-    allTimeCost // 历史总费用（用于总费用限制）
+    allTimeCost // 历史总费用（用于总费用Límite）
   }
 }
 
 /**
- * 批量获取指定 Keys 的最后使用账号信息
+ * 批量Obtener指定 Keys 的最后使用账号Información
  * POST /admin/api-keys/batch-last-usage
  *
- * 用于 API Keys 列表页面异步加载最后使用账号数据
+ * 用于 API Keys ColumnaTablaPáginaAsíncrono加载最后使用账号Datos
  */
 router.post('/api-keys/batch-last-usage', authenticateAdmin, async (req, res) => {
   try {
     const { keyIds } = req.body
 
-    // 参数验证
+    // ParámetroValidar
     if (!Array.isArray(keyIds) || keyIds.length === 0) {
       return res.status(400).json({
         success: false,
@@ -1372,7 +1372,7 @@ router.post('/api-keys/batch-last-usage', authenticateAdmin, async (req, res) =>
       })
     }
 
-    // 限制单次最多处理 100 个 Key
+    // Límite单次最多Procesar 100 个 Key
     if (keyIds.length > 100) {
       return res.status(400).json({
         success: false,
@@ -1386,11 +1386,11 @@ router.post('/api-keys/batch-last-usage', authenticateAdmin, async (req, res) =>
     const lastUsageData = {}
     const accountInfoCache = new Map()
 
-    // 并行获取每个 Key 的最后使用记录
+    // 并FilaObtener每个 Key 的最后使用Registro
     await Promise.all(
       keyIds.map(async (keyId) => {
         try {
-          // 获取最新的使用记录
+          // Obtener最新的使用Registro
           const usageRecords = await redis.getUsageRecords(keyId, 1)
           if (!Array.isArray(usageRecords) || usageRecords.length === 0) {
             lastUsageData[keyId] = null
@@ -1403,7 +1403,7 @@ router.post('/api-keys/batch-last-usage', authenticateAdmin, async (req, res) =>
             return
           }
 
-          // 解析账号信息
+          // Analizar账号Información
           const resolvedAccount = await apiKeyService._resolveAccountByUsageRecord(
             lastUsageRecord,
             accountInfoCache,
@@ -1420,18 +1420,18 @@ router.post('/api-keys/batch-last-usage', authenticateAdmin, async (req, res) =>
               recordedAt: lastUsageRecord.timestamp || null
             }
           } else {
-            // 账号已删除
+            // 账号已Eliminar
             lastUsageData[keyId] = {
               accountId: null,
               rawAccountId: lastUsageRecord.accountId || null,
               accountType: 'deleted',
               accountCategory: 'deleted',
-              accountName: '已删除',
+              accountName: '已Eliminar',
               recordedAt: lastUsageRecord.timestamp || null
             }
           }
         } catch (error) {
-          logger.debug(`获取 API Key ${keyId} 的最后使用记录失败:`, error)
+          logger.debug(`Obtener API Key ${keyId} 的最后使用RegistroFalló:`, error)
           lastUsageData[keyId] = null
         }
       })
@@ -1448,7 +1448,7 @@ router.post('/api-keys/batch-last-usage', authenticateAdmin, async (req, res) =>
   }
 })
 
-// 创建新的API Key
+// Crear新的API Key
 router.post('/api-keys', authenticateAdmin, async (req, res) => {
   try {
     const {
@@ -1475,14 +1475,14 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
       totalCostLimit,
       weeklyOpusCostLimit,
       tags,
-      activationDays, // 新增：激活后有效天数
-      activationUnit, // 新增：激活时间单位 (hours/days)
-      expirationMode, // 新增：过期模式
-      icon, // 新增：图标
-      serviceRates // API Key 级别服务倍率
+      activationDays, // Nueva característica：激活后有效天数
+      activationUnit, // Nueva característica：激活Tiempo单位 (hours/days)
+      expirationMode, // Nueva característica：过期模式
+      icon, // Nueva característica：图标
+      serviceRates // API Key 级别Servicio倍率
     } = req.body
 
-    // 输入验证
+    // 输入Validar
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return res.status(400).json({ error: 'Name is required and must be a non-empty string' })
     }
@@ -1530,7 +1530,7 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Rate limit requests must be a positive integer' })
     }
 
-    // 验证模型限制字段
+    // Validar模型LímiteCampo
     if (enableModelRestriction !== undefined && typeof enableModelRestriction !== 'boolean') {
       return res.status(400).json({ error: 'Enable model restriction must be a boolean' })
     }
@@ -1539,7 +1539,7 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Restricted models must be an array' })
     }
 
-    // 验证客户端限制字段
+    // ValidarClienteLímiteCampo
     if (enableClientRestriction !== undefined && typeof enableClientRestriction !== 'boolean') {
       return res.status(400).json({ error: 'Enable client restriction must be a boolean' })
     }
@@ -1548,7 +1548,7 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Allowed clients must be an array' })
     }
 
-    // 验证标签字段
+    // Validar标签Campo
     if (tags !== undefined && !Array.isArray(tags)) {
       return res.status(400).json({ error: 'Tags must be an array' })
     }
@@ -1566,7 +1566,7 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Total cost limit must be a non-negative number' })
     }
 
-    // 验证激活相关字段
+    // Validar激活相关Campo
     if (expirationMode && !['fixed', 'activation'].includes(expirationMode)) {
       return res
         .status(400)
@@ -1574,14 +1574,14 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
     }
 
     if (expirationMode === 'activation') {
-      // 验证激活时间单位
+      // Validar激活Tiempo单位
       if (!activationUnit || !['hours', 'days'].includes(activationUnit)) {
         return res.status(400).json({
           error: 'Activation unit must be either "hours" or "days" when using activation mode'
         })
       }
 
-      // 验证激活时间数值
+      // Validar激活Tiempo数Valor
       if (
         !activationDays ||
         !Number.isInteger(Number(activationDays)) ||
@@ -1592,7 +1592,7 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
           error: `Activation ${unitText} must be a positive integer when using activation mode`
         })
       }
-      // 激活模式下不应该设置固定过期时间
+      // 激活模式下不应该Establecer固定过期Tiempo
       if (expiresAt) {
         return res
           .status(400)
@@ -1600,13 +1600,13 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 验证服务权限字段（支持数组格式）
+    // ValidarServicioPermisoCampo（SoportarArregloFormato）
     const permissionsError = validatePermissions(permissions)
     if (permissionsError) {
       return res.status(400).json({ error: permissionsError })
     }
 
-    // 验证服务倍率
+    // ValidarServicio倍率
     const serviceRatesError = validateServiceRates(serviceRates)
     if (serviceRatesError) {
       return res.status(400).json({ error: serviceRatesError })
@@ -1651,7 +1651,7 @@ router.post('/api-keys', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 批量创建API Keys
+// 批量CrearAPI Keys
 router.post('/api-keys/batch', authenticateAdmin, async (req, res) => {
   try {
     const {
@@ -1686,7 +1686,7 @@ router.post('/api-keys/batch', authenticateAdmin, async (req, res) => {
       serviceRates
     } = req.body
 
-    // 输入验证
+    // 输入Validar
     if (!baseName || typeof baseName !== 'string' || baseName.trim().length === 0) {
       return res.status(400).json({ error: 'Base name is required and must be a non-empty string' })
     }
@@ -1701,19 +1701,19 @@ router.post('/api-keys/batch', authenticateAdmin, async (req, res) => {
         .json({ error: 'Base name must be less than 90 characters to allow for numbering' })
     }
 
-    // 验证服务权限字段（支持数组格式）
+    // ValidarServicioPermisoCampo（SoportarArregloFormato）
     const batchPermissionsError = validatePermissions(permissions)
     if (batchPermissionsError) {
       return res.status(400).json({ error: batchPermissionsError })
     }
 
-    // 验证服务倍率
+    // ValidarServicio倍率
     const batchServiceRatesError = validateServiceRates(serviceRates)
     if (batchServiceRatesError) {
       return res.status(400).json({ error: batchServiceRatesError })
     }
 
-    // 生成批量API Keys
+    // Generar批量API Keys
     const createdKeys = []
     const errors = []
 
@@ -1751,7 +1751,7 @@ router.post('/api-keys/batch', authenticateAdmin, async (req, res) => {
           serviceRates
         })
 
-        // 保留原始 API Key 供返回
+        // 保留原始 API Key 供Retornar
         createdKeys.push({
           ...newKey,
           apiKey: newKey.apiKey
@@ -1765,7 +1765,7 @@ router.post('/api-keys/batch', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 如果有部分失败，返回部分成功的结果
+    // 如果有部分Falló，Retornar部分Éxito的结果
     if (errors.length > 0 && createdKeys.length === 0) {
       return res.status(400).json({
         success: false,
@@ -1774,7 +1774,7 @@ router.post('/api-keys/batch', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 返回创建的keys（包含完整的apiKey）
+    // RetornarCrear的keys（Incluir完整的apiKey）
     return res.json({
       success: true,
       data: createdKeys,
@@ -1814,7 +1814,7 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 验证服务权限字段（支持数组格式）
+    // ValidarServicioPermisoCampo（SoportarArregloFormato）
     if (updates.permissions !== undefined) {
       const updatePermissionsError = validatePermissions(updates.permissions)
       if (updatePermissionsError) {
@@ -1822,7 +1822,7 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 验证服务倍率
+    // ValidarServicio倍率
     if (updates.serviceRates !== undefined) {
       const updateServiceRatesError = validateServiceRates(updates.serviceRates)
       if (updateServiceRatesError) {
@@ -1841,10 +1841,10 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
       errors: []
     }
 
-    // 处理每个API Key
+    // Procesar每个API Key
     for (const keyId of keyIds) {
       try {
-        // 获取当前API Key信息
+        // Obtener当前API KeyInformación
         const currentKey = await redis.getApiKey(keyId)
         if (!currentKey || Object.keys(currentKey).length === 0) {
           results.failedCount++
@@ -1852,10 +1852,10 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
           continue
         }
 
-        // 构建最终更新数据
+        // Construir最终ActualizarDatos
         const finalUpdates = {}
 
-        // 处理普通字段
+        // Procesar普通Campo
         if (updates.name) {
           finalUpdates.name = updates.name
         }
@@ -1902,7 +1902,7 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
           finalUpdates.serviceRates = updates.serviceRates
         }
 
-        // 处理账户绑定
+        // ProcesarCuenta绑定
         if (updates.claudeAccountId !== undefined) {
           finalUpdates.claudeAccountId = updates.claudeAccountId
         }
@@ -1922,7 +1922,7 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
           finalUpdates.droidAccountId = updates.droidAccountId || ''
         }
 
-        // 处理标签操作
+        // Procesar标签Operación
         if (updates.tags !== undefined) {
           if (updates.tagOperation) {
             const currentTags = currentKey.tags ? JSON.parse(currentKey.tags) : []
@@ -1949,12 +1949,12 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
               }
             }
           } else {
-            // 如果没有指定操作类型，默认为替换
+            // 如果没有指定OperaciónTipo，Predeterminado为Reemplazo
             finalUpdates.tags = updates.tags
           }
         }
 
-        // 执行更新
+        // EjecutarActualizar
         await apiKeyService.updateApiKey(keyId, finalUpdates)
         results.successCount++
         logger.success(`Batch edit: API key ${keyId} updated successfully`)
@@ -1965,7 +1965,7 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 记录批量编辑结果
+    // Registro批量编辑结果
     if (results.successCount > 0) {
       logger.success(
         `🎉 Batch edit completed: ${results.successCount} successful, ${results.failedCount} failed`
@@ -1990,12 +1990,12 @@ router.put('/api-keys/batch', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新API Key
+// ActualizarAPI Key
 router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
   try {
     const { keyId } = req.params
     const {
-      name, // 添加名称字段
+      name, // 添加NombreCampo
       tokenLimit,
       concurrencyLimit,
       rateLimitWindow,
@@ -2018,14 +2018,14 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       totalCostLimit,
       weeklyOpusCostLimit,
       tags,
-      ownerId, // 新增：所有者ID字段
-      serviceRates // API Key 级别服务倍率
+      ownerId, // Nueva característica：所有者IDCampo
+      serviceRates // API Key 级别Servicio倍率
     } = req.body
 
-    // 只允许更新指定字段
+    // 只允许Actualizar指定Campo
     const updates = {}
 
-    // 处理名称字段
+    // ProcesarNombreCampo
     if (name !== undefined && name !== null && name !== '') {
       const trimmedName = name.toString().trim()
       if (trimmedName.length === 0) {
@@ -2076,37 +2076,37 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
     }
 
     if (claudeAccountId !== undefined) {
-      // 空字符串表示解绑，null或空字符串都设置为空字符串
+      // 空CadenaTabla示解绑，null或空Cadena都Establecer为空Cadena
       updates.claudeAccountId = claudeAccountId || ''
     }
 
     if (claudeConsoleAccountId !== undefined) {
-      // 空字符串表示解绑，null或空字符串都设置为空字符串
+      // 空CadenaTabla示解绑，null或空Cadena都Establecer为空Cadena
       updates.claudeConsoleAccountId = claudeConsoleAccountId || ''
     }
 
     if (geminiAccountId !== undefined) {
-      // 空字符串表示解绑，null或空字符串都设置为空字符串
+      // 空CadenaTabla示解绑，null或空Cadena都Establecer为空Cadena
       updates.geminiAccountId = geminiAccountId || ''
     }
 
     if (openaiAccountId !== undefined) {
-      // 空字符串表示解绑，null或空字符串都设置为空字符串
+      // 空CadenaTabla示解绑，null或空Cadena都Establecer为空Cadena
       updates.openaiAccountId = openaiAccountId || ''
     }
 
     if (bedrockAccountId !== undefined) {
-      // 空字符串表示解绑，null或空字符串都设置为空字符串
+      // 空CadenaTabla示解绑，null或空Cadena都Establecer为空Cadena
       updates.bedrockAccountId = bedrockAccountId || ''
     }
 
     if (droidAccountId !== undefined) {
-      // 空字符串表示解绑，null或空字符串都设置为空字符串
+      // 空CadenaTabla示解绑，null或空Cadena都Establecer为空Cadena
       updates.droidAccountId = droidAccountId || ''
     }
 
     if (permissions !== undefined) {
-      // 验证服务权限字段（支持数组格式）
+      // ValidarServicioPermisoCampo（SoportarArregloFormato）
       const singlePermissionsError = validatePermissions(permissions)
       if (singlePermissionsError) {
         return res.status(400).json({ error: singlePermissionsError })
@@ -2114,7 +2114,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.permissions = permissions
     }
 
-    // 处理模型限制字段
+    // Procesar模型LímiteCampo
     if (enableModelRestriction !== undefined) {
       if (typeof enableModelRestriction !== 'boolean') {
         return res.status(400).json({ error: 'Enable model restriction must be a boolean' })
@@ -2129,7 +2129,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.restrictedModels = restrictedModels
     }
 
-    // 处理客户端限制字段
+    // ProcesarClienteLímiteCampo
     if (enableClientRestriction !== undefined) {
       if (typeof enableClientRestriction !== 'boolean') {
         return res.status(400).json({ error: 'Enable client restriction must be a boolean' })
@@ -2144,24 +2144,24 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.allowedClients = allowedClients
     }
 
-    // 处理过期时间字段
+    // Procesar过期TiempoCampo
     if (expiresAt !== undefined) {
       if (expiresAt === null) {
-        // null 表示永不过期
+        // null Tabla示永不过期
         updates.expiresAt = null
         updates.isActive = true
       } else {
-        // 验证日期格式
+        // ValidarFechaFormato
         const expireDate = new Date(expiresAt)
         if (isNaN(expireDate.getTime())) {
           return res.status(400).json({ error: 'Invalid expiration date format' })
         }
         updates.expiresAt = expiresAt
-        updates.isActive = expireDate > new Date() // 如果过期时间在当前时间之后，则设置为激活状态
+        updates.isActive = expireDate > new Date() // 如果过期Tiempo在当前Tiempo之后，则Establecer为激活状态
       }
     }
 
-    // 处理每日费用限制
+    // Procesar每日费用Límite
     if (dailyCostLimit !== undefined && dailyCostLimit !== null && dailyCostLimit !== '') {
       const costLimit = Number(dailyCostLimit)
       if (isNaN(costLimit) || costLimit < 0) {
@@ -2178,14 +2178,14 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.totalCostLimit = costLimit
     }
 
-    // 处理 Opus 周费用限制
+    // Procesar Opus 周费用Límite
     if (
       weeklyOpusCostLimit !== undefined &&
       weeklyOpusCostLimit !== null &&
       weeklyOpusCostLimit !== ''
     ) {
       const costLimit = Number(weeklyOpusCostLimit)
-      // 明确验证非负数（0 表示禁用，负数无意义）
+      // 明确Validar非负数（0 Tabla示Deshabilitar，负数无意义）
       if (isNaN(costLimit) || costLimit < 0) {
         return res
           .status(400)
@@ -2194,7 +2194,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.weeklyOpusCostLimit = costLimit
     }
 
-    // 处理标签
+    // Procesar标签
     if (tags !== undefined) {
       if (!Array.isArray(tags)) {
         return res.status(400).json({ error: 'Tags must be an array' })
@@ -2205,7 +2205,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.tags = tags
     }
 
-    // 处理服务倍率
+    // ProcesarServicio倍率
     if (serviceRates !== undefined) {
       const singleServiceRatesError = validateServiceRates(serviceRates)
       if (singleServiceRatesError) {
@@ -2214,7 +2214,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.serviceRates = serviceRates
     }
 
-    // 处理活跃/禁用状态状态, 放在过期处理后，以确保后续增加禁用key功能
+    // Procesar活跃/Deshabilitar状态状态, 放在过期Procesar后，以确保后续增加Deshabilitarkey功能
     if (isActive !== undefined) {
       if (typeof isActive !== 'boolean') {
         return res.status(400).json({ error: 'isActive must be a boolean' })
@@ -2222,7 +2222,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
       updates.isActive = isActive
     }
 
-    // 处理所有者变更
+    // Procesar所有者变更
     if (ownerId !== undefined) {
       const userService = require('../../services/userService')
 
@@ -2232,7 +2232,7 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
         updates.userUsername = ''
         updates.createdBy = 'admin'
       } else if (ownerId) {
-        // 分配给用户
+        // 分配给Usuario
         try {
           const user = await userService.getUserById(ownerId, false)
           if (!user) {
@@ -2242,12 +2242,12 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
             return res.status(400).json({ error: 'Cannot assign to inactive user' })
           }
 
-          // 设置新的所有者信息
+          // Establecer新的所有者Información
           updates.userId = ownerId
           updates.userUsername = user.username
           updates.createdBy = user.username
 
-          // 管理员重新分配时，不检查用户的API Key数量限制
+          // 管理员重新分配时，不VerificarUsuario的API Key数量Límite
           logger.info(`🔄 Admin reassigning API key ${keyId} to user ${user.username}`)
         } catch (error) {
           logger.error('Error fetching user for owner reassignment:', error)
@@ -2271,13 +2271,13 @@ router.put('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 修改API Key过期时间（包括手动激活功能）
+// 修改API Key过期Tiempo（包括手动激活功能）
 router.patch('/api-keys/:keyId/expiration', authenticateAdmin, async (req, res) => {
   try {
     const { keyId } = req.params
     const { expiresAt, activateNow } = req.body
 
-    // 获取当前API Key信息
+    // Obtener当前API KeyInformación
     const keyData = await redis.getApiKey(keyId)
     if (!keyData || Object.keys(keyData).length === 0) {
       return res.status(404).json({ error: 'API key not found' })
@@ -2285,7 +2285,7 @@ router.patch('/api-keys/:keyId/expiration', authenticateAdmin, async (req, res) 
 
     const updates = {}
 
-    // 如果是激活操作（用于未激活的key）
+    // 如果是激活Operación（用于未激活的key）
     if (activateNow === true) {
       if (keyData.expirationMode === 'activation' && keyData.isActivated !== 'true') {
         const now = new Date()
@@ -2309,14 +2309,14 @@ router.patch('/api-keys/:keyId/expiration', authenticateAdmin, async (req, res) 
       }
     }
 
-    // 如果提供了新的过期时间（但不是激活操作）
+    // 如果提供了新的过期Tiempo（但不是激活Operación）
     if (expiresAt !== undefined && activateNow !== true) {
-      // 验证过期时间格式
+      // Validar过期TiempoFormato
       if (expiresAt && isNaN(Date.parse(expiresAt))) {
         return res.status(400).json({ error: 'Invalid expiration date format' })
       }
 
-      // 如果设置了过期时间，确保key是激活状态
+      // 如果Establecer了过期Tiempo，确保key是激活状态
       if (expiresAt) {
         updates.expiresAt = new Date(expiresAt).toISOString()
         // 如果之前是未激活状态，现在激活它
@@ -2325,7 +2325,7 @@ router.patch('/api-keys/:keyId/expiration', authenticateAdmin, async (req, res) 
           updates.activatedAt = new Date().toISOString()
         }
       } else {
-        // 清除过期时间（永不过期）
+        // 清除过期Tiempo（永不过期）
         updates.expiresAt = ''
       }
     }
@@ -2334,7 +2334,7 @@ router.patch('/api-keys/:keyId/expiration', authenticateAdmin, async (req, res) 
       return res.status(400).json({ error: 'No valid updates provided' })
     }
 
-    // 更新API Key
+    // ActualizarAPI Key
     await apiKeyService.updateApiKey(keyId, updates)
 
     logger.success(`📝 Updated API key expiration: ${keyId} (${keyData.name})`)
@@ -2352,16 +2352,16 @@ router.patch('/api-keys/:keyId/expiration', authenticateAdmin, async (req, res) 
   }
 })
 
-// 批量删除API Keys（必须在 :keyId 路由之前定义）
+// 批量EliminarAPI Keys（必须在 :keyId Ruta之前定义）
 router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
   try {
     const { keyIds } = req.body
 
-    // 调试信息
+    // DepurarInformación
     logger.info(`🐛 Batch delete request body: ${JSON.stringify(req.body)}`)
     logger.info(`🐛 keyIds type: ${typeof keyIds}, value: ${JSON.stringify(keyIds)}`)
 
-    // 参数验证
+    // ParámetroValidar
     if (!keyIds || !Array.isArray(keyIds) || keyIds.length === 0) {
       logger.warn(
         `🚨 Invalid keyIds: ${JSON.stringify({
@@ -2372,7 +2372,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
       )
       return res.status(400).json({
         error: 'Invalid request',
-        message: 'keyIds 必须是一个非空数组'
+        message: 'keyIds 必须是一个非空Arreglo'
       })
     }
 
@@ -2383,7 +2383,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 验证keyIds格式
+    // ValidarkeyIdsFormato
     const invalidKeys = keyIds.filter((id) => !id || typeof id !== 'string')
     if (invalidKeys.length > 0) {
       return res.status(400).json({
@@ -2402,10 +2402,10 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
       errors: []
     }
 
-    // 逐个删除，记录成功和失败情况
+    // 逐个Eliminar，RegistroÉxito和Falló情况
     for (const keyId of keyIds) {
       try {
-        // 检查API Key是否存在
+        // VerificarAPI Key是否存在
         const apiKey = await redis.getApiKey(keyId)
         if (!apiKey || Object.keys(apiKey).length === 0) {
           results.failedCount++
@@ -2413,7 +2413,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
           continue
         }
 
-        // 执行删除
+        // EjecutarEliminar
         await apiKeyService.deleteApiKey(keyId)
         results.successCount++
 
@@ -2422,14 +2422,14 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
         results.failedCount++
         results.errors.push({
           keyId,
-          error: error.message || '删除失败'
+          error: error.message || 'EliminarFalló'
         })
 
         logger.error(`❌ Batch delete failed for key ${keyId}:`, error)
       }
     }
 
-    // 记录批量删除结果
+    // Registro批量Eliminar结果
     if (results.successCount > 0) {
       logger.success(
         `🎉 Batch delete completed: ${results.successCount} successful, ${results.failedCount} failed`
@@ -2454,7 +2454,7 @@ router.delete('/api-keys/batch', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除单个API Key（必须在批量删除路由之后定义）
+// Eliminar单个API Key（必须在批量EliminarRuta之后定义）
 router.delete('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
   try {
     const { keyId } = req.params
@@ -2469,7 +2469,7 @@ router.delete('/api-keys/:keyId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 📋 获取已删除的API Keys
+// 📋 Obtener已Eliminar的API Keys
 router.get('/api-keys/deleted', authenticateAdmin, async (req, res) => {
   try {
     const deletedApiKeys = await apiKeyService.getAllApiKeysFast(true) // Include deleted
@@ -2482,7 +2482,7 @@ router.get('/api-keys/deleted', authenticateAdmin, async (req, res) => {
       deletedAt: key.deletedAt,
       deletedBy: key.deletedBy,
       deletedByType: key.deletedByType,
-      canRestore: true // 已删除的API Key可以恢复
+      canRestore: true // 已Eliminar的API Key可以Restauración
     }))
 
     logger.success(`📋 Admin retrieved ${enrichedKeys.length} deleted API keys`)
@@ -2495,13 +2495,13 @@ router.get('/api-keys/deleted', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 🔄 恢复已删除的API Key
+// 🔄 Restauración已Eliminar的API Key
 router.post('/api-keys/:keyId/restore', authenticateAdmin, async (req, res) => {
   try {
     const { keyId } = req.params
     const adminUsername = req.session?.admin?.username || 'unknown'
 
-    // 调用服务层的恢复方法
+    // 调用Servicio层的RestauraciónMétodo
     const result = await apiKeyService.restoreApiKey(keyId, adminUsername, 'admin')
 
     if (result.success) {
@@ -2520,7 +2520,7 @@ router.post('/api-keys/:keyId/restore', authenticateAdmin, async (req, res) => {
   } catch (error) {
     logger.error('❌ Failed to restore API key:', error)
 
-    // 根据错误类型返回适当的响应
+    // 根据ErrorTipoRetornar适当的Respuesta
     if (error.message === 'API key not found') {
       return res.status(404).json({
         success: false,
@@ -2529,25 +2529,25 @@ router.post('/api-keys/:keyId/restore', authenticateAdmin, async (req, res) => {
     } else if (error.message === 'API key is not deleted') {
       return res.status(400).json({
         success: false,
-        error: '该 API Key 未被删除，无需恢复'
+        error: '该 API Key 未被Eliminar，无需Restauración'
       })
     }
 
     return res.status(500).json({
       success: false,
-      error: '恢复 API Key 失败',
+      error: 'Restauración API Key Falló',
       message: error.message
     })
   }
 })
 
-// 🗑️ 彻底删除API Key（物理删除）
+// 🗑️ 彻底EliminarAPI Key（物理Eliminar）
 router.delete('/api-keys/:keyId/permanent', authenticateAdmin, async (req, res) => {
   try {
     const { keyId } = req.params
     const adminUsername = req.session?.admin?.username || 'unknown'
 
-    // 调用服务层的彻底删除方法
+    // 调用Servicio层的彻底EliminarMétodo
     const result = await apiKeyService.permanentDeleteApiKey(keyId)
 
     if (result.success) {
@@ -2565,27 +2565,27 @@ router.delete('/api-keys/:keyId/permanent', authenticateAdmin, async (req, res) 
         success: false,
         error: 'API Key 不存在'
       })
-    } else if (error.message === '只能彻底删除已经删除的API Key') {
+    } else if (error.message === '只能彻底Eliminar已经Eliminar的API Key') {
       return res.status(400).json({
         success: false,
-        error: '只能彻底删除已经删除的API Key'
+        error: '只能彻底Eliminar已经Eliminar的API Key'
       })
     }
 
     return res.status(500).json({
       success: false,
-      error: '彻底删除 API Key 失败',
+      error: '彻底Eliminar API Key Falló',
       message: error.message
     })
   }
 })
 
-// 🧹 清空所有已删除的API Keys
+// 🧹 清空所有已Eliminar的API Keys
 router.delete('/api-keys/deleted/clear-all', authenticateAdmin, async (req, res) => {
   try {
     const adminUsername = req.session?.admin?.username || 'unknown'
 
-    // 调用服务层的清空方法
+    // 调用Servicio层的清空Método
     const result = await apiKeyService.clearAllDeletedApiKeys()
 
     logger.success(
@@ -2606,7 +2606,7 @@ router.delete('/api-keys/deleted/clear-all', authenticateAdmin, async (req, res)
     logger.error('❌ Failed to clear all deleted API keys:', error)
     return res.status(500).json({
       success: false,
-      error: '清空已删除的 API Keys 失败',
+      error: '清空已Eliminar的 API Keys Falló',
       message: error.message
     })
   }

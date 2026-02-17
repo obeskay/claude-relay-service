@@ -8,13 +8,13 @@ class LdapService {
     this.config = config.ldap || {}
     this.client = null
 
-    // 验证配置 - 只有在 LDAP 配置存在且启用时才验证
+    // ValidarConfiguración - 只有在 LDAP Configuración存在且Habilitar时才Validar
     if (this.config && this.config.enabled) {
       this.validateConfiguration()
     }
   }
 
-  // 🔍 验证LDAP配置
+  // 🔍 ValidarLDAPConfiguración
   validateConfiguration() {
     const errors = []
 
@@ -97,20 +97,20 @@ class LdapService {
     return null
   }
 
-  // 🌐 从DN中提取域名，用于Windows AD UPN格式认证
+  // 🌐 从DN中提取域名，用于Windows AD UPNFormato认证
   extractDomainFromDN(dnString) {
     try {
       if (!dnString || typeof dnString !== 'string') {
         return null
       }
 
-      // 提取所有DC组件：DC=test,DC=demo,DC=com
+      // 提取所有DCComponente：DC=test,DC=demo,DC=com
       const dcMatches = dnString.match(/DC=([^,]+)/gi)
       if (!dcMatches || dcMatches.length === 0) {
         return null
       }
 
-      // 提取DC值并连接成域名
+      // 提取DCValor并Conexión成域名
       const domainParts = dcMatches.map((match) => {
         const value = match.replace(/DC=/i, '').trim()
         return value
@@ -129,7 +129,7 @@ class LdapService {
     }
   }
 
-  // 🔗 创建LDAP客户端连接
+  // 🔗 CrearLDAPClienteConexión
   createClient() {
     try {
       const clientOptions = {
@@ -143,7 +143,7 @@ class LdapService {
       if (this.config.server.url.toLowerCase().startsWith('ldaps://')) {
         const tlsOptions = {}
 
-        // 证书验证设置
+        // 证书ValidarEstablecer
         if (this.config.server.tls) {
           if (typeof this.config.server.tls.rejectUnauthorized === 'boolean') {
             tlsOptions.rejectUnauthorized = this.config.server.tls.rejectUnauthorized
@@ -154,7 +154,7 @@ class LdapService {
             tlsOptions.ca = this.config.server.tls.ca
           }
 
-          // 客户端证书和私钥 (双向认证)
+          // Cliente证书和私钥 (双向认证)
           if (this.config.server.tls.cert) {
             tlsOptions.cert = this.config.server.tls.cert
           }
@@ -163,7 +163,7 @@ class LdapService {
             tlsOptions.key = this.config.server.tls.key
           }
 
-          // 服务器名称 (SNI)
+          // Servicio器Nombre (SNI)
           if (this.config.server.tls.servername) {
             tlsOptions.servername = this.config.server.tls.servername
           }
@@ -183,7 +183,7 @@ class LdapService {
 
       const client = ldap.createClient(clientOptions)
 
-      // 设置错误处理
+      // EstablecerErrorProcesar
       client.on('error', (err) => {
         if (err.code === 'CERT_HAS_EXPIRED' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
           logger.error('🔒 LDAP TLS certificate error:', {
@@ -215,10 +215,10 @@ class LdapService {
     }
   }
 
-  // 🔒 绑定LDAP连接（管理员认证）
+  // 🔒 绑定LDAPConexión（管理员认证）
   async bindClient(client) {
     return new Promise((resolve, reject) => {
-      // 验证绑定凭据
+      // Validar绑定凭据
       const { bindDN } = this.config.server
       const { bindCredentials } = this.config.server
 
@@ -248,7 +248,7 @@ class LdapService {
     })
   }
 
-  // 🔍 搜索用户
+  // 🔍 搜索Usuario
   async searchUser(client, username) {
     return new Promise((resolve, reject) => {
       // 防止LDAP注入：转义特殊字符
@@ -330,10 +330,10 @@ class LdapService {
     })
   }
 
-  // 🔐 验证用户密码
+  // 🔐 ValidarUsuario密码
   async authenticateUser(userDN, password) {
     return new Promise((resolve, reject) => {
-      // 验证输入参数
+      // Validar输入Parámetro
       if (!userDN || typeof userDN !== 'string') {
         const error = new Error('User DN is not provided or invalid')
         logger.error('❌ LDAP authentication error:', error.message)
@@ -350,7 +350,7 @@ class LdapService {
       const authClient = this.createClient()
 
       authClient.bind(userDN, password, (err) => {
-        authClient.unbind() // 立即关闭认证客户端
+        authClient.unbind() // 立即关闭认证Cliente
 
         if (err) {
           if (err.name === 'InvalidCredentialsError') {
@@ -368,7 +368,7 @@ class LdapService {
     })
   }
 
-  // 🔐 Windows AD兼容认证 - 在DN认证失败时尝试多种格式
+  // 🔐 Windows AD兼容认证 - 在DN认证Falló时尝试多种Formato
   async tryWindowsADAuthentication(username, password) {
     if (!username || !password) {
       return false
@@ -380,16 +380,16 @@ class LdapService {
     const adFormats = []
 
     if (domain) {
-      // UPN格式（Windows AD标准）
+      // UPNFormato（Windows AD标准）
       adFormats.push(`${username}@${domain}`)
 
-      // 如果域名有多个部分，也尝试简化版本
+      // 如果域名有多个部分，也尝试简化Versión
       const domainParts = domain.split('.')
       if (domainParts.length > 1) {
         adFormats.push(`${username}@${domainParts.slice(-2).join('.')}`) // 只取后两部分
       }
 
-      // 域\用户名格式
+      // 域\Usuario名Formato
       const firstDomainPart = domainParts[0]
       if (firstDomainPart) {
         adFormats.push(`${firstDomainPart}\\${username}`)
@@ -397,7 +397,7 @@ class LdapService {
       }
     }
 
-    // 纯用户名（最后尝试）
+    // 纯Usuario名（最后尝试）
     adFormats.push(username)
 
     logger.info(`🔄 Attempting ${adFormats.length} Windows AD authentication formats...`)
@@ -420,7 +420,7 @@ class LdapService {
     return false
   }
 
-  // 🔐 直接尝试绑定认证的辅助方法
+  // 🔐 直接尝试绑定认证的辅助Método
   async tryDirectBind(identifier, password) {
     return new Promise((resolve, reject) => {
       const authClient = this.createClient()
@@ -441,13 +441,13 @@ class LdapService {
     })
   }
 
-  // 📝 提取用户信息
+  // 📝 提取UsuarioInformación
   extractUserInfo(ldapEntry, username) {
     try {
       const attributes = ldapEntry.attributes || []
       const userInfo = { username }
 
-      // 创建属性映射
+      // CrearPropiedad映射
       const attrMap = {}
       attributes.forEach((attr) => {
         const name = attr.type || attr.name
@@ -455,7 +455,7 @@ class LdapService {
         attrMap[name] = values.length === 1 ? values[0] : values
       })
 
-      // 根据配置映射用户属性
+      // 根据Configuración映射UsuarioPropiedad
       const mapping = this.config.userMapping
 
       userInfo.displayName = attrMap[mapping.displayName] || username
@@ -483,7 +483,7 @@ class LdapService {
     }
   }
 
-  // 🔍 验证和清理用户名
+  // 🔍 Validar和LimpiarUsuario名
   validateAndSanitizeUsername(username) {
     if (!username || typeof username !== 'string' || username.trim() === '') {
       throw new Error('Username is required and must be a non-empty string')
@@ -491,13 +491,13 @@ class LdapService {
 
     const trimmedUsername = username.trim()
 
-    // 用户名只能包含字母、数字、下划线和连字符
+    // Usuario名只能Incluir字母、Número、下划线和连字符
     const usernameRegex = /^[a-zA-Z0-9_-]+$/
     if (!usernameRegex.test(trimmedUsername)) {
       throw new Error('Username can only contain letters, numbers, underscores, and hyphens')
     }
 
-    // 长度限制 (防止过长的输入)
+    // 长度Límite (防止过长的输入)
     if (trimmedUsername.length > 64) {
       throw new Error('Username cannot exceed 64 characters')
     }
@@ -510,20 +510,20 @@ class LdapService {
     return trimmedUsername
   }
 
-  // 🔐 主要的登录验证方法
+  // 🔐 主要的登录ValidarMétodo
   async authenticateUserCredentials(username, password) {
     if (!this.config.enabled) {
       throw new Error('LDAP authentication is not enabled')
     }
 
-    // 验证和清理用户名 (防止LDAP注入)
+    // Validar和LimpiarUsuario名 (防止LDAP注入)
     const sanitizedUsername = this.validateAndSanitizeUsername(username)
 
     if (!password || typeof password !== 'string' || password.trim() === '') {
       throw new Error('Password is required and must be a non-empty string')
     }
 
-    // 验证LDAP服务器配置
+    // ValidarLDAPServicio器Configuración
     if (!this.config.server || !this.config.server.url) {
       throw new Error('LDAP server URL is not configured')
     }
@@ -549,14 +549,14 @@ class LdapService {
       // 1. 使用管理员凭据绑定
       await this.bindClient(client)
 
-      // 2. 搜索用户 (使用已验证的用户名)
+      // 2. 搜索Usuario (使用已Validar的Usuario名)
       const ldapEntry = await this.searchUser(client, sanitizedUsername)
       if (!ldapEntry) {
         logger.info(`🚫 User not found in LDAP: ${sanitizedUsername}`)
         return { success: false, message: 'Invalid username or password' }
       }
 
-      // 3. 获取用户DN
+      // 3. ObtenerUsuarioDN
       logger.debug('🔍 LDAP entry details for DN extraction:', {
         hasEntry: !!ldapEntry,
         entryType: typeof ldapEntry,
@@ -572,7 +572,7 @@ class LdapService {
 
       logger.debug(`👤 Extracted user DN: ${userDN} (type: ${typeof userDN})`)
 
-      // 验证用户DN
+      // ValidarUsuarioDN
       if (!userDN) {
         logger.error(`❌ Invalid or missing DN for user: ${sanitizedUsername}`, {
           ldapEntryDn: ldapEntry.dn,
@@ -583,7 +583,7 @@ class LdapService {
         return { success: false, message: 'Authentication service error' }
       }
 
-      // 4. 验证用户密码 - 支持传统LDAP和Windows AD
+      // 4. ValidarUsuario密码 - Soportar传统LDAP和Windows AD
       let isPasswordValid = false
 
       // 首先尝试传统的DN认证（保持原有LDAP逻辑）
@@ -598,7 +598,7 @@ class LdapService {
         )
       }
 
-      // 如果DN认证失败，尝试Windows AD多格式认证
+      // 如果DN认证Falló，尝试Windows AD多Formato认证
       if (!isPasswordValid) {
         logger.debug(`🔄 Trying Windows AD authentication formats for user: ${sanitizedUsername}`)
         isPasswordValid = await this.tryWindowsADAuthentication(sanitizedUsername, password)
@@ -612,13 +612,13 @@ class LdapService {
         return { success: false, message: 'Invalid username or password' }
       }
 
-      // 5. 提取用户信息
+      // 5. 提取UsuarioInformación
       const userInfo = this.extractUserInfo(ldapEntry, sanitizedUsername)
 
-      // 6. 创建或更新本地用户
+      // 6. Crear或Actualizar本地Usuario
       const user = await userService.createOrUpdateUser(userInfo)
 
-      // 7. 检查用户是否被禁用
+      // 7. VerificarUsuario是否被Deshabilitar
       if (!user.isActive) {
         logger.security(
           `🔒 Disabled user LDAP login attempt: ${sanitizedUsername} from LDAP authentication`
@@ -629,10 +629,10 @@ class LdapService {
         }
       }
 
-      // 8. 记录登录
+      // 8. Registro登录
       await userService.recordUserLogin(user.id)
 
-      // 9. 创建用户会话
+      // 9. CrearUsuarioSesión
       const sessionToken = await userService.createUserSession(user.id)
 
       logger.info(`✅ LDAP authentication successful for user: ${sanitizedUsername}`)
@@ -644,21 +644,21 @@ class LdapService {
         message: 'Authentication successful'
       }
     } catch (error) {
-      // 记录详细错误供调试，但不向用户暴露
+      // Registro详细Error供Depurar，但不向Usuario暴露
       logger.error('❌ LDAP authentication error:', {
         username: sanitizedUsername,
         error: error.message,
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       })
 
-      // 返回通用错误消息，避免信息泄露
-      // 不要尝试解析具体的错误信息，因为不同LDAP服务器返回的格式不同
+      // Retornar通用Error消息，避免Información泄露
+      // 不要尝试Analizar具体的ErrorInformación，因为不同LDAPServicio器Retornar的Formato不同
       return {
         success: false,
         message: 'Authentication service unavailable'
       }
     } finally {
-      // 确保客户端连接被关闭
+      // 确保ClienteConexión被关闭
       if (client) {
         client.unbind((err) => {
           if (err) {
@@ -669,7 +669,7 @@ class LdapService {
     }
   }
 
-  // 🔍 测试LDAP连接
+  // 🔍 ProbarLDAPConexión
   async testConnection() {
     if (!this.config.enabled) {
       return { success: false, message: 'LDAP is not enabled' }
@@ -693,10 +693,10 @@ class LdapService {
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       })
 
-      // 提供通用错误消息，避免泄露系统细节
+      // 提供通用Error消息，避免泄露系统细节
       let userMessage = 'LDAP connection failed'
 
-      // 对于某些已知错误类型，提供有用但不泄露细节的信息
+      // 对于某些已知ErrorTipo，提供有用但不泄露细节的Información
       if (error.code === 'ECONNREFUSED') {
         userMessage = 'Unable to connect to LDAP server'
       } else if (error.code === 'ETIMEDOUT') {
@@ -721,7 +721,7 @@ class LdapService {
     }
   }
 
-  // 📊 获取LDAP配置信息（不包含敏感信息）
+  // 📊 ObtenerLDAPConfiguraciónInformación（不Incluir敏感Información）
   getConfigInfo() {
     const configInfo = {
       enabled: this.config.enabled,
@@ -735,7 +735,7 @@ class LdapService {
       userMapping: this.config.userMapping
     }
 
-    // 添加 TLS 配置信息（不包含敏感数据）
+    // 添加 TLS ConfiguraciónInformación（不Incluir敏感Datos）
     if (this.config.server.url.toLowerCase().startsWith('ldaps://') && this.config.server.tls) {
       configInfo.server.tls = {
         rejectUnauthorized: this.config.server.tls.rejectUnauthorized,

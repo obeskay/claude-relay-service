@@ -1,31 +1,31 @@
 /**
  * ============================================================================
- * Anthropic → Gemini/Antigravity 桥接服务
+ * Anthropic → Gemini/Antigravity 桥接Servicio
  * ============================================================================
  *
- * 【模块功能】
- * 本模块负责将 Anthropic Claude API 格式的请求转换为 Gemini/Antigravity 格式，
- * 并将响应转换回 Anthropic 格式返回给客户端（如 Claude Code）。
+ * 【Módulo功能】
+ * 本Módulo负责将 Anthropic Claude API Formato的SolicitudConvertir为 Gemini/Antigravity Formato，
+ * 并将RespuestaConvertir回 Anthropic FormatoRetornar给Cliente（如 Claude Code）。
  *
- * 【支持的后端 (vendor)】
+ * 【Soportar的后端 (vendor)】
  * - gemini-cli: 原生 Google Gemini API
- * - antigravity: Claude 代理层 (CLIProxyAPI)，使用 Gemini 格式但有额外约束
+ * - antigravity: Claude Proxy层 (CLIProxyAPI)，使用 Gemini Formato但有额外Restricción
  *
- * 【核心处理流程】
- * 1. 接收 Anthropic 格式请求 (/v1/messages)
- * 2. 标准化消息 (normalizeAnthropicMessages) - 处理 thinking blocks、tool_result 等
- * 3. 转换工具定义 (convertAnthropicToolsToGeminiTools) - 压缩描述、清洗 schema
- * 4. 转换消息内容 (convertAnthropicMessagesToGeminiContents)
- * 5. 构建 Gemini 请求 (buildGeminiRequestFromAnthropic)
- * 6. 发送请求并处理 SSE 流式响应
- * 7. 将 Gemini 响应转换回 Anthropic 格式返回
+ * 【核心Procesar流程】
+ * 1. 接收 Anthropic FormatoSolicitud (/v1/messages)
+ * 2. 标准化消息 (normalizeAnthropicMessages) - Procesar thinking blocks、tool_result 等
+ * 3. Convertir工具定义 (convertAnthropicToolsToGeminiTools) - 压缩描述、清洗 schema
+ * 4. Convertir消息内容 (convertAnthropicMessagesToGeminiContents)
+ * 5. Construir Gemini Solicitud (buildGeminiRequestFromAnthropic)
+ * 6. 发送Solicitud并Procesar SSE 流式Respuesta
+ * 7. 将 Gemini RespuestaConvertir回 Anthropic FormatoRetornar
  *
- * 【Antigravity 特殊处理】
- * - 工具描述压缩：限制 400 字符，避免 prompt 超长
- * - Schema description 压缩：限制 200 字符，保留关键约束信息
- * - Thinking signature 校验：防止格式错误导致 400
- * - Tool result 截断：限制 20 万字符
- * - 缺失 tool_result 自动补全：避免 tool_use concurrency 错误
+ * 【Antigravity 特殊Procesar】
+ * - 工具描述压缩：Límite 400 字符，避免 prompt 超长
+ * - Schema description 压缩：Límite 200 字符，保留关键RestricciónInformación
+ * - Thinking signature 校验：防止FormatoError导致 400
+ * - Tool result 截断：Límite 20 万字符
+ * - 缺失 tool_result 自动补全：避免 tool_use concurrency Error
  */
 
 const util = require('util')
@@ -56,23 +56,23 @@ const {
 // 常量定义
 // ============================================================================
 
-// 默认签名
+// PredeterminadoFirma
 const THOUGHT_SIGNATURE_FALLBACK = 'skip_thought_signature_validator'
 
-// 支持的后端类型
+// Soportar的后端Tipo
 const SUPPORTED_VENDORS = new Set(['gemini-cli', 'antigravity'])
 // 需要跳过的系统提醒前缀（Claude 内部消息，不应转发给上游）
 const SYSTEM_REMINDER_PREFIX = '<system-reminder>'
-// 调试：工具定义 dump 相关
+// Depurar：工具定义 dump 相关
 const TOOLS_DUMP_ENV = 'ANTHROPIC_DEBUG_TOOLS_DUMP'
 const TOOLS_DUMP_FILENAME = 'anthropic-tools-dump.jsonl'
-// 环境变量：工具调用失败时是否回退到文本输出
+// Variable de entorno：工具调用Falló时是否Retirada到文本输出
 const TEXT_TOOL_FALLBACK_ENV = 'ANTHROPIC_TEXT_TOOL_FALLBACK'
-// 环境变量：工具报错时是否继续执行（而非中断）
+// Variable de entorno：工具报错时是否继续Ejecutar（而非中断）
 const TOOL_ERROR_CONTINUE_ENV = 'ANTHROPIC_TOOL_ERROR_CONTINUE'
 // Antigravity 工具顶级描述的最大字符数（防止 prompt 超长）
 const MAX_ANTIGRAVITY_TOOL_DESCRIPTION_CHARS = 400
-// Antigravity 参数 schema description 的最大字符数（保留关键约束信息）
+// Antigravity Parámetro schema description 的最大字符数（保留关键RestricciónInformación）
 const MAX_ANTIGRAVITY_SCHEMA_DESCRIPTION_CHARS = 200
 // Antigravity：当已经决定要走工具时，避免“只宣布步骤就结束”
 const ANTIGRAVITY_TOOL_FOLLOW_THROUGH_PROMPT =
@@ -91,12 +91,12 @@ This information may or may not be relevant to the coding task, it is up for you
 - **Proactiveness**. As an agent, you are allowed to be proactive, but only in the course of completing the user's task. For example, if the user asks you to add a new component, you can edit the code, verify build and test statuses, and take any other obvious follow-up actions, such as performing additional research. However, avoid surprising the user. For example, if the user asks HOW to approach something, you should answer their question and instead of jumping into editing a file.</communication_style>`
 
 // ============================================================================
-// 辅助函数：基础工具
+// 辅助Función：基础工具
 // ============================================================================
 
 /**
- * 确保 Antigravity 请求有有效的 projectId
- * 如果账户没有配置 projectId，则生成一个临时 ID
+ * 确保 Antigravity Solicitud有有效的 projectId
+ * 如果Cuenta没有Configuración projectId，则Generar一个临时 ID
  */
 function ensureAntigravityProjectId(account) {
   if (account.projectId) {
@@ -110,7 +110,7 @@ function ensureAntigravityProjectId(account) {
 
 /**
  * 从 Anthropic 消息内容中提取纯文本
- * 支持字符串和 content blocks 数组两种格式
+ * SoportarCadena和 content blocks Arreglo两种Formato
  * @param {string|Array} content - Anthropic 消息内容
  * @returns {string} 提取的文本
  */
@@ -131,8 +131,8 @@ function extractAnthropicText(content) {
 }
 
 /**
- * 检查文本是否应该跳过（不转发给上游）
- * 主要过滤 Claude 内部的 system-reminder 消息
+ * Verificar文本是否应该跳过（不转发给上游）
+ * 主要Filtrar Claude 内部的 system-reminder 消息
  */
 function shouldSkipText(text) {
   if (!text || typeof text !== 'string') {
@@ -142,10 +142,10 @@ function shouldSkipText(text) {
 }
 
 /**
- * 构建 Gemini 格式的 system parts
- * 将 Anthropic 的 system prompt 转换为 Gemini 的 parts 数组
+ * Construir Gemini Formato的 system parts
+ * 将 Anthropic 的 system prompt Convertir为 Gemini 的 parts Arreglo
  * @param {string|Array} system - Anthropic 的 system prompt
- * @returns {Array} Gemini 格式的 parts
+ * @returns {Array} Gemini Formato的 parts
  */
 function buildSystemParts(system) {
   const parts = []
@@ -172,9 +172,9 @@ function buildSystemParts(system) {
 }
 
 /**
- * 构建 tool_use ID 到工具名称的映射
- * 用于在处理 tool_result 时查找对应的工具名
- * @param {Array} messages - 消息列表
+ * Construir tool_use ID 到工具Nombre的映射
+ * 用于在Procesar tool_result 时查找对应的工具名
+ * @param {Array} messages - 消息ColumnaTabla
  * @returns {Map} tool_use_id -> tool_name 的映射
  */
 function buildToolUseIdToNameMap(messages) {
@@ -202,8 +202,8 @@ function buildToolUseIdToNameMap(messages) {
 }
 
 /**
- * 标准化工具调用的输入参数
- * 确保输入始终是对象格式
+ * 标准化工具调用的输入Parámetro
+ * 确保输入始终是ObjetoFormato
  */
 function normalizeToolUseInput(input) {
   if (input === null || input === undefined) {
@@ -233,12 +233,12 @@ function normalizeToolUseInput(input) {
 const MAX_ANTIGRAVITY_TOOL_RESULT_CHARS = 200000
 
 // ============================================================================
-// 辅助函数：Antigravity 体积压缩
-// 这些函数用于压缩工具描述、schema 等，避免 prompt 超过 Antigravity 的上限
+// 辅助Función：Antigravity 体积压缩
+// 这些Función用于压缩工具描述、schema 等，避免 prompt 超过 Antigravity 的上限
 // ============================================================================
 
 /**
- * 截断文本并添加截断提示（带换行）
+ * 截断文本并添加截断提示（带换Fila）
  * @param {string} text - 原始文本
  * @param {number} maxChars - 最大字符数
  * @returns {string} 截断后的文本
@@ -254,7 +254,7 @@ function truncateText(text, maxChars) {
 }
 
 /**
- * 截断文本并添加截断提示（内联模式，不带换行）
+ * 截断文本并添加截断提示（内联模式，不带换Fila）
  */
 function truncateInlineText(text, maxChars) {
   if (!text || typeof text !== 'string') {
@@ -268,8 +268,8 @@ function truncateInlineText(text, maxChars) {
 
 /**
  * 压缩工具顶级描述
- * 取前 6 行，合并为单行，截断到 400 字符
- * 这样可以在保留关键信息的同时大幅减少体积
+ * 取前 6 Fila，合并为单Fila，截断到 400 字符
+ * 这样可以在保留关键Información的同时大幅减少体积
  * @param {string} description - 原始工具描述
  * @returns {string} 压缩后的描述
  */
@@ -296,9 +296,9 @@ function compactToolDescriptionForAntigravity(description) {
 }
 
 /**
- * 压缩 JSON Schema 属性描述
+ * 压缩 JSON Schema Propiedad描述
  * 压缩多余空白，截断到 200 字符
- * 这是为了保留关键参数约束（如 ji 工具的 action 只能是 "记忆"/"回忆"）
+ * 这是为了保留关键ParámetroRestricción（如 ji 工具的 action 只能是 "记忆"/"回忆"）
  * @param {string} description - 原始描述
  * @returns {string} 压缩后的描述
  */
@@ -314,9 +314,9 @@ function compactSchemaDescriptionForAntigravity(description) {
 }
 
 /**
- * 递归压缩 JSON Schema 中所有层级的 description 字段
- * 保留并压缩 description（而不是删除），确保关键参数约束信息不丢失
- * @param {Object} schema - JSON Schema 对象
+ * 递归压缩 JSON Schema 中所有层级的 description Campo
+ * 保留并压缩 description（而不是Eliminar），确保关键ParámetroRestricciónInformación不丢失
+ * @param {Object} schema - JSON Schema Objeto
  * @returns {Object} 压缩后的 schema
  */
 function compactJsonSchemaDescriptionsForAntigravity(schema) {
@@ -346,8 +346,8 @@ function compactJsonSchemaDescriptionsForAntigravity(schema) {
 
 /**
  * 清洗 thinking block 的 signature
- * 检查格式是否合法（Base64-like token），不合法则返回空串
- * 这是为了避免 "Invalid signature in thinking block" 400 错误
+ * VerificarFormato是否合法（Base64-like token），不合法则Retornar空串
+ * 这是为了避免 "Invalid signature in thinking block" 400 Error
  * @param {string} signature - 原始 signature
  * @returns {string} 清洗后的 signature（不合法则为空串）
  */
@@ -378,11 +378,11 @@ function sanitizeThoughtSignatureForAntigravity(signature) {
 }
 
 /**
- * 检测是否是 Antigravity 的 INVALID_ARGUMENT (400) 错误
- * 用于在日志中特殊标记这类错误，方便调试
+ * 检测是否是 Antigravity 的 INVALID_ARGUMENT (400) Error
+ * 用于在Registro中特殊标记这ClaseError，方便Depurar
  *
- * @param {Object} sanitized - sanitizeUpstreamError 处理后的错误对象
- * @returns {boolean} 是否是参数无效错误
+ * @param {Object} sanitized - sanitizeUpstreamError Procesar后的ErrorObjeto
+ * @returns {boolean} 是否是Parámetro无效Error
  */
 function isInvalidAntigravityArgumentError(sanitized) {
   if (!sanitized || typeof sanitized !== 'object') {
@@ -397,11 +397,11 @@ function isInvalidAntigravityArgumentError(sanitized) {
 }
 
 /**
- * 汇总 Antigravity 请求信息用于调试
- * 当发生 400 错误时，输出请求的关键统计信息，帮助定位问题
+ * 汇总 Antigravity SolicitudInformación用于Depurar
+ * 当发生 400 Error时，输出Solicitud的关键EstadísticaInformación，帮助定位问题
  *
- * @param {Object} requestData - 发送给 Antigravity 的请求数据
- * @returns {Object} 请求摘要信息
+ * @param {Object} requestData - 发送给 Antigravity 的SolicitudDatos
+ * @returns {Object} Solicitud摘要Información
  */
 function summarizeAntigravityRequestForDebug(requestData) {
   const request = requestData?.request || {}
@@ -457,9 +457,9 @@ function summarizeAntigravityRequestForDebug(requestData) {
 
 /**
  * 清洗工具结果的 content blocks
- * - 移除 base64 图片（避免体积过大）
+ * - Eliminación base64 图片（避免体积过大）
  * - 截断文本内容到 20 万字符
- * @param {Array} blocks - content blocks 数组
+ * @param {Array} blocks - content blocks Arreglo
  * @returns {Array} 清洗后的 blocks
  */
 function sanitizeToolResultBlocksForAntigravity(blocks) {
@@ -510,13 +510,13 @@ function sanitizeToolResultBlocksForAntigravity(blocks) {
 }
 
 // ============================================================================
-// 核心函数：消息标准化和转换
+// 核心Función：消息标准化和Convertir
 // ============================================================================
 
 /**
  * 标准化工具结果内容
- * 支持字符串和 content blocks 数组两种格式
- * 对 Antigravity 会进行截断和图片移除处理
+ * SoportarCadena和 content blocks Arreglo两种Formato
+ * 对 Antigravity 会进Fila截断和图片EliminaciónProcesar
  */
 function normalizeToolResultContent(content, { vendor = null } = {}) {
   if (content === null || content === undefined) {
@@ -528,8 +528,8 @@ function normalizeToolResultContent(content, { vendor = null } = {}) {
     }
     return content
   }
-  // Claude Code 的 tool_result.content 通常是 content blocks 数组（例如 [{type:"text",text:"..."}]）。
-  // 为对齐 CLIProxyAPI/Antigravity 的行为，这里优先保留原始 JSON 结构（数组/对象），
+  // Claude Code 的 tool_result.content 通常是 content blocks Arreglo（例如 [{type:"text",text:"..."}]）。
+  // 为对齐 CLIProxyAPI/Antigravity 的Fila为，这里优先保留原始 JSON 结构（Arreglo/Objeto），
   // 避免上游将其视为“无效 tool_result”从而触发 tool_use concurrency 400。
   if (Array.isArray(content) || (content && typeof content === 'object')) {
     if (vendor === 'antigravity' && Array.isArray(content)) {
@@ -541,28 +541,28 @@ function normalizeToolResultContent(content, { vendor = null } = {}) {
 }
 
 /**
- * 标准化 Anthropic 消息列表
- * 这是关键的预处理函数，处理以下问题：
+ * 标准化 Anthropic 消息ColumnaTabla
+ * 这是关键的预ProcesarFunción，Procesar以下问题：
  *
  * 1. Antigravity thinking block 顺序调整
  *    - Antigravity 要求 thinking blocks 必须在 assistant 消息的最前面
- *    - 移除 thinking block 中的 cache_control 字段（上游不接受）
+ *    - Eliminación thinking block 中的 cache_control Campo（上游不接受）
  *
  * 2. tool_use 后的冗余内容剥离
- *    - 移除 tool_use 后的空文本、"(no content)" 等冗余 part
+ *    - Eliminación tool_use 后的空文本、"(no content)" 等冗余 part
  *
  * 3. 缺失 tool_result 补全（Antigravity 专用）
  *    - 检测消息历史中是否有 tool_use 没有对应的 tool_result
  *    - 自动插入合成的 tool_result（is_error: true）
- *    - 避免 "tool_use concurrency" 400 错误
+ *    - 避免 "tool_use concurrency" 400 Error
  *
  * 4. tool_result 和 user 文本拆分
- *    - Claude Code 可能把 tool_result 和用户文本混在一个 user message 中
+ *    - Claude Code 可能把 tool_result 和Usuario文本混在一个 user message 中
  *    - 拆分为两个 message 以符合 Anthropic 规范
  *
- * @param {Array} messages - 原始消息列表
- * @param {Object} options - 选项，包含 vendor
- * @returns {Array} 标准化后的消息列表
+ * @param {Array} messages - 原始消息ColumnaTabla
+ * @param {Object} options - 选项，Incluir vendor
+ * @returns {Array} 标准化后的消息ColumnaTabla
  */
 function normalizeAnthropicMessages(messages, { vendor = null } = {}) {
   if (!Array.isArray(messages) || messages.length === 0) {
@@ -598,8 +598,8 @@ function normalizeAnthropicMessages(messages, { vendor = null } = {}) {
         continue
       }
       if (part.type === 'thinking' || part.type === 'redacted_thinking') {
-        // 移除 cache_control 字段，上游 API 不接受 thinking block 中包含此字段
-        // 错误信息: "thinking.cache_control: Extra inputs are not permitted"
+        // Eliminación cache_control Campo，上游 API 不接受 thinking block 中Incluir此Campo
+        // ErrorInformación: "thinking.cache_control: Extra inputs are not permitted"
         const { cache_control: _cache_control, ...cleanedPart } = part
         thinkingBlocks.push(cleanedPart)
         continue
@@ -722,9 +722,9 @@ function normalizeAnthropicMessages(messages, { vendor = null } = {}) {
       continue
     }
 
-    // Claude Code 可能把 tool_result 和下一条用户文本合并在同一个 user message 中。
-    // 但上游（Antigravity/Claude）会按 Anthropic 规则校验：tool_use 后的下一条 message
-    // 必须只包含 tool_result blocks。这里做兼容拆分，避免 400 tool-use concurrency。
+    // Claude Code 可能把 tool_result 和下一条Usuario文本合并在同一个 user message 中。
+    // 但上游（Antigravity/Claude）会按 Anthropic Regla校验：tool_use 后的下一条 message
+    // 必须只Incluir tool_result blocks。这里做兼容拆分，避免 400 tool-use concurrency。
     normalized.push({ ...message, content: toolResults })
     normalized.push({ ...message, content: nonToolResults })
   }
@@ -751,23 +751,23 @@ function normalizeAnthropicMessages(messages, { vendor = null } = {}) {
 }
 
 // ============================================================================
-// 核心函数：工具定义转换
+// 核心Función：工具定义Convertir
 // ============================================================================
 
 /**
- * 将 Anthropic 工具定义转换为 Gemini/Antigravity 格式
+ * 将 Anthropic 工具定义Convertir为 Gemini/Antigravity Formato
  *
  * 主要工作：
  * 1. 工具描述压缩（Antigravity: 400 字符上限）
- * 2. JSON Schema 清洗（移除不支持的字段如 $schema, format 等）
- * 3. Schema description 压缩（Antigravity: 200 字符上限，保留关键约束）
- * 4. 输出格式差异：
+ * 2. JSON Schema 清洗（Eliminación不Soportar的Campo如 $schema, format 等）
+ * 3. Schema description 压缩（Antigravity: 200 字符上限，保留关键Restricción）
+ * 4. 输出Formato差异：
  *    - Antigravity: 使用 parametersJsonSchema
  *    - Gemini: 使用 parameters
  *
- * @param {Array} tools - Anthropic 格式的工具定义数组
- * @param {Object} options - 选项，包含 vendor
- * @returns {Array|null} Gemini 格式的工具定义，或 null
+ * @param {Array} tools - Anthropic Formato的工具定义Arreglo
+ * @param {Object} options - 选项，Incluir vendor
+ * @returns {Array|null} Gemini Formato的工具定义，或 null
  */
 function convertAnthropicToolsToGeminiTools(tools, { vendor = null } = {}) {
   if (!Array.isArray(tools) || tools.length === 0) {
@@ -812,15 +812,15 @@ function convertAnthropicToolsToGeminiTools(tools, { vendor = null } = {}) {
 
     const sanitized = {}
     for (const [key, value] of Object.entries(schema)) {
-      // Antigravity/Cloud Code 的 function_declarations.parameters 不接受 $schema / $id 等元字段
+      // Antigravity/Cloud Code 的 function_declarations.parameters 不接受 $schema / $id 等元Campo
       if (key === '$schema' || key === '$id') {
         continue
       }
-      // 去除常见的非必要字段，减少上游 schema 校验失败概率
+      // 去除常见的非必要Campo，减少上游 schema 校验Falló概率
       if (key === 'title' || key === 'default' || key === 'examples' || key === 'example') {
         continue
       }
-      // 上游对 JSON Schema "format" 支持不稳定（特别是 format=uri），直接移除以降低 400 概率
+      // 上游对 JSON Schema "format" Soportar不稳定（特别是 format=uri），直接Eliminación以降低 400 概率
       if (key === 'format') {
         continue
       }
@@ -952,7 +952,7 @@ function convertAnthropicToolsToGeminiTools(tools, { vendor = null } = {}) {
 }
 
 /**
- * 将 Anthropic 的 tool_choice 转换为 Gemini 的 toolConfig
+ * 将 Anthropic 的 tool_choice Convertir为 Gemini 的 toolConfig
  * 映射关系：
  *   auto → AUTO（模型自决定是否调用工具）
  *   any  → ANY（必须调用某个工具）
@@ -998,29 +998,29 @@ function convertAnthropicToolChoiceToGeminiToolConfig(toolChoice) {
 }
 
 // ============================================================================
-// 核心函数：消息内容转换
+// 核心Función：消息内容Convertir
 // ============================================================================
 
 /**
- * 将 Anthropic 消息转换为 Gemini contents 格式
+ * 将 Anthropic 消息Convertir为 Gemini contents Formato
  *
- * 处理的内容类型：
+ * Procesar的内容Tipo：
  * - text: 纯文本内容
- * - thinking: 思考过程（转换为 Gemini 的 thought part）
- * - image: 图片（转换为 inlineData）
- * - tool_use: 工具调用（转换为 functionCall）
- * - tool_result: 工具结果（转换为 functionResponse）
+ * - thinking: 思考过程（Convertir为 Gemini 的 thought part）
+ * - image: 图片（Convertir为 inlineData）
+ * - tool_use: 工具调用（Convertir为 functionCall）
+ * - tool_result: 工具结果（Convertir为 functionResponse）
  *
- * Antigravity 特殊处理：
- * - thinking block 转换为 { thought: true, text, thoughtSignature }
- * - signature 清洗和校验（不伪造签名）
- * - 空 thinking block 跳过（避免 400 错误）
+ * Antigravity 特殊Procesar：
+ * - thinking block Convertir为 { thought: true, text, thoughtSignature }
+ * - signature 清洗和校验（不伪造Firma）
+ * - 空 thinking block 跳过（避免 400 Error）
  * - stripThinking 模式：完全剔除 thinking blocks
  *
- * @param {Array} messages - 标准化后的消息列表
+ * @param {Array} messages - 标准化后的消息ColumnaTabla
  * @param {Map} toolUseIdToName - tool_use ID 到工具名的映射
- * @param {Object} options - 选项，包含 vendor、stripThinking
- * @returns {Array} Gemini 格式的 contents
+ * @param {Object} options - 选项，Incluir vendor、stripThinking
+ * @returns {Array} Gemini Formato的 contents
  */
 function convertAnthropicMessagesToGeminiContents(
   messages,
@@ -1055,7 +1055,7 @@ function convertAnthropicMessagesToGeminiContents(
         }
 
         if (part.type === 'thinking' || part.type === 'redacted_thinking') {
-          // 当 thinking 未启用时，跳过所有 thinking blocks，避免 Antigravity 400 错误：
+          // 当 thinking 未Habilitar时，跳过所有 thinking blocks，避免 Antigravity 400 Error：
           // "When thinking is disabled, an assistant message cannot contain thinking"
           if (stripThinking) {
             continue
@@ -1064,7 +1064,7 @@ function convertAnthropicMessagesToGeminiContents(
           const thinkingText = extractAnthropicText(part.thinking || part.text || '')
           if (vendor === 'antigravity') {
             const hasThinkingText = thinkingText && !shouldSkipText(thinkingText)
-            // 先尝试使用请求中的签名，如果没有则尝试从缓存恢复
+            // 先尝试使用Solicitud中的Firma，如果没有则尝试从CachéRestauración
             let signature = sanitizeThoughtSignatureForAntigravity(part.signature)
             if (!signature && sessionId && hasThinkingText) {
               const cachedSig = signatureCache.getCachedSignature(sessionId, thinkingText)
@@ -1122,15 +1122,15 @@ function convertAnthropicMessagesToGeminiContents(
             }
 
             // Antigravity 对历史工具调用的 functionCall 会校验 thoughtSignature；
-            // Claude Code 侧的签名存放在 thinking block（part.signature），这里需要回填到 functionCall part 上。
+            // Claude Code 侧的Firma存放在 thinking block（part.signature），这里需要回填到 functionCall part 上。
             // [大东的绝杀补丁] 再次尝试！
             if (vendor === 'antigravity') {
-              // 如果没有真签名，就用“免检金牌”
+              // 如果没有真Firma，就用“免检金牌”
               const effectiveSignature =
                 lastAntigravityThoughtSignature || THOUGHT_SIGNATURE_FALLBACK
 
               // 必须把这个塞进去
-              // Antigravity 要求：每个包含 thoughtSignature 的 part 都必须有 thought: true
+              // Antigravity 要求：每个Incluir thoughtSignature 的 part 都必须有 thought: true
               parts.push({
                 thought: true,
                 thoughtSignature: effectiveSignature,
@@ -1206,23 +1206,23 @@ function convertAnthropicMessagesToGeminiContents(
 }
 
 /**
- * 检查是否可以为 Antigravity 启用 thinking 功能
+ * Verificar是否可以为 Antigravity Habilitar thinking 功能
  *
- * 规则：查找最后一个 assistant 消息，检查其 thinking block 是否有效
- * - 如果有 thinking 文本或 signature，则可以启用
- * - 如果是空 thinking block（无文本且无 signature），则不能启用
+ * Regla：查找最后一个 assistant 消息，Verificar其 thinking block 是否有效
+ * - 如果有 thinking 文本或 signature，则可以Habilitar
+ * - 如果是空 thinking block（无文本且无 signature），则不能Habilitar
  *
- * 这是为了避免 "When thinking is disabled, an assistant message cannot contain thinking" 错误
+ * 这是为了避免 "When thinking is disabled, an assistant message cannot contain thinking" Error
  *
- * @param {Array} messages - 消息列表
- * @returns {boolean} 是否可以启用 thinking
+ * @param {Array} messages - 消息ColumnaTabla
+ * @returns {boolean} 是否可以Habilitar thinking
  */
 function canEnableAntigravityThinking(messages) {
   if (!Array.isArray(messages) || messages.length === 0) {
     return true
   }
 
-  // Antigravity 会校验历史 thinking blocks 的 signature；缺失/不合法时必须禁用 thinking，避免 400。
+  // Antigravity 会校验历史 thinking blocks 的 signature；缺失/不合法时必须Deshabilitar thinking，避免 400。
   for (const message of messages) {
     if (!message || message.role !== 'assistant') {
       continue
@@ -1275,26 +1275,26 @@ function canEnableAntigravityThinking(messages) {
 }
 
 // ============================================================================
-// 核心函数：构建最终请求
+// 核心Función：Construir最终Solicitud
 // ============================================================================
 
 /**
- * 构建 Gemini/Antigravity 请求体
- * 这是整个转换流程的主函数，串联所有转换步骤：
+ * Construir Gemini/Antigravity Solicitud体
+ * 这是整个Convertir流程的主Función，串联所有Convertir步骤：
  *
  * 1. normalizeAnthropicMessages - 消息标准化
- * 2. buildToolUseIdToNameMap - 构建 tool_use ID 映射
- * 3. canEnableAntigravityThinking - 检查 thinking 是否可启用
- * 4. convertAnthropicMessagesToGeminiContents - 转换消息内容
- * 5. buildSystemParts - 构建 system prompt
- * 6. convertAnthropicToolsToGeminiTools - 转换工具定义
- * 7. convertAnthropicToolChoiceToGeminiToolConfig - 转换工具选择
- * 8. 构建 generationConfig（温度、maxTokens、thinking 等）
+ * 2. buildToolUseIdToNameMap - Construir tool_use ID 映射
+ * 3. canEnableAntigravityThinking - Verificar thinking 是否可Habilitar
+ * 4. convertAnthropicMessagesToGeminiContents - Convertir消息内容
+ * 5. buildSystemParts - Construir system prompt
+ * 6. convertAnthropicToolsToGeminiTools - Convertir工具定义
+ * 7. convertAnthropicToolChoiceToGeminiToolConfig - Convertir工具选择
+ * 8. Construir generationConfig（温度、maxTokens、thinking 等）
  *
- * @param {Object} body - Anthropic 请求体
+ * @param {Object} body - Anthropic Solicitud体
  * @param {string} baseModel - 基础模型名
- * @param {Object} options - 选项，包含 vendor
- * @returns {Object} { model, request } Gemini 请求对象
+ * @param {Object} options - 选项，Incluir vendor
+ * @returns {Object} { model, request } Gemini SolicitudObjeto
  */
 function buildGeminiRequestFromAnthropic(
   body,
@@ -1304,7 +1304,7 @@ function buildGeminiRequestFromAnthropic(
   const normalizedMessages = normalizeAnthropicMessages(body.messages || [], { vendor })
   const toolUseIdToName = buildToolUseIdToNameMap(normalizedMessages || [])
 
-  // 提前判断是否可以启用 thinking，以便决定是否需要剥离 thinking blocks
+  // 提前判断是否可以Habilitar thinking，以便决定是否需要剥离 thinking blocks
   let canEnableThinking = false
   if (vendor === 'antigravity' && body?.thinking?.type === 'enabled') {
     const budgetRaw = Number(body.thinking.budget_tokens)
@@ -1318,7 +1318,7 @@ function buildGeminiRequestFromAnthropic(
     toolUseIdToName,
     {
       vendor,
-      // 当 Antigravity 无法启用 thinking 时，剥离所有 thinking blocks
+      // 当 Antigravity 无法Habilitar thinking 时，剥离所有 thinking blocks
       stripThinking: vendor === 'antigravity' && !canEnableThinking,
       sessionId
     }
@@ -1348,7 +1348,7 @@ function buildGeminiRequestFromAnthropic(
     generationConfig.topK = body.top_k
   }
 
-  // 使用前面已经计算好的 canEnableThinking 结果
+  // 使用前面已经Calcular好的 canEnableThinking 结果
   if (vendor === 'antigravity' && body?.thinking?.type === 'enabled') {
     const budgetRaw = Number(body.thinking.budget_tokens)
     if (Number.isFinite(budgetRaw)) {
@@ -1388,8 +1388,8 @@ function buildGeminiRequestFromAnthropic(
   if (toolConfig) {
     geminiRequestBody.toolConfig = toolConfig
   } else if (geminiTools) {
-    // Anthropic 的默认语义是 tools 存在且未设置 tool_choice 时为 auto。
-    // Gemini/Antigravity 的 function calling 默认可能不会启用，因此显式设置为 AUTO，避免“永远不产出 tool_use”。
+    // Anthropic 的Predeterminado语义是 tools 存在且未Establecer tool_choice 时为 auto。
+    // Gemini/Antigravity 的 function calling Predeterminado可能不会Habilitar，因此显式Establecer为 AUTO，避免“永远不产出 tool_use”。
     geminiRequestBody.toolConfig = { functionCallingConfig: { mode: 'AUTO' } }
   }
 
@@ -1397,13 +1397,13 @@ function buildGeminiRequestFromAnthropic(
 }
 
 // ============================================================================
-// 辅助函数：Gemini 响应解析
+// 辅助Función：Gemini RespuestaAnalizar
 // ============================================================================
 
 /**
- * 从 Gemini 响应中提取文本内容
- * @param {Object} payload - Gemini 响应 payload
- * @param {boolean} includeThought - 是否包含 thinking 文本
+ * 从 Gemini Respuesta中提取文本内容
+ * @param {Object} payload - Gemini Respuesta payload
+ * @param {boolean} includeThought - 是否Incluir thinking 文本
  * @returns {string} 提取的文本
  */
 function extractGeminiText(payload, { includeThought = false } = {}) {
@@ -1422,7 +1422,7 @@ function extractGeminiText(payload, { includeThought = false } = {}) {
 }
 
 /**
- * 从 Gemini 响应中提取 thinking 文本内容
+ * 从 Gemini Respuesta中提取 thinking 文本内容
  */
 function extractGeminiThoughtText(payload) {
   const candidate = payload?.candidates?.[0]
@@ -1438,7 +1438,7 @@ function extractGeminiThoughtText(payload) {
 }
 
 /**
- * 从 Gemini 响应中提取 thinking signature
+ * 从 Gemini Respuesta中提取 thinking signature
  * 用于在下一轮对话中传回给 Antigravity
  */
 function extractGeminiThoughtSignature(payload) {
@@ -1455,7 +1455,7 @@ function extractGeminiThoughtSignature(payload) {
     return part.thoughtSignature || part.thought_signature || part.signature || ''
   }
 
-  // 优先：functionCall part 上的 signature（上游可能把签名挂在工具调用 part 上）
+  // 优先：functionCall part 上的 signature（上游可能把Firma挂在工具调用 part 上）
   for (const part of parts) {
     if (!part?.functionCall?.name) {
       continue
@@ -1466,7 +1466,7 @@ function extractGeminiThoughtSignature(payload) {
     }
   }
 
-  // 回退：thought part 上的 signature
+  // Retirada：thought part 上的 signature
   for (const part of parts) {
     if (!part?.thought) {
       continue
@@ -1480,8 +1480,8 @@ function extractGeminiThoughtSignature(payload) {
 }
 
 /**
- * 解析 Gemini 响应的 token 使用情况
- * 计算输出 token 数（包括 candidate + thought tokens）
+ * Analizar Gemini Respuesta的 token 使用情况
+ * Calcular输出 token 数（包括 candidate + thought tokens）
  */
 function resolveUsageOutputTokens(usageMetadata) {
   if (!usageMetadata || typeof usageMetadata !== 'object') {
@@ -1503,8 +1503,8 @@ function resolveUsageOutputTokens(usageMetadata) {
 }
 
 /**
- * 检查环境变量是否启用
- * 支持 true/1/yes/on 等值
+ * VerificarVariable de entorno是否Habilitar
+ * Soportar true/1/yes/on 等Valor
  */
 function isEnvEnabled(value) {
   if (!value) {
@@ -1516,8 +1516,8 @@ function isEnvEnabled(value) {
 
 /**
  * 从文本中提取 Write 工具调用
- * 处理模型在文本中输出 "Write: <path>" 格式的情况
- * 这是一个兜底机制，用于处理 function calling 失败的情况
+ * Procesar模型在文本中输出 "Write: <path>" Formato的情况
+ * 这是一个兜底机制，用于Procesar function calling Falló的情况
  */
 function tryExtractWriteToolFromText(text, fallbackCwd) {
   if (!text || typeof text !== 'string') {
@@ -1539,8 +1539,8 @@ function tryExtractWriteToolFromText(text, fallbackCwd) {
   const content = lines.slice(index + 1).join('\n')
   const prefixText = lines.slice(0, index).join('\n').trim()
 
-  // Claude Code 的 Write 工具要求绝对路径。若模型给的是相对路径，仅在本地运行代理时可用；
-  // 这里提供一个可选回退：使用服务端 cwd 解析。
+  // Claude Code 的 Write 工具要求绝对Ruta。若模型给的是相对Ruta，仅在本地运FilaProxy时可用；
+  // 这里提供一个OpcionalRetirada：使用Servicio端 cwd Analizar。
   let filePath = rawPath
   if (!path.isAbsolute(filePath) && fallbackCwd) {
     filePath = path.resolve(fallbackCwd, filePath)
@@ -1567,16 +1567,16 @@ function mapGeminiFinishReasonToAnthropicStopReason(finishReason) {
 }
 
 /**
- * 生成工具调用 ID
- * 使用 toolu_ 前缀 + 随机字符串
+ * Generar工具调用 ID
+ * 使用 toolu_ 前缀 + 随机Cadena
  */
 function buildToolUseId() {
   return `toolu_${crypto.randomBytes(10).toString('hex')}`
 }
 
 /**
- * 稳定的 JSON 序列化（键按字母顺序排列）
- * 用于生成可比较的 JSON 字符串
+ * 稳定的 JSON Serialización（键按字母顺序排Columna）
+ * 用于Generar可比较的 JSON Cadena
  */
 function stableJsonStringify(value) {
   if (value === null || value === undefined) {
@@ -1594,7 +1594,7 @@ function stableJsonStringify(value) {
 }
 
 /**
- * 从 Gemini 响应中提取 parts 数组
+ * 从 Gemini Respuesta中提取 parts Arreglo
  */
 function extractGeminiParts(payload) {
   const candidate = payload?.candidates?.[0]
@@ -1606,18 +1606,18 @@ function extractGeminiParts(payload) {
 }
 
 // ============================================================================
-// 核心函数：Gemini 响应转换为 Anthropic 格式
+// 核心Función：Gemini RespuestaConvertir为 Anthropic Formato
 // ============================================================================
 
 /**
- * 将 Gemini 响应转换为 Anthropic content blocks
+ * 将 Gemini RespuestaConvertir为 Anthropic content blocks
  *
- * 处理的内容类型：
+ * Procesar的内容Tipo：
  * - text: 纯文本 → { type: "text", text }
  * - thought: 思考过程 → { type: "thinking", thinking, signature }
  * - functionCall: 工具调用 → { type: "tool_use", id, name, input }
  *
- * 注意：thinking blocks 会被调整到数组最前面（符合 Anthropic 规范）
+ * 注意：thinking blocks 会被调整到Arreglo最前面（符合 Anthropic 规范）
  */
 function convertGeminiPayloadToAnthropicContent(payload) {
   const parts = extractGeminiParts(payload)
@@ -1669,7 +1669,7 @@ function convertGeminiPayloadToAnthropicContent(payload) {
     if (functionCall?.name) {
       flushText()
 
-      // 上游可能把 thought signature 挂在 functionCall part 上：需要原样传回给客户端，
+      // 上游可能把 thought signature 挂在 functionCall part 上：需要原样传回给Cliente，
       // 以便下一轮对话能携带 signature。
       const functionCallSignature = resolveSignature(part)
       if (functionCallSignature) {
@@ -1704,7 +1704,7 @@ function convertGeminiPayloadToAnthropicContent(payload) {
 }
 
 /**
- * 构建 Anthropic 格式的错误响应
+ * Construir Anthropic Formato的ErrorRespuesta
  */
 function buildAnthropicError(message) {
   return {
@@ -1717,8 +1717,8 @@ function buildAnthropicError(message) {
 }
 
 /**
- * 判断是否应该在无工具模式下重试
- * 当上游报告 JSON Schema 或工具相关错误时，移除工具定义重试
+ * 判断是否应该在无工具模式下Reintentar
+ * 当上游报告 JSON Schema 或工具相关Error时，Eliminación工具定义Reintentar
  */
 function shouldRetryWithoutTools(sanitizedError) {
   const message = (sanitizedError?.upstreamMessage || sanitizedError?.message || '').toLowerCase()
@@ -1734,7 +1734,7 @@ function shouldRetryWithoutTools(sanitizedError) {
 }
 
 /**
- * 从请求中移除工具定义（用于重试）
+ * 从Solicitud中Eliminación工具定义（用于Reintentar）
  */
 function stripToolsFromRequest(requestData) {
   if (!requestData || !requestData.request) {
@@ -1752,8 +1752,8 @@ function stripToolsFromRequest(requestData) {
 }
 
 /**
- * 写入 Anthropic SSE 事件
- * 将事件和数据以 SSE 格式发送给客户端
+ * Escribir Anthropic SSE Evento
+ * 将Evento和Datos以 SSE Formato发送给Cliente
  */
 function writeAnthropicSseEvent(res, event, data) {
   res.write(`event: ${event}\n`)
@@ -1761,12 +1761,12 @@ function writeAnthropicSseEvent(res, event, data) {
 }
 
 // ============================================================================
-// 调试和跟踪函数
+// Depurar和跟踪Función
 // ============================================================================
 
 /**
- * 记录工具定义到文件（调试用）
- * 只在环境变量 ANTHROPIC_DEBUG_TOOLS_DUMP 启用时生效
+ * Registro工具定义到Archivo（Depurar用）
+ * 只在Variable de entorno ANTHROPIC_DEBUG_TOOLS_DUMP Habilitar时生效
  */
 function dumpToolsPayload({ vendor, model, tools, toolChoice }) {
   if (!isEnvEnabled(process.env[TOOLS_DUMP_ENV])) {
@@ -1797,7 +1797,7 @@ function dumpToolsPayload({ vendor, model, tools, toolChoice }) {
 }
 
 /**
- * 更新速率限制计数器
+ * Actualizar速率Límite计数器
  * 跟踪 token 使用量和成本
  */
 async function applyRateLimitTracking(
@@ -1833,25 +1833,25 @@ async function applyRateLimitTracking(
 }
 
 // ============================================================================
-// 主入口函数：API 请求处理
+// 主入口Función：API SolicitudProcesar
 // ============================================================================
 
 /**
- * 处理 Anthropic 格式的请求并转发到 Gemini/Antigravity
+ * Procesar Anthropic Formato的Solicitud并转发到 Gemini/Antigravity
  *
- * 这是整个模块的主入口，完整流程：
- * 1. 验证 vendor 支持
- * 2. 选择可用的 Gemini 账户
- * 3. 模型回退匹配（如果请求的模型不可用）
- * 4. 构建 Gemini 请求 (buildGeminiRequestFromAnthropic)
- * 5. 发送请求（流式或非流式）
- * 6. 处理响应并转换为 Anthropic 格式
- * 7. 如果工具相关错误，尝试移除工具重试
- * 8. 返回结果给客户端
+ * 这是整个Módulo的主入口，完整流程：
+ * 1. Validar vendor Soportar
+ * 2. 选择可用的 Gemini Cuenta
+ * 3. 模型Retirada匹配（如果Solicitud的模型不可用）
+ * 4. Construir Gemini Solicitud (buildGeminiRequestFromAnthropic)
+ * 5. 发送Solicitud（流式或非流式）
+ * 6. ProcesarRespuesta并Convertir为 Anthropic Formato
+ * 7. 如果工具相关Error，尝试Eliminación工具Reintentar
+ * 8. Retornar结果给Cliente
  *
- * @param {Object} req - Express 请求对象
- * @param {Object} res - Express 响应对象
- * @param {Object} options - 包含 vendor 和 baseModel
+ * @param {Object} req - Express SolicitudObjeto
+ * @param {Object} res - Express RespuestaObjeto
+ * @param {Object} options - Incluir vendor 和 baseModel
  */
 async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) {
   if (!SUPPORTED_VENDORS.has(vendor)) {
@@ -1879,7 +1879,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
       return requestedModel
     }
 
-    // Claude Code 常见探测模型：优先回退到 Opus 4.5（如果账号支持）
+    // Claude Code 常见探测模型：优先Retirada到 Opus 4.5（如果账号Soportar）
     const preferred = ['claude-opus-4-5', 'claude-sonnet-4-5-thinking', 'claude-sonnet-4-5']
     for (const candidate of preferred) {
       if (normalizedSupported.includes(candidate)) {
@@ -1964,8 +1964,8 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     sessionId: sessionHash
   })
 
-  // Antigravity 上游对 function calling 的启用/校验更严格：参考实现普遍使用 VALIDATED。
-  // 这里仅在 tools 存在且未显式禁用（tool_choice=none）时应用，避免破坏原始语义。
+  // Antigravity 上游对 function calling 的Habilitar/校验更严格：参考实现普遍使用 VALIDATED。
+  // 这里仅在 tools 存在且未显式Deshabilitar（tool_choice=none）时应用，避免破坏原始语义。
   if (
     vendor === 'antigravity' &&
     Array.isArray(requestData?.request?.tools) &&
@@ -1985,7 +1985,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     }
   }
 
-  // Antigravity 默认启用 tools（对齐 CLIProxyAPI）。若上游拒绝 schema，会在下方自动重试去掉 tools/toolConfig。
+  // Antigravity PredeterminadoHabilitar tools（对齐 CLIProxyAPI）。若上游拒绝 schema，会在下方自动Reintentar去掉 tools/toolConfig。
 
   const abortController = new AbortController()
   req.on('close', () => {
@@ -2029,7 +2029,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
           })
           rawResponse = await attemptRequest(stripToolsFromRequest(requestData))
         } else if (
-          // [429 账户切换] 检测到 Antigravity 配额耗尽错误时，尝试切换账户重试
+          // [429 Cuenta切换] 检测到 Antigravity Cuota耗尽Error时，尝试切换CuentaReintentar
           vendor === 'antigravity' &&
           sanitized.statusCode === 429 &&
           (sanitized.message?.toLowerCase()?.includes('exhausted') ||
@@ -2044,11 +2044,11 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
               model: effectiveModel
             }
           )
-          // 删除当前会话映射，让调度器选择其他账户
+          // Eliminar当前Sesión映射，让调度器选择其他Cuenta
           if (sessionHash) {
             await unifiedGeminiScheduler._deleteSessionMapping(sessionHash)
           }
-          // 重新选择账户
+          // 重新选择Cuenta
           try {
             const newAccountSelection = await unifiedGeminiScheduler.selectAccountForApiKey(
               req.apiKey,
@@ -2064,7 +2064,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
             logger.info(
               `🔄 Retrying non-stream with new account: ${newAccountId} (was: ${accountId})`
             )
-            // 用新账户的 client 重试
+            // 用新Cuenta的 client Reintentar
             rawResponse =
               vendor === 'antigravity'
                 ? await geminiAccountService.generateContentAntigravity(
@@ -2083,11 +2083,11 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
                     upstreamSessionId,
                     proxyConfig
                   )
-            // 更新 accountId 以便后续使用记录
+            // Actualizar accountId 以便后续使用Registro
             accountId = newAccountId
           } catch (retryError) {
             logger.error('❌ Failed to retry non-stream with new account:', retryError)
-            throw error // 抛出原始错误
+            throw error // 抛出原始Error
           }
         } else {
           throw error
@@ -2098,8 +2098,8 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
       let content = convertGeminiPayloadToAnthropicContent(payload)
       let hasToolUse = content.some((block) => block.type === 'tool_use')
 
-      // Antigravity 某些模型可能不会返回 functionCall（导致永远没有 tool_use），但会把 “Write: xxx” 以纯文本形式输出。
-      // 可选回退：解析该文本并合成标准 tool_use，交给 claude-cli 去执行。
+      // Antigravity 某些模型可能不会Retornar functionCall（导致永远没有 tool_use），但会把 “Write: xxx” 以纯文本形式输出。
+      // OpcionalRetirada：Analizar该文本并合成标准 tool_use，交给 claude-cli 去Ejecutar。
       if (!hasToolUse && isEnvEnabled(process.env[TEXT_TOOL_FALLBACK_ENV])) {
         const fullText = extractGeminiText(payload)
         const extracted = tryExtractWriteToolFromText(fullText, process.cwd())
@@ -2230,7 +2230,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
         })
         streamResponse = await startStream(stripToolsFromRequest(requestData))
       } else if (
-        // [429 账户切换] 检测到 Antigravity 配额耗尽错误时，尝试切换账户重试
+        // [429 Cuenta切换] 检测到 Antigravity Cuota耗尽Error时，尝试切换CuentaReintentar
         vendor === 'antigravity' &&
         sanitized.statusCode === 429 &&
         (sanitized.message?.toLowerCase()?.includes('exhausted') ||
@@ -2242,11 +2242,11 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
           accountId,
           model: effectiveModel
         })
-        // 删除当前会话映射，让调度器选择其他账户
+        // Eliminar当前Sesión映射，让调度器选择其他Cuenta
         if (sessionHash) {
           await unifiedGeminiScheduler._deleteSessionMapping(sessionHash)
         }
-        // 重新选择账户
+        // 重新选择Cuenta
         try {
           const newAccountSelection = await unifiedGeminiScheduler.selectAccountForApiKey(
             req.apiKey,
@@ -2260,7 +2260,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
             throw new Error('Failed to get new Gemini client for retry')
           }
           logger.info(`🔄 Retrying with new account: ${newAccountId} (was: ${accountId})`)
-          // 用新账户的 client 重试
+          // 用新Cuenta的 client Reintentar
           streamResponse =
             vendor === 'antigravity'
               ? await geminiAccountService.generateContentStreamAntigravity(
@@ -2281,20 +2281,20 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
                   abortController.signal,
                   proxyConfig
                 )
-          // 更新 accountId 以便后续使用记录
+          // Actualizar accountId 以便后续使用Registro
           accountId = newAccountId
         } catch (retryError) {
           logger.error('❌ Failed to retry with new account:', retryError)
-          throw error // 抛出原始错误
+          throw error // 抛出原始Error
         }
       } else {
         throw error
       }
     }
 
-    // 仅在上游流成功建立后再开始向客户端发送 SSE。
-    // 这样如果上游在握手阶段直接返回 4xx/5xx（例如 schema 400 或配额 429），
-    // 我们可以返回真实 HTTP 状态码，而不是先 200 再在 SSE 内发 error 事件。
+    // 仅在上游流Éxito建立后再Iniciando向Cliente发送 SSE。
+    // 这样如果上游在握手阶段直接Retornar 4xx/5xx（例如 schema 400 或Cuota 429），
+    // 我们可以Retornar真实 HTTP 状态码，而不是先 200 再在 SSE 内发 error Evento。
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
     res.setHeader('Connection', 'keep-alive')
@@ -2323,10 +2323,10 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
       requestData?.request?.generationConfig?.thinkingConfig?.include_thoughts === true
 
     // ========================================================================
-    // [大东的 2.0 补丁 - 修复版] 活跃度看门狗 (Watchdog)
+    // [大东的 2.0 补丁 - Corrección版] 活跃度看门狗 (Watchdog)
     // ========================================================================
     let activityTimeout = null
-    const STREAM_ACTIVITY_TIMEOUT_MS = 90000 // 90秒无数据视为卡死
+    const STREAM_ACTIVITY_TIMEOUT_MS = 90000 // 90秒无Datos视为卡死
 
     const resetActivityTimeout = () => {
       if (activityTimeout) {
@@ -2337,7 +2337,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
           return
         }
 
-        // 🛑【关键修改】先锁门！防止 abort() 触发的 onError 再次写入 res
+        // 🛑【关键修改】先锁门！防止 abort() 触发的 onError 再次Escribir res
         finished = true
 
         logger.warn('⚠️ Upstream stream zombie detected (no data for 45s). Forcing termination.', {
@@ -2423,13 +2423,13 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     }
 
     const canStartThinkingBlock = (_hasSignature = false) => {
-      // Antigravity 特殊处理：某些情况下不应启动 thinking block
+      // Antigravity 特殊Procesar：某些情况下不应启动 thinking block
       if (isAntigravityVendor) {
         // 如果 wantsThinkingBlockFirst 且已发送过工具调用，不应再启动 thinking
         if (wantsThinkingBlockFirst && emittedAnyToolUse) {
           return false
         }
-        // [移除规则2] 签名可能在后续 chunk 中到达，不应提前阻止 thinking 启动
+        // [EliminaciónRegla2] Firma可能在后续 chunk 中到达，不应提前阻止 thinking 启动
       }
       if (currentIndex < 0) {
         return true
@@ -2566,13 +2566,13 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
       }
       finished = true
 
-      // 若存在未完成的工具调用（例如 args 分段但上游提前结束），尽力 flush，避免客户端卡死。
+      // 若存在未Completado的工具调用（例如 args 分段但上游提前结束），尽力 flush，避免Cliente卡死。
       for (const id of pendingToolCallsById.keys()) {
         flushPendingToolCallById(id, { force: true })
       }
 
       // 上游可能在没有 finishReason 的情况下静默结束（例如 browser_snapshot 输出过大被截断）。
-      // 这种情况下主动向客户端发送错误，避免长时间挂起。
+      // 这种情况下主动向Cliente发送Error，避免长Tiempo挂起。
       if (!finishReason) {
         logger.warn(
           '⚠️ Upstream stream ended without finishReason; sending overloaded_error to client',
@@ -2592,7 +2592,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
           }
         })
 
-        // 记录摘要便于排查
+        // Registro摘要便于排查
         dumpAnthropicStreamSummary(req, {
           vendor,
           accountId,
@@ -2659,7 +2659,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
         usage: { input_tokens: inputTokens, output_tokens: outputTokens }
       })
 
-      // 记录 Antigravity 上游流摘要用于调试
+      // Registro Antigravity 上游流摘要用于Depurar
       if (vendor === 'antigravity') {
         dumpAntigravityStreamSummary({
           requestId: req.requestId,
@@ -2695,7 +2695,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     }
 
     streamResponse.on('data', (chunk) => {
-      resetActivityTimeout() // <--- 【新增】收到数据了，重置倒计时！
+      resetActivityTimeout() // <--- 【Nueva característica】收到Datos了，重置倒计时！
 
       if (finished) {
         return
@@ -2720,7 +2720,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
 
         const payload = parsed.data?.response || parsed.data
 
-        // 记录上游 SSE 事件用于调试
+        // Registro上游 SSE Evento用于Depurar
         if (vendor === 'antigravity') {
           sseEventIndex += 1
           dumpAntigravityStreamEvent({
@@ -2744,7 +2744,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
 
         const parts = extractGeminiParts(payload)
         const rawThoughtSignature = extractGeminiThoughtSignature(payload)
-        // Antigravity 专用净化：确保签名格式符合 API 要求
+        // Antigravity 专用净化：确保FirmaFormato符合 API 要求
         const thoughtSignature = isAntigravityVendor
           ? sanitizeThoughtSignatureForAntigravity(rawThoughtSignature)
           : rawThoughtSignature
@@ -2752,7 +2752,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
 
         if (wantsThinkingBlockFirst) {
           // 关键：确保 thinking/signature 在 tool_use 之前输出，避免出现 tool_use 后紧跟 thinking(signature)
-          // 导致下一轮请求的 thinking 校验/工具调用校验失败（Antigravity 会返回 400）。
+          // 导致下一轮Solicitud的 thinking 校验/工具调用校验Falló（Antigravity 会Retornar 400）。
           if (thoughtSignature && canStartThinkingBlock()) {
             let delta = ''
             if (thoughtSignature.startsWith(emittedThoughtSignature)) {
@@ -2830,7 +2830,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
           }
           pendingToolCallsById.set(id, pending)
 
-          // 能确定“本次已完整”时再 emit；否则继续等待后续 SSE 事件补全 args。
+          // 能确定“本次已完整”时再 emit；否则继续等待后续 SSE Evento补全 args。
           if (!canContinue) {
             flushPendingToolCallById(id)
           }
@@ -2873,7 +2873,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
               index: currentIndex,
               delta: { type: 'thinking_delta', thinking: delta }
             })
-            // [签名缓存] 当 thinking 内容和签名都有时，缓存供后续请求使用
+            // [FirmaCaché] 当 thinking 内容和Firma都有时，Caché供后续Solicitud使用
             if (isAntigravityVendor && sessionHash && emittedThoughtSignature) {
               signatureCache.cacheSignature(sessionHash, fullThought, emittedThoughtSignature)
             }
@@ -2904,7 +2904,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     streamResponse.on('end', () => {
       if (activityTimeout) {
         clearTimeout(activityTimeout)
-      } // <--- 【新增】正常结束，取消报警
+      } // <--- 【Nueva característica】正常结束，取消报警
 
       finalize().catch((e) => logger.error('Failed to finalize Anthropic SSE response:', e))
     })
@@ -2912,7 +2912,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     streamResponse.on('error', (error) => {
       if (activityTimeout) {
         clearTimeout(activityTimeout)
-      } // <--- 【新增】报错了，取消报警
+      } // <--- 【Nueva característica】报错了，取消报警
 
       if (finished) {
         return
@@ -2930,10 +2930,10 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
     return undefined
   } catch (error) {
     // ============================================================
-    // [大东修复 3.0] 彻底防止 JSON 循环引用导致服务崩溃
+    // [大东Corrección 3.0] 彻底防止 JSON Bucle引用导致Servicio崩溃
     // ============================================================
 
-    // 1. 使用 util.inspect 安全地将错误对象转为字符串，不使用 JSON.stringify
+    // 1. 使用 util.inspect Seguridad地将ErrorObjeto转为Cadena，不使用 JSON.stringify
     const safeErrorDetails = util.inspect(error, {
       showHidden: false,
       depth: 2,
@@ -2941,12 +2941,12 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
       breakLength: Infinity
     })
 
-    // 2. 打印安全日志，绝对不会崩
-    logger.error(`❌ [Critical] Failed to start Gemini stream. 错误详情:\n${safeErrorDetails}`)
+    // 2. 打印SeguridadRegistro，绝对不会崩
+    logger.error(`❌ [Critical] Failed to start Gemini stream. Error详情:\n${safeErrorDetails}`)
 
     const sanitized = sanitizeUpstreamError(error)
 
-    // 3. 特殊处理 Antigravity 的参数错误 (400)，输出详细请求信息便于调试
+    // 3. 特殊Procesar Antigravity 的ParámetroError (400)，输出详细SolicitudInformación便于Depurar
     if (
       vendor === 'antigravity' &&
       effectiveModel.includes('claude') &&
@@ -2961,9 +2961,9 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
       })
     }
 
-    // 4. 确保返回 JSON 响应给客户端 (让客户端知道出错了并重试)
+    // 4. 确保Retornar JSON Respuesta给Cliente (让Cliente知道出错了并Reintentar)
     if (!res.headersSent) {
-      // 记录非流式响应日志
+      // Registro非流式RespuestaRegistro
       dumpAnthropicNonStreamResponse(
         req,
         sanitized.statusCode || 502,
@@ -2976,7 +2976,7 @@ async function handleAnthropicMessagesToGemini(req, res, { vendor, baseModel }) 
         .json(buildAnthropicError(sanitized.upstreamMessage || sanitized.message))
     }
 
-    // 5. 如果头已经发了，走 SSE 发送错误
+    // 5. 如果头已经发了，走 SSE 发送Error
     writeAnthropicSseEvent(
       res,
       'error',
@@ -3083,12 +3083,12 @@ async function handleAnthropicCountTokensToGemini(req, res, { vendor }) {
 }
 
 // ============================================================================
-// 模块导出
+// Módulo导出
 // ============================================================================
 
 module.exports = {
-  // 主入口：处理 /v1/messages 请求
+  // 主入口：Procesar /v1/messages Solicitud
   handleAnthropicMessagesToGemini,
-  // 辅助入口：处理 /v1/messages/count_tokens 请求
+  // 辅助入口：Procesar /v1/messages/count_tokens Solicitud
   handleAnthropicCountTokensToGemini
 }

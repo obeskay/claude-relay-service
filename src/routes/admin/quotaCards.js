@@ -1,5 +1,5 @@
 /**
- * 额度卡/时间卡管理路由
+ * 额度卡/Tiempo卡管理Ruta
  */
 const express = require('express')
 const router = express.Router()
@@ -12,7 +12,7 @@ const { authenticateAdmin } = require('../../middleware/auth')
 // 额度卡管理
 // ═══════════════════════════════════════════════════════════════════════════
 
-// 获取额度卡上限配置
+// Obtener额度卡上限Configuración
 router.get('/quota-cards/limits', authenticateAdmin, async (req, res) => {
   try {
     const config = await quotaCardService.getLimitsConfig()
@@ -23,7 +23,7 @@ router.get('/quota-cards/limits', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新额度卡上限配置
+// Actualizar额度卡上限Configuración
 router.put('/quota-cards/limits', authenticateAdmin, async (req, res) => {
   try {
     const { enabled, maxExpiryDays, maxTotalCostLimit } = req.body
@@ -39,7 +39,7 @@ router.put('/quota-cards/limits', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取额度卡列表
+// Obtener额度卡ColumnaTabla
 router.get('/quota-cards', authenticateAdmin, async (req, res) => {
   try {
     const { status, limit = 100, offset = 0 } = req.query
@@ -62,7 +62,7 @@ router.get('/quota-cards', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取额度卡统计
+// Obtener额度卡Estadística
 router.get('/quota-cards/stats', authenticateAdmin, async (req, res) => {
   try {
     const stats = await quotaCardService.getCardStats()
@@ -79,7 +79,7 @@ router.get('/quota-cards/stats', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取单个额度卡详情
+// Obtener单个额度卡详情
 router.get('/quota-cards/:id', authenticateAdmin, async (req, res) => {
   try {
     const card = await quotaCardService.getCardById(req.params.id)
@@ -103,7 +103,7 @@ router.get('/quota-cards/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 创建额度卡
+// Crear额度卡
 router.post('/quota-cards', authenticateAdmin, async (req, res) => {
   try {
     const { type, quotaAmount, timeAmount, timeUnit, expiresAt, note, count = 1 } = req.body
@@ -146,7 +146,7 @@ router.post('/quota-cards', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除未使用的额度卡
+// Eliminar未使用的额度卡
 router.delete('/quota-cards/:id', authenticateAdmin, async (req, res) => {
   try {
     const result = await quotaCardService.deleteCard(req.params.id)
@@ -164,10 +164,10 @@ router.delete('/quota-cards/:id', authenticateAdmin, async (req, res) => {
 })
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 核销记录管理
+// 核销Registro管理
 // ═══════════════════════════════════════════════════════════════════════════
 
-// 获取核销记录列表
+// Obtener核销RegistroColumnaTabla
 router.get('/redemptions', authenticateAdmin, async (req, res) => {
   try {
     const { userId, apiKeyId, limit = 100, offset = 0 } = req.query

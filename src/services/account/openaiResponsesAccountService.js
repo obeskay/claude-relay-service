@@ -8,7 +8,7 @@ const upstreamErrorHelper = require('../../utils/upstreamErrorHelper')
 
 class OpenAIResponsesAccountService {
   constructor() {
-    // 加密相关常量
+    // Cifrado相关常量
     this.ENCRYPTION_ALGORITHM = 'aes-256-cbc'
     this.ENCRYPTION_SALT = 'openai-responses-salt'
 
@@ -16,13 +16,13 @@ class OpenAIResponsesAccountService {
     this.ACCOUNT_KEY_PREFIX = 'openai_responses_account:'
     this.SHARED_ACCOUNTS_KEY = 'shared_openai_responses_accounts'
 
-    // 🚀 性能优化：缓存派生的加密密钥，避免每次重复计算
+    // 🚀 RendimientoOptimización：Caché派生的CifradoClave，避免每次重复Calcular
     this._encryptionKeyCache = null
 
-    // 🔄 解密结果缓存，提高解密性能
+    // 🔄 Descifrado结果Caché，提高DescifradoRendimiento
     this._decryptCache = new LRUCache(500)
 
-    // 🧹 定期清理缓存（每10分钟）
+    // 🧹 定期LimpiarCaché（每10分钟）
     setInterval(
       () => {
         this._decryptCache.cleanup()
@@ -35,26 +35,26 @@ class OpenAIResponsesAccountService {
     )
   }
 
-  // 创建账户
+  // CrearCuenta
   async createAccount(options = {}) {
     const {
       name = 'OpenAI Responses Account',
       description = '',
       baseApi = '', // 必填：API 基础地址
-      apiKey = '', // 必填：API 密钥
-      userAgent = '', // 可选：自定义 User-Agent，空则透传原始请求
+      apiKey = '', // 必填：API Clave
+      userAgent = '', // Opcional：自定义 User-Agent，空则透传原始Solicitud
       priority = 50, // 调度优先级 (1-100)
       proxy = null,
       isActive = true,
       accountType = 'shared', // 'dedicated' or 'shared'
       schedulable = true, // 是否可被调度
-      dailyQuota = 0, // 每日额度限制（美元），0表示不限制
-      quotaResetTime = '00:00', // 额度重置时间（HH:mm格式）
-      rateLimitDuration = 60, // 限流时间（分钟）
-      disableAutoProtection = false // 是否关闭自动防护（429/401/400/529 不自动禁用）
+      dailyQuota = 0, // 每日额度Límite（美元），0Tabla示不Límite
+      quotaResetTime = '00:00', // 额度重置Tiempo（HH:mmFormato）
+      rateLimitDuration = 60, // 限流Tiempo（分钟）
+      disableAutoProtection = false // 是否关闭自动防护（429/401/400/529 不自动Deshabilitar）
     } = options
 
-    // 验证必填字段
+    // Validar必填Campo
     if (!baseApi || !apiKey) {
       throw new Error('Base API URL and API Key are required for OpenAI-Responses account')
     }
@@ -78,7 +78,7 @@ class OpenAIResponsesAccountService {
       accountType,
       schedulable: schedulable.toString(),
 
-      // ✅ 新增：账户订阅到期时间（业务字段，手动管理）
+      // ✅ Nueva característica：Cuenta订阅到期Tiempo（业务Campo，手动管理）
       // 注意：OpenAI-Responses 使用 API Key 认证，没有 OAuth token，因此没有 expiresAt
       subscriptionExpiresAt: options.subscriptionExpiresAt || null,
 
@@ -106,11 +106,11 @@ class OpenAIResponsesAccountService {
 
     return {
       ...accountData,
-      apiKey: '***' // 返回时隐藏敏感信息
+      apiKey: '***' // Retornar时隐藏敏感Información
     }
   }
 
-  // 获取账户
+  // ObtenerCuenta
   async getAccount(accountId) {
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
@@ -120,10 +120,10 @@ class OpenAIResponsesAccountService {
       return null
     }
 
-    // 解密敏感数据
+    // Descifrado敏感Datos
     accountData.apiKey = this._decryptSensitiveData(accountData.apiKey)
 
-    // 解析 JSON 字段
+    // Analizar JSON Campo
     if (accountData.proxy) {
       try {
         accountData.proxy = JSON.parse(accountData.proxy)
@@ -135,19 +135,19 @@ class OpenAIResponsesAccountService {
     return accountData
   }
 
-  // 更新账户
+  // ActualizarCuenta
   async updateAccount(accountId, updates) {
     const account = await this.getAccount(accountId)
     if (!account) {
       throw new Error('Account not found')
     }
 
-    // 处理敏感字段加密
+    // Procesar敏感CampoCifrado
     if (updates.apiKey) {
       updates.apiKey = this._encryptSensitiveData(updates.apiKey)
     }
 
-    // 处理 JSON 字段
+    // Procesar JSON Campo
     if (updates.proxy !== undefined) {
       updates.proxy = updates.proxy ? JSON.stringify(updates.proxy) : ''
     }
@@ -160,7 +160,7 @@ class OpenAIResponsesAccountService {
     }
 
     // ✅ 直接保存 subscriptionExpiresAt（如果提供）
-    // OpenAI-Responses 使用 API Key，没有 token 刷新逻辑，不会覆盖此字段
+    // OpenAI-Responses 使用 API Key，没有 token 刷新逻辑，不会覆盖此Campo
     if (updates.subscriptionExpiresAt !== undefined) {
       // 直接保存，不做任何调整
     }
@@ -170,7 +170,7 @@ class OpenAIResponsesAccountService {
       updates.disableAutoProtection = updates.disableAutoProtection.toString()
     }
 
-    // 更新 Redis
+    // Actualizar Redis
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
     await client.hset(key, updates)
@@ -180,18 +180,18 @@ class OpenAIResponsesAccountService {
     return { success: true }
   }
 
-  // 删除账户
+  // EliminarCuenta
   async deleteAccount(accountId) {
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
 
-    // 从共享账户列表中移除
+    // 从共享CuentaColumnaTabla中Eliminación
     await client.srem(this.SHARED_ACCOUNTS_KEY, accountId)
 
-    // 从索引中移除
+    // 从Índice中Eliminación
     await redis.removeFromIndex('openai_responses_account:index', accountId)
 
-    // 删除账户数据
+    // EliminarCuentaDatos
     await client.del(key)
 
     logger.info(`🗑️ Deleted OpenAI-Responses account: ${accountId}`)
@@ -199,11 +199,11 @@ class OpenAIResponsesAccountService {
     return { success: true }
   }
 
-  // 获取所有账户
+  // Obtener所有Cuenta
   async getAllAccounts(includeInactive = false) {
     const client = redis.getClientSafe()
 
-    // 使用索引获取所有账户ID
+    // 使用ÍndiceObtener所有CuentaID
     const accountIds = await redis.getAllIdsByIndex(
       'openai_responses_account:index',
       `${this.ACCOUNT_KEY_PREFIX}*`,
@@ -214,7 +214,7 @@ class OpenAIResponsesAccountService {
     }
 
     const keys = accountIds.map((id) => `${this.ACCOUNT_KEY_PREFIX}${id}`)
-    // Pipeline 批量查询所有账户数据
+    // Pipeline 批量Consulta所有CuentaDatos
     const pipeline = client.pipeline()
     keys.forEach((key) => pipeline.hgetall(key))
     const results = await pipeline.exec()
@@ -225,15 +225,15 @@ class OpenAIResponsesAccountService {
         return
       }
 
-      // 过滤非活跃账户
+      // Filtrar非活跃Cuenta
       if (!includeInactive && accountData.isActive !== 'true') {
         return
       }
 
-      // 隐藏敏感信息
+      // 隐藏敏感Información
       accountData.apiKey = '***'
 
-      // 解析 JSON 字段
+      // Analizar JSON Campo
       if (accountData.proxy) {
         try {
           accountData.proxy = JSON.parse(accountData.proxy)
@@ -242,7 +242,7 @@ class OpenAIResponsesAccountService {
         }
       }
 
-      // 获取限流状态信息
+      // Obtener限流状态Información
       const rateLimitInfo = this._getRateLimitInfo(accountData)
       accountData.rateLimitStatus = rateLimitInfo.isRateLimited
         ? {
@@ -256,7 +256,7 @@ class OpenAIResponsesAccountService {
             minutesRemaining: 0
           }
 
-      // 转换字段类型
+      // ConvertirCampoTipo
       accountData.schedulable = accountData.schedulable !== 'false'
       accountData.isActive = accountData.isActive === 'true'
       accountData.expiresAt = accountData.subscriptionExpiresAt || null
@@ -268,7 +268,7 @@ class OpenAIResponsesAccountService {
     return accounts
   }
 
-  // 标记账户限流
+  // 标记Cuenta限流
   async markAccountRateLimited(accountId, duration = null) {
     const account = await this.getAccount(accountId)
     if (!account) {
@@ -294,8 +294,8 @@ class OpenAIResponsesAccountService {
     )
   }
 
-  // 🚫 标记账户为未授权状态（401错误）
-  async markAccountUnauthorized(accountId, reason = 'OpenAI Responses账号认证失败（401错误）') {
+  // 🚫 标记Cuenta为未授权状态（401Error）
+  async markAccountUnauthorized(accountId, reason = 'OpenAI Responses账号认证Falló（401Error）') {
     const account = await this.getAccount(accountId)
     if (!account) {
       return
@@ -336,7 +336,7 @@ class OpenAIResponsesAccountService {
     }
   }
 
-  // 检查并清除过期的限流状态
+  // Verificar并清除过期的限流状态
   async checkAndClearRateLimit(accountId) {
     const account = await this.getAccount(accountId)
     if (!account || account.rateLimitStatus !== 'limited') {
@@ -346,7 +346,7 @@ class OpenAIResponsesAccountService {
     const now = new Date()
     let shouldClear = false
 
-    // 优先使用 rateLimitResetAt 字段
+    // 优先使用 rateLimitResetAt Campo
     if (account.rateLimitResetAt) {
       const resetAt = new Date(account.rateLimitResetAt)
       shouldClear = now >= resetAt
@@ -364,7 +364,7 @@ class OpenAIResponsesAccountService {
         rateLimitStatus: '',
         rateLimitResetAt: '',
         status: 'active',
-        schedulable: 'true', // 恢复调度
+        schedulable: 'true', // Restauración调度
         errorMessage: ''
       })
 
@@ -397,14 +397,14 @@ class OpenAIResponsesAccountService {
     }
   }
 
-  // 更新使用额度
+  // Actualizar使用额度
   async updateUsageQuota(accountId, amount) {
     const account = await this.getAccount(accountId)
     if (!account) {
       return
     }
 
-    // 检查是否需要重置额度
+    // Verificar是否需要重置额度
     const today = redis.getDateStringInTimezone()
     if (account.lastResetDate !== today) {
       // 重置额度
@@ -423,7 +423,7 @@ class OpenAIResponsesAccountService {
         dailyUsage: newUsage.toString()
       }
 
-      // 检查是否超出额度
+      // Verificar是否超出额度
       if (dailyQuota > 0 && newUsage >= dailyQuota) {
         updates.status = 'quotaExceeded'
         updates.quotaStoppedAt = new Date().toISOString()
@@ -435,7 +435,7 @@ class OpenAIResponsesAccountService {
     }
   }
 
-  // 更新账户使用统计（记录 token 使用量）
+  // ActualizarCuenta使用Estadística（Registro token 使用量）
   async updateAccountUsage(accountId, tokens = 0) {
     const account = await this.getAccount(accountId)
     if (!account) {
@@ -446,7 +446,7 @@ class OpenAIResponsesAccountService {
       lastUsedAt: new Date().toISOString()
     }
 
-    // 如果有 tokens 参数且大于0，同时更新使用统计
+    // 如果有 tokens Parámetro且大于0，同时Actualizar使用Estadística
     if (tokens > 0) {
       const currentTokens = parseInt(account.totalUsedTokens) || 0
       updates.totalUsedTokens = (currentTokens + tokens).toString()
@@ -455,12 +455,12 @@ class OpenAIResponsesAccountService {
     await this.updateAccount(accountId, updates)
   }
 
-  // 记录使用量（为了兼容性的别名）
+  // Registro使用量（为了兼容性的别名）
   async recordUsage(accountId, tokens = 0) {
     return this.updateAccountUsage(accountId, tokens)
   }
 
-  // 重置账户状态（清除所有异常状态）
+  // 重置Cuenta状态（清除所有异常状态）
   async resetAccountStatus(accountId) {
     const account = await this.getAccount(accountId)
     if (!account) {
@@ -468,11 +468,11 @@ class OpenAIResponsesAccountService {
     }
 
     const updates = {
-      // 根据是否有有效的 apiKey 来设置 status
+      // 根据是否有有效的 apiKey 来Establecer status
       status: account.apiKey ? 'active' : 'created',
-      // 恢复可调度状态
+      // Restauración可调度状态
       schedulable: 'true',
-      // 清除错误相关字段
+      // 清除Error相关Campo
       errorMessage: '',
       rateLimitedAt: '',
       rateLimitStatus: '',
@@ -508,10 +508,10 @@ class OpenAIResponsesAccountService {
     return { success: true, message: 'Account status reset successfully' }
   }
 
-  // ⏰ 检查账户订阅是否已过期
+  // ⏰ VerificarCuenta订阅是否已过期
   isSubscriptionExpired(account) {
     if (!account.subscriptionExpiresAt) {
-      return false // 未设置过期时间，视为永不过期
+      return false // 未Establecer过期Tiempo，视为永不过期
     }
 
     const expiryDate = new Date(account.subscriptionExpiresAt)
@@ -527,7 +527,7 @@ class OpenAIResponsesAccountService {
     return false
   }
 
-  // 获取限流信息
+  // Obtener限流Información
   _getRateLimitInfo(accountData) {
     if (accountData.rateLimitStatus !== 'limited') {
       return { isRateLimited: false }
@@ -537,7 +537,7 @@ class OpenAIResponsesAccountService {
     let willBeAvailableAt
     let remainingMinutes
 
-    // 优先使用 rateLimitResetAt 字段
+    // 优先使用 rateLimitResetAt Campo
     if (accountData.rateLimitResetAt) {
       willBeAvailableAt = new Date(accountData.rateLimitResetAt)
       remainingMinutes = Math.max(0, Math.ceil((willBeAvailableAt - now) / 60000))
@@ -557,7 +557,7 @@ class OpenAIResponsesAccountService {
     }
   }
 
-  // 加密敏感数据
+  // Cifrado敏感Datos
   _encryptSensitiveData(text) {
     if (!text) {
       return ''
@@ -573,13 +573,13 @@ class OpenAIResponsesAccountService {
     return `${iv.toString('hex')}:${encrypted.toString('hex')}`
   }
 
-  // 解密敏感数据
+  // Descifrado敏感Datos
   _decryptSensitiveData(text) {
     if (!text || text === '') {
       return ''
     }
 
-    // 检查缓存
+    // VerificarCaché
     const cacheKey = crypto.createHash('sha256').update(text).digest('hex')
     const cached = this._decryptCache.get(cacheKey)
     if (cached !== undefined) {
@@ -599,7 +599,7 @@ class OpenAIResponsesAccountService {
 
       const result = decrypted.toString()
 
-      // 存入缓存（5分钟过期）
+      // 存入Caché（5分钟过期）
       this._decryptCache.set(cacheKey, result, 5 * 60 * 1000)
 
       return result
@@ -609,7 +609,7 @@ class OpenAIResponsesAccountService {
     }
   }
 
-  // 获取加密密钥
+  // ObtenerCifradoClave
   _getEncryptionKey() {
     if (!this._encryptionKeyCache) {
       this._encryptionKeyCache = crypto.scryptSync(
@@ -621,18 +621,18 @@ class OpenAIResponsesAccountService {
     return this._encryptionKeyCache
   }
 
-  // 保存账户到 Redis
+  // 保存Cuenta到 Redis
   async _saveAccount(accountId, accountData) {
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
 
-    // 保存账户数据
+    // 保存CuentaDatos
     await client.hset(key, accountData)
 
-    // 添加到索引
+    // 添加到Índice
     await redis.addToIndex('openai_responses_account:index', accountId)
 
-    // 添加到共享账户列表
+    // 添加到共享CuentaColumnaTabla
     if (accountData.accountType === 'shared') {
       await client.sadd(this.SHARED_ACCOUNTS_KEY, accountId)
     }

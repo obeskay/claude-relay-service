@@ -3,8 +3,8 @@ const logger = require('../../utils/logger')
 const ProxyHelper = require('../../utils/proxyHelper')
 
 /**
- * Provider 抽象基类
- * 各平台 Provider 需继承并实现 queryBalance(account)
+ * Provider Abstracción基Clase
+ * 各平台 Provider 需Herencia并实现 queryBalance(account)
  */
 class BaseBalanceProvider {
   constructor(platform) {
@@ -13,8 +13,8 @@ class BaseBalanceProvider {
   }
 
   /**
-   * 查询余额（抽象方法）
-   * @param {object} account - 账户对象
+   * Consulta余额（AbstracciónMétodo）
+   * @param {object} account - CuentaObjeto
    * @returns {Promise<object>}
    * 形如：
    * {
@@ -26,11 +26,11 @@ class BaseBalanceProvider {
    * }
    */
   async queryBalance(_account) {
-    throw new Error('queryBalance 方法必须由子类实现')
+    throw new Error('queryBalance Método必须由子Clase实现')
   }
 
   /**
-   * 通用 HTTP 请求方法（支持代理）
+   * 通用 HTTP SolicitudMétodo（SoportarProxy）
    * @param {string} url
    * @param {object} options
    * @param {object} account
@@ -66,8 +66,8 @@ class BaseBalanceProvider {
       }
     } catch (error) {
       const status = error.response?.status
-      const message = error.response?.data?.message || error.message || '请求失败'
-      this.logger.debug(`余额 Provider HTTP 请求失败: ${url} (${this.platform})`, {
+      const message = error.response?.data?.message || error.message || 'SolicitudFalló'
+      this.logger.debug(`余额 Provider HTTP SolicitudFalló: ${url} (${this.platform})`, {
         status,
         message
       })
@@ -76,14 +76,14 @@ class BaseBalanceProvider {
   }
 
   /**
-   * 从账户字段读取 dailyQuota / dailyUsage（通用降级方案）
-   * 注意：部分平台 dailyUsage 字段可能不是实时值，最终以 AccountBalanceService 的本地统计为准
+   * 从CuentaCampoLeer dailyQuota / dailyUsage（通用Degradación方案）
+   * 注意：部分平台 dailyUsage Campo可能不是实时Valor，最终以 AccountBalanceService 的本地Estadística为准
    */
   readQuotaFromFields(account) {
     const dailyQuota = Number(account?.dailyQuota || 0)
     const dailyUsage = Number(account?.dailyUsage || 0)
 
-    // 无限制
+    // 无Límite
     if (!Number.isFinite(dailyQuota) || dailyQuota <= 0) {
       return {
         balance: null,
@@ -124,7 +124,7 @@ class BaseBalanceProvider {
     try {
       return await fn()
     } catch (error) {
-      this.logger.error(`余额 Provider 执行失败: ${this.platform}`, error)
+      this.logger.error(`余额 Provider EjecutarFalló: ${this.platform}`, error)
       return fallbackValue
     }
   }

@@ -12,7 +12,7 @@
               <i class="fas fa-user-circle text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              {{ isEdit ? '编辑账户' : '添加账户' }}
+              {{ isEdit ? 'EditarCuenta' : '添加Cuenta' }}
             </h3>
           </div>
           <button
@@ -40,7 +40,7 @@
               </div>
               <span
                 class="ml-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 sm:ml-2 sm:text-sm"
-                >基本信息</span
+                >基本Información</span
               >
             </div>
             <div class="h-0.5 w-4 bg-gray-300 sm:w-8" />
@@ -61,14 +61,14 @@
           </div>
         </div>
 
-        <!-- 步骤1: 基本信息和代理设置 -->
+        <!-- 步骤1: 基本Informacióny代理Configuración -->
         <div v-if="oauthStep === 1 && !isEdit">
           <div class="space-y-6">
             <div v-if="!isEdit">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >选择平台</label
+                >选择Plataforma</label
               >
-              <!-- 平台分组选择器 -->
+              <!-- Plataforma分组选择器 -->
               <div class="space-y-3">
                 <!-- 分组选择器 -->
                 <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -206,13 +206,13 @@
                   </div>
                 </div>
 
-                <!-- 子平台选择器 -->
+                <!-- 子Plataforma选择器 -->
                 <div
                   v-if="platformGroup"
                   class="animate-fadeIn rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
                 >
                   <p class="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
-                    选择具体平台类型：
+                    选择具体PlataformaTipo：
                   </p>
                   <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     <!-- Claude 子选项 -->
@@ -618,7 +618,7 @@
                     value="manual"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300"
-                    >手动输入 Access Token</span
+                    >手动Entrada Access Token</span
                   >
                 </label>
                 <label v-if="form.platform === 'droid'" class="flex cursor-pointer items-center">
@@ -629,7 +629,7 @@
                     value="apikey"
                   />
                   <span class="text-sm text-gray-700 dark:text-gray-300"
-                    >使用 API Key (支持多个)</span
+                    >使用 API Key (支持多 )</span
                   >
                 </label>
               </div>
@@ -637,13 +637,13 @@
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >账户名称</label
+                >CuentaNombre</label
               >
               <input
                 v-model="form.name"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.name }"
-                placeholder="为账户设置一个易识别的名称"
+                placeholder="paraCuentaConfiguración一 易识别Nombre"
                 required
                 type="text"
               />
@@ -654,19 +654,19 @@
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >描述 (可选)</label
+                >Descripción (可选)</label
               >
               <textarea
                 v-model="form.description"
                 class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="账户用途说明..."
+                placeholder="Cuenta用途Instrucciones..."
                 rows="3"
               />
             </div>
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >账户类型</label
+                >CuentaTipo</label
               >
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -676,7 +676,7 @@
                     type="radio"
                     value="shared"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">共享账户</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">共享Cuenta</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -685,7 +685,7 @@
                     type="radio"
                     value="dedicated"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">专属账户</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">专属Cuenta</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input
@@ -698,12 +698,12 @@
                 </label>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                共享账户：供所有API Key使用；专属账户：仅供特定API
+                共享Cuenta：供所有API Key使用；专属Cuenta：仅供特定API
                 Key使用；分组调度：加入分组供分组内调度
               </p>
             </div>
 
-            <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗，Gemini API 不需要 -->
+            <!-- 到期时间 - 仅enCrearCuenta时显示，Editar时使用独立过期时间Editar弹窗，Gemini API 不需要 -->
             <div v-if="!isEdit && form.platform !== 'gemini-api'">
               <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >到期时间 (可选)</label
@@ -738,11 +738,11 @@
                 </p>
                 <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-infinity mr-1" />
-                  账户永不过期
+                  Cuenta永不过期
                 </p>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                设置 Claude Max/Pro 订阅的到期时间，到期后将停止调度此账户
+                Configuración Claude Max/Pro 订阅到期时间，到期siguiente将停止调度此Cuenta
               </p>
             </div>
 
@@ -761,7 +761,7 @@
                       v-if="filteredGroups.length === 0"
                       class="text-sm text-gray-500 dark:text-gray-400"
                     >
-                      暂无可用分组
+                      Sin可用分组
                     </div>
                     <label
                       v-for="group in filteredGroups"
@@ -775,7 +775,7 @@
                         :value="group.id"
                       />
                       <span class="text-sm text-gray-700 dark:text-gray-200">
-                        {{ group.name }} ({{ group.memberCount || 0 }} 个成员)
+                        {{ group.name }} ({{ group.memberCount || 0 }}  成员)
                       </span>
                     </label>
                     <!-- 新建分组选项 -->
@@ -818,8 +818,8 @@
                   <div class="text-xs text-yellow-700">
                     <p class="mb-1 font-medium">Google Cloud/Workspace 账号需要提供项目 ID</p>
                     <p>
-                      某些 Google 账号（特别是绑定了 Google Cloud 的账号）会被识别为 Workspace
-                      账号，需要提供额外的项目 ID。
+                      某些 Google 账号（特别是绑定 Google Cloud 账号）会被识别para Workspace
+                      账号，需要提供额外项目 ID。
                     </p>
                     <div class="mt-2 rounded border border-yellow-300 bg-white p-2">
                       <p class="mb-1 font-medium">如何获取项目 ID：</p>
@@ -834,16 +834,16 @@
                           >
                         </li>
                         <li>
-                          复制<span class="font-semibold text-red-600">项目 ID（Project ID）</span
+                          Copiar<span class="font-semibold text-red-600">项目 ID（Project ID）</span
                           >，通常是字符串格式
                         </li>
                         <li class="text-red-600">
-                          ⚠️ 注意：要复制项目 ID（Project ID），不要复制项目编号（Project Number）！
+                          ⚠️ Nota：要Copiar项目 ID（Project ID），不要Copiar项目编号（Project Number）！
                         </li>
                       </ol>
                     </div>
                     <p class="mt-2">
-                      <strong>提示：</strong>如果您的账号是普通个人账号（未绑定 Google
+                      <strong>Sugerencia：</strong>如果您账号是普通 人账号（未绑定 Google
                       Cloud），请留空此字段。
                     </p>
                   </div>
@@ -853,10 +853,10 @@
 
             <!-- Bedrock 特定字段 -->
             <div v-if="form.platform === 'bedrock'" class="space-y-4">
-              <!-- 凭证类型选择器 -->
+              <!-- 凭证Tipo选择器 -->
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >凭证类型 *</label
+                  >凭证Tipo *</label
                 >
                 <div v-if="!isEdit" class="flex gap-4">
                   <label class="flex cursor-pointer items-center">
@@ -867,7 +867,7 @@
                       value="access_key"
                     />
                     <span class="text-sm text-gray-700 dark:text-gray-300"
-                      >AWS Access Key（访问密钥）</span
+                      >AWS Access Key（Clave de acceso）</span
                     >
                   </label>
                   <label class="flex cursor-pointer items-center">
@@ -878,7 +878,7 @@
                       value="bearer_token"
                     />
                     <span class="text-sm text-gray-700 dark:text-gray-300"
-                      >Bearer Token（长期令牌）</span
+                      >Bearer Token（长期Token）</span
                     >
                   </label>
                 </div>
@@ -892,7 +892,7 @@
                       value="access_key"
                     />
                     <span class="text-sm text-gray-700 dark:text-gray-300"
-                      >AWS Access Key（访问密钥）</span
+                      >AWS Access Key（Clave de acceso）</span
                     >
                   </label>
                   <label class="flex items-center opacity-60">
@@ -904,7 +904,7 @@
                       value="bearer_token"
                     />
                     <span class="text-sm text-gray-700 dark:text-gray-300"
-                      >Bearer Token（长期令牌）</span
+                      >Bearer Token（长期Token）</span
                     >
                   </label>
                 </div>
@@ -915,31 +915,31 @@
                     <i class="fas fa-info-circle mt-0.5 text-blue-600 dark:text-blue-400" />
                     <div class="text-xs text-blue-700 dark:text-blue-300">
                       <p v-if="form.credentialType === 'access_key'" class="font-medium">
-                        使用 AWS Access Key ID 和 Secret Access Key 进行身份验证（支持临时凭证）
+                        使用 AWS Access Key ID y Secret Access Key 进行身份验证（支持临时凭证）
                       </p>
                       <p v-else class="font-medium">
-                        使用 AWS Bedrock API Keys 生成的 Bearer Token
+                        使用 AWS Bedrock API Keys 生成 Bearer Token
                         进行身份验证，更简单、权限范围更小
                       </p>
                       <p v-if="isEdit" class="mt-1 text-xs italic">
-                        💡 编辑模式下凭证类型不可更改，如需切换类型请重新创建账户
+                        💡 Editar模式abajo凭证Tipo不可更改，如需切换Tipo请重新CrearCuenta
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- AWS Access Key 字段（仅在 access_key 模式下显示）-->
+              <!-- AWS Access Key 字段（仅en access_key 模式abajo显示）-->
               <div v-if="form.credentialType === 'access_key'">
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                    >AWS 访问密钥 ID {{ isEdit ? '' : '*' }}</label
+                    >AWS Clave de acceso ID {{ isEdit ? '' : '*' }}</label
                   >
                   <input
                     v-model="form.accessKeyId"
                     class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     :class="{ 'border-red-500': errors.accessKeyId }"
-                    :placeholder="isEdit ? '留空则保持原有凭证不变' : '请输入 AWS Access Key ID'"
+                    :placeholder="isEdit ? '留空则保持原有凭证不变' : 'Ingrese AWS Access Key ID'"
                     :required="!isEdit"
                     type="text"
                   />
@@ -947,20 +947,20 @@
                     {{ errors.accessKeyId }}
                   </p>
                   <p v-if="isEdit" class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    💡 编辑模式下，留空则保持原有 Access Key ID 不变
+                    💡 Editar模式abajo，留空则保持原有 Access Key ID 不变
                   </p>
                 </div>
 
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                    >AWS 秘密访问密钥 {{ isEdit ? '' : '*' }}</label
+                    >AWS 秘密Clave de acceso {{ isEdit ? '' : '*' }}</label
                   >
                   <input
                     v-model="form.secretAccessKey"
                     class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     :class="{ 'border-red-500': errors.secretAccessKey }"
                     :placeholder="
-                      isEdit ? '留空则保持原有凭证不变' : '请输入 AWS Secret Access Key'
+                      isEdit ? '留空则保持原有凭证不变' : 'Ingrese AWS Secret Access Key'
                     "
                     :required="!isEdit"
                     type="password"
@@ -969,13 +969,13 @@
                     {{ errors.secretAccessKey }}
                   </p>
                   <p v-if="isEdit" class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    💡 编辑模式下，留空则保持原有 Secret Access Key 不变
+                    💡 Editar模式abajo，留空则保持原有 Secret Access Key 不变
                   </p>
                 </div>
 
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                    >会话令牌 (可选)</label
+                    >会话Token (可选)</label
                   >
                   <input
                     v-model="form.sessionToken"
@@ -983,17 +983,17 @@
                     :placeholder="
                       isEdit
                         ? '留空则保持原有 Session Token 不变'
-                        : '如果使用临时凭证，请输入会话令牌'
+                        : '如果使用临时凭证，Ingrese会话Token'
                     "
                     type="password"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    仅在使用临时 AWS 凭证时需要填写
+                    仅en使用临时 AWS 凭证时需要填写
                   </p>
                 </div>
               </div>
 
-              <!-- Bearer Token 字段（仅在 bearer_token 模式下显示）-->
+              <!-- Bearer Token 字段（仅en bearer_token 模式abajo显示）-->
               <div v-if="form.credentialType === 'bearer_token'">
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                   >Bearer Token {{ isEdit ? '' : '*' }}</label
@@ -1003,7 +1003,7 @@
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.bearerToken }"
                   :placeholder="
-                    isEdit ? '留空则保持原有 Bearer Token 不变' : '请输入 AWS Bearer Token'
+                    isEdit ? '留空则保持原有 Bearer Token 不变' : 'Ingrese AWS Bearer Token'
                   "
                   :required="!isEdit"
                   type="password"
@@ -1012,7 +1012,7 @@
                   {{ errors.bearerToken }}
                 </p>
                 <p v-if="isEdit" class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  💡 编辑模式下，留空则保持原有 Bearer Token 不变
+                  💡 Editar模式abajo，留空则保持原有 Bearer Token 不变
                 </p>
                 <div
                   class="mt-2 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-700 dark:bg-green-900/30"
@@ -1020,9 +1020,9 @@
                   <div class="flex items-start gap-2">
                     <i class="fas fa-key mt-0.5 text-green-600 dark:text-green-400" />
                     <div class="text-xs text-green-700 dark:text-green-300">
-                      <p class="mb-1 font-medium">Bearer Token 说明：</p>
+                      <p class="mb-1 font-medium">Bearer Token Instrucciones：</p>
                       <ul class="list-inside list-disc space-y-1 text-xs">
-                        <li>输入 AWS Bedrock API Keys 生成的 Bearer Token</li>
+                        <li>Entrada AWS Bedrock API Keys 生成 Bearer Token</li>
                         <li>Bearer Token 仅限 Bedrock 服务访问，权限范围更小</li>
                         <li>相比 Access Key 更简单，无需 Secret Key</li>
                         <li>
@@ -1030,7 +1030,7 @@
                             class="text-green-600 underline dark:text-green-400"
                             href="https://aws.amazon.com/cn/blogs/machine-learning/accelerate-ai-development-with-amazon-bedrock-api-keys/"
                             target="_blank"
-                            >AWS 官方文档</a
+                            >AWS 官方Documentación</a
                           >
                         </li>
                       </ul>
@@ -1039,7 +1039,7 @@
                 </div>
               </div>
 
-              <!-- AWS 区域（两种凭证类型都需要）-->
+              <!-- AWS 区域（两种凭证Tipo都需要）-->
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                   >AWS 区域 *</label
@@ -1071,7 +1071,7 @@
                         <span>• eu-central-1 (法兰克福)</span>
                       </div>
                       <p class="mt-2 text-blue-600 dark:text-blue-400">
-                        💡 请输入完整的区域代码，如 us-east-1
+                        💡 Ingrese完整区域代码，如 us-east-1
                       </p>
                     </div>
                   </div>
@@ -1080,7 +1080,7 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >默认主模型 (可选)</label
+                  >默认主Modelo (可选)</label
                 >
                 <input
                   v-model="form.defaultModel"
@@ -1089,18 +1089,18 @@
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  留空将使用系统默认模型。支持 inference profile ID 或 ARN
+                  留空将使用系统默认Modelo。支持 inference profile ID o ARN
                 </p>
                 <div class="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
                   <div class="flex items-start gap-2">
                     <i class="fas fa-info-circle mt-0.5 text-amber-600" />
                     <div class="text-xs text-amber-700">
-                      <p class="mb-1 font-medium">Bedrock 模型配置说明：</p>
+                      <p class="mb-1 font-medium">Bedrock Modelo配置Instrucciones：</p>
                       <ul class="list-inside list-disc space-y-1 text-xs">
                         <li>支持 Inference Profile ID（推荐）</li>
                         <li>支持 Application Inference Profile ARN</li>
-                        <li>常用模型：us.anthropic.claude-sonnet-4-20250514-v1:0</li>
-                        <li>留空将使用系统配置的默认模型</li>
+                        <li>常用Modelo：us.anthropic.claude-sonnet-4-20250514-v1:0</li>
+                        <li>留空将使用系统配置默认Modelo</li>
                       </ul>
                     </div>
                   </div>
@@ -1109,7 +1109,7 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >小快速模型 (可选)</label
+                  >小快速Modelo (可选)</label
                 >
                 <input
                   v-model="form.smallFastModel"
@@ -1118,7 +1118,7 @@
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  用于快速响应的轻量级模型，留空将使用系统默认
+                  para快速响应轻量级Modelo，留空将使用系统默认
                 </p>
               </div>
             </div>
@@ -1141,7 +1141,7 @@
                   {{ errors.azureEndpoint }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Azure OpenAI 资源的终结点 URL，格式：https://your-resource.openai.azure.com
+                  Azure OpenAI 资源终结点 URL，格式：https://your-resource.openai.azure.com
                 </p>
               </div>
 
@@ -1162,7 +1162,7 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >部署名称 *</label
+                  >部署Nombre *</label
                 >
                 <input
                   v-model="form.deploymentName"
@@ -1176,7 +1176,7 @@
                   {{ errors.deploymentName }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  在 Azure OpenAI Studio 中创建的部署名称
+                  en Azure OpenAI Studio enCrear部署Nombre
                 </p>
               </div>
 
@@ -1188,7 +1188,7 @@
                   v-model="form.apiKey"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKey }"
-                  placeholder="请输入 Azure OpenAI API Key"
+                  placeholder="Ingrese Azure OpenAI API Key"
                   required
                   type="password"
                 />
@@ -1196,13 +1196,13 @@
                   {{ errors.apiKey }}
                 </p>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  从 Azure 门户获取的 API 密钥
+                  de Azure 门户获取 API Clave
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >支持的模型</label
+                  >支持Modelo</label
                 >
                 <div class="flex flex-wrap gap-2">
                   <label
@@ -1230,7 +1230,7 @@
                   </label>
                 </div>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  选择此部署支持的模型类型
+                  选择此部署支持ModeloTipo
                 </p>
               </div>
             </div>
@@ -1247,10 +1247,10 @@
                       class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">启用限流机制</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Habilitar限流机制</span>
                   </label>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    启用后，当账号返回429错误时将暂停调度一段时间
+                    Habilitarsiguiente，当账号返回429Error时将暂停调度一段时间
                   </p>
                 </div>
 
@@ -1266,13 +1266,13 @@
                     type="number"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    账号被限流后暂停调度的时间（分钟）
+                    账号被限流siguiente暂停调度时间（分钟）
                   </p>
                 </div>
               </div>
             </div>
 
-            <!-- Claude Console 和 CCR 特定字段 -->
+            <!-- Claude Console y CCR 特定字段 -->
             <div
               v-if="(form.platform === 'claude-console' || form.platform === 'ccr') && !isEdit"
               class="space-y-4"
@@ -1302,7 +1302,7 @@
                   v-model="form.apiKey"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKey }"
-                  placeholder="请输入API Key"
+                  placeholder="IngreseAPI Key"
                   required
                   type="password"
                 />
@@ -1315,24 +1315,24 @@
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    每日额度限制 ($)
+                    每日额度Limitar ($)
                   </label>
                   <input
                     v-model.number="form.dailyQuota"
                     class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                     min="0"
-                    placeholder="0 表示不限制"
+                    placeholder="0 表示不Límite"
                     step="0.01"
                     type="number"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    设置每日使用额度，0 表示不限制
+                    Configuración每日使用额度，0 表示不Límite
                   </p>
                 </div>
 
                 <div>
                   <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    额度重置时间
+                    额度Restablecer时间
                   </label>
                   <input
                     v-model="form.quotaResetTime"
@@ -1341,7 +1341,7 @@
                     type="time"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    每日自动重置额度的时间
+                    每日自动Restablecer额度时间
                   </p>
                 </div>
               </div>
@@ -1355,17 +1355,17 @@
                   v-model.number="form.maxConcurrentTasks"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   min="0"
-                  placeholder="0 表示不限制"
+                  placeholder="0 表示不Límite"
                   type="number"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  限制该账户的并发请求数量，0 表示不限制
+                  Límite该Cuenta并发Solicitud数量，0 表示不Límite
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >模型限制 (可选)</label
+                  >Límite de modelos (可选)</label
                 >
 
                 <!-- 模式切换 -->
@@ -1381,7 +1381,7 @@
                     @click="modelRestrictionMode = 'whitelist'"
                   >
                     <i class="fas fa-check-circle mr-2" />
-                    模型白名单
+                    Modelo白名单
                   </button>
                   <button
                     class="flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all"
@@ -1394,7 +1394,7 @@
                     @click="modelRestrictionMode = 'mapping'"
                   >
                     <i class="fas fa-random mr-2" />
-                    模型映射
+                    Modelo映射
                   </button>
                 </div>
 
@@ -1403,11 +1403,11 @@
                   <div class="mb-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/30">
                     <p class="text-xs text-blue-700 dark:text-blue-400">
                       <i class="fas fa-info-circle mr-1" />
-                      选择允许使用此账户的模型。留空表示支持所有模型。
+                      选择允许使用此CuentaModelo。留空表示支持Todos los modelos。
                     </p>
                   </div>
 
-                  <!-- 模型复选框列表 -->
+                  <!-- Modelo复选框列表 -->
                   <div class="mb-3 grid grid-cols-2 gap-2">
                     <label
                       v-for="model in commonModels"
@@ -1432,8 +1432,8 @@
                   </div>
 
                   <p class="text-xs text-gray-500 dark:text-gray-400">
-                    已选择 {{ allowedModels.length }} 个模型
-                    <span v-if="allowedModels.length === 0">（支持所有模型）</span>
+                    已选择 {{ allowedModels.length }}  Modelo
+                    <span v-if="allowedModels.length === 0">（支持Todos los modelos）</span>
                   </p>
                 </div>
 
@@ -1442,11 +1442,11 @@
                   <div class="mb-3 rounded-lg bg-purple-50 p-3 dark:bg-purple-900/30">
                     <p class="text-xs text-purple-700 dark:text-purple-400">
                       <i class="fas fa-info-circle mr-1" />
-                      配置模型映射关系。左侧是客户端请求的模型，右侧是实际发送给API的模型。
+                      配置Modelo映射关系。izquierda侧是客户端SolicitudModelo，derecha侧是实际发送给APIModelo。
                     </p>
                   </div>
 
-                  <!-- 模型映射表 -->
+                  <!-- Modelo映射表 -->
                   <div class="mb-3 space-y-2">
                     <div
                       v-for="(mapping, index) in modelMappings"
@@ -1456,14 +1456,14 @@
                       <input
                         v-model="mapping.from"
                         class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                        placeholder="原始模型名称"
+                        placeholder="原始Nombre del modelo"
                         type="text"
                       />
                       <i class="fas fa-arrow-right text-gray-400 dark:text-gray-500" />
                       <input
                         v-model="mapping.to"
                         class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                        placeholder="映射后的模型名称"
+                        placeholder="映射siguienteNombre del modelo"
                         type="text"
                       />
                       <button
@@ -1483,7 +1483,7 @@
                     @click="addModelMapping"
                   >
                     <i class="fas fa-plus mr-2" />
-                    添加模型映射
+                    添加Modelo映射
                   </button>
 
                   <!-- 快捷添加按钮 -->
@@ -1585,7 +1585,7 @@
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  留空时将自动使用客户端的 User-Agent，仅在需要固定特定 UA 时填写
+                  留空时将自动使用客户端 User-Agent，仅en需要固定特定 UA 时填写
                 </p>
               </div>
 
@@ -1600,10 +1600,10 @@
                       class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700"
                       type="checkbox"
                     />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">启用限流机制</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Habilitar限流机制</span>
                   </label>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    启用后，当账号返回429错误时将暂停调度一段时间
+                    Habilitarsiguiente，当账号返回429Error时将暂停调度一段时间
                   </p>
                 </div>
 
@@ -1619,7 +1619,7 @@
                     type="number"
                   />
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    账号被限流后暂停调度的时间（分钟）
+                    账号被限流siguiente暂停调度时间（分钟）
                   </p>
                 </div>
               </div>
@@ -1639,13 +1639,13 @@
                   type="url"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  第三方 OpenAI 兼容 API 的基础地址，不要包含具体路径
+                  第三方 OpenAI 兼容 API 基础地址，不要包含具体路径
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 密钥 *</label
+                  >API Clave *</label
                 >
                 <div class="relative">
                   <input
@@ -1664,7 +1664,7 @@
                   </button>
                 </div>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  第三方服务提供的 API 密钥
+                  第三方服务提供 API Clave
                 </p>
               </div>
 
@@ -1675,11 +1675,11 @@
                 <input
                   v-model="form.userAgent"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="留空则透传原始请求的 User-Agent"
+                  placeholder="留空则透传原始Solicitud User-Agent"
                   type="text"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  可选项。如果设置，所有请求将使用此 User-Agent；否则透传客户端的 User-Agent
+                  可选项。如果Configuración，所有Solicitud将使用此 User-Agent；否则透传客户端 User-Agent
                 </p>
               </div>
 
@@ -1701,7 +1701,7 @@
                   type="url"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  填写 API 基础地址（可包含路径前缀），系统会自动拼接
+                  填写 API 基础地址（可包含路径anterior缀），系统会自动拼接
                   <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                     >/v1beta/models/{model}:generateContent</code
                   >
@@ -1711,7 +1711,7 @@
                   <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                     >https://generativelanguage.googleapis.com</code
                   >
-                  | 上游为 CRS:
+                  | arriba游para CRS:
                   <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                     >https://your-crs.com/gemini</code
                   >
@@ -1720,7 +1720,7 @@
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >API 密钥 *</label
+                  >API Clave *</label
                 >
                 <div class="relative">
                   <input
@@ -1739,15 +1739,15 @@
                   </button>
                 </div>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  从 Google AI Studio 获取的 API 密钥
+                  de Google AI Studio 获取 API Clave
                 </p>
               </div>
             </div>
 
-            <!-- Claude 订阅类型选择 -->
+            <!-- Claude 订阅Tipo选择 -->
             <div v-if="form.platform === 'claude'">
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >订阅类型</label
+                >订阅Tipo</label
               >
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -1771,11 +1771,11 @@
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <i class="fas fa-info-circle mr-1" />
-                Pro 账号不支持 Claude Opus 4 模型
+                Pro 账号不支持 Claude Opus 4 Modelo
               </p>
             </div>
 
-            <!-- Claude 5小时限制自动停止调度选项 -->
+            <!-- Claude 5小时Límite自动停止调度选项 -->
             <div v-if="form.platform === 'claude'" class="mt-4">
               <label class="flex items-start">
                 <input
@@ -1785,10 +1785,10 @@
                 />
                 <div class="ml-3">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    5小时使用量接近限制时自动停止调度
+                    5小时使用量接近Límite时自动停止调度
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    当系统检测到账户接近5小时使用限制时，自动暂停调度该账户。进入新的时间窗口后会自动恢复调度。
+                    当系统检测到Cuenta接近5小时使用Límite时，自动暂停调度该Cuenta。进入新时间窗口siguiente会自动恢复调度。
                   </p>
                 </div>
               </label>
@@ -1807,12 +1807,12 @@
                     使用统一 Claude Code 版本
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    开启后将使用从真实 Claude Code 客户端捕获的统一 User-Agent，提高兼容性
+                    开启siguiente将使用de真实 Claude Code 客户端捕获统一 User-Agent，提高兼容性
                   </p>
                   <div v-if="unifiedUserAgent" class="mt-1">
                     <div class="flex items-center justify-between">
                       <p class="text-xs text-green-600 dark:text-green-400">
-                        💡 当前统一版本：{{ unifiedUserAgent }}
+                        💡 当anterior统一版本：{{ unifiedUserAgent }}
                       </p>
                       <button
                         class="ml-2 text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
@@ -1822,17 +1822,17 @@
                       >
                         <i v-if="!clearingCache" class="fas fa-trash-alt mr-1"></i>
                         <div v-else class="loading-spinner mr-1"></div>
-                        {{ clearingCache ? '清除中...' : '清除缓存' }}
+                        {{ clearingCache ? '清除en...' : '清除Caché' }}
                       </button>
                     </div>
                   </div>
                   <div v-else class="mt-1">
                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                      ⏳ 等待从 Claude Code 客户端捕获 User-Agent
+                      ⏳ 等待de Claude Code 客户端捕获 User-Agent
                     </p>
                     <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                      💡 提示：如果长时间未能捕获，请确认有 Claude Code 客户端正在使用此账户，
-                      或联系开发者检查 User-Agent 格式是否发生变化
+                      💡 Sugerencia：如果长时间未能捕获，请Confirmar有 Claude Code 客户端正en使用此Cuenta，
+                      o联系开发者检查 User-Agent 格式是否发生变化
                     </p>
                   </div>
                 </div>
@@ -1850,10 +1850,10 @@
                 />
                 <div class="ml-3 flex-1">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    使用统一的客户端标识
+                    使用统一客户端标识
                   </span>
                   <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    开启后将使用固定的客户端标识，使所有请求看起来来自同一个客户端，减少特征
+                    开启siguiente将使用固定客户端标识，使所有Solicitud看起来来自同一 客户端，减少特征
                   </p>
                   <div v-if="form.useUnifiedClientId" class="mt-3">
                     <div
@@ -1889,7 +1889,7 @@
                       </div>
                       <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                         <i class="fas fa-info-circle mr-1 text-blue-500" />
-                        此ID将替换请求中的user_id客户端部分，保留session部分用于粘性会话
+                        此ID将替换Solicitudenuser_id客户端部分，保留session部分para粘性会话
                       </p>
                     </div>
                   </div>
@@ -1897,7 +1897,7 @@
               </label>
             </div>
 
-            <!-- 所有平台的优先级设置 -->
+            <!-- 所有Plataforma优先级Configuración -->
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >调度优先级 (1-100)</label
@@ -1915,7 +1915,7 @@
               </p>
             </div>
 
-            <!-- 手动输入 Token 字段 -->
+            <!-- 手动Entrada Token 字段 -->
             <div
               v-if="
                 form.addType === 'manual' &&
@@ -1935,51 +1935,51 @@
                 </div>
                 <div>
                   <h5 class="mb-2 font-semibold text-blue-900 dark:text-blue-300">
-                    手动输入 Token
+                    手动Entrada Token
                   </h5>
                   <p
                     v-if="form.platform === 'claude'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 Claude Access Token。如果您有 Refresh
-                    Token，建议也一并填写以支持自动刷新。
+                    IngreseVálido Claude Access Token。如果您有 Refresh
+                    Token，建议也一并填写以支持自动Actualizar。
                   </p>
                   <p
                     v-else-if="form.platform === 'gemini' || form.platform === 'gemini-antigravity'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 Gemini Access Token。如果您有 Refresh
-                    Token，建议也一并填写以支持自动刷新。
+                    IngreseVálido Gemini Access Token。如果您有 Refresh
+                    Token，建议也一并填写以支持自动Actualizar。
                   </p>
                   <p
                     v-else-if="form.platform === 'openai'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 OpenAI Access Token。如果您有 Refresh
-                    Token，建议也一并填写以支持自动刷新。
+                    IngreseVálido OpenAI Access Token。如果您有 Refresh
+                    Token，建议也一并填写以支持自动Actualizar。
                   </p>
                   <p
                     v-else-if="form.platform === 'droid'"
                     class="mb-2 text-sm text-blue-800 dark:text-blue-300"
                   >
-                    请输入有效的 Droid Access Token，并同时提供 Refresh Token 以支持自动刷新。
+                    IngreseVálido Droid Access Token，并同时提供 Refresh Token 以支持自动Actualizar。
                   </p>
                   <div
                     class="mb-2 mt-2 rounded-lg border border-blue-300 bg-white/80 p-3 dark:border-blue-600 dark:bg-gray-800/80"
                   >
                     <p class="mb-1 text-sm font-medium text-blue-900 dark:text-blue-300">
                       <i class="fas fa-folder-open mr-1" />
-                      获取 Access Token 的方法：
+                      获取 Access Token 方法：
                     </p>
                     <p
                       v-if="form.platform === 'claude'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已登录 Claude Code 的机器上获取
+                      请de已Iniciar sesión Claude Code 机器arriba获取
                       <code class="rounded bg-blue-100 px-1 py-0.5 font-mono dark:bg-blue-900/50"
                         >~/.claude/.credentials.json</code
                       >
-                      文件中的凭证， 请勿使用 Claude 官网 API Keys 页面的密钥。
+                      文件en凭证， 请勿使用 Claude 官网 API Keys 页面Clave。
                     </p>
                     <p
                       v-else-if="
@@ -1987,24 +1987,24 @@
                       "
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已登录 Gemini CLI 的机器上获取
+                      请de已Iniciar sesión Gemini CLI 机器arriba获取
                       <code class="rounded bg-blue-100 px-1 py-0.5 font-mono dark:bg-blue-900/50"
                         >~/.config/gemini/credentials.json</code
                       >
-                      文件中的凭证。
+                      文件en凭证。
                     </p>
                     <p
                       v-else-if="form.platform === 'openai'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已登录 OpenAI 账户的机器上获取认证凭证， 或通过 OAuth 授权流程获取 Access
+                      请de已Iniciar sesión OpenAI Cuenta机器arriba获取认证凭证， o通过 OAuth 授权流程获取 Access
                       Token。
                     </p>
                     <p
                       v-else-if="form.platform === 'droid'"
                       class="text-xs text-blue-800 dark:text-blue-300"
                     >
-                      请从已完成授权的 Droid CLI 或 Factory.ai 导出的凭证中获取 Access Token 与
+                      请de已完成授权 Droid CLI o Factory.ai Exportar凭证en获取 Access Token 与
                       Refresh Token。
                     </p>
                   </div>
@@ -2012,10 +2012,10 @@
                     v-if="form.platform !== 'droid'"
                     class="text-xs text-blue-600 dark:text-blue-400"
                   >
-                    💡 如果未填写 Refresh Token，Token 过期后需要手动更新。
+                    💡 如果未填写 Refresh Token，Token 过期siguiente需要手动Actualizar。
                   </p>
                   <p v-else class="text-xs text-red-600 dark:text-red-400">
-                    ⚠️ Droid 账户必须填写 Refresh Token，缺失将导致无法自动刷新 Access Token。
+                    ⚠️ Droid Cuenta必须填写 Refresh Token，缺失将导致无法自动Actualizar Access Token。
                   </p>
                 </div>
               </div>
@@ -2044,7 +2044,7 @@
                   v-model="form.accessToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.accessToken }"
-                  placeholder="请输入 Access Token..."
+                  placeholder="Ingrese Access Token..."
                   required
                   rows="4"
                 />
@@ -2061,7 +2061,7 @@
                   v-model="form.refreshToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.refreshToken }"
-                  placeholder="请输入 Refresh Token（必填）..."
+                  placeholder="Ingrese Refresh Token（必填）..."
                   required
                   rows="4"
                 />
@@ -2071,10 +2071,10 @@
                 <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-info-circle mr-1" />
                   <template v-if="form.platform === 'openai'">
-                    系统将使用 Refresh Token 自动获取 Access Token 和用户信息
+                    系统将使用 Refresh Token 自动获取 Access Token yUsuarioInformación
                   </template>
                   <template v-else>
-                    系统将使用 Refresh Token 自动刷新 Factory.ai 访问令牌，确保账户保持可用。
+                    系统将使用 Refresh Token 自动Actualizar Factory.ai 访问Token，确保Cuenta保持可用。
                   </template>
                 </p>
               </div>
@@ -2086,13 +2086,13 @@
                 <textarea
                   v-model="form.refreshToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="请输入 Refresh Token..."
+                  placeholder="Ingrese Refresh Token..."
                   rows="4"
                 />
               </div>
             </div>
 
-            <!-- API Key 模式输入 -->
+            <!-- API Key 模式Entrada -->
             <div
               v-if="form.addType === 'apikey' && form.platform === 'droid'"
               class="space-y-4 rounded-lg border border-purple-200 bg-purple-50 p-4 dark:border-purple-700 dark:bg-purple-900/30"
@@ -2108,8 +2108,8 @@
                     使用 API Key 调度 Droid
                   </h5>
                   <p class="text-sm text-purple-800 dark:text-purple-200">
-                    请填写一个或多个 Factory.ai API
-                    Key，系统会自动在请求时随机挑选并结合会话哈希维持粘性，确保对话上下文保持稳定。
+                    请填写一 o多  Factory.ai API
+                    Key，系统会自动enSolicitud时随机挑选并结合会话哈希维持粘性，确保对话arribaabajo文保持稳定。
                   </p>
                 </div>
               </div>
@@ -2122,7 +2122,7 @@
                   v-model="form.apiKeysInput"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKeys }"
-                  placeholder="每行一个 API Key，可粘贴多行"
+                  placeholder="每行一  API Key，可Pegar多行"
                   required
                   rows="6"
                 />
@@ -2131,26 +2131,26 @@
                 </p>
                 <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <i class="fas fa-info-circle mr-1" />
-                  建议为每条 Key 提供独立额度；系统会自动去重并忽略空白行。
+                  建议para每registros Key 提供独立额度；系统会自动去重并忽略空白行。
                 </p>
               </div>
 
               <div
                 class="rounded-lg border border-purple-200 bg-white/70 p-3 text-xs text-purple-800 dark:border-purple-700 dark:bg-purple-800/20 dark:text-purple-100"
               >
-                <p class="font-medium"><i class="fas fa-random mr-1" />分配策略说明</p>
+                <p class="font-medium"><i class="fas fa-random mr-1" />分配策略Instrucciones</p>
                 <ul class="mt-1 list-disc space-y-1 pl-4">
-                  <li>新会话将随机命中一个 Key，并在会话有效期内保持粘性。</li>
-                  <li>若某 Key 失效，会自动切换到剩余可用 Key，最大化成功率。</li>
+                  <li>新会话将随机命en一 claves，并en会话Válido期内保持粘性。</li>
+                  <li>若某 Key 失效，会自动切换到剩余可用 Key，最大化Exitoso率。</li>
                   <li>
-                    若上游返回 4xx 错误码，该 Key 会被自动标记为异常；全部 Key
-                    异常后账号将暂停调度。
+                    若arriba游返回 4xx Error码，该 Key 会被自动标记para异常；全部 Key
+                    异常siguiente账号将暂停调度。
                   </li>
                 </ul>
               </div>
             </div>
 
-            <!-- 代理设置 -->
+            <!-- 代理Configuración -->
             <ProxyConfig v-model="form.proxy" />
 
             <div class="flex gap-3 pt-4">
@@ -2159,7 +2159,7 @@
                 type="button"
                 @click="$emit('close')"
               >
-                取消
+                Cancelar
               </button>
               <button
                 v-if="
@@ -2176,7 +2176,7 @@
                 type="button"
                 @click="nextStep"
               >
-                下一步
+                abajo一步
               </button>
               <button
                 v-else
@@ -2186,7 +2186,7 @@
                 @click="createAccount"
               >
                 <div v-if="loading" class="loading-spinner mr-2" />
-                {{ loading ? '创建中...' : '创建' }}
+                {{ loading ? 'Crearen...' : 'Crear' }}
               </button>
             </div>
           </div>
@@ -2219,7 +2219,7 @@
                     Claude Setup Token 授权
                   </h4>
                   <p class="mb-4 text-sm text-blue-800 dark:text-blue-300">
-                    请按照以下步骤通过 Setup Token 完成 Claude 账户的授权：
+                    请按照以abajo步骤通过 Setup Token 完成 Claude Cuenta授权：
                   </p>
 
                   <div class="space-y-4">
@@ -2235,7 +2235,7 @@
                         </div>
                         <div class="flex-1">
                           <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
-                            点击下方按钮生成授权链接
+                            点击abajo方按钮生成授权链接
                           </p>
                           <button
                             v-if="!setupTokenAuthUrl"
@@ -2245,7 +2245,7 @@
                           >
                             <i v-if="!setupTokenLoading" class="fas fa-link mr-2" />
                             <div v-else class="loading-spinner mr-2" />
-                            {{ setupTokenLoading ? '生成中...' : '生成 Setup Token 授权链接' }}
+                            {{ setupTokenLoading ? '生成en...' : '生成 Setup Token 授权链接' }}
                           </button>
                           <div v-else class="space-y-3">
                             <div class="flex items-center gap-2">
@@ -2257,7 +2257,7 @@
                               />
                               <button
                                 class="rounded-lg bg-gray-100 px-3 py-2 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                title="复制链接"
+                                title="Copiar链接"
                                 @click="copySetupTokenAuthUrl"
                               >
                                 <i
@@ -2290,25 +2290,25 @@
                         </div>
                         <div class="flex-1">
                           <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
-                            在浏览器中打开链接并完成授权
+                            en浏览器en打开链接并完成授权
                           </p>
                           <p class="mb-2 text-sm text-blue-700 dark:text-blue-300">
-                            请在新标签页中打开授权链接，登录您的 Claude 账户并授权 Claude Code。
+                            请en新Etiqueta页en打开授权链接，Iniciar sesión您 Claude Cuenta并授权 Claude Code。
                           </p>
                           <div
                             class="rounded border border-yellow-300 bg-yellow-50 p-3 dark:border-yellow-700 dark:bg-yellow-900/30"
                           >
                             <p class="text-xs text-yellow-800 dark:text-yellow-300">
                               <i class="fas fa-exclamation-triangle mr-1" />
-                              <strong>注意：</strong
-                              >如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
+                              <strong>Nota：</strong
+                              >如果您Configuración代理，请确保浏览器也使用相同代理访问授权页面。
                             </p>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <!-- 步骤3: 输入授权码 -->
+                    <!-- 步骤3: Entrada授权码 -->
                     <div
                       class="rounded-lg border border-blue-300 bg-white/80 p-4 dark:border-blue-600 dark:bg-gray-800/80"
                     >
@@ -2320,10 +2320,10 @@
                         </div>
                         <div class="flex-1">
                           <p class="mb-2 font-medium text-blue-900 dark:text-blue-200">
-                            输入 Authorization Code
+                            Entrada Authorization Code
                           </p>
                           <p class="mb-3 text-sm text-blue-700 dark:text-blue-300">
-                            授权完成后，从返回页面复制 Authorization Code，并粘贴到下方输入框：
+                            授权完成siguiente，de返回页面Copiar Authorization Code，并Pegar到abajo方Entrada框：
                           </p>
                           <div class="space-y-3">
                             <div>
@@ -2335,13 +2335,13 @@
                               <textarea
                                 v-model="setupTokenAuthCode"
                                 class="form-input w-full resize-none border-gray-300 font-mono text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                                placeholder="粘贴从Claude Code授权页面获取的Authorization Code..."
+                                placeholder="PegardeClaude Code授权页面获取Authorization Code..."
                                 rows="3"
                               />
                             </div>
                             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                               <i class="fas fa-info-circle mr-1" />
-                              请粘贴从Claude Code授权页面复制的Authorization Code
+                              请PegardeClaude Code授权页面CopiarAuthorization Code
                             </p>
                           </div>
                         </div>
@@ -2359,7 +2359,7 @@
               type="button"
               @click="oauthStep = 1"
             >
-              上一步
+              arriba一步
             </button>
             <button
               class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -2368,22 +2368,22 @@
               @click="exchangeSetupTokenCode"
             >
               <div v-if="setupTokenExchanging" class="loading-spinner mr-2" />
-              {{ setupTokenExchanging ? '验证中...' : '完成授权' }}
+              {{ setupTokenExchanging ? '验证en...' : '完成授权' }}
             </button>
           </div>
         </div>
 
-        <!-- 编辑模式 -->
+        <!-- Editar模式 -->
         <div v-if="isEdit" class="space-y-6">
-          <!-- 基本信息 -->
+          <!-- 基本Información -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >账户名称</label
+              >CuentaNombre</label
             >
             <input
               v-model="form.name"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="为账户设置一个易识别的名称"
+              placeholder="paraCuentaConfiguración一 易识别Nombre"
               required
               type="text"
             />
@@ -2391,19 +2391,19 @@
 
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >描述 (可选)</label
+              >Descripción (可选)</label
             >
             <textarea
               v-model="form.description"
               class="form-input w-full resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="账户用途说明..."
+              placeholder="Cuenta用途Instrucciones..."
               rows="3"
             />
           </div>
 
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >账户类型</label
+              >CuentaTipo</label
             >
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
@@ -2413,7 +2413,7 @@
                   type="radio"
                   value="shared"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">共享账户</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">共享Cuenta</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
@@ -2422,7 +2422,7 @@
                   type="radio"
                   value="dedicated"
                 />
-                <span class="text-sm text-gray-700 dark:text-gray-300">专属账户</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">专属Cuenta</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input
@@ -2435,12 +2435,12 @@
               </label>
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              共享账户：供所有API Key使用；专属账户：仅供特定API
+              共享Cuenta：供所有API Key使用；专属Cuenta：仅供特定API
               Key使用；分组调度：加入分组供分组内调度
             </p>
           </div>
 
-          <!-- 到期时间 - 仅在创建账户时显示，编辑时使用独立的过期时间编辑弹窗 -->
+          <!-- 到期时间 - 仅enCrearCuenta时显示，Editar时使用独立过期时间Editar弹窗 -->
           <div v-if="!isEdit">
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
               >到期时间 (可选)</label
@@ -2475,11 +2475,11 @@
               </p>
               <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <i class="fas fa-infinity mr-1" />
-                账户永不过期
+                Cuenta永不过期
               </p>
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              设置 Claude Max/Pro 订阅的到期时间，到期后将停止调度此账户
+              Configuración Claude Max/Pro 订阅到期时间，到期siguiente将停止调度此Cuenta
             </p>
           </div>
 
@@ -2498,7 +2498,7 @@
                     v-if="filteredGroups.length === 0"
                     class="text-sm text-gray-500 dark:text-gray-400"
                   >
-                    暂无可用分组
+                    Sin可用分组
                   </div>
                   <label
                     v-for="group in filteredGroups"
@@ -2512,7 +2512,7 @@
                       :value="group.id"
                     />
                     <span class="text-sm text-gray-700 dark:text-gray-200">
-                      {{ group.name }} ({{ group.memberCount || 0 }} 个成员)
+                      {{ group.name }} ({{ group.memberCount || 0 }}  成员)
                     </span>
                   </label>
                   <!-- 新建分组选项 -->
@@ -2554,10 +2554,10 @@
             </p>
           </div>
 
-          <!-- Claude 订阅类型选择（编辑模式） -->
+          <!-- Claude 订阅Tipo选择（Editar模式） -->
           <div v-if="form.platform === 'claude'">
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >订阅类型</label
+              >订阅Tipo</label
             >
             <div class="flex gap-4">
               <label class="flex cursor-pointer items-center">
@@ -2581,11 +2581,11 @@
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
               <i class="fas fa-info-circle mr-1" />
-              Pro 账号不支持 Claude Opus 4 模型
+              Pro 账号不支持 Claude Opus 4 Modelo
             </p>
           </div>
 
-          <!-- Claude 5小时限制自动停止调度选项（编辑模式） -->
+          <!-- Claude 5小时Límite自动停止调度选项（Editar模式） -->
           <div v-if="form.platform === 'claude'" class="mt-4">
             <label class="flex items-start">
               <input
@@ -2595,16 +2595,16 @@
               />
               <div class="ml-3">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  5小时使用量接近限制时自动停止调度
+                  5小时使用量接近Límite时自动停止调度
                 </span>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  当系统检测到账户接近5小时使用限制时，自动暂停调度该账户。进入新的时间窗口后会自动恢复调度。
+                  当系统检测到Cuenta接近5小时使用Límite时，自动暂停调度该Cuenta。进入新时间窗口siguiente会自动恢复调度。
                 </p>
               </div>
             </label>
           </div>
 
-          <!-- Claude User-Agent 版本配置（编辑模式） -->
+          <!-- Claude User-Agent 版本配置（Editar模式） -->
           <div v-if="form.platform === 'claude'" class="mt-4">
             <label class="flex items-start">
               <input
@@ -2617,12 +2617,12 @@
                   使用统一 Claude Code 版本
                 </span>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  开启后将使用从真实 Claude Code 客户端捕获的统一 User-Agent，提高兼容性
+                  开启siguiente将使用de真实 Claude Code 客户端捕获统一 User-Agent，提高兼容性
                 </p>
                 <div v-if="unifiedUserAgent" class="mt-1">
                   <div class="flex items-center justify-between">
                     <p class="text-xs text-green-600 dark:text-green-400">
-                      💡 当前统一版本：{{ unifiedUserAgent }}
+                      💡 当anterior统一版本：{{ unifiedUserAgent }}
                     </p>
                     <button
                       class="ml-2 text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
@@ -2632,24 +2632,24 @@
                     >
                       <i v-if="!clearingCache" class="fas fa-trash-alt mr-1"></i>
                       <div v-else class="loading-spinner mr-1"></div>
-                      {{ clearingCache ? '清除中...' : '清除缓存' }}
+                      {{ clearingCache ? '清除en...' : '清除Caché' }}
                     </button>
                   </div>
                 </div>
                 <div v-else class="mt-1">
                   <p class="text-xs text-gray-500 dark:text-gray-400">
-                    ⏳ 等待从 Claude Code 客户端捕获 User-Agent
+                    ⏳ 等待de Claude Code 客户端捕获 User-Agent
                   </p>
                   <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                    💡 提示：如果长时间未能捕获，请确认有 Claude Code 客户端正在使用此账户，
-                    或联系开发者检查 User-Agent 格式是否发生变化
+                    💡 Sugerencia：如果长时间未能捕获，请Confirmar有 Claude Code 客户端正en使用此Cuenta，
+                    o联系开发者检查 User-Agent 格式是否发生变化
                   </p>
                 </div>
               </div>
             </label>
           </div>
 
-          <!-- Claude 统一客户端标识配置（编辑模式） -->
+          <!-- Claude 统一客户端标识配置（Editar模式） -->
           <div v-if="form.platform === 'claude'" class="mt-4">
             <label class="flex items-start">
               <input
@@ -2660,10 +2660,10 @@
               />
               <div class="ml-3 flex-1">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  使用统一的客户端标识
+                  使用统一客户端标识
                 </span>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  开启后将使用固定的客户端标识，使所有请求看起来来自同一个客户端，减少特征
+                  开启siguiente将使用固定客户端标识，使所有Solicitud看起来来自同一 客户端，减少特征
                 </p>
                 <div v-if="form.useUnifiedClientId" class="mt-3">
                   <div
@@ -2699,7 +2699,7 @@
                     </div>
                     <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                       <i class="fas fa-info-circle mr-1 text-blue-500" />
-                      此ID将替换请求中的user_id客户端部分，保留session部分用于粘性会话
+                      此ID将替换Solicitudenuser_id客户端部分，保留session部分para粘性会话
                     </p>
                   </div>
                 </div>
@@ -2707,7 +2707,7 @@
             </label>
           </div>
 
-          <!-- 所有平台的优先级设置（编辑模式） -->
+          <!-- 所有Plataforma优先级Configuración（Editar模式） -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
               >调度优先级 (1-100)</label
@@ -2725,7 +2725,7 @@
             </p>
           </div>
 
-          <!-- Claude Console 和 CCR 特定字段（编辑模式）-->
+          <!-- Claude Console y CCR 特定字段（Editar模式）-->
           <div
             v-if="form.platform === 'claude-console' || form.platform === 'ccr'"
             class="space-y-4"
@@ -2746,34 +2746,34 @@
               <input
                 v-model="form.apiKey"
                 class="form-input w-full"
-                placeholder="留空表示不更新"
+                placeholder="留空表示不Actualizar"
                 type="password"
               />
-              <p class="mt-1 text-xs text-gray-500">留空表示不更新 API Key</p>
+              <p class="mt-1 text-xs text-gray-500">留空表示不Actualizar API Key</p>
             </div>
 
             <!-- 额度管理字段 -->
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  每日额度限制 ($)
+                  每日额度Limitar ($)
                 </label>
                 <input
                   v-model.number="form.dailyQuota"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   min="0"
-                  placeholder="0 表示不限制"
+                  placeholder="0 表示不Límite"
                   step="0.01"
                   type="number"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  设置每日使用额度，0 表示不限制
+                  Configuración每日使用额度，0 表示不Límite
                 </p>
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  额度重置时间
+                  额度Restablecer时间
                 </label>
                 <input
                   v-model="form.quotaResetTime"
@@ -2781,18 +2781,18 @@
                   placeholder="00:00"
                   type="time"
                 />
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">每日自动重置额度的时间</p>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">每日自动Restablecer额度时间</p>
               </div>
             </div>
 
-            <!-- 当前使用情况（仅编辑模式显示） -->
+            <!-- 当anterior使用情况（仅Editar模式显示） -->
             <div
               v-if="isEdit && form.dailyQuota > 0"
               class="rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
             >
               <div class="mb-2 flex items-center justify-between">
                 <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  今日使用情况
+                  Hoy使用情况
                 </span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">
                   ${{ calculateCurrentUsage().toFixed(4) }} / ${{ form.dailyQuota.toFixed(2) }}
@@ -2821,7 +2821,7 @@
               </div>
             </div>
 
-            <!-- 并发控制字段（编辑模式）-->
+            <!-- 并发控制字段（Editar模式）-->
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 最大并发任务数
@@ -2830,17 +2830,17 @@
                 v-model.number="form.maxConcurrentTasks"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 min="0"
-                placeholder="0 表示不限制"
+                placeholder="0 表示不Límite"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                限制该账户的并发请求数量，0 表示不限制
+                Límite该Cuenta并发Solicitud数量，0 表示不Límite
               </p>
             </div>
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >模型限制 (可选)</label
+                >Límite de modelos (可选)</label
               >
 
               <!-- 模式切换 -->
@@ -2856,7 +2856,7 @@
                   @click="modelRestrictionMode = 'whitelist'"
                 >
                   <i class="fas fa-check-circle mr-2" />
-                  模型白名单
+                  Modelo白名单
                 </button>
                 <button
                   class="flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all"
@@ -2869,7 +2869,7 @@
                   @click="modelRestrictionMode = 'mapping'"
                 >
                   <i class="fas fa-random mr-2" />
-                  模型映射
+                  Modelo映射
                 </button>
               </div>
 
@@ -2878,11 +2878,11 @@
                 <div class="mb-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/30">
                   <p class="text-xs text-blue-700 dark:text-blue-400">
                     <i class="fas fa-info-circle mr-1" />
-                    选择允许使用此账户的模型。留空表示支持所有模型。
+                    选择允许使用此CuentaModelo。留空表示支持Todos los modelos。
                   </p>
                 </div>
 
-                <!-- 模型复选框列表 -->
+                <!-- Modelo复选框列表 -->
                 <div class="mb-3 grid grid-cols-2 gap-2">
                   <label
                     v-for="model in commonModels"
@@ -2907,8 +2907,8 @@
                 </div>
 
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  已选择 {{ allowedModels.length }} 个模型
-                  <span v-if="allowedModels.length === 0">（支持所有模型）</span>
+                  已选择 {{ allowedModels.length }}  Modelo
+                  <span v-if="allowedModels.length === 0">（支持Todos los modelos）</span>
                 </p>
               </div>
 
@@ -2917,11 +2917,11 @@
                 <div class="mb-3 rounded-lg bg-purple-50 p-3 dark:bg-purple-900/30">
                   <p class="text-xs text-purple-700 dark:text-purple-400">
                     <i class="fas fa-info-circle mr-1" />
-                    配置模型映射关系。左侧是客户端请求的模型，右侧是实际发送给API的模型。
+                    配置Modelo映射关系。izquierda侧是客户端SolicitudModelo，derecha侧是实际发送给APIModelo。
                   </p>
                 </div>
 
-                <!-- 模型映射表 -->
+                <!-- Modelo映射表 -->
                 <div class="mb-3 space-y-2">
                   <div
                     v-for="(mapping, index) in modelMappings"
@@ -2931,14 +2931,14 @@
                     <input
                       v-model="mapping.from"
                       class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                      placeholder="原始模型名称"
+                      placeholder="原始Nombre del modelo"
                       type="text"
                     />
                     <i class="fas fa-arrow-right text-gray-400 dark:text-gray-500" />
                     <input
                       v-model="mapping.to"
                       class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                      placeholder="映射后的模型名称"
+                      placeholder="映射siguienteNombre del modelo"
                       type="text"
                     />
                     <button
@@ -2958,7 +2958,7 @@
                   @click="addModelMapping"
                 >
                   <i class="fas fa-plus mr-2" />
-                  添加模型映射
+                  添加Modelo映射
                 </button>
 
                 <!-- 快捷添加按钮 -->
@@ -3060,7 +3060,7 @@
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500">
-                留空时将自动使用客户端的 User-Agent，仅在需要固定特定 UA 时填写
+                留空时将自动使用客户端 User-Agent，仅en需要固定特定 UA 时填写
               </p>
             </div>
 
@@ -3073,10 +3073,10 @@
                     class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200"
                     type="checkbox"
                   />
-                  <span class="text-sm text-gray-700">启用限流机制</span>
+                  <span class="text-sm text-gray-700">Habilitar限流机制</span>
                 </label>
                 <p class="mt-1 text-xs text-gray-500">
-                  启用后，当账号返回429错误时将暂停调度一段时间
+                  Habilitarsiguiente，当账号返回429Error时将暂停调度一段时间
                 </p>
               </div>
 
@@ -3090,12 +3090,12 @@
                   min="1"
                   type="number"
                 />
-                <p class="mt-1 text-xs text-gray-500">账号被限流后暂停调度的时间（分钟）</p>
+                <p class="mt-1 text-xs text-gray-500">账号被限流siguiente暂停调度时间（分钟）</p>
               </div>
             </div>
           </div>
 
-          <!-- OpenAI-Responses 特定字段（编辑模式）-->
+          <!-- OpenAI-Responses 特定字段（Editar模式）-->
           <div v-if="form.platform === 'openai-responses'" class="space-y-4">
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700">API 基础地址</label>
@@ -3108,12 +3108,12 @@
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700">API 密钥</label>
+              <label class="mb-3 block text-sm font-semibold text-gray-700">API Clave</label>
               <div class="relative">
                 <input
                   v-model="form.apiKey"
                   class="form-input w-full pr-10"
-                  placeholder="留空表示不更新"
+                  placeholder="留空表示不Actualizar"
                   :type="showApiKey ? 'text' : 'password'"
                 />
                 <button
@@ -3124,7 +3124,7 @@
                   <i :class="showApiKey ? 'fas fa-eye-slash' : 'fas fa-eye'" />
                 </button>
               </div>
-              <p class="mt-1 text-xs text-gray-500">留空表示不更新 API Key</p>
+              <p class="mt-1 text-xs text-gray-500">留空表示不Actualizar API Key</p>
             </div>
 
             <div>
@@ -3138,7 +3138,7 @@
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500">
-                留空时将自动使用客户端的 User-Agent，仅在需要固定特定 UA 时填写
+                留空时将自动使用客户端 User-Agent，仅en需要固定特定 UA 时填写
               </p>
             </div>
 
@@ -3149,20 +3149,20 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  每日额度限制 ($)
+                  每日额度Limitar ($)
                 </label>
                 <input
                   v-model.number="form.dailyQuota"
                   class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   min="0"
-                  placeholder="0 表示不限制"
+                  placeholder="0 表示不Límite"
                   step="0.01"
                   type="number"
                 />
               </div>
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  额度重置时间
+                  额度Restablecer时间
                 </label>
                 <input
                   v-model="form.quotaResetTime"
@@ -3181,16 +3181,16 @@
                 v-model.number="form.maxConcurrentTasks"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                 min="0"
-                placeholder="0 表示不限制"
+                placeholder="0 表示不Límite"
                 type="number"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                限制该账户的并发请求数量，0 表示不限制
+                Límite该Cuenta并发Solicitud数量，0 表示不Límite
               </p>
             </div>
           </div>
 
-          <!-- Gemini API 特定字段（编辑模式）-->
+          <!-- Gemini API 特定字段（Editar模式）-->
           <div v-if="form.platform === 'gemini-api'" class="space-y-4">
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
@@ -3203,7 +3203,7 @@
                 type="url"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                填写 API 基础地址（可包含路径前缀），系统会自动拼接
+                填写 API 基础地址（可包含路径anterior缀），系统会自动拼接
                 <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                   >/v1beta/models/{model}:generateContent</code
                 >
@@ -3213,7 +3213,7 @@
                 <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                   >https://generativelanguage.googleapis.com</code
                 >
-                | 上游为 CRS:
+                | arriba游para CRS:
                 <code class="rounded bg-gray-100 px-1 dark:bg-gray-600"
                   >https://your-crs.com/gemini</code
                 >
@@ -3222,13 +3222,13 @@
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >API 密钥</label
+                >API Clave</label
               >
               <div class="relative">
                 <input
                   v-model="form.apiKey"
                   class="form-input w-full border-gray-300 pr-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                  placeholder="留空表示不更新"
+                  placeholder="留空表示不Actualizar"
                   :type="showApiKey ? 'text' : 'password'"
                 />
                 <button
@@ -3239,32 +3239,32 @@
                   <i :class="showApiKey ? 'fas fa-eye-slash' : 'fas fa-eye'" />
                 </button>
               </div>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">留空表示不更新 API Key</p>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">留空表示不Actualizar API Key</p>
             </div>
           </div>
 
-          <!-- Bedrock 特定字段（编辑模式）-->
+          <!-- Bedrock 特定字段（Editar模式）-->
           <div v-if="form.platform === 'bedrock'" class="space-y-4">
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700">AWS 访问密钥 ID</label>
+              <label class="mb-3 block text-sm font-semibold text-gray-700">AWS Clave de acceso ID</label>
               <input
                 v-model="form.accessKeyId"
                 class="form-input w-full"
-                placeholder="留空表示不更新"
+                placeholder="留空表示不Actualizar"
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500">留空表示不更新 AWS Access Key ID</p>
+              <p class="mt-1 text-xs text-gray-500">留空表示不Actualizar AWS Access Key ID</p>
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700">AWS 秘密访问密钥</label>
+              <label class="mb-3 block text-sm font-semibold text-gray-700">AWS 秘密Clave de acceso</label>
               <input
                 v-model="form.secretAccessKey"
                 class="form-input w-full"
-                placeholder="留空表示不更新"
+                placeholder="留空表示不Actualizar"
                 type="password"
               />
-              <p class="mt-1 text-xs text-gray-500">留空表示不更新 AWS Secret Access Key</p>
+              <p class="mt-1 text-xs text-gray-500">留空表示不Actualizar AWS Secret Access Key</p>
             </div>
 
             <div>
@@ -3294,18 +3294,18 @@
             </div>
 
             <div>
-              <label class="mb-3 block text-sm font-semibold text-gray-700">会话令牌 (可选)</label>
+              <label class="mb-3 block text-sm font-semibold text-gray-700">会话Token (可选)</label>
               <input
                 v-model="form.sessionToken"
                 class="form-input w-full"
-                placeholder="留空表示不更新"
+                placeholder="留空表示不Actualizar"
                 type="password"
               />
             </div>
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700"
-                >默认主模型 (可选)</label
+                >默认主Modelo (可选)</label
               >
               <input
                 v-model="form.defaultModel"
@@ -3314,13 +3314,13 @@
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500">
-                留空将使用系统默认模型。支持 inference profile ID 或 ARN
+                留空将使用系统默认Modelo。支持 inference profile ID o ARN
               </p>
             </div>
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >小快速模型 (可选)</label
+                >小快速Modelo (可选)</label
               >
               <input
                 v-model="form.smallFastModel"
@@ -3328,7 +3328,7 @@
                 placeholder="例如：us.anthropic.claude-3-5-haiku-20241022-v1:0"
                 type="text"
               />
-              <p class="mt-1 text-xs text-gray-500">用于快速响应的轻量级模型，留空将使用系统默认</p>
+              <p class="mt-1 text-xs text-gray-500">para快速响应轻量级Modelo，留空将使用系统默认</p>
             </div>
 
             <div>
@@ -3340,10 +3340,10 @@
                     class="mr-2 rounded border-gray-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200"
                     type="checkbox"
                   />
-                  <span class="text-sm text-gray-700">启用限流机制</span>
+                  <span class="text-sm text-gray-700">Habilitar限流机制</span>
                 </label>
                 <p class="mt-1 text-xs text-gray-500">
-                  启用后，当账号返回429错误时将暂停调度一段时间
+                  Habilitarsiguiente，当账号返回429Error时将暂停调度一段时间
                 </p>
               </div>
 
@@ -3357,12 +3357,12 @@
                   min="1"
                   type="number"
                 />
-                <p class="mt-1 text-xs text-gray-500">账号被限流后暂停调度的时间（分钟）</p>
+                <p class="mt-1 text-xs text-gray-500">账号被限流siguiente暂停调度时间（分钟）</p>
               </div>
             </div>
           </div>
 
-          <!-- Azure OpenAI 特定字段（编辑模式）-->
+          <!-- Azure OpenAI 特定字段（Editar模式）-->
           <div v-if="form.platform === 'azure_openai'" class="space-y-4">
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
@@ -3397,7 +3397,7 @@
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >部署名称</label
+                >部署Nombre</label
               >
               <input
                 v-model="form.deploymentName"
@@ -3419,18 +3419,18 @@
                 v-model="form.apiKey"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 :class="{ 'border-red-500': errors.apiKey }"
-                placeholder="留空表示不更新"
+                placeholder="留空表示不Actualizar"
                 type="password"
               />
               <p v-if="errors.apiKey" class="mt-1 text-xs text-red-500">
                 {{ errors.apiKey }}
               </p>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">留空表示不更新 API Key</p>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">留空表示不Actualizar API Key</p>
             </div>
 
             <div>
               <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >支持的模型</label
+                >支持Modelo</label
               >
               <div class="flex flex-wrap gap-2">
                 <label
@@ -3457,11 +3457,11 @@
                   <span class="text-sm text-gray-700 dark:text-gray-300">{{ model }}</span>
                 </label>
               </div>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">选择此部署支持的模型类型</p>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">选择此部署支持ModeloTipo</p>
             </div>
           </div>
 
-          <!-- Token 更新 -->
+          <!-- Token Actualizar -->
           <div
             v-if="isEdit && isEditingDroidApiKey"
             class="rounded-lg border border-purple-200 bg-purple-50 p-4 dark:border-purple-700 dark:bg-purple-900/30"
@@ -3474,7 +3474,7 @@
               </div>
               <div class="flex-1">
                 <div class="mb-2 flex items-center justify-between">
-                  <h5 class="font-semibold text-purple-900 dark:text-purple-200">更新 API Key</h5>
+                  <h5 class="font-semibold text-purple-900 dark:text-purple-200">Actualizar API Key</h5>
                   <button
                     class="flex items-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
                     type="button"
@@ -3485,11 +3485,11 @@
                   </button>
                 </div>
                 <p class="mb-1 text-sm text-purple-800 dark:text-purple-200">
-                  当前已保存 <strong>{{ existingApiKeyCount }}</strong> 条 API Key。您可以追加新的
-                  Key，或通过下方模式快速覆盖、删除指定 Key。
+                  当anterior已Guardar <strong>{{ existingApiKeyCount }}</strong> registros API Key。您可以追加新
+                  Key，o通过abajo方模式快速覆盖、Eliminar指定 Key。
                 </p>
                 <p class="text-xs text-purple-700 dark:text-purple-300">
-                  留空表示保留现有 Key 不变；根据所选模式决定是追加、覆盖还是删除输入的 Key。
+                  留空表示保留现有 Key 不变；根据所选模式决定是追加、覆盖还是EliminarEntrada Key。
                 </p>
               </div>
             </div>
@@ -3497,13 +3497,13 @@
             <div class="space-y-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >新的 API Key 列表</label
+                  >新 API Key 列表</label
                 >
                 <textarea
                   v-model="form.apiKeysInput"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                   :class="{ 'border-red-500': errors.apiKeys }"
-                  placeholder="根据模式填写；每行一个 API Key"
+                  placeholder="根据模式填写；每行一  API Key"
                   rows="6"
                 />
                 <p v-if="errors.apiKeys" class="mt-1 text-xs text-red-500">
@@ -3514,7 +3514,7 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <span class="text-sm font-semibold text-purple-800 dark:text-purple-100"
-                    >API Key 更新模式</span
+                    >API Key Actualizar模式</span
                   >
                   <span class="text-xs text-purple-600 dark:text-purple-300">
                     {{ currentApiKeyModeLabel }}
@@ -3550,12 +3550,12 @@
               <div
                 class="rounded-lg border border-purple-200 bg-white/70 p-3 text-xs text-purple-800 dark:border-purple-700 dark:bg-purple-800/20 dark:text-purple-100"
               >
-                <p class="font-medium"><i class="fas fa-lightbulb mr-1" />小提示</p>
+                <p class="font-medium"><i class="fas fa-lightbulb mr-1" />小Sugerencia</p>
                 <ul class="mt-1 list-disc space-y-1 pl-4">
-                  <li>系统会为新的 Key 自动建立粘性映射，保持同一会话命中同一个 Key。</li>
-                  <li>追加模式会保留现有 Key 并在末尾追加新的 Key。</li>
-                  <li>覆盖模式会先清空旧 Key 再写入上方的新列表。</li>
-                  <li>删除模式会根据输入精准移除指定 Key，适合快速处理失效或被封禁的 Key。</li>
+                  <li>系统会para新 Key 自动建立粘性映射，保持同一会话命en同一 claves。</li>
+                  <li>追加模式会保留现有 Key 并en末尾追加新 Key。</li>
+                  <li>覆盖模式会先清空旧 Key 再写入arriba方新列表。</li>
+                  <li>Eliminar模式会根据Entrada精准移除指定 Key，适合快速处理失效o被封禁 Key。</li>
                 </ul>
               </div>
             </div>
@@ -3579,42 +3579,42 @@
                 <i class="fas fa-key text-sm text-white" />
               </div>
               <div>
-                <h5 class="mb-2 font-semibold text-amber-900 dark:text-amber-300">更新 Token</h5>
+                <h5 class="mb-2 font-semibold text-amber-900 dark:text-amber-300">Actualizar Token</h5>
                 <p class="mb-2 text-sm text-amber-800 dark:text-amber-300">
-                  可以更新 Access Token 和 Refresh Token。为了安全起见，不会显示当前的 Token 值。
+                  可以Actualizar Access Token y Refresh Token。para安全起见，不会显示当anterior Token 值。
                 </p>
-                <p class="text-xs text-amber-600 dark:text-amber-400">💡 留空表示不更新该字段。</p>
+                <p class="text-xs text-amber-600 dark:text-amber-400">💡 留空表示不Actualizar该字段。</p>
               </div>
             </div>
 
             <div class="space-y-4">
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >新的 Access Token</label
+                  >新 Access Token</label
                 >
                 <textarea
                   v-model="form.accessToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="留空表示不更新..."
+                  placeholder="留空表示不Actualizar..."
                   rows="4"
                 />
               </div>
 
               <div>
                 <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-                  >新的 Refresh Token</label
+                  >新 Refresh Token</label
                 >
                 <textarea
                   v-model="form.refreshToken"
                   class="form-input w-full resize-none border-gray-300 font-mono text-xs dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                  placeholder="留空表示不更新..."
+                  placeholder="留空表示不Actualizar..."
                   rows="4"
                 />
               </div>
             </div>
           </div>
 
-          <!-- 代理设置 -->
+          <!-- 代理Configuración -->
           <ProxyConfig v-model="form.proxy" />
 
           <div class="flex gap-3 pt-4">
@@ -3623,7 +3623,7 @@
               type="button"
               @click="$emit('close')"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -3632,14 +3632,14 @@
               @click="updateAccount"
             >
               <div v-if="loading" class="loading-spinner mr-2" />
-              {{ loading ? '更新中...' : '更新' }}
+              {{ loading ? 'Actualizaren...' : 'Actualizar' }}
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 确认弹窗 -->
+    <!-- Confirmar弹窗 -->
     <ConfirmModal
       :cancel-text="confirmOptions.cancelText"
       :confirm-text="confirmOptions.confirmText"
@@ -3691,11 +3691,11 @@ const emit = defineEmits(['close', 'success', 'platform-changed'])
 
 const accountsStore = useAccountsStore()
 
-// 确认弹窗状态
+// Confirmar弹窗Estado
 const showConfirmModal = ref(false)
-const confirmOptions = ref({ title: '', message: '', confirmText: '继续', cancelText: '取消' })
+const confirmOptions = ref({ title: '', message: '', confirmText: '继续', cancelText: 'Cancelar' })
 let confirmResolve = null
-const showConfirm = (title, message, confirmText = '继续', cancelText = '取消') => {
+const showConfirm = (title, message, confirmText = '继续', cancelText = 'Cancelar') => {
   return new Promise((resolve) => {
     confirmOptions.value = { title, message, confirmText, cancelText }
     confirmResolve = resolve
@@ -3713,7 +3713,7 @@ const handleCancel = () => {
   confirmResolve = null
 }
 
-// 是否为编辑模式
+// 是否paraEditar模式
 const isEdit = computed(() => !!props.account)
 const show = ref(true)
 
@@ -3722,7 +3722,7 @@ const oauthStep = ref(1)
 const loading = ref(false)
 const showApiKey = ref(false)
 
-// Setup Token 相关状态
+// Setup Token 相关Estado
 const setupTokenLoading = ref(false)
 const setupTokenExchanging = ref(false)
 const setupTokenAuthUrl = ref('')
@@ -3730,19 +3730,19 @@ const setupTokenAuthCode = ref('')
 const setupTokenCopied = ref(false)
 const setupTokenSessionId = ref('')
 
-// Claude Code 统一 User-Agent 信息
+// Claude Code 统一 User-Agent Información
 const unifiedUserAgent = ref('')
 const clearingCache = ref(false)
-// 客户端标识编辑状态（已废弃，不再需要编辑功能）
+// 客户端标识EditarEstado（已废弃，不再需要Editar功能）
 // const editingClientId = ref(false)
 
-// 平台分组状态
+// Plataforma分组Estado
 const platformGroup = ref('')
 
 // API Key 管理模态框
 const showApiKeyManagement = ref(false)
 
-// 根据现有平台确定分组
+// 根据现有PlataformaConfirmar分组
 const determinePlatformGroup = (platform) => {
   if (['claude', 'claude-console', 'ccr', 'bedrock'].includes(platform)) {
     return 'claude'
@@ -3892,11 +3892,11 @@ const form = ref({
   description: props.account?.description || '',
   accountType: props.account?.accountType || 'shared',
   authenticationMethod: props.account?.authenticationMethod || '',
-  subscriptionType: 'claude_max', // 默认为 Claude Max，兼容旧数据
-  autoStopOnWarning: props.account?.autoStopOnWarning || false, // 5小时限制自动停止调度
+  subscriptionType: 'claude_max', // 默认para Claude Max，兼容旧数据
+  autoStopOnWarning: props.account?.autoStopOnWarning || false, // 5小时Límite自动停止调度
   useUnifiedUserAgent: props.account?.useUnifiedUserAgent || false, // 使用统一Claude Code版本
-  useUnifiedClientId: props.account?.useUnifiedClientId || false, // 使用统一的客户端标识
-  unifiedClientId: props.account?.unifiedClientId || '', // 统一的客户端标识
+  useUnifiedClientId: props.account?.useUnifiedClientId || false, // 使用统一客户端标识
+  unifiedClientId: props.account?.unifiedClientId || '', // 统一客户端标识
   groupId: '',
   groupIds: [],
   projectId: props.account?.projectId || '',
@@ -3916,11 +3916,11 @@ const form = ref({
   supportedModels: (() => {
     const models = props.account?.supportedModels
     if (!models) return []
-    // 处理对象格式（Claude Console 的新格式）
+    // 处理对象格式（Claude Console 新格式）
     if (typeof models === 'object' && !Array.isArray(models)) {
       return Object.keys(models)
     }
-    // 处理数组格式（向后兼容）
+    // 处理数组格式（向siguiente兼容）
     if (Array.isArray(models)) {
       return models
     }
@@ -3935,7 +3935,7 @@ const form = ref({
   // 并发控制字段
   maxConcurrentTasks: props.account?.maxConcurrentTasks || 0,
   // Bedrock 特定字段
-  credentialType: props.account?.credentialType || 'access_key', // 'access_key' 或 'bearer_token'
+  credentialType: props.account?.credentialType || 'access_key', // 'access_key' o 'bearer_token'
   accessKeyId: props.account?.accessKeyId || '',
   secretAccessKey: props.account?.secretAccessKey || '',
   region: props.account?.region || '',
@@ -3949,16 +3949,16 @@ const form = ref({
   deploymentName: props.account?.deploymentName || '',
   // 到期时间字段
   expireDuration: (() => {
-    // 编辑时根据expiresAt初始化expireDuration
+    // Editar时根据expiresAt初始化expireDuration
     if (props.account?.expiresAt) {
-      return 'custom' // 如果有过期时间，默认显示为自定义
+      return 'custom' // 如果有过期时间，默认显示para自定义
     }
     return ''
   })(),
   customExpireDate: (() => {
-    // 编辑时根据expiresAt初始化customExpireDate
+    // Editar时根据expiresAt初始化customExpireDate
     if (props.account?.expiresAt) {
-      // 转换ISO时间为datetime-local格式 (YYYY-MM-DDTHH:mm)
+      // 转换ISO时间paradatetime-local格式 (YYYY-MM-DDTHH:mm)
       return new Date(props.account.expiresAt).toISOString().slice(0, 16)
     }
     return ''
@@ -3966,19 +3966,19 @@ const form = ref({
   expiresAt: props.account?.expiresAt || null
 })
 
-// 模型限制配置
-const modelRestrictionMode = ref('whitelist') // 'whitelist' 或 'mapping'
+// ModeloConfiguración de límites
+const modelRestrictionMode = ref('whitelist') // 'whitelist' o 'mapping'
 const allowedModels = ref([
-  // 默认勾选所有 Sonnet 和 Haiku 模型
+  // 默认勾选所有 Sonnet y Haiku Modelo
   'claude-sonnet-4-20250514',
   'claude-sonnet-4-5-20250929',
   'claude-3-5-haiku-20241022'
-]) // 白名单模式下选中的模型列表
+]) // 白名单模式abajo选enModelo列表
 
-// 常用模型列表（从 API 获取）
+// 常用Modelo列表（de API 获取）
 const commonModels = ref([])
 
-// 加载模型列表
+// 加载Modelo列表
 const loadCommonModels = async () => {
   try {
     const result = await httpApis.getModelsApi()
@@ -3990,13 +3990,13 @@ const loadCommonModels = async () => {
   }
 }
 
-// 模型映射表数据
+// Modelo映射表数据
 const modelMappings = ref([])
 
-// 初始化模型映射表
+// 初始化Modelo映射表
 const initModelMappings = () => {
   if (props.account?.supportedModels) {
-    // 如果是对象格式（新的映射表）
+    // 如果是对象格式（新映射表）
     if (
       typeof props.account.supportedModels === 'object' &&
       !Array.isArray(props.account.supportedModels)
@@ -4004,25 +4004,25 @@ const initModelMappings = () => {
       const entries = Object.entries(props.account.supportedModels)
 
       // 判断是白名单模式还是映射模式
-      // 如果所有映射都是"映射到自己"，则视为白名单模式
+      // 如果所有映射都是"映射到自己"，则视para白名单模式
       const isWhitelist = entries.every(([from, to]) => from === to)
       if (isWhitelist) {
         modelRestrictionMode.value = 'whitelist'
-        // 白名单模式：设置 allowedModels（显示勾选的模型）
+        // 白名单模式：Configuración allowedModels（显示勾选Modelo）
         allowedModels.value = entries.map(([from]) => from)
-        // 同时保留 modelMappings（以便用户切换到映射模式时有初始数据）
+        // 同时保留 modelMappings（以便Usuario切换到映射模式时有初始数据）
         modelMappings.value = entries.map(([from, to]) => ({ from, to }))
       } else {
         modelRestrictionMode.value = 'mapping'
-        // 映射模式：设置 modelMappings（显示映射表）
+        // 映射模式：Configuración modelMappings（显示映射表）
         modelMappings.value = entries.map(([from, to]) => ({ from, to }))
-        // 不填充 allowedModels，因为映射模式不使用白名单复选框
+        // 不填充 allowedModels，因para映射模式不使用白名单复选框
       }
     } else if (Array.isArray(props.account.supportedModels)) {
-      // 如果是数组格式（旧格式），转换为白名单模式
+      // 如果是数组格式（旧格式），转换para白名单模式
       modelRestrictionMode.value = 'whitelist'
       allowedModels.value = props.account.supportedModels
-      // 同时设置 modelMappings 为自映射
+      // 同时Configuración modelMappings para自映射
       modelMappings.value = props.account.supportedModels.map((model) => ({
         from: model,
         to: model
@@ -4031,7 +4031,7 @@ const initModelMappings = () => {
   }
 }
 
-// 解析多行 API Key 输入
+// 解析多行 API Key Entrada
 const parseApiKeysInput = (input) => {
   if (!input || typeof input !== 'string') {
     return []
@@ -4054,17 +4054,17 @@ const apiKeyModeOptions = [
   {
     value: 'append',
     label: '追加模式',
-    description: '保留现有 Key，并在末尾追加新 Key 列表。'
+    description: '保留现有 Key，并en末尾追加新 Key 列表。'
   },
   {
     value: 'replace',
     label: '覆盖模式',
-    description: '先清空旧 Key，再写入上方的新 Key 列表。'
+    description: '先清空旧 Key，再写入arriba方新 Key 列表。'
   },
   {
     value: 'delete',
-    label: '删除模式',
-    description: '输入要移除的 Key，可精准删除失效或被封禁的 Key。'
+    label: 'Eliminar模式',
+    description: 'Entrada要移除 Key，可精准Eliminar失效o被封禁 Key。'
   }
 ]
 
@@ -4091,7 +4091,7 @@ const currentApiKeyModeDescription = computed(() => {
   return option ? option.description : apiKeyModeOptions[0].description
 })
 
-// 表单验证错误
+// 表单验证Error
 const errors = ref({
   name: '',
   refreshToken: '',
@@ -4108,7 +4108,7 @@ const errors = ref({
   deploymentName: ''
 })
 
-// 计算是否可以进入下一步
+// 计算是否可以进入abajo一步
 const canProceed = computed(() => {
   return form.value.name?.trim() && form.value.platform
 })
@@ -4118,14 +4118,14 @@ const canExchangeSetupToken = computed(() => {
   return setupTokenAuthUrl.value && setupTokenAuthCode.value.trim()
 })
 
-// 获取当前使用量（实时）
+// 获取当anterior使用量（实时）
 const calculateCurrentUsage = () => {
-  // 如果不是编辑模式或没有账户ID，返回0
+  // 如果不是Editar模式o没有CuentaID，返回0
   if (!isEdit.value || !props.account?.id) {
     return 0
   }
 
-  // 如果已经加载了今日使用数据，直接使用
+  // 如果已经加载Hoy使用数据，直接使用
   if (typeof form.value.dailyUsage === 'number') {
     return form.value.dailyUsage
   }
@@ -4142,7 +4142,7 @@ const usagePercentage = computed(() => {
   return (currentUsage / form.value.dailyQuota) * 100
 })
 
-// 当前账户的 API Key 数量（仅用于展示）
+// 当anteriorCuenta API Key 数量（仅para展示）
 const existingApiKeyCount = computed(() => {
   if (!props.account || props.account.platform !== 'droid') {
     return 0
@@ -4172,7 +4172,7 @@ const existingApiKeyCount = computed(() => {
   return Number(count) || 0
 })
 
-// 编辑时判断是否为 API Key 模式的 Droid 账户
+// Editar时判断是否para API Key 模式 Droid Cuenta
 const isEditingDroidApiKey = computed(() => {
   if (!isEdit.value || form.value.platform !== 'droid') {
     return false
@@ -4191,22 +4191,22 @@ const isEditingDroidApiKey = computed(() => {
   return method.trim().toLowerCase() === 'api_key'
 })
 
-// 加载账户今日使用情况
+// 加载CuentaHoy使用情况
 const loadAccountUsage = async () => {
   if (!isEdit.value || !props.account?.id) return
 
   try {
     const response = await httpApis.getClaudeConsoleAccountUsageApi(props.account.id)
     if (response) {
-      // 更新表单中的使用量数据
+      // Actualizar表单en使用量数据
       form.value.dailyUsage = response.dailyUsage || 0
     }
   } catch (error) {
-    // 静默处理使用量加载失败
+    // 静默处理使用量加载Fallido
   }
 }
 
-// // 计算是否可以创建
+// // 计算是否可以Crear
 // const canCreate = computed(() => {
 //   if (form.value.addType === 'manual') {
 //     return form.value.name?.trim() && form.value.accessToken?.trim()
@@ -4214,10 +4214,10 @@ const loadAccountUsage = async () => {
 //   return form.value.name?.trim()
 // })
 
-// 选择平台分组
+// 选择Plataforma分组
 const selectPlatformGroup = (group) => {
   platformGroup.value = group
-  // 根据分组自动选择默认平台
+  // 根据分组自动选择默认Plataforma
   if (group === 'claude') {
     form.value.platform = 'claude'
   } else if (group === 'openai') {
@@ -4229,28 +4229,28 @@ const selectPlatformGroup = (group) => {
   }
 }
 
-// 下一步
+// abajo一步
 const nextStep = async () => {
-  // 清除之前的错误
+  // 清除之anteriorError
   errors.value.name = ''
 
   if (!canProceed.value) {
     if (!form.value.name || form.value.name.trim() === '') {
-      errors.value.name = '请填写账户名称'
+      errors.value.name = '请填写CuentaNombre'
     }
     return
   }
 
-  // 分组类型验证 - OAuth流程修复
+  // 分组Tipo验证 - OAuth流程修复
   if (
     form.value.accountType === 'group' &&
     (!form.value.groupIds || form.value.groupIds.length === 0)
   ) {
-    showToast('请选择一个分组', 'error')
+    showToast('请选择一 分组', 'error')
     return
   }
 
-  // 数据同步：确保 groupId 和 groupIds 保持一致 - OAuth流程
+  // 数据同步：确保 groupId y groupIds 保持一致 - OAuth流程
   if (form.value.accountType === 'group') {
     if (form.value.groupIds && form.value.groupIds.length > 0) {
       form.value.groupId = form.value.groupIds[0]
@@ -4259,17 +4259,17 @@ const nextStep = async () => {
     }
   }
 
-  // 对于Gemini账户，检查项目 ID
+  // 对于GeminiCuenta，检查项目 ID
   if (
     (form.value.platform === 'gemini' || form.value.platform === 'gemini-antigravity') &&
     oauthStep.value === 1 &&
     form.value.addType === 'oauth'
   ) {
     if (!form.value.projectId || form.value.projectId.trim() === '') {
-      // 使用自定义确认弹窗
+      // 使用自定义Confirmar弹窗
       const confirmed = await showConfirm(
         '项目 ID 未填写',
-        '您尚未填写项目 ID。\n\n如果您的Google账号绑定了Google Cloud或被识别为Workspace账号，需要提供项目 ID。\n如果您使用的是普通个人账号，可以继续不填写。',
+        '您尚未填写项目 ID。\n\n如果您Google账号绑定Google Cloudo被识别paraWorkspace账号，需要提供项目 ID。\n如果您使用是普通 人账号，可以继续不填写。',
         '继续',
         '返回填写'
       )
@@ -4294,7 +4294,7 @@ const generateSetupTokenAuthUrl = async () => {
     setupTokenAuthUrl.value = result.authUrl
     setupTokenSessionId.value = result.sessionId
   } catch (error) {
-    showToast(error.message || '生成Setup Token授权链接失败', 'error')
+    showToast(error.message || '生成Setup Token授权链接Fallido', 'error')
   } finally {
     setupTokenLoading.value = false
   }
@@ -4307,17 +4307,17 @@ const regenerateSetupTokenAuthUrl = () => {
   generateSetupTokenAuthUrl()
 }
 
-// 复制Setup Token授权URL
+// CopiarSetup Token授权URL
 const copySetupTokenAuthUrl = async () => {
   try {
     await navigator.clipboard.writeText(setupTokenAuthUrl.value)
     setupTokenCopied.value = true
-    showToast('链接已复制', 'success')
+    showToast('链接已Copiar', 'success')
     setTimeout(() => {
       setupTokenCopied.value = false
     }, 2000)
   } catch (error) {
-    // 降级方案 - 使用 textarea 替代 input，禁用 ESLint 警告
+    // 降级方案 - 使用 textarea 替代 input，Deshabilitar ESLint Advertencia
     const textarea = document.createElement('textarea')
     textarea.value = setupTokenAuthUrl.value
     textarea.style.position = 'fixed'
@@ -4330,12 +4330,12 @@ const copySetupTokenAuthUrl = async () => {
       const successful = document.execCommand('copy')
       if (successful) {
         setupTokenCopied.value = true
-        showToast('链接已复制', 'success')
+        showToast('链接已Copiar', 'success')
       } else {
-        showToast('复制失败，请手动复制', 'error')
+        showToast('CopiarFallido，请手动Copiar', 'error')
       }
     } catch (err) {
-      showToast('复制失败，请手动复制', 'error')
+      showToast('CopiarFallido，请手动Copiar', 'error')
     }
 
     document.body.removeChild(textarea)
@@ -4356,7 +4356,7 @@ const exchangeSetupTokenCode = async () => {
       callbackUrl: setupTokenAuthCode.value.trim()
     }
 
-    // 添加代理配置（如果启用）
+    // 添加代理配置（如果Habilitar）
     const proxyPayload = buildProxyPayload(form.value.proxy)
     if (proxyPayload) {
       data.proxy = proxyPayload
@@ -4369,16 +4369,16 @@ const exchangeSetupTokenCode = async () => {
       form.value.unifiedClientId = generateClientId()
     }
 
-    // 调用相同的成功处理函数
+    // 调用相同Exitoso处理函数
     await handleOAuthSuccess(tokenInfo)
   } catch (error) {
-    showToast(error.message || 'Setup Token授权失败，请检查授权码是否正确', 'error')
+    showToast(error.message || 'Setup Token授权Fallido，请检查授权码是否正确', 'error')
   } finally {
     setupTokenExchanging.value = false
   }
 }
 
-// 处理OAuth成功
+// 处理OAuthExitoso
 const handleOAuthSuccess = async (tokenInfo) => {
   loading.value = true
   try {
@@ -4441,17 +4441,17 @@ const handleOAuthSuccess = async (tokenInfo) => {
       data.useUnifiedUserAgent = form.value.useUnifiedUserAgent || false
       data.useUnifiedClientId = form.value.useUnifiedClientId || false
       data.unifiedClientId = form.value.unifiedClientId || ''
-      // 添加订阅类型信息
+      // 添加订阅TipoInformación
       data.subscriptionInfo = {
         accountType: form.value.subscriptionType || 'claude_max',
         hasClaudeMax: form.value.subscriptionType === 'claude_max',
         hasClaudePro: form.value.subscriptionType === 'claude_pro',
-        manuallySet: true // 标记为手动设置
+        manuallySet: true // 标记para手动Configuración
       }
     } else if (currentPlatform === 'gemini' || currentPlatform === 'gemini-antigravity') {
       // Gemini/Antigravity使用geminiOauth字段
       data.geminiOauth = tokenInfo.tokens || tokenInfo
-      // 根据 platform 设置 oauthProvider
+      // 根据 platform Configuración oauthProvider
       data.oauthProvider =
         currentPlatform === 'gemini-antigravity'
           ? 'antigravity'
@@ -4481,7 +4481,7 @@ const handleOAuthSuccess = async (tokenInfo) => {
 
       if (!normalizedTokens.refreshToken) {
         loading.value = false
-        showToast('授权成功但未返回 Refresh Token，请确认已授予离线访问权限后重试。', 'error')
+        showToast('授权Exitoso但未返回 Refresh Token，请Confirmar已授予离线访问权限siguiente重试。', 'error')
         return
       }
 
@@ -4546,36 +4546,36 @@ const handleOAuthSuccess = async (tokenInfo) => {
 
     emit('success', result)
   } catch (error) {
-    // 显示详细的错误信息
-    const errorMessage = error.response?.data?.error || error.message || '账户创建失败'
+    // 显示详细ErrorInformación
+    const errorMessage = error.response?.data?.error || error.message || 'CuentaError al crear'
     const suggestion = error.response?.data?.suggestion || ''
     const errorDetails = error.response?.data?.errorDetails || null
 
-    // 构建完整的错误提示
+    // 构建完整ErrorSugerencia
     let fullMessage = errorMessage
     if (suggestion) {
       fullMessage += `\n${suggestion}`
     }
 
-    // 如果有详细的 OAuth 错误信息，也显示出来
+    // 如果有详细 OAuth ErrorInformación，也显示出来
     if (errorDetails && errorDetails.error_description) {
-      fullMessage += `\n详细信息: ${errorDetails.error_description}`
+      fullMessage += `\n详细Información: ${errorDetails.error_description}`
     } else if (errorDetails && errorDetails.error && errorDetails.error.message) {
-      // 处理 OpenAI 格式的错误
-      fullMessage += `\n详细信息: ${errorDetails.error.message}`
+      // 处理 OpenAI 格式Error
+      fullMessage += `\n详细Información: ${errorDetails.error.message}`
     }
 
     showToast(fullMessage, 'error', '', 8000)
 
-    // 错误已通过 toast 显示给用户
+    // Error已通过 toast 显示给Usuario
   } finally {
     loading.value = false
   }
 }
 
-// 创建账户（手动模式）
+// CrearCuenta（手动模式）
 const createAccount = async () => {
-  // 清除之前的错误
+  // 清除之anteriorError
   errors.value.name = ''
   errors.value.accessToken = ''
   errors.value.refreshToken = ''
@@ -4586,7 +4586,7 @@ const createAccount = async () => {
   let hasError = false
 
   if (!form.value.name || form.value.name.trim() === '') {
-    errors.value.name = '请填写账户名称'
+    errors.value.name = '请填写CuentaNombre'
     hasError = true
   }
 
@@ -4602,7 +4602,7 @@ const createAccount = async () => {
     }
   }
 
-  // CCR (Claude Code Router) 验证 - 使用与 Claude Console 相同的字段
+  // CCR (Claude Code Router) 验证 - 使用与 Claude Console 相同字段
   if (form.value.platform === 'ccr') {
     if (!form.value.apiUrl || form.value.apiUrl.trim() === '') {
       errors.value.apiUrl = '请填写 API URL'
@@ -4621,25 +4621,25 @@ const createAccount = async () => {
       hasError = true
     }
     if (!form.value.apiKey || form.value.apiKey.trim() === '') {
-      errors.value.apiKey = '请填写 API 密钥'
+      errors.value.apiKey = '请填写 API Clave'
       hasError = true
     }
   } else if (form.value.platform === 'bedrock') {
-    // Bedrock 验证 - 根据凭证类型进行不同验证
+    // Bedrock 验证 - 根据凭证Tipo进行不同验证
     if (form.value.credentialType === 'access_key') {
-      // Access Key 模式：创建时必填，编辑时可选（留空则保持原有凭证）
+      // Access Key 模式：Crear时必填，Editar时可选（留空则保持原有凭证）
       if (!isEdit.value) {
         if (!form.value.accessKeyId || form.value.accessKeyId.trim() === '') {
-          errors.value.accessKeyId = '请填写 AWS 访问密钥 ID'
+          errors.value.accessKeyId = '请填写 AWS Clave de acceso ID'
           hasError = true
         }
         if (!form.value.secretAccessKey || form.value.secretAccessKey.trim() === '') {
-          errors.value.secretAccessKey = '请填写 AWS 秘密访问密钥'
+          errors.value.secretAccessKey = '请填写 AWS 秘密Clave de acceso'
           hasError = true
         }
       }
     } else if (form.value.credentialType === 'bearer_token') {
-      // Bearer Token 模式：创建时必填，编辑时可选（留空则保持原有凭证）
+      // Bearer Token 模式：Crear时必填，Editar时可选（留空则保持原有凭证）
       if (!isEdit.value) {
         if (!form.value.bearerToken || form.value.bearerToken.trim() === '') {
           errors.value.bearerToken = '请填写 Bearer Token'
@@ -4658,7 +4658,7 @@ const createAccount = async () => {
       hasError = true
     }
     if (!form.value.deploymentName || form.value.deploymentName.trim() === '') {
-      errors.value.deploymentName = '请填写部署名称'
+      errors.value.deploymentName = '请填写部署Nombre'
       hasError = true
     }
     if (!form.value.apiKey || form.value.apiKey.trim() === '') {
@@ -4666,16 +4666,16 @@ const createAccount = async () => {
       hasError = true
     }
   } else if (form.value.addType === 'manual') {
-    // 手动模式验证 - 只有部分平台需要验证 Token
+    // 手动模式验证 - 只有部分Plataforma需要验证 Token
     if (form.value.platform === 'openai') {
-      // OpenAI 平台必须有 Refresh Token
+      // OpenAI Plataforma必须有 Refresh Token
       if (!form.value.refreshToken || form.value.refreshToken.trim() === '') {
         errors.value.refreshToken = '请填写 Refresh Token'
         hasError = true
       }
       // Access Token 可选，如果没有会通过 Refresh Token 获取
     } else if (form.value.platform === 'gemini') {
-      // Gemini 平台需要 Access Token
+      // Gemini Plataforma需要 Access Token
       if (!form.value.accessToken || form.value.accessToken.trim() === '') {
         errors.value.accessToken = '请填写 Access Token'
         hasError = true
@@ -4690,40 +4690,40 @@ const createAccount = async () => {
         hasError = true
       }
     } else if (form.value.platform === 'claude') {
-      // Claude 平台需要 Access Token
+      // Claude Plataforma需要 Access Token
       if (!form.value.accessToken || form.value.accessToken.trim() === '') {
         errors.value.accessToken = '请填写 Access Token'
         hasError = true
       }
     }
-    // Claude Console、CCR、OpenAI-Responses 等其他平台不需要 Token 验证
+    // Claude Console、CCR、OpenAI-Responses 等OtroPlataforma不需要 Token 验证
   } else if (form.value.addType === 'apikey') {
-    // Gemini API 使用单个 apiKey 字段
+    // Gemini API 使用单  apiKey 字段
     if (form.value.platform === 'gemini-api') {
       if (!form.value.apiKey || form.value.apiKey.trim() === '') {
         errors.value.apiKey = '请填写 API Key'
         hasError = true
       }
     } else {
-      // 其他平台（如 Droid）使用多 API Key 输入
+      // OtroPlataforma（如 Droid）使用多 API Key Entrada
       const apiKeys = parseApiKeysInput(form.value.apiKeysInput)
       if (apiKeys.length === 0) {
-        errors.value.apiKeys = '请至少填写一个 API Key'
+        errors.value.apiKeys = '请a少填写一  API Key'
         hasError = true
       }
     }
   }
 
-  // 分组类型验证 - 创建账户流程修复
+  // 分组Tipo验证 - CrearCuenta流程修复
   if (
     form.value.accountType === 'group' &&
     (!form.value.groupIds || form.value.groupIds.length === 0)
   ) {
-    showToast('请选择一个分组', 'error')
+    showToast('请选择一 分组', 'error')
     hasError = true
   }
 
-  // 数据同步：确保 groupId 和 groupIds 保持一致 - 创建流程
+  // 数据同步：确保 groupId y groupIds 保持一致 - Crear流程
   if (form.value.accountType === 'group') {
     if (form.value.groupIds && form.value.groupIds.length > 0) {
       form.value.groupId = form.value.groupIds[0]
@@ -4772,12 +4772,12 @@ const createAccount = async () => {
       data.useUnifiedUserAgent = form.value.useUnifiedUserAgent || false
       data.useUnifiedClientId = form.value.useUnifiedClientId || false
       data.unifiedClientId = form.value.unifiedClientId || ''
-      // 添加订阅类型信息
+      // 添加订阅TipoInformación
       data.subscriptionInfo = {
         accountType: form.value.subscriptionType || 'claude_max',
         hasClaudeMax: form.value.subscriptionType === 'claude_max',
         hasClaudePro: form.value.subscriptionType === 'claude_pro',
-        manuallySet: true // 标记为手动设置
+        manuallySet: true // 标记para手动Configuración
       }
     } else if (form.value.platform === 'gemini') {
       // Gemini手动模式需要构建geminiOauth对象
@@ -4806,13 +4806,13 @@ const createAccount = async () => {
         : 365 * 24 * 60 * 60 * 1000 // 1年
 
       data.openaiOauth = {
-        idToken: '', // 不再需要用户输入，系统会自动获取
+        idToken: '', // 不再需要UsuarioEntrada，系统会自动获取
         accessToken: form.value.accessToken || '', // Access Token 可选
         refreshToken: form.value.refreshToken, // Refresh Token 必填
-        expires_in: Math.floor(expiresInMs / 1000) // 转换为秒
+        expires_in: Math.floor(expiresInMs / 1000) // 转换para秒
       }
 
-      // 账户信息将在首次刷新时自动获取
+      // CuentaInformación将en首vecesActualizar时自动获取
       data.accountInfo = {
         accountId: '',
         chatgptUserId: '',
@@ -4824,9 +4824,9 @@ const createAccount = async () => {
         emailVerified: false
       }
 
-      // OpenAI 手动模式必须刷新以获取完整信息（包括 ID Token）
+      // OpenAI 手动模式必须Actualizar以获取完整Información（包括 ID Token）
       data.needsImmediateRefresh = true
-      data.requireRefreshSuccess = true // 必须刷新成功才能创建账户
+      data.requireRefreshSuccess = true // 必须ActualizarExitoso才能CrearCuenta
       data.priority = form.value.priority || 50
     } else if (form.value.platform === 'droid') {
       data.priority = form.value.priority || 50
@@ -4852,13 +4852,13 @@ const createAccount = async () => {
         data.authenticationMethod = 'manual'
       }
     } else if (form.value.platform === 'claude-console' || form.value.platform === 'ccr') {
-      // Claude Console 和 CCR 账户特定数据（CCR 使用 Claude Console 的后端逻辑）
+      // Claude Console y CCR Cuenta特定数据（CCR 使用 Claude Console siguiente端逻辑）
       data.apiUrl = form.value.apiUrl
       data.apiKey = form.value.apiKey
       data.priority = form.value.priority || 50
       data.supportedModels = convertMappingsToObject() || {}
       data.userAgent = form.value.userAgent || null
-      // 如果不启用限流，传递 0 表示不限流
+      // 如果不Habilitar限流，传递 0 表示不限流
       data.rateLimitDuration = form.value.enableRateLimit ? form.value.rateLimitDuration || 60 : 0
       // 额度管理字段
       data.dailyQuota = form.value.dailyQuota || 0
@@ -4866,12 +4866,12 @@ const createAccount = async () => {
       // 并发控制字段
       data.maxConcurrentTasks = form.value.maxConcurrentTasks || 0
     } else if (form.value.platform === 'openai-responses') {
-      // OpenAI-Responses 账户特定数据
+      // OpenAI-Responses Cuenta特定数据
       data.baseApi = form.value.baseApi
       data.apiKey = form.value.apiKey
       data.userAgent = form.value.userAgent || ''
       data.priority = form.value.priority || 50
-      data.rateLimitDuration = 60 // 默认值60，不从用户输入获取
+      data.rateLimitDuration = 60 // 默认值60，不deUsuarioEntrada获取
       data.dailyQuota = form.value.dailyQuota || 0
       data.quotaResetTime = form.value.quotaResetTime || '00:00'
     } else if (form.value.platform === 'gemini-antigravity') {
@@ -4879,7 +4879,7 @@ const createAccount = async () => {
       data.oauthProvider = 'antigravity'
       data.priority = form.value.priority || 50
     } else if (form.value.platform === 'gemini-api') {
-      // Gemini API 账户特定数据
+      // Gemini API Cuenta特定数据
       data.baseUrl = form.value.baseUrl || 'https://generativelanguage.googleapis.com'
       data.apiKey = form.value.apiKey
       data.priority = form.value.priority || 50
@@ -4887,10 +4887,10 @@ const createAccount = async () => {
         ? form.value.supportedModels
         : []
     } else if (form.value.platform === 'bedrock') {
-      // Bedrock 账户特定数据
+      // Bedrock Cuenta特定数据
       data.credentialType = form.value.credentialType || 'access_key'
 
-      // 根据凭证类型构造不同的凭证对象
+      // 根据凭证Tipo构造不同凭证对象
       if (form.value.credentialType === 'access_key') {
         data.awsCredentials = {
           accessKeyId: form.value.accessKeyId,
@@ -4906,10 +4906,10 @@ const createAccount = async () => {
       data.defaultModel = form.value.defaultModel || null
       data.smallFastModel = form.value.smallFastModel || null
       data.priority = form.value.priority || 50
-      // 如果不启用限流，传递 0 表示不限流
+      // 如果不Habilitar限流，传递 0 表示不限流
       data.rateLimitDuration = form.value.enableRateLimit ? form.value.rateLimitDuration || 60 : 0
     } else if (form.value.platform === 'azure_openai') {
-      // Azure OpenAI 账户特定数据
+      // Azure OpenAI Cuenta特定数据
       data.azureEndpoint = form.value.azureEndpoint
       data.apiKey = form.value.apiKey
       data.apiVersion = form.value.apiVersion || '2024-02-01'
@@ -4926,7 +4926,7 @@ const createAccount = async () => {
     if (form.value.platform === 'claude') {
       result = await accountsStore.createClaudeAccount(data)
     } else if (form.value.platform === 'claude-console' || form.value.platform === 'ccr') {
-      // CCR 使用 Claude Console 的后端 API
+      // CCR 使用 Claude Console siguiente端 API
       result = await accountsStore.createClaudeConsoleAccount(data)
     } else if (form.value.platform === 'droid') {
       result = await accountsStore.createDroidAccount(data)
@@ -4943,60 +4943,60 @@ const createAccount = async () => {
     } else if (form.value.platform === 'gemini-api') {
       result = await accountsStore.createGeminiApiAccount(data)
     } else {
-      throw new Error(`不支持的平台: ${form.value.platform}`)
+      throw new Error(`不支持Plataforma: ${form.value.platform}`)
     }
 
     emit('success', result)
   } catch (error) {
-    // 显示详细的错误信息
-    const errorMessage = error.response?.data?.error || error.message || '账户创建失败'
+    // 显示详细ErrorInformación
+    const errorMessage = error.response?.data?.error || error.message || 'CuentaError al crear'
     const suggestion = error.response?.data?.suggestion || ''
     const errorDetails = error.response?.data?.errorDetails || null
 
-    // 构建完整的错误提示
+    // 构建完整ErrorSugerencia
     let fullMessage = errorMessage
     if (suggestion) {
       fullMessage += `\n${suggestion}`
     }
 
-    // 如果有详细的 OAuth 错误信息，也显示出来
+    // 如果有详细 OAuth ErrorInformación，也显示出来
     if (errorDetails && errorDetails.error_description) {
-      fullMessage += `\n详细信息: ${errorDetails.error_description}`
+      fullMessage += `\n详细Información: ${errorDetails.error_description}`
     } else if (errorDetails && errorDetails.error && errorDetails.error.message) {
-      // 处理 OpenAI 格式的错误
-      fullMessage += `\n详细信息: ${errorDetails.error.message}`
+      // 处理 OpenAI 格式Error
+      fullMessage += `\n详细Información: ${errorDetails.error.message}`
     }
 
     showToast(fullMessage, 'error', '', 8000)
 
-    // 错误已通过 toast 显示给用户
+    // Error已通过 toast 显示给Usuario
   } finally {
     loading.value = false
   }
 }
 
-// 更新账户
+// ActualizarCuenta
 const updateAccount = async () => {
-  // 清除之前的错误
+  // 清除之anteriorError
   errors.value.name = ''
   errors.value.apiKeys = ''
 
-  // 验证账户名称
+  // 验证CuentaNombre
   if (!form.value.name || form.value.name.trim() === '') {
-    errors.value.name = '请填写账户名称'
+    errors.value.name = '请填写CuentaNombre'
     return
   }
 
-  // 分组类型验证 - 更新账户流程修复
+  // 分组Tipo验证 - ActualizarCuenta流程修复
   if (
     form.value.accountType === 'group' &&
     (!form.value.groupIds || form.value.groupIds.length === 0)
   ) {
-    showToast('请选择一个分组', 'error')
+    showToast('请选择一 分组', 'error')
     return
   }
 
-  // 数据同步：确保 groupId 和 groupIds 保持一致 - 更新流程
+  // 数据同步：确保 groupId y groupIds 保持一致 - Actualizar流程
   if (form.value.accountType === 'group') {
     if (form.value.groupIds && form.value.groupIds.length > 0) {
       form.value.groupId = form.value.groupIds[0]
@@ -5005,14 +5005,14 @@ const updateAccount = async () => {
     }
   }
 
-  // 对于Gemini账户，检查项目 ID
+  // 对于GeminiCuenta，检查项目 ID
   if (form.value.platform === 'gemini') {
     if (!form.value.projectId || form.value.projectId.trim() === '') {
-      // 使用自定义确认弹窗
+      // 使用自定义Confirmar弹窗
       const confirmed = await showConfirm(
         '项目 ID 未填写',
-        '您尚未填写项目 ID。\n\n如果您的Google账号绑定了Google Cloud或被识别为Workspace账号，需要提供项目 ID。\n如果您使用的是普通个人账号，可以继续不填写。',
-        '继续保存',
+        '您尚未填写项目 ID。\n\n如果您Google账号绑定Google Cloudo被识别paraWorkspace账号，需要提供项目 ID。\n如果您使用是普通 人账号，可以继续不填写。',
+        '继续Guardar',
         '返回填写'
       )
       if (!confirmed) {
@@ -5035,7 +5035,7 @@ const updateAccount = async () => {
       proxy: proxyPayload
     }
 
-    // 只有非空时才更新token
+    // 只有非空时才Actualizartoken
     if (form.value.accessToken || form.value.refreshToken) {
       const trimmedAccessToken = form.value.accessToken?.trim() || ''
       const trimmedRefreshToken = form.value.refreshToken?.trim() || ''
@@ -5050,7 +5050,7 @@ const updateAccount = async () => {
           accessToken: trimmedAccessToken || '',
           refreshToken: trimmedRefreshToken || '',
           expiresAt: Date.now() + expiresInMs,
-          scopes: props.account.scopes || [] // 保持原有的 scopes，如果没有则为空数组
+          scopes: props.account.scopes || [] // 保持原有 scopes，如果没有则para空数组
         }
       } else if (props.account.platform === 'gemini') {
         // Gemini需要构建geminiOauth对象
@@ -5072,13 +5072,13 @@ const updateAccount = async () => {
           : 365 * 24 * 60 * 60 * 1000 // 1年
 
         data.openaiOauth = {
-          idToken: '', // 不需要用户输入
+          idToken: '', // 不需要UsuarioEntrada
           accessToken: trimmedAccessToken || '',
           refreshToken: trimmedRefreshToken || '',
-          expires_in: Math.floor(expiresInMs / 1000) // 转换为秒
+          expires_in: Math.floor(expiresInMs / 1000) // 转换para秒
         }
 
-        // 编辑 OpenAI 账户时，如果更新了 Refresh Token，也需要验证
+        // Editar OpenAI Cuenta时，如果Actualizar Refresh Token，也需要验证
         if (trimmedRefreshToken && trimmedRefreshToken !== props.account.refreshToken) {
           data.needsImmediateRefresh = true
           data.requireRefreshSuccess = true
@@ -5099,14 +5099,14 @@ const updateAccount = async () => {
 
       if (apiKeyUpdateMode === 'delete') {
         if (!trimmedApiKeysInput) {
-          errors.value.apiKeys = '请填写需要删除的 API Key'
+          errors.value.apiKeys = '请填写需要Eliminar API Key'
           loading.value = false
           return
         }
 
         const removeApiKeys = parseApiKeysInput(trimmedApiKeysInput)
         if (removeApiKeys.length === 0) {
-          errors.value.apiKeys = '请填写需要删除的 API Key'
+          errors.value.apiKeys = '请填写需要Eliminar API Key'
           loading.value = false
           return
         }
@@ -5117,7 +5117,7 @@ const updateAccount = async () => {
         if (trimmedApiKeysInput) {
           const apiKeys = parseApiKeysInput(trimmedApiKeysInput)
           if (apiKeys.length === 0) {
-            errors.value.apiKeys = '请至少填写一个 API Key'
+            errors.value.apiKeys = '请a少填写一  API Key'
             loading.value = false
             return
           }
@@ -5145,9 +5145,9 @@ const updateAccount = async () => {
       data.endpointType = form.value.endpointType || 'anthropic'
     }
 
-    // Claude 官方账号优先级和订阅类型更新
+    // Claude 官方账号优先级y订阅TipoActualizar
     if (props.account.platform === 'claude') {
-      // 更新模式也需要确保生成客户端ID
+      // Actualizar模式也需要确保生成客户端ID
       if (form.value.useUnifiedClientId && !form.value.unifiedClientId) {
         form.value.unifiedClientId = generateClientId()
       }
@@ -5157,26 +5157,26 @@ const updateAccount = async () => {
       data.useUnifiedUserAgent = form.value.useUnifiedUserAgent || false
       data.useUnifiedClientId = form.value.useUnifiedClientId || false
       data.unifiedClientId = form.value.unifiedClientId || ''
-      // 更新订阅类型信息
+      // Actualizar订阅TipoInformación
       data.subscriptionInfo = {
         accountType: form.value.subscriptionType || 'claude_max',
         hasClaudeMax: form.value.subscriptionType === 'claude_max',
         hasClaudePro: form.value.subscriptionType === 'claude_pro',
-        manuallySet: true // 标记为手动设置
+        manuallySet: true // 标记para手动Configuración
       }
     }
 
-    // OpenAI 账号优先级更新
+    // OpenAI 账号优先级Actualizar
     if (props.account.platform === 'openai') {
       data.priority = form.value.priority || 50
     }
 
-    // Gemini 账号优先级更新
+    // Gemini 账号优先级Actualizar
     if (props.account.platform === 'gemini') {
       data.priority = form.value.priority || 50
     }
 
-    // Claude Console 特定更新
+    // Claude Console 特定Actualizar
     if (props.account.platform === 'claude-console') {
       data.apiUrl = form.value.apiUrl
       if (form.value.apiKey) {
@@ -5185,7 +5185,7 @@ const updateAccount = async () => {
       data.priority = form.value.priority || 50
       data.supportedModels = convertMappingsToObject() || {}
       data.userAgent = form.value.userAgent || null
-      // 如果不启用限流，传递 0 表示不限流
+      // 如果不Habilitar限流，传递 0 表示不限流
       data.rateLimitDuration = form.value.enableRateLimit ? form.value.rateLimitDuration || 60 : 0
       // 额度管理字段
       data.dailyQuota = form.value.dailyQuota || 0
@@ -5194,7 +5194,7 @@ const updateAccount = async () => {
       data.maxConcurrentTasks = form.value.maxConcurrentTasks || 0
     }
 
-    // OpenAI-Responses 特定更新
+    // OpenAI-Responses 特定Actualizar
     if (props.account.platform === 'openai-responses') {
       data.baseApi = form.value.baseApi
       if (form.value.apiKey) {
@@ -5202,19 +5202,19 @@ const updateAccount = async () => {
       }
       data.userAgent = form.value.userAgent || ''
       data.priority = form.value.priority || 50
-      // 编辑时不上传 rateLimitDuration，保持原值
+      // Editar时不Subir rateLimitDuration，保持原值
       data.dailyQuota = form.value.dailyQuota || 0
       data.quotaResetTime = form.value.quotaResetTime || '00:00'
     }
 
-    // Bedrock 特定更新
+    // Bedrock 特定Actualizar
     if (props.account.platform === 'bedrock') {
-      // 更新凭证类型
+      // Actualizar凭证Tipo
       if (form.value.credentialType) {
         data.credentialType = form.value.credentialType
       }
 
-      // 根据凭证类型更新凭证
+      // 根据凭证TipoActualizar凭证
       if (form.value.credentialType === 'access_key') {
         // 只有当有凭证变更时才构造 awsCredentials 对象
         if (form.value.accessKeyId || form.value.secretAccessKey || form.value.sessionToken) {
@@ -5230,7 +5230,7 @@ const updateAccount = async () => {
           }
         }
       } else if (form.value.credentialType === 'bearer_token') {
-        // Bearer Token 模式：更新 Bearer Token（编辑时可选，留空则保留原有凭证）
+        // Bearer Token 模式：Actualizar Bearer Token（Editar时可选，留空则保留原有凭证）
         if (form.value.bearerToken && form.value.bearerToken.trim()) {
           data.bearerToken = form.value.bearerToken
         }
@@ -5239,15 +5239,15 @@ const updateAccount = async () => {
       if (form.value.region) {
         data.region = form.value.region
       }
-      // 模型配置（支持设置为空来使用系统默认）
+      // Modelo配置（支持Configuraciónpara空来使用系统默认）
       data.defaultModel = form.value.defaultModel || null
       data.smallFastModel = form.value.smallFastModel || null
       data.priority = form.value.priority || 50
-      // 如果不启用限流，传递 0 表示不限流
+      // 如果不Habilitar限流，传递 0 表示不限流
       data.rateLimitDuration = form.value.enableRateLimit ? form.value.rateLimitDuration || 60 : 0
     }
 
-    // Azure OpenAI 特定更新
+    // Azure OpenAI 特定Actualizar
     if (props.account.platform === 'azure_openai') {
       data.azureEndpoint = form.value.azureEndpoint
       data.apiVersion = form.value.apiVersion || '2024-02-01'
@@ -5256,16 +5256,16 @@ const updateAccount = async () => {
         ? form.value.supportedModels
         : []
       data.priority = form.value.priority || 50
-      // 只有当有新的 API Key 时才更新
+      // 只有当有新 API Key 时才Actualizar
       if (form.value.apiKey && form.value.apiKey.trim()) {
         data.apiKey = form.value.apiKey
       }
     }
 
-    // Gemini API 特定更新
+    // Gemini API 特定Actualizar
     if (props.account.platform === 'gemini-api') {
       data.baseUrl = form.value.baseUrl || 'https://generativelanguage.googleapis.com'
-      // 只有当有新的 API Key 时才更新
+      // 只有当有新 API Key 时才Actualizar
       if (form.value.apiKey && form.value.apiKey.trim()) {
         data.apiKey = form.value.apiKey
       }
@@ -5294,39 +5294,39 @@ const updateAccount = async () => {
     } else if (props.account.platform === 'droid') {
       await accountsStore.updateDroidAccount(props.account.id, data)
     } else {
-      throw new Error(`不支持的平台: ${props.account.platform}`)
+      throw new Error(`不支持Plataforma: ${props.account.platform}`)
     }
 
     emit('success')
   } catch (error) {
-    // 显示详细的错误信息
-    const errorMessage = error.response?.data?.error || error.message || '账户更新失败'
+    // 显示详细ErrorInformación
+    const errorMessage = error.response?.data?.error || error.message || 'CuentaError al actualizar'
     const suggestion = error.response?.data?.suggestion || ''
     const errorDetails = error.response?.data?.errorDetails || null
 
-    // 构建完整的错误提示
+    // 构建完整ErrorSugerencia
     let fullMessage = errorMessage
     if (suggestion) {
       fullMessage += `\n${suggestion}`
     }
 
-    // 如果有详细的 OAuth 错误信息，也显示出来
+    // 如果有详细 OAuth ErrorInformación，也显示出来
     if (errorDetails && errorDetails.error_description) {
-      fullMessage += `\n详细信息: ${errorDetails.error_description}`
+      fullMessage += `\n详细Información: ${errorDetails.error_description}`
     } else if (errorDetails && errorDetails.error && errorDetails.error.message) {
-      // 处理 OpenAI 格式的错误
-      fullMessage += `\n详细信息: ${errorDetails.error.message}`
+      // 处理 OpenAI 格式Error
+      fullMessage += `\n详细Información: ${errorDetails.error.message}`
     }
 
     showToast(fullMessage, 'error', '', 8000)
 
-    // 错误已通过 toast 显示给用户
+    // Error已通过 toast 显示给Usuario
   } finally {
     loading.value = false
   }
 }
 
-// 监听表单名称变化，清除错误
+// 监听表单Nombre变化，清除Error
 watch(
   () => form.value.name,
   () => {
@@ -5336,7 +5336,7 @@ watch(
   }
 )
 
-// 监听Access Token变化，清除错误
+// 监听Access Token变化，清除Error
 watch(
   () => form.value.accessToken,
   () => {
@@ -5346,7 +5346,7 @@ watch(
   }
 )
 
-// 监听Refresh Token变化，清除错误
+// 监听Refresh Token变化，清除Error
 watch(
   () => form.value.refreshToken,
   () => {
@@ -5356,7 +5356,7 @@ watch(
   }
 )
 
-// 监听API URL变化，清除错误
+// 监听API URL变化，清除Error
 watch(
   () => form.value.apiUrl,
   () => {
@@ -5366,7 +5366,7 @@ watch(
   }
 )
 
-// 监听API Key变化，清除错误
+// 监听API Key变化，清除Error
 watch(
   () => form.value.apiKey,
   () => {
@@ -5376,7 +5376,7 @@ watch(
   }
 )
 
-// 监听Azure Endpoint变化，清除错误
+// 监听Azure Endpoint变化，清除Error
 watch(
   () => form.value.azureEndpoint,
   () => {
@@ -5386,7 +5386,7 @@ watch(
   }
 )
 
-// 监听Deployment Name变化，清除错误
+// 监听Deployment Name变化，清除Error
 watch(
   () => form.value.deploymentName,
   () => {
@@ -5401,10 +5401,10 @@ const groups = ref([])
 const loadingGroups = ref(false)
 const showGroupManagement = ref(false)
 
-// 根据平台筛选分组
+// 根据PlataformaFiltrar分组
 const filteredGroups = computed(() => {
   let platformFilter = form.value.platform
-  // Claude Console 和 CCR 使用 Claude 分组
+  // Claude Console y CCR 使用 Claude 分组
   if (form.value.platform === 'claude-console' || form.value.platform === 'ccr') {
     platformFilter = 'claude'
   }
@@ -5426,17 +5426,17 @@ const loadGroups = async () => {
     const response = await httpApis.getAccountGroupsApi()
     groups.value = response.data || []
   } catch (error) {
-    showToast('加载分组列表失败', 'error')
+    showToast('加载分组列表Fallido', 'error')
     groups.value = []
   } finally {
     loadingGroups.value = false
   }
 }
 
-// 刷新分组列表
+// Actualizar分组列表
 const refreshGroups = async () => {
   await loadGroups()
-  showToast('分组列表已刷新', 'success')
+  showToast('分组列表已Actualizar', 'success')
 }
 
 // 处理新建分组
@@ -5444,14 +5444,14 @@ const handleNewGroup = () => {
   showGroupManagement.value = true
 }
 
-// 处理分组管理模态框刷新
+// 处理分组管理模态框Actualizar
 const handleGroupRefresh = async () => {
   await loadGroups()
 }
 
-// 处理 API Key 管理模态框刷新
+// 处理 API Key 管理模态框Actualizar
 const handleApiKeyRefresh = async () => {
-  // 刷新账户信息以更新 API Key 数量
+  // ActualizarCuentaInformación以Actualizar API Key 数量
   if (!props.account?.id) {
     return
   }
@@ -5468,38 +5468,38 @@ const handleApiKeyRefresh = async () => {
       await refresher()
       return
     } catch (error) {
-      console.error('刷新账户列表失败:', error)
+      console.error('ActualizarCuenta列表Fallido:', error)
     }
   }
 }
 
-// 监听平台变化，重置表单
+// 监听Plataforma变化，Restablecer表单
 watch(
   () => form.value.platform,
   (newPlatform) => {
-    // 处理添加方式的自动切换
+    // 处理添加方式自动切换
     if (
       newPlatform === 'claude-console' ||
       newPlatform === 'ccr' ||
       newPlatform === 'bedrock' ||
       newPlatform === 'openai-responses'
     ) {
-      form.value.addType = 'manual' // Claude Console、CCR、Bedrock 和 OpenAI-Responses 只支持手动模式
+      form.value.addType = 'manual' // Claude Console、CCR、Bedrock y OpenAI-Responses 只支持手动模式
     } else if (newPlatform === 'claude') {
-      // 切换到 Claude 时，使用 oauth 作为默认方式
+      // 切换到 Claude 时，使用 oauth 作para默认方式
       form.value.addType = 'oauth'
     } else if (newPlatform === 'gemini') {
-      // 切换到 Gemini 时，使用 OAuth 作为默认方式
+      // 切换到 Gemini 时，使用 OAuth 作para默认方式
       form.value.addType = 'oauth'
     } else if (newPlatform === 'openai') {
-      // 切换到 OpenAI 时，使用 OAuth 作为默认方式
+      // 切换到 OpenAI 时，使用 OAuth 作para默认方式
       form.value.addType = 'oauth'
     } else if (newPlatform === 'gemini-api' || newPlatform === 'azure_openai') {
-      // 切换到 Gemini API 或 Azure OpenAI 时，使用 apikey 模式（直接创建，不需要 OAuth 流程）
+      // 切换到 Gemini API o Azure OpenAI 时，使用 apikey 模式（直接Crear，不需要 OAuth 流程）
       form.value.addType = 'apikey'
     }
 
-    // 平台变化时，清空分组选择
+    // Plataforma变化时，清空分组选择
     if (form.value.accountType === 'group') {
       form.value.groupId = ''
       form.value.groupIds = []
@@ -5507,16 +5507,16 @@ watch(
   }
 )
 
-// 监听分组选择变化，保持 groupId 和 groupIds 同步
+// 监听分组选择变化，保持 groupId y groupIds 同步
 watch(
   () => form.value.groupIds,
   (newGroupIds) => {
     if (form.value.accountType === 'group') {
       if (newGroupIds && newGroupIds.length > 0) {
-        // 如果有选中的分组，使用第一个作为主分组
+        // 如果有选en分组，使用primero作para主分组
         form.value.groupId = newGroupIds[0]
       } else {
-        // 如果没有选中分组，清空主分组
+        // 如果没有选en分组，清空主分组
         form.value.groupId = ''
       }
     }
@@ -5524,7 +5524,7 @@ watch(
   { deep: true }
 )
 
-// 监听添加方式切换，确保字段状态同步
+// 监听添加方式切换，确保字段Estado同步
 watch(
   () => form.value.addType,
   (newType, oldType) => {
@@ -5541,7 +5541,7 @@ watch(
       form.value.authenticationMethod = 'api_key'
       form.value.apiKeyUpdateMode = 'append'
     } else if (oldType === 'apikey') {
-      // 切换离开 API Key 模式时重置 API Key 输入
+      // 切换离开 API Key 模式时Restablecer API Key Entrada
       form.value.apiKeysInput = ''
       form.value.apiKeyUpdateMode = 'append'
       errors.value.apiKeys = ''
@@ -5552,7 +5552,7 @@ watch(
   }
 )
 
-// 监听 API Key 更新模式切换，自动清理提示
+// 监听 API Key Actualizar模式切换，自动清理Sugerencia
 watch(
   () => form.value.apiKeyUpdateMode,
   (newMode, oldMode) => {
@@ -5566,7 +5566,7 @@ watch(
   }
 )
 
-// 监听 API Key 输入，自动清理错误提示
+// 监听 API Key Entrada，自动清理ErrorSugerencia
 watch(
   () => form.value.apiKeysInput,
   (newValue) => {
@@ -5595,65 +5595,65 @@ watch(
   }
 )
 
-// 监听Setup Token授权码输入，自动提取URL中的code参数
+// 监听Setup Token授权码Entrada，自动提取URLencode参数
 watch(setupTokenAuthCode, (newValue) => {
   if (!newValue || typeof newValue !== 'string') return
 
   const trimmedValue = newValue.trim()
 
-  // 如果内容为空，不处理
+  // 如果内容para空，不处理
   if (!trimmedValue) return
 
-  // 检查是否是 URL 格式（包含 http:// 或 https://）
+  // 检查是否是 URL 格式（包含 http:// o https://）
   const isUrl = trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')
 
   // 如果是 URL 格式
   if (isUrl) {
-    // 检查是否是正确的 localhost:45462 开头的 URL
+    // 检查是否是正确 localhost:45462 开头 URL
     if (trimmedValue.startsWith('http://localhost:45462')) {
       try {
         const url = new URL(trimmedValue)
         const code = url.searchParams.get('code')
 
         if (code) {
-          // 成功提取授权码
+          // Exitoso提取授权码
           setupTokenAuthCode.value = code
-          showToast('成功提取授权码！', 'success')
+          showToast('Exitoso提取授权码！', 'success')
           // Successfully extracted authorization code from URL
         } else {
-          // URL 中没有 code 参数
-          showToast('URL 中未找到授权码参数，请检查链接是否正确', 'error')
+          // URL en没有 code 参数
+          showToast('URL en未找到授权码参数，请检查链接是否正确', 'error')
         }
       } catch (error) {
-        // URL 解析失败
+        // URL 解析Fallido
         // Failed to parse URL
-        showToast('链接格式错误，请检查是否为完整的 URL', 'error')
+        showToast('链接格式Error，请检查是否para完整 URL', 'error')
       }
     } else {
-      // 错误的 URL（不是 localhost:45462 开头）
-      showToast('请粘贴以 http://localhost:45462 开头的链接', 'error')
+      // Error URL（不是 localhost:45462 开头）
+      showToast('请Pegar以 http://localhost:45462 开头链接', 'error')
     }
   }
-  // 如果不是 URL，保持原值（兼容直接输入授权码）
+  // 如果不是 URL，保持原值（兼容直接Entrada授权码）
 })
 
-// 监听平台变化
+// 监听Plataforma变化
 watch(
   () => form.value.platform,
   (newPlatform) => {
-    // 当选择 CCR 平台时，通知父组件
+    // 当选择 CCR Plataforma时，通知父组件
     if (!isEdit.value) {
       emit('platform-changed', newPlatform)
     }
   }
 )
 
-// 监听账户类型变化
+// 监听CuentaTipo变化
 watch(
   () => form.value.accountType,
   (newType) => {
     if (newType === 'group') {
-      // 如果选择分组类型，加载分组列表
+      // 如果选择分组Tipo，加载分组列表
       if (groups.value.length === 0) {
         loadGroups()
       }
@@ -5666,29 +5666,29 @@ watch(
   () => form.value.groupId,
   (newGroupId) => {
     if (newGroupId === '__new__') {
-      // 触发创建新分组
+      // 触发Crear新分组
       form.value.groupId = ''
       showGroupManagement.value = true
     }
   }
 )
 
-// 添加模型映射
+// 添加Modelo映射
 const addModelMapping = () => {
   modelMappings.value.push({ from: '', to: '' })
 }
 
-// 移除模型映射
+// 移除Modelo映射
 const removeModelMapping = (index) => {
   modelMappings.value.splice(index, 1)
 }
 
 // 添加预设映射
 const addPresetMapping = (from, to) => {
-  // 检查是否已存在相同的映射
+  // 检查是否已存en相同映射
   const exists = modelMappings.value.some((mapping) => mapping.from === from)
   if (exists) {
-    showToast(`模型 ${from} 的映射已存在`, 'info')
+    showToast(`Modelo ${from} 映射已存en`, 'info')
     return
   }
 
@@ -5696,17 +5696,17 @@ const addPresetMapping = (from, to) => {
   showToast(`已添加映射: ${from} → ${to}`, 'success')
 }
 
-// 将模型映射表转换为对象格式（根据当前模式）
+// 将Modelo映射表转换para对象格式（根据当anterior模式）
 const convertMappingsToObject = () => {
   const mapping = {}
 
   if (modelRestrictionMode.value === 'whitelist') {
-    // 白名单模式：将选中的模型映射到自己
+    // 白名单模式：将选enModelo映射到自己
     allowedModels.value.forEach((model) => {
       mapping[model] = model
     })
   } else {
-    // 映射模式：使用手动配置的映射表
+    // 映射模式：使用手动配置映射表
     modelMappings.value.forEach((item) => {
       if (item.from && item.to) {
         mapping[item.from] = item.to
@@ -5717,7 +5717,7 @@ const convertMappingsToObject = () => {
   return Object.keys(mapping).length > 0 ? mapping : null
 }
 
-// 监听账户变化，更新表单
+// 监听Cuenta变化，Actualizar表单
 watch(
   () => props.account,
   (newAccount) => {
@@ -5736,13 +5736,13 @@ watch(
             ? 'manual'
             : 'oauth'
 
-      // 获取分组ID - 可能来自 groupId 字段或 groupInfo 对象
+      // 获取分组ID - 可能来自 groupId 字段o groupInfo 对象
       let groupId = ''
       if (newAccount.accountType === 'group') {
         groupId = newAccount.groupId || (newAccount.groupInfo && newAccount.groupInfo.id) || ''
       }
 
-      // 初始化订阅类型（从 subscriptionInfo 中提取，兼容旧数据默认为 claude_max）
+      // 初始化订阅Tipo（de subscriptionInfo en提取，兼容旧数据默认para claude_max）
       let subscriptionType = 'claude_max'
       if (newAccount.subscriptionInfo) {
         const info =
@@ -5783,16 +5783,16 @@ watch(
         proxy: proxyConfig,
         // Claude Console 特定字段
         apiUrl: newAccount.apiUrl || '',
-        apiKey: '', // 编辑模式不显示现有的 API Key
+        apiKey: '', // Editar模式不显示现有 API Key
         priority: newAccount.priority || 50,
         supportedModels: (() => {
           const models = newAccount.supportedModels
           if (!models) return []
-          // 处理对象格式（Claude Console 的新格式）
+          // 处理对象格式（Claude Console 新格式）
           if (typeof models === 'object' && !Array.isArray(models)) {
             return Object.keys(models)
           }
-          // 处理数组格式（向后兼容）
+          // 处理数组格式（向siguiente兼容）
           if (Array.isArray(models)) {
             return models
           }
@@ -5803,10 +5803,10 @@ watch(
           newAccount.rateLimitDuration && newAccount.rateLimitDuration > 0 ? true : false,
         rateLimitDuration: newAccount.rateLimitDuration || 60,
         // Bedrock 特定字段
-        accessKeyId: '', // 编辑模式不显示现有的访问密钥
-        secretAccessKey: '', // 编辑模式不显示现有的秘密密钥
+        accessKeyId: '', // Editar模式不显示现有Clave de acceso
+        secretAccessKey: '', // Editar模式不显示现有秘密Clave
         region: newAccount.region || '',
-        sessionToken: '', // 编辑模式不显示现有的会话令牌
+        sessionToken: '', // Editar模式不显示现有会话Token
         defaultModel: newAccount.defaultModel || '',
         smallFastModel: newAccount.smallFastModel || '',
         // Azure OpenAI 特定字段
@@ -5823,23 +5823,23 @@ watch(
         maxConcurrentTasks: newAccount.maxConcurrentTasks || 0
       }
 
-      // 如果是Claude Console账户，加载实时使用情况
+      // 如果是Claude ConsoleCuenta，加载实时使用情况
       if (newAccount.platform === 'claude-console') {
         loadAccountUsage()
       }
 
-      // 如果是分组类型，加载分组ID
+      // 如果是分组Tipo，加载分组ID
       if (newAccount.accountType === 'group') {
         // 先加载分组列表
         loadGroups().then(async () => {
           const foundGroupIds = []
 
-          // 如果账户有 groupInfo，直接使用它的 groupId
+          // 如果Cuenta有 groupInfo，直接使用它 groupId
           if (newAccount.groupInfo && newAccount.groupInfo.id) {
             form.value.groupId = newAccount.groupInfo.id
             foundGroupIds.push(newAccount.groupInfo.id)
           } else if (newAccount.groupId) {
-            // 如果账户有 groupId 字段，直接使用（OpenAI-Responses 等账户）
+            // 如果Cuenta有 groupId 字段，直接使用（OpenAI-Responses 等Cuenta）
             form.value.groupId = newAccount.groupId
             foundGroupIds.push(newAccount.groupId)
           } else if (
@@ -5847,11 +5847,11 @@ watch(
             Array.isArray(newAccount.groupIds) &&
             newAccount.groupIds.length > 0
           ) {
-            // 如果账户有 groupIds 数组，使用它
+            // 如果Cuenta有 groupIds 数组，使用它
             form.value.groupId = newAccount.groupIds[0]
             foundGroupIds.push(...newAccount.groupIds)
           } else {
-            // 否则查找账户所属的分组
+            // 否则查找Cuenta所属分组
             const checkPromises = groups.value.map(async (group) => {
               try {
                 const response = await httpApis.getAccountGroupMembersApi(group.id)
@@ -5859,18 +5859,18 @@ watch(
                 if (members.some((m) => m.id === newAccount.id)) {
                   foundGroupIds.push(group.id)
                   if (!form.value.groupId) {
-                    form.value.groupId = group.id // 设置第一个找到的分组作为主分组
+                    form.value.groupId = group.id // Configuraciónprimero找到分组作para主分组
                   }
                 }
               } catch (error) {
-                // 忽略错误
+                // 忽略Error
               }
             })
 
             await Promise.all(checkPromises)
           }
 
-          // 设置多选分组
+          // Configuración多选分组
           form.value.groupIds = foundGroupIds
         })
       }
@@ -5879,7 +5879,7 @@ watch(
   { immediate: true }
 )
 
-// 获取统一 User-Agent 信息
+// 获取统一 User-Agent Información
 const fetchUnifiedUserAgent = async () => {
   try {
     const response = await httpApis.getClaudeCodeVersionApi()
@@ -5894,20 +5894,20 @@ const fetchUnifiedUserAgent = async () => {
   }
 }
 
-// 清除统一 User-Agent 缓存
+// 清除统一 User-Agent Caché
 const clearUnifiedCache = async () => {
   clearingCache.value = true
   try {
     const response = await httpApis.clearClaudeCodeVersionApi()
     if (response.success) {
       unifiedUserAgent.value = ''
-      showToast('统一User-Agent缓存已清除', 'success')
+      showToast('统一User-AgentCaché已清除', 'success')
     } else {
-      showToast('清除缓存失败', 'error')
+      showToast('清除CachéFallido', 'error')
     }
   } catch (error) {
     // Failed to clear unified User-Agent cache
-    showToast('清除缓存失败：' + (error.message || '未知错误'), 'error')
+    showToast('清除CachéFallido：' + (error.message || 'Error desconocido'), 'error')
   } finally {
     clearingCache.value = false
   }
@@ -5924,15 +5924,15 @@ const generateClientId = () => {
 // 重新生成客户端标识
 const regenerateClientId = () => {
   form.value.unifiedClientId = generateClientId()
-  showToast('已生成新的客户端标识', 'success')
+  showToast('已生成新客户端标识', 'success')
 }
 
 // 处理统一客户端标识复选框变化
 const handleUnifiedClientIdChange = () => {
   if (form.value.useUnifiedClientId) {
-    // 如果启用了统一客户端标识，自动启用统一User-Agent
+    // 如果Habilitar统一客户端标识，自动Habilitar统一User-Agent
     form.value.useUnifiedUserAgent = true
-    // 如果没有客户端标识，自动生成一个
+    // 如果没有客户端标识，自动生成一 
     if (!form.value.unifiedClientId) {
       form.value.unifiedClientId = generateClientId()
     }
@@ -5947,7 +5947,7 @@ const minDateTime = computed(() => {
   return now.toISOString().slice(0, 16)
 })
 
-// 更新账户过期时间
+// ActualizarCuenta过期时间
 const updateAccountExpireAt = () => {
   if (!form.value.expireDuration) {
     form.value.expiresAt = null
@@ -5974,7 +5974,7 @@ const updateAccountExpireAt = () => {
   }
 }
 
-// 更新自定义过期时间
+// Actualizar自定义过期时间
 const updateAccountCustomExpireAt = () => {
   if (form.value.customExpireDate) {
     form.value.expiresAt = new Date(form.value.customExpireDate).toISOString()
@@ -5994,28 +5994,28 @@ const formatExpireDate = (dateString) => {
   })
 }
 
-// 组件挂载时获取统一 User-Agent 信息
+// 组件挂载时获取统一 User-Agent Información
 onMounted(() => {
-  // 初始化平台分组
+  // 初始化Plataforma分组
   platformGroup.value = determinePlatformGroup(form.value.platform)
 
-  // 初始化模型映射表（如果是编辑模式）
+  // 初始化Modelo映射表（如果是Editar模式）
   if (isEdit.value) {
     initModelMappings()
   }
 
-  // 加载模型列表
+  // 加载Modelo列表
   loadCommonModels()
 
-  // 获取Claude Code统一User-Agent信息
+  // 获取Claude Code统一User-AgentInformación
   fetchUnifiedUserAgent()
-  // 如果是编辑模式且是Claude Console账户，加载使用情况
+  // 如果是Editar模式且是Claude ConsoleCuenta，加载使用情况
   if (isEdit.value && props.account?.platform === 'claude-console') {
     loadAccountUsage()
   }
 })
 
-// 监听平台变化，当切换到Claude平台时获取统一User-Agent信息
+// 监听Plataforma变化，当切换到ClaudePlataforma时获取统一User-AgentInformación
 watch(
   () => form.value.platform,
   (newPlatform) => {

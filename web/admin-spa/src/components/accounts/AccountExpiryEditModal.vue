@@ -20,7 +20,7 @@
             <div>
               <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">修改到期时间</h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                为 "{{ account.name || 'Account' }}" 设置新的到期时间
+                para "{{ account.name || 'Account' }}" Configuración新到期时间
               </p>
             </div>
           </div>
@@ -33,15 +33,15 @@
         </div>
 
         <div class="space-y-6">
-          <!-- 当前状态显示 -->
+          <!-- 当anteriorEstado显示 -->
           <div
             class="rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 p-4 dark:border-gray-600 dark:from-gray-700 dark:to-gray-800"
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="mb-1 text-xs font-medium text-gray-600 dark:text-gray-400">当前状态</p>
+                <p class="mb-1 text-xs font-medium text-gray-600 dark:text-gray-400">当anteriorEstado</p>
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  <!-- 已设置过期时间 -->
+                  <!-- 已Configuración过期时间 -->
                   <template v-if="account.expiresAt">
                     {{ formatFullExpireDate(account.expiresAt) }}
                     <span
@@ -77,7 +77,7 @@
           <!-- 快捷选项 -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择新的期限</label
+              >选择新期限</label
             >
             <div class="mb-3 grid grid-cols-3 gap-2">
               <button
@@ -111,7 +111,7 @@
           <!-- 自定义日期选择 -->
           <div v-if="localForm.expireDuration === 'custom'" class="animate-fadeIn">
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >选择日期和时间</label
+              >选择日期y时间</label
             >
             <input
               v-model="localForm.customExpireDate"
@@ -121,11 +121,11 @@
               @change="updateCustomExpiryPreview"
             />
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              选择一个未来的日期和时间作为到期时间
+              选择一 未来日期y时间作para到期时间
             </p>
           </div>
 
-          <!-- 预览新的过期时间 -->
+          <!-- Vista previa新过期时间 -->
           <div
             v-if="localForm.expiresAt !== account.expiresAt"
             class="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 dark:border-blue-700 dark:from-blue-900/20 dark:to-indigo-900/20"
@@ -134,7 +134,7 @@
               <div>
                 <p class="mb-1 text-xs font-medium text-blue-700 dark:text-blue-400">
                   <i class="fas fa-arrow-right mr-1" />
-                  新的到期时间
+                  新到期时间
                 </p>
                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">
                   <template v-if="localForm.expiresAt">
@@ -161,13 +161,13 @@
             </div>
           </div>
 
-          <!-- 操作按钮 -->
+          <!-- Operación按钮 -->
           <div class="flex gap-3 pt-2">
             <button
               class="flex-1 rounded-lg bg-gray-100 px-4 py-2.5 font-semibold text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               @click="$emit('close')"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="btn btn-primary flex-1 px-4 py-2.5 font-semibold"
@@ -176,7 +176,7 @@
             >
               <div v-if="saving" class="loading-spinner mr-2" />
               <i v-else class="fas fa-save mr-2" />
-              {{ saving ? '保存中...' : '保存更改' }}
+              {{ saving ? 'Guardaren...' : 'Guardar更改' }}
             </button>
           </div>
         </div>
@@ -227,7 +227,7 @@ const minDateTime = computed(() => {
   return now.toISOString().slice(0, 16)
 })
 
-// 监听显示状态，初始化表单
+// 监听显示Estado，初始化表单
 watch(
   () => props.show,
   (newVal) => {
@@ -301,19 +301,19 @@ const selectQuickOption = (value) => {
   }
 }
 
-// 更新自定义过期时间
+// Actualizar自定义过期时间
 const updateCustomExpiryPreview = () => {
   if (localForm.customExpireDate) {
     try {
-      // 手动解析日期时间字符串，确保它被正确解释为本地时间
+      // 手动解析日期时间字符串，确保它被正确解释para本地时间
       const [datePart, timePart] = localForm.customExpireDate.split('T')
       const [year, month, day] = datePart.split('-').map(Number)
       const [hours, minutes] = timePart.split(':').map(Number)
 
-      // 使用构造函数创建本地时间的 Date 对象，然后转换为 UTC ISO 字符串
+      // 使用构造函数Crear本地时间 Date 对象，然siguiente转换para UTC ISO 字符串
       const localDate = new Date(year, month - 1, day, hours, minutes, 0, 0)
 
-      // 验证日期有效性
+      // 验证日期Válido性
       if (isNaN(localDate.getTime())) {
         console.error('Invalid date:', localForm.customExpireDate)
         return
@@ -345,7 +345,7 @@ const isExpired = (dateString) => {
   return new Date(dateString) < new Date()
 }
 
-// 获取过期状态
+// 获取过期Estado
 const getExpiryStatus = (expiresAt) => {
   if (!expiresAt) return null
 
@@ -361,23 +361,23 @@ const getExpiryStatus = (expiresAt) => {
     }
   } else if (diffDays <= 7) {
     return {
-      text: `${diffDays} 天后过期`,
+      text: `${diffDays} 天siguiente过期`,
       class: 'text-orange-600'
     }
   } else if (diffDays <= 30) {
     return {
-      text: `${diffDays} 天后过期`,
+      text: `${diffDays} 天siguiente过期`,
       class: 'text-yellow-600'
     }
   } else {
     return {
-      text: `${Math.ceil(diffDays / 30)} 个月后过期`,
+      text: `${Math.ceil(diffDays / 30)}  月siguiente过期`,
       class: 'text-green-600'
     }
   }
 }
 
-// 保存
+// Guardar
 const handleSave = () => {
   saving.value = true
   emit('save', {
@@ -386,7 +386,7 @@ const handleSave = () => {
   })
 }
 
-// 重置保存状态
+// RestablecerGuardarEstado
 const resetSaving = () => {
   saving.value = false
 }

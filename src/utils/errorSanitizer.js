@@ -1,11 +1,11 @@
 /**
- * 错误消息清理工具 - 白名单错误码制
- * 所有错误映射到预定义的标准错误码，原始消息只记日志不返回前端
+ * Error消息Limpiar工具 - 白名单Error码制
+ * 所有Error映射到预定义的标准Error码，原始消息只记Registro不Retornar前端
  */
 
 const logger = require('./logger')
 
-// 标准错误码定义
+// 标准Error码定义
 const ERROR_CODES = {
   E001: { message: 'Service temporarily unavailable', status: 503 },
   E002: { message: 'Network connection failed', status: 502 },
@@ -24,63 +24,63 @@ const ERROR_CODES = {
   E015: { message: 'Internal server error', status: 500 }
 }
 
-// 错误特征匹配规则（按优先级排序）
+// Error特征匹配Regla（按优先级Ordenar）
 const ERROR_MATCHERS = [
-  // 网络层错误
+  // 网络层Error
   { pattern: /ENOTFOUND|DNS|getaddrinfo/i, code: 'E002' },
   { pattern: /ECONNREFUSED|ECONNRESET|connection refused/i, code: 'E002' },
   { pattern: /ETIMEDOUT|timeout/i, code: 'E008' },
   { pattern: /ECONNABORTED|aborted/i, code: 'E002' },
 
-  // 认证错误
+  // 认证Error
   { pattern: /unauthorized|invalid.*token|token.*invalid|invalid.*key/i, code: 'E003' },
   { pattern: /invalid.*api.*key|api.*key.*invalid/i, code: 'E013' },
   { pattern: /authentication|auth.*fail/i, code: 'E003' },
 
-  // 权限错误
+  // PermisoError
   { pattern: /forbidden|permission.*denied|access.*denied/i, code: 'E009' },
   { pattern: /does not have.*permission/i, code: 'E009' },
 
-  // 限流错误
+  // 限流Error
   { pattern: /rate.*limit|too many requests|429/i, code: 'E004' },
   { pattern: /quota.*exceeded|usage.*limit/i, code: 'E014' },
 
-  // 过载错误
+  // 过载Error
   { pattern: /overloaded|529|capacity/i, code: 'E012' },
 
-  // 账户错误
+  // CuentaError
   { pattern: /account.*disabled|organization.*disabled/i, code: 'E011' },
   { pattern: /too many active sessions/i, code: 'E011' },
 
-  // 模型错误
+  // 模型Error
   { pattern: /model.*not.*found|model.*unavailable|unsupported.*model/i, code: 'E006' },
 
-  // 请求错误
+  // SolicitudError
   { pattern: /bad.*request|invalid.*request|malformed/i, code: 'E005' },
   { pattern: /not.*found|404/i, code: 'E010' },
 
-  // 上游错误
+  // 上游Error
   { pattern: /upstream|502|bad.*gateway/i, code: 'E007' },
   { pattern: /503|service.*unavailable/i, code: 'E001' }
 ]
 
 /**
- * 根据原始错误匹配标准错误码
- * @param {Error|string|object} error - 原始错误
+ * 根据原始Error匹配标准Error码
+ * @param {Error|string|object} error - 原始Error
  * @param {object} options - 选项
- * @param {string} options.context - 错误上下文（用于日志）
- * @param {boolean} options.logOriginal - 是否记录原始错误（默认true）
+ * @param {string} options.context - Error上下文（用于Registro）
+ * @param {boolean} options.logOriginal - 是否Registro原始Error（Predeterminadotrue）
  * @returns {{ code: string, message: string, status: number }}
  */
 function mapToErrorCode(error, options = {}) {
   const { context = 'unknown', logOriginal = true } = options
 
-  // 提取原始错误信息
+  // 提取原始ErrorInformación
   const originalMessage = extractOriginalMessage(error)
   const errorCode = error?.code || error?.response?.status
   const statusCode = error?.response?.status || error?.status || error?.statusCode
 
-  // 记录原始错误到日志（供调试）
+  // Registro原始Error到Registro（供Depurar）
   if (logOriginal && originalMessage) {
     logger.debug(`[ErrorSanitizer] Original error (${context}):`, {
       message: originalMessage,
@@ -89,8 +89,8 @@ function mapToErrorCode(error, options = {}) {
     })
   }
 
-  // 匹配错误码
-  let matchedCode = 'E015' // 默认：内部服务器错误
+  // 匹配Error码
+  let matchedCode = 'E015' // Predeterminado：内部Servicio器Error
 
   // 先按 HTTP 状态码快速匹配
   if (statusCode) {
@@ -123,7 +123,7 @@ function mapToErrorCode(error, options = {}) {
     }
   }
 
-  // 按错误 code 匹配（网络错误）
+  // 按Error code 匹配（网络Error）
   if (errorCode) {
     const codeStr = String(errorCode).toUpperCase()
     if (codeStr === 'ENOTFOUND' || codeStr === 'EAI_AGAIN') {
@@ -146,7 +146,7 @@ function mapToErrorCode(error, options = {}) {
 }
 
 /**
- * 提取原始错误消息
+ * 提取原始Error消息
  */
 function extractOriginalMessage(error) {
   if (!error) {
@@ -171,8 +171,8 @@ function extractOriginalMessage(error) {
 }
 
 /**
- * 创建安全的错误响应对象
- * @param {Error|string|object} error - 原始错误
+ * CrearSeguridad的ErrorRespuestaObjeto
+ * @param {Error|string|object} error - 原始Error
  * @param {object} options - 选项
  * @returns {{ error: { code: string, message: string }, status: number }}
  */
@@ -188,10 +188,10 @@ function createSafeErrorResponse(error, options = {}) {
 }
 
 /**
- * 创建安全的 SSE 错误事件
- * @param {Error|string|object} error - 原始错误
+ * CrearSeguridad的 SSE ErrorEvento
+ * @param {Error|string|object} error - 原始Error
  * @param {object} options - 选项
- * @returns {string} - SSE 格式的错误事件
+ * @returns {string} - SSE Formato的ErrorEvento
  */
 function createSafeSSEError(error, options = {}) {
   const mapped = mapToErrorCode(error, options)
@@ -203,8 +203,8 @@ function createSafeSSEError(error, options = {}) {
 }
 
 /**
- * 获取安全的错误消息（用于替换 error.message）
- * @param {Error|string|object} error - 原始错误
+ * ObtenerSeguridad的Error消息（用于Reemplazo error.message）
+ * @param {Error|string|object} error - 原始Error
  * @param {object} options - 选项
  * @returns {string}
  */
@@ -212,7 +212,7 @@ function getSafeMessage(error, options = {}) {
   return mapToErrorCode(error, options).message
 }
 
-// 兼容旧接口
+// 兼容旧Interfaz
 function sanitizeErrorMessage(message) {
   if (!message) {
     return 'Service temporarily unavailable'
@@ -254,7 +254,7 @@ module.exports = {
   createSafeErrorResponse,
   createSafeSSEError,
   getSafeMessage,
-  // 兼容旧接口
+  // 兼容旧Interfaz
   sanitizeErrorMessage,
   sanitizeUpstreamError,
   extractErrorMessage,

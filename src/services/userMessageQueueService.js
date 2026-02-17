@@ -1,9 +1,9 @@
 /**
- * 用户消息队列服务
- * 为 Claude 账户实现基于消息类型的串行排队机制
+ * Usuario消息ColaServicio
+ * 为 Claude Cuenta实现基于消息Tipo的串Fila排队机制
  *
- * 当请求的最后一条消息是用户输入（role: user）时，
- * 同一账户的此类请求需要串行等待，并在请求之间添加延迟
+ * 当Solicitud的最后一条消息是Usuario输入（role: user）时，
+ * 同一Cuenta的此ClaseSolicitud需要串Fila等待，并在Solicitud之间添加延迟
  */
 
 const { v4: uuidv4 } = require('uuid')
@@ -12,15 +12,15 @@ const config = require('../../config/config')
 const logger = require('../utils/logger')
 const { getCachedConfig, setCachedConfig } = require('../utils/performanceOptimizer')
 
-// 清理任务间隔
+// Limpiar任务间隔
 const CLEANUP_INTERVAL_MS = 60000 // 1分钟
 
-// 轮询等待配置
+// 轮询等待Configuración
 const POLL_INTERVAL_BASE_MS = 50 // 基础轮询间隔
 const POLL_INTERVAL_MAX_MS = 500 // 最大轮询间隔
 const POLL_BACKOFF_FACTOR = 1.5 // 退避因子
 
-// 配置缓存 key
+// ConfiguraciónCaché key
 const CONFIG_CACHE_KEY = 'user_message_queue_config'
 
 class UserMessageQueueService {
@@ -29,15 +29,15 @@ class UserMessageQueueService {
   }
 
   /**
-   * 检测请求是否为真正的用户消息请求
-   * 区分真正的用户输入和 tool_result 消息
+   * 检测Solicitud是否为真正的Usuario消息Solicitud
+   * 区分真正的Usuario输入和 tool_result 消息
    *
-   * Claude API 消息格式：
-   * - 用户文本消息: { role: 'user', content: 'text' } 或 { role: 'user', content: [{ type: 'text', text: '...' }] }
+   * Claude API 消息Formato：
+   * - Usuario文本消息: { role: 'user', content: 'text' } 或 { role: 'user', content: [{ type: 'text', text: '...' }] }
    * - 工具结果消息: { role: 'user', content: [{ type: 'tool_result', tool_use_id: '...', content: '...' }] }
    *
-   * @param {Object} requestBody - 请求体
-   * @returns {boolean} - 是否为真正的用户消息（排除 tool_result）
+   * @param {Object} requestBody - Solicitud体
+   * @returns {boolean} - 是否为真正的Usuario消息（Excluir tool_result）
    */
   isUserMessageRequest(requestBody) {
     const messages = requestBody?.messages
@@ -46,15 +46,15 @@ class UserMessageQueueService {
     }
     const lastMessage = messages[messages.length - 1]
 
-    // 检查 role 是否为 user
+    // Verificar role 是否为 user
     if (lastMessage?.role !== 'user') {
       return false
     }
 
-    // 检查 content 是否包含 tool_result 类型
+    // Verificar content 是否Incluir tool_result Tipo
     const { content } = lastMessage
     if (Array.isArray(content)) {
-      // 如果 content 数组中任何元素是 tool_result，则不是真正的用户消息
+      // 如果 content Arreglo中任何元素是 tool_result，则不是真正的Usuario消息
       const hasToolResult = content.some(
         (block) => block?.type === 'tool_result' || block?.type === 'tool_use_result'
       )
@@ -63,22 +63,22 @@ class UserMessageQueueService {
       }
     }
 
-    // role 是 user 且不包含 tool_result，是真正的用户消息
+    // role 是 user 且不Incluir tool_result，是真正的Usuario消息
     return true
   }
 
   /**
-   * 获取当前配置（支持 Web 界面配置优先，带短 TTL 缓存）
-   * @returns {Promise<Object>} 配置对象
+   * Obtener当前Configuración（Soportar Web 界面Configuración优先，带短 TTL Caché）
+   * @returns {Promise<Object>} ConfiguraciónObjeto
    */
   async getConfig() {
-    // 检查缓存
+    // VerificarCaché
     const cached = getCachedConfig(CONFIG_CACHE_KEY)
     if (cached) {
       return cached
     }
 
-    // 默认配置（防止 config.userMessageQueue 未定义）
+    // PredeterminadoConfiguración（防止 config.userMessageQueue 未定义）
     const queueConfig = config.userMessageQueue || {}
     const defaults = {
       enabled: queueConfig.enabled ?? false,
@@ -87,7 +87,7 @@ class UserMessageQueueService {
       lockTtlMs: queueConfig.lockTtlMs ?? 120000
     }
 
-    // 尝试从 claudeRelayConfigService 获取 Web 界面配置
+    // 尝试从 claudeRelayConfigService Obtener Web 界面Configuración
     try {
       const claudeRelayConfigService = require('./claudeRelayConfigService')
       const webConfig = await claudeRelayConfigService.getConfig()
@@ -111,18 +111,18 @@ class UserMessageQueueService {
             : defaults.lockTtlMs
       }
 
-      // 缓存配置 30 秒
+      // CachéConfiguración 30 秒
       setCachedConfig(CONFIG_CACHE_KEY, result, 30000)
       return result
     } catch {
-      // 回退到环境变量配置，也缓存
+      // Retirada到Variable de entornoConfiguración，也Caché
       setCachedConfig(CONFIG_CACHE_KEY, defaults, 30000)
       return defaults
     }
   }
 
   /**
-   * 检查功能是否启用
+   * Verificar功能是否Habilitar
    * @returns {Promise<boolean>}
    */
   async isEnabled() {
@@ -131,18 +131,18 @@ class UserMessageQueueService {
   }
 
   /**
-   * 获取账户队列锁（阻塞等待）
-   * @param {string} accountId - 账户ID
-   * @param {string} requestId - 请求ID（可选，会自动生成）
-   * @param {number} timeoutMs - 超时时间（可选，使用配置默认值）
-   * @param {Object} accountConfig - 账户级配置（可选），优先级高于全局配置
-   * @param {number} accountConfig.maxConcurrency - 账户级串行队列开关：>0启用，=0使用全局配置
+   * ObtenerCuentaCola锁（Bloqueante等待）
+   * @param {string} accountId - CuentaID
+   * @param {string} requestId - SolicitudID（Opcional，会自动Generar）
+   * @param {number} timeoutMs - Tiempo de espera agotadoTiempo（Opcional，使用ConfiguraciónPredeterminadoValor）
+   * @param {Object} accountConfig - Cuenta级Configuración（Opcional），优先级高于全局Configuración
+   * @param {number} accountConfig.maxConcurrency - Cuenta级串FilaCola开关：>0Habilitar，=0使用全局Configuración
    * @returns {Promise<{acquired: boolean, requestId: string, error?: string}>}
    */
   async acquireQueueLock(accountId, requestId = null, timeoutMs = null, accountConfig = null) {
     const cfg = await this.getConfig()
 
-    // 账户级配置优先：maxConcurrency > 0 时强制启用，忽略全局开关
+    // Cuenta级Configuración优先：maxConcurrency > 0 时强制Habilitar，忽略全局开关
     let queueEnabled = cfg.enabled
     if (accountConfig && accountConfig.maxConcurrency > 0) {
       queueEnabled = true
@@ -173,7 +173,7 @@ class UserMessageQueueService {
         cfg.delayMs
       )
 
-      // 检测 Redis 错误，立即返回系统错误而非继续轮询
+      // 检测 Redis Error，立即Retornar系统Error而非继续轮询
       if (result.redisError) {
         logger.error(`📬 User message queue: Redis error while acquiring lock`, {
           accountId,
@@ -199,7 +199,7 @@ class UserMessageQueueService {
 
       // 需要等待
       if (result.waitMs > 0) {
-        // 需要延迟（上一个请求刚完成）
+        // 需要延迟（上一个Solicitud刚Completado）
         await this._sleep(Math.min(result.waitMs, timeout - (Date.now() - startTime)))
       } else {
         // 锁被占用，使用指数退避轮询等待
@@ -207,7 +207,7 @@ class UserMessageQueueService {
           POLL_INTERVAL_BASE_MS * Math.pow(POLL_BACKOFF_FACTOR, retryCount),
           POLL_INTERVAL_MAX_MS
         )
-        // 添加 ±15% 随机抖动，避免高并发下的周期性碰撞
+        // 添加 ±15% 随机抖动，避免高Concurrencia下的周期性碰撞
         const jitter = basePollInterval * (0.85 + Math.random() * 0.3)
         const pollInterval = Math.min(jitter, POLL_INTERVAL_MAX_MS)
         await this._sleep(pollInterval)
@@ -215,7 +215,7 @@ class UserMessageQueueService {
       }
     }
 
-    // 超时
+    // Tiempo de espera agotado
     logger.warn(`📬 User message queue: timeout waiting for lock`, {
       accountId,
       requestId: reqId,
@@ -230,9 +230,9 @@ class UserMessageQueueService {
   }
 
   /**
-   * 释放账户队列锁
-   * @param {string} accountId - 账户ID
-   * @param {string} requestId - 请求ID
+   * 释放CuentaCola锁
+   * @param {string} accountId - CuentaID
+   * @param {string} requestId - SolicitudID
    * @returns {Promise<boolean>}
    */
   async releaseQueueLock(accountId, requestId) {
@@ -257,8 +257,8 @@ class UserMessageQueueService {
   }
 
   /**
-   * 获取队列统计信息
-   * @param {string} accountId - 账户ID
+   * ObtenerColaEstadísticaInformación
+   * @param {string} accountId - CuentaID
    * @returns {Promise<Object>}
    */
   async getQueueStats(accountId) {
@@ -266,9 +266,9 @@ class UserMessageQueueService {
   }
 
   /**
-   * 服务启动时清理所有残留的队列锁
-   * 防止服务重启后旧锁阻塞新请求
-   * @returns {Promise<number>} 清理的锁数量
+   * Servicio启动时Limpiar所有残留的Cola锁
+   * 防止Servicio重启后旧锁Bloqueante新Solicitud
+   * @returns {Promise<number>} Limpiar的锁数量
    */
   async cleanupStaleLocks() {
     try {
@@ -300,8 +300,8 @@ class UserMessageQueueService {
   }
 
   /**
-   * 启动定时清理任务
-   * 始终启动，每次执行时检查配置以支持运行时动态启用/禁用
+   * 启动定时Limpiar任务
+   * 始终启动，每次Ejecutar时VerificarConfiguración以Soportar运Fila时动态Habilitar/Deshabilitar
    */
   startCleanupTask() {
     if (this.cleanupTimer) {
@@ -309,7 +309,7 @@ class UserMessageQueueService {
     }
 
     this.cleanupTimer = setInterval(async () => {
-      // 每次运行时检查配置，以便在运行时动态启用/禁用
+      // 每次运Fila时VerificarConfiguración，以便在运Fila时动态Habilitar/Deshabilitar
       const currentConfig = await this.getConfig()
       if (!currentConfig.enabled) {
         logger.debug('📬 User message queue: cleanup skipped (feature disabled)')
@@ -322,7 +322,7 @@ class UserMessageQueueService {
   }
 
   /**
-   * 停止定时清理任务
+   * 停止定时Limpiar任务
    */
   stopCleanupTask() {
     if (this.cleanupTimer) {
@@ -333,8 +333,8 @@ class UserMessageQueueService {
   }
 
   /**
-   * 清理孤儿锁
-   * 检测异常情况：锁存在但没有设置过期时间（lockTtlRaw === -1）
+   * Limpiar孤儿锁
+   * 检测异常情况：锁存在但没有Establecer过期Tiempo（lockTtlRaw === -1）
    * 正常情况下所有锁都应该有 TTL，Redis 会自动过期
    * @private
    */
@@ -345,8 +345,8 @@ class UserMessageQueueService {
       for (const accountId of accountIds) {
         const stats = await redis.getUserMessageQueueStats(accountId)
 
-        // 检测异常情况：锁存在（isLocked=true）但没有过期时间（lockTtlRaw=-1）
-        // 正常创建的锁都带有 PX 过期时间，如果没有说明是异常状态
+        // 检测异常情况：锁存在（isLocked=true）但没有过期Tiempo（lockTtlRaw=-1）
+        // 正常Crear的锁都带有 PX 过期Tiempo，如果没有说明是异常状态
         if (stats.isLocked && stats.lockTtlRaw === -1) {
           logger.warn(
             `📬 User message queue: cleaning up orphan lock without TTL for account ${accountId}`,
@@ -361,7 +361,7 @@ class UserMessageQueueService {
   }
 
   /**
-   * 睡眠辅助函数
+   * 睡眠辅助Función
    * @param {number} ms - 毫秒
    * @private
    */

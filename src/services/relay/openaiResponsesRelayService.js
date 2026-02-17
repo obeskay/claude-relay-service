@@ -10,11 +10,11 @@ const crypto = require('crypto')
 const LRUCache = require('../../utils/lruCache')
 const upstreamErrorHelper = require('../../utils/upstreamErrorHelper')
 
-// lastUsedAt 更新节流（每账户 60 秒内最多更新一次，使用 LRU 防止内存泄漏）
-const lastUsedAtThrottle = new LRUCache(1000) // 最多缓存 1000 个账户
+// lastUsedAt Actualizar节流（每Cuenta 60 秒内最多Actualizar一次，使用 LRU 防止内存泄漏）
+const lastUsedAtThrottle = new LRUCache(1000) // 最多Caché 1000 个Cuenta
 const LAST_USED_AT_THROTTLE_MS = 60000
 
-// 抽取缓存写入 token，兼容多种字段命名
+// 抽取CachéEscribir token，兼容多种Campo命名
 function extractCacheCreationTokens(usageData) {
   if (!usageData || typeof usageData !== 'object') {
     return 0
@@ -45,13 +45,13 @@ class OpenAIResponsesRelayService {
     this.defaultTimeout = config.requestTimeout || 600000
   }
 
-  // 节流更新 lastUsedAt
+  // 节流Actualizar lastUsedAt
   async _throttledUpdateLastUsedAt(accountId) {
     const now = Date.now()
     const lastUpdate = lastUsedAtThrottle.get(accountId)
 
     if (lastUpdate && now - lastUpdate < LAST_USED_AT_THROTTLE_MS) {
-      return // 跳过更新
+      return // 跳过Actualizar
     }
 
     lastUsedAtThrottle.set(accountId, now, LAST_USED_AT_THROTTLE_MS)
@@ -60,26 +60,26 @@ class OpenAIResponsesRelayService {
     })
   }
 
-  // 处理请求转发
+  // ProcesarSolicitud转发
   async handleRequest(req, res, account, apiKeyData) {
     let abortController = null
-    // 获取会话哈希（如果有的话）
+    // ObtenerSesión哈希（如果有的话）
     const sessionId = req.headers['session_id'] || req.body?.session_id
     const sessionHash = sessionId
       ? crypto.createHash('sha256').update(sessionId).digest('hex')
       : null
 
     try {
-      // 获取完整的账户信息（包含解密的 API Key）
+      // Obtener完整的CuentaInformación（IncluirDescifrado的 API Key）
       const fullAccount = await openaiResponsesAccountService.getAccount(account.id)
       if (!fullAccount) {
         throw new Error('Account not found')
       }
 
-      // 创建 AbortController 用于取消请求
+      // Crear AbortController 用于取消Solicitud
       abortController = new AbortController()
 
-      // 设置客户端断开监听器
+      // EstablecerCliente断开Escucha
       const handleClientDisconnect = () => {
         logger.info('🔌 Client disconnected, aborting OpenAI-Responses request')
         if (abortController && !abortController.signal.aborted) {
@@ -87,22 +87,22 @@ class OpenAIResponsesRelayService {
         }
       }
 
-      // 监听客户端断开事件
+      // 监听Cliente断开Evento
       req.once('close', handleClientDisconnect)
       res.once('close', handleClientDisconnect)
 
-      // 构建目标 URL
+      // Construir目标 URL
       const targetUrl = `${fullAccount.baseApi}${req.path}`
       logger.info(`🎯 Forwarding to: ${targetUrl}`)
 
-      // 构建请求头 - 使用统一的 headerFilter 移除 CDN headers
+      // ConstruirSolicitud头 - 使用统一的 headerFilter Eliminación CDN headers
       const headers = {
         ...filterForOpenAI(req.headers),
         Authorization: `Bearer ${fullAccount.apiKey}`,
         'Content-Type': 'application/json'
       }
 
-      // 处理 User-Agent
+      // Procesar User-Agent
       if (fullAccount.userAgent) {
         // 使用自定义 User-Agent
         headers['User-Agent'] = fullAccount.userAgent
@@ -113,7 +113,7 @@ class OpenAIResponsesRelayService {
         logger.debug(`📱 Forwarding original User-Agent: ${req.headers['user-agent']}`)
       }
 
-      // 配置请求选项
+      // ConfiguraciónSolicitud选项
       const requestOptions = {
         method: req.method,
         url: targetUrl,
@@ -121,11 +121,11 @@ class OpenAIResponsesRelayService {
         data: req.body,
         timeout: this.defaultTimeout,
         responseType: req.body?.stream ? 'stream' : 'json',
-        validateStatus: () => true, // 允许处理所有状态码
+        validateStatus: () => true, // 允许Procesar所有状态码
         signal: abortController.signal
       }
 
-      // 配置代理（如果有）
+      // ConfiguraciónProxy（如果有）
       if (fullAccount.proxy) {
         const proxyAgent = ProxyHelper.createProxyAgent(fullAccount.proxy)
         if (proxyAgent) {
@@ -138,7 +138,7 @@ class OpenAIResponsesRelayService {
         }
       }
 
-      // 记录请求信息
+      // RegistroSolicitudInformación
       logger.info('📤 OpenAI-Responses relay request', {
         accountId: account.id,
         accountName: account.name,
@@ -149,10 +149,10 @@ class OpenAIResponsesRelayService {
         userAgent: headers['User-Agent'] || 'not set'
       })
 
-      // 发送请求
+      // 发送Solicitud
       const response = await axios(requestOptions)
 
-      // 处理 429 限流错误
+      // Procesar 429 限流Error
       if (response.status === 429) {
         const { resetsInSeconds, errorData } = await this._handle429Error(
           account,
@@ -174,7 +174,7 @@ class OpenAIResponsesRelayService {
             .catch(() => {})
         }
 
-        // 返回错误响应（使用处理后的数据，避免循环引用）
+        // RetornarErrorRespuesta（使用Procesar后的Datos，避免Bucle引用）
         const errorResponse = errorData || {
           error: {
             message: 'Rate limit exceeded',
@@ -186,25 +186,25 @@ class OpenAIResponsesRelayService {
         return res.status(429).json(errorResponse)
       }
 
-      // 处理其他错误状态码
+      // Procesar其他Error状态码
       if (response.status >= 400) {
-        // 处理流式错误响应
+        // Procesar流式ErrorRespuesta
         let errorData = response.data
         if (response.data && typeof response.data.pipe === 'function') {
-          // 流式响应需要先读取内容
+          // 流式Respuesta需要先Leer内容
           const chunks = []
           await new Promise((resolve) => {
             response.data.on('data', (chunk) => chunks.push(chunk))
             response.data.on('end', resolve)
             response.data.on('error', resolve)
-            setTimeout(resolve, 5000) // 超时保护
+            setTimeout(resolve, 5000) // Tiempo de espera agotado保护
           })
           const fullResponse = Buffer.concat(chunks).toString()
 
-          // 尝试解析错误响应
+          // 尝试AnalizarErrorRespuesta
           try {
             if (fullResponse.includes('data: ')) {
-              // SSE格式
+              // SSEFormato
               const lines = fullResponse.split('\n')
               for (const line of lines) {
                 if (line.startsWith('data: ')) {
@@ -232,10 +232,10 @@ class OpenAIResponsesRelayService {
         })
 
         if (response.status === 401) {
-          logger.warn(`🚫 OpenAI Responses账号认证失败（401错误）for account ${account?.id}`)
+          logger.warn(`🚫 OpenAI Responses账号认证Falló（401Error）for account ${account?.id}`)
 
           try {
-            // 仅临时暂停，不永久禁用
+            // 仅临时暂停，不永久Deshabilitar
             const oaiAutoProtectionDisabled =
               account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
             if (!oaiAutoProtectionDisabled) {
@@ -271,14 +271,14 @@ class OpenAIResponsesRelayService {
             }
           }
 
-          // 清理监听器
+          // LimpiarEscucha
           req.removeListener('close', handleClientDisconnect)
           res.removeListener('close', handleClientDisconnect)
 
           return res.status(401).json(unauthorizedResponse)
         }
 
-        // 处理 5xx 上游错误
+        // Procesar 5xx 上游Error
         if (response.status >= 500 && account?.id) {
           try {
             const oaiAutoProtectionDisabled =
@@ -301,7 +301,7 @@ class OpenAIResponsesRelayService {
           }
         }
 
-        // 清理监听器
+        // LimpiarEscucha
         req.removeListener('close', handleClientDisconnect)
         res.removeListener('close', handleClientDisconnect)
 
@@ -310,10 +310,10 @@ class OpenAIResponsesRelayService {
           .json(upstreamErrorHelper.sanitizeErrorForClient(errorData))
       }
 
-      // 更新最后使用时间（节流）
+      // Actualizar最后使用Tiempo（节流）
       await this._throttledUpdateLastUsedAt(account.id)
 
-      // 处理流式响应
+      // Procesar流式Respuesta
       if (req.body?.stream && response.data && typeof response.data.pipe === 'function') {
         return this._handleStreamResponse(
           response,
@@ -326,15 +326,15 @@ class OpenAIResponsesRelayService {
         )
       }
 
-      // 处理非流式响应
+      // Procesar非流式Respuesta
       return this._handleNormalResponse(response, res, account, apiKeyData, req.body?.model)
     } catch (error) {
-      // 清理 AbortController
+      // Limpiar AbortController
       if (abortController && !abortController.signal.aborted) {
         abortController.abort()
       }
 
-      // 安全地记录错误，避免循环引用
+      // Seguridad地RegistroError，避免Bucle引用
       const errorInfo = {
         message: error.message,
         code: error.code,
@@ -343,7 +343,7 @@ class OpenAIResponsesRelayService {
       }
       logger.error('OpenAI-Responses relay error:', errorInfo)
 
-      // 检查是否是网络错误
+      // Verificar是否是网络Error
       if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
         if (account?.id) {
           const oaiAutoProtectionDisabled =
@@ -356,14 +356,14 @@ class OpenAIResponsesRelayService {
         }
       }
 
-      // 如果已经发送了响应头，直接结束
+      // 如果已经发送了Respuesta头，直接结束
       if (res.headersSent) {
         return res.end()
       }
 
-      // 检查是否是axios错误并包含响应
+      // Verificar是否是axiosError并IncluirRespuesta
       if (error.response) {
-        // 处理axios错误响应
+        // ProcesaraxiosErrorRespuesta
         const status = error.response.status || 500
         let errorData = {
           error: {
@@ -373,9 +373,9 @@ class OpenAIResponsesRelayService {
           }
         }
 
-        // 如果响应包含数据，尝试使用它
+        // 如果RespuestaIncluirDatos，尝试使用它
         if (error.response.data) {
-          // 检查是否是流
+          // Verificar是否是流
           if (typeof error.response.data === 'object' && !error.response.data.pipe) {
             errorData = error.response.data
           } else if (typeof error.response.data === 'string') {
@@ -389,11 +389,11 @@ class OpenAIResponsesRelayService {
 
         if (status === 401) {
           logger.warn(
-            `🚫 OpenAI Responses账号认证失败（401错误）for account ${account?.id} (catch handler)`
+            `🚫 OpenAI Responses账号认证Falló（401Error）for account ${account?.id} (catch handler)`
           )
 
           try {
-            // 仅临时暂停，不永久禁用
+            // 仅临时暂停，不永久Deshabilitar
             const oaiAutoProtectionDisabled =
               account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
             if (!oaiAutoProtectionDisabled) {
@@ -435,7 +435,7 @@ class OpenAIResponsesRelayService {
         return res.status(status).json(upstreamErrorHelper.sanitizeErrorForClient(errorData))
       }
 
-      // 其他错误
+      // 其他Error
       return res.status(500).json({
         error: {
           message: 'Internal server error',
@@ -446,7 +446,7 @@ class OpenAIResponsesRelayService {
     }
   }
 
-  // 处理流式响应
+  // Procesar流式Respuesta
   async _handleStreamResponse(
     response,
     res,
@@ -456,7 +456,7 @@ class OpenAIResponsesRelayService {
     handleClientDisconnect,
     req
   ) {
-    // 设置 SSE 响应头
+    // Establecer SSE Respuesta头
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
     res.setHeader('Connection', 'keep-alive')
@@ -469,7 +469,7 @@ class OpenAIResponsesRelayService {
     let rateLimitResetsInSeconds = null
     let streamEnded = false
 
-    // 解析 SSE 事件以捕获 usage 数据和 model
+    // Analizar SSE Evento以捕获 usage Datos和 model
     const parseSSEForUsage = (data) => {
       const lines = data.split('\n')
 
@@ -483,15 +483,15 @@ class OpenAIResponsesRelayService {
 
             const eventData = JSON.parse(jsonStr)
 
-            // 检查是否是 response.completed 事件（OpenAI-Responses 格式）
+            // Verificar是否是 response.completed Evento（OpenAI-Responses Formato）
             if (eventData.type === 'response.completed' && eventData.response) {
-              // 从响应中获取真实的 model
+              // 从Respuesta中Obtener真实的 model
               if (eventData.response.model) {
                 actualModel = eventData.response.model
                 logger.debug(`📊 Captured actual model from response.completed: ${actualModel}`)
               }
 
-              // 获取 usage 数据 - OpenAI-Responses 格式在 response.usage 下
+              // Obtener usage Datos - OpenAI-Responses Formato在 response.usage 下
               if (eventData.response.usage) {
                 usageData = eventData.response.usage
                 logger.info('📊 Successfully captured usage data from OpenAI-Responses:', {
@@ -502,9 +502,9 @@ class OpenAIResponsesRelayService {
               }
             }
 
-            // 检查是否有限流错误
+            // Verificar是否有限流Error
             if (eventData.error) {
-              // 检查多种可能的限流错误类型
+              // Verificar多种可能的限流ErrorTipo
               if (
                 eventData.error.type === 'rate_limit_error' ||
                 eventData.error.type === 'usage_limit_reached' ||
@@ -520,26 +520,26 @@ class OpenAIResponsesRelayService {
               }
             }
           } catch (e) {
-            // 忽略解析错误
+            // 忽略AnalizarError
           }
         }
       }
     }
 
-    // 监听数据流
+    // 监听Datos流
     response.data.on('data', (chunk) => {
       try {
         const chunkStr = chunk.toString()
 
-        // 转发数据给客户端
+        // 转发Datos给Cliente
         if (!res.destroyed && !streamEnded) {
           res.write(chunk)
         }
 
-        // 同时解析数据以捕获 usage 信息
+        // 同时AnalizarDatos以捕获 usage Información
         buffer += chunkStr
 
-        // 处理完整的 SSE 事件
+        // Procesar完整的 SSE Evento
         if (buffer.includes('\n\n')) {
           const events = buffer.split('\n\n')
           buffer = events.pop() || ''
@@ -558,22 +558,22 @@ class OpenAIResponsesRelayService {
     response.data.on('end', async () => {
       streamEnded = true
 
-      // 处理剩余的 buffer
+      // Procesar剩余的 buffer
       if (buffer.trim()) {
         parseSSEForUsage(buffer)
       }
 
-      // 记录使用统计
+      // Registro使用Estadística
       if (usageData) {
         try {
           // OpenAI-Responses 使用 input_tokens/output_tokens，标准 OpenAI 使用 prompt_tokens/completion_tokens
           const totalInputTokens = usageData.input_tokens || usageData.prompt_tokens || 0
           const outputTokens = usageData.output_tokens || usageData.completion_tokens || 0
 
-          // 提取缓存相关的 tokens（如果存在）
+          // 提取Caché相关的 tokens（如果存在）
           const cacheReadTokens = usageData.input_tokens_details?.cached_tokens || 0
           const cacheCreateTokens = extractCacheCreationTokens(usageData)
-          // 计算实际输入token（总输入减去缓存部分）
+          // Calcular实际输入token（总输入减去Caché部分）
           const actualInputTokens = Math.max(0, totalInputTokens - cacheReadTokens)
 
           const totalTokens =
@@ -582,7 +582,7 @@ class OpenAIResponsesRelayService {
 
           await apiKeyService.recordUsage(
             apiKeyData.id,
-            actualInputTokens, // 传递实际输入（不含缓存）
+            actualInputTokens, // 传递实际输入（不含Caché）
             outputTokens,
             cacheCreateTokens,
             cacheReadTokens,
@@ -595,16 +595,16 @@ class OpenAIResponsesRelayService {
             `📊 Recorded usage - Input: ${totalInputTokens}(actual:${actualInputTokens}+cached:${cacheReadTokens}), CacheCreate: ${cacheCreateTokens}, Output: ${outputTokens}, Total: ${totalTokens}, Model: ${modelToRecord}`
           )
 
-          // 更新账户的 token 使用统计
+          // ActualizarCuenta的 token 使用Estadística
           await openaiResponsesAccountService.updateAccountUsage(account.id, totalTokens)
 
-          // 更新账户使用额度（如果设置了额度限制）
+          // ActualizarCuenta使用额度（如果Establecer了额度Límite）
           if (parseFloat(account.dailyQuota) > 0) {
-            // 使用CostCalculator正确计算费用（考虑缓存token的不同价格）
+            // 使用CostCalculator正确Calcular费用（考虑Cachétoken的不同价格）
             const CostCalculator = require('../../utils/costCalculator')
             const costInfo = CostCalculator.calculateCost(
               {
-                input_tokens: actualInputTokens, // 实际输入（不含缓存）
+                input_tokens: actualInputTokens, // 实际输入（不含Caché）
                 output_tokens: outputTokens,
                 cache_creation_input_tokens: cacheCreateTokens,
                 cache_read_input_tokens: cacheReadTokens
@@ -618,9 +618,9 @@ class OpenAIResponsesRelayService {
         }
       }
 
-      // 如果在流式响应中检测到限流
+      // 如果在流式Respuesta中检测到限流
       if (rateLimitDetected) {
-        // 使用统一调度器处理限流（与非流式响应保持一致）
+        // 使用统一调度器Procesar限流（与非流式Respuesta保持一致）
         const sessionId = req.headers['session_id'] || req.body?.session_id
         const sessionHash = sessionId
           ? crypto.createHash('sha256').update(sessionId).digest('hex')
@@ -638,7 +638,7 @@ class OpenAIResponsesRelayService {
         )
       }
 
-      // 清理监听器
+      // LimpiarEscucha
       req.removeListener('close', handleClientDisconnect)
       res.removeListener('close', handleClientDisconnect)
 
@@ -657,7 +657,7 @@ class OpenAIResponsesRelayService {
       streamEnded = true
       logger.error('Stream error:', error)
 
-      // 清理监听器
+      // LimpiarEscucha
       req.removeListener('close', handleClientDisconnect)
       res.removeListener('close', handleClientDisconnect)
 
@@ -668,14 +668,14 @@ class OpenAIResponsesRelayService {
       }
     })
 
-    // 处理客户端断开连接
+    // ProcesarCliente断开Conexión
     const cleanup = () => {
       streamEnded = true
       try {
         response.data?.unpipe?.(res)
         response.data?.destroy?.()
       } catch (_) {
-        // 忽略清理错误
+        // 忽略LimpiarError
       }
     }
 
@@ -683,27 +683,27 @@ class OpenAIResponsesRelayService {
     req.on('aborted', cleanup)
   }
 
-  // 处理非流式响应
+  // Procesar非流式Respuesta
   async _handleNormalResponse(response, res, account, apiKeyData, requestedModel) {
     const responseData = response.data
 
-    // 提取 usage 数据和实际 model
-    // 支持两种格式：直接的 usage 或嵌套在 response 中的 usage
+    // 提取 usage Datos和实际 model
+    // Soportar两种Formato：直接的 usage 或嵌套在 response 中的 usage
     const usageData = responseData?.usage || responseData?.response?.usage
     const actualModel =
       responseData?.model || responseData?.response?.model || requestedModel || 'gpt-4'
 
-    // 记录使用统计
+    // Registro使用Estadística
     if (usageData) {
       try {
         // OpenAI-Responses 使用 input_tokens/output_tokens，标准 OpenAI 使用 prompt_tokens/completion_tokens
         const totalInputTokens = usageData.input_tokens || usageData.prompt_tokens || 0
         const outputTokens = usageData.output_tokens || usageData.completion_tokens || 0
 
-        // 提取缓存相关的 tokens（如果存在）
+        // 提取Caché相关的 tokens（如果存在）
         const cacheReadTokens = usageData.input_tokens_details?.cached_tokens || 0
         const cacheCreateTokens = extractCacheCreationTokens(usageData)
-        // 计算实际输入token（总输入减去缓存部分）
+        // Calcular实际输入token（总输入减去Caché部分）
         const actualInputTokens = Math.max(0, totalInputTokens - cacheReadTokens)
 
         const totalTokens =
@@ -711,7 +711,7 @@ class OpenAIResponsesRelayService {
 
         await apiKeyService.recordUsage(
           apiKeyData.id,
-          actualInputTokens, // 传递实际输入（不含缓存）
+          actualInputTokens, // 传递实际输入（不含Caché）
           outputTokens,
           cacheCreateTokens,
           cacheReadTokens,
@@ -724,16 +724,16 @@ class OpenAIResponsesRelayService {
           `📊 Recorded non-stream usage - Input: ${totalInputTokens}(actual:${actualInputTokens}+cached:${cacheReadTokens}), CacheCreate: ${cacheCreateTokens}, Output: ${outputTokens}, Total: ${totalTokens}, Model: ${actualModel}`
         )
 
-        // 更新账户的 token 使用统计
+        // ActualizarCuenta的 token 使用Estadística
         await openaiResponsesAccountService.updateAccountUsage(account.id, totalTokens)
 
-        // 更新账户使用额度（如果设置了额度限制）
+        // ActualizarCuenta使用额度（如果Establecer了额度Límite）
         if (parseFloat(account.dailyQuota) > 0) {
-          // 使用CostCalculator正确计算费用（考虑缓存token的不同价格）
+          // 使用CostCalculator正确Calcular费用（考虑Cachétoken的不同价格）
           const CostCalculator = require('../../utils/costCalculator')
           const costInfo = CostCalculator.calculateCost(
             {
-              input_tokens: actualInputTokens, // 实际输入（不含缓存）
+              input_tokens: actualInputTokens, // 实际输入（不含Caché）
               output_tokens: outputTokens,
               cache_creation_input_tokens: cacheCreateTokens,
               cache_read_input_tokens: cacheReadTokens
@@ -747,7 +747,7 @@ class OpenAIResponsesRelayService {
       }
     }
 
-    // 返回响应
+    // RetornarRespuesta
     res.status(response.status).json(responseData)
 
     logger.info('Normal response completed', {
@@ -758,27 +758,27 @@ class OpenAIResponsesRelayService {
     })
   }
 
-  // 处理 429 限流错误
+  // Procesar 429 限流Error
   async _handle429Error(account, response, isStream = false, sessionHash = null) {
     let resetsInSeconds = null
     let errorData = null
 
     try {
-      // 对于429错误，响应可能是JSON或SSE格式
+      // 对于429Error，Respuesta可能是JSON或SSEFormato
       if (isStream && response.data && typeof response.data.pipe === 'function') {
-        // 流式响应需要先收集数据
+        // 流式Respuesta需要先收集Datos
         const chunks = []
         await new Promise((resolve, reject) => {
           response.data.on('data', (chunk) => chunks.push(chunk))
           response.data.on('end', resolve)
           response.data.on('error', reject)
-          // 设置超时防止无限等待
+          // EstablecerTiempo de espera agotado防止无限等待
           setTimeout(resolve, 5000)
         })
 
         const fullResponse = Buffer.concat(chunks).toString()
 
-        // 尝试解析SSE格式的错误响应
+        // 尝试AnalizarSSEFormato的ErrorRespuesta
         if (fullResponse.includes('data: ')) {
           const lines = fullResponse.split('\n')
           for (const line of lines) {
@@ -790,13 +790,13 @@ class OpenAIResponsesRelayService {
                   break
                 }
               } catch (e) {
-                // 继续尝试下一行
+                // 继续尝试下一Fila
               }
             }
           }
         }
 
-        // 如果SSE解析失败，尝试直接解析为JSON
+        // 如果SSEAnalizarFalló，尝试直接Analizar为JSON
         if (!errorData) {
           try {
             errorData = JSON.parse(fullResponse)
@@ -806,7 +806,7 @@ class OpenAIResponsesRelayService {
           }
         }
       } else if (response.data && typeof response.data !== 'object') {
-        // 如果response.data是字符串，尝试解析为JSON
+        // 如果response.data是Cadena，尝试Analizar为JSON
         try {
           errorData = JSON.parse(response.data)
         } catch (e) {
@@ -814,11 +814,11 @@ class OpenAIResponsesRelayService {
           errorData = { error: { message: response.data } }
         }
       } else if (response.data && typeof response.data === 'object' && !response.data.pipe) {
-        // 非流式响应，且是对象，直接使用
+        // 非流式Respuesta，且是Objeto，直接使用
         errorData = response.data
       }
 
-      // 从响应体中提取重置时间（OpenAI 标准格式）
+      // 从Respuesta体中提取重置Tiempo（OpenAI 标准Formato）
       if (errorData && errorData.error) {
         if (errorData.error.resets_in_seconds) {
           resetsInSeconds = errorData.error.resets_in_seconds
@@ -826,7 +826,7 @@ class OpenAIResponsesRelayService {
             `🕐 Rate limit will reset in ${resetsInSeconds} seconds (${Math.ceil(resetsInSeconds / 60)} minutes / ${Math.ceil(resetsInSeconds / 3600)} hours)`
           )
         } else if (errorData.error.resets_in) {
-          // 某些 API 可能使用不同的字段名
+          // 某些 API 可能使用不同的Campo名
           resetsInSeconds = parseInt(errorData.error.resets_in)
           logger.info(
             `🕐 Rate limit will reset in ${resetsInSeconds} seconds (${Math.ceil(resetsInSeconds / 60)} minutes / ${Math.ceil(resetsInSeconds / 3600)} hours)`
@@ -841,7 +841,7 @@ class OpenAIResponsesRelayService {
       logger.error('⚠️ Failed to parse rate limit error:', e)
     }
 
-    // 使用统一调度器标记账户为限流状态（与普通OpenAI账号保持一致）
+    // 使用统一调度器标记Cuenta为限流状态（与普通OpenAI账号保持一致）
     await unifiedOpenAIScheduler.markAccountRateLimited(
       account.id,
       'openai-responses',
@@ -857,17 +857,17 @@ class OpenAIResponsesRelayService {
       resetInHours: resetsInSeconds ? Math.ceil(resetsInSeconds / 3600) : 1
     })
 
-    // 返回处理后的数据，避免循环引用
+    // RetornarProcesar后的Datos，避免Bucle引用
     return { resetsInSeconds, errorData }
   }
 
-  // 过滤请求头 - 已迁移到 headerFilter 工具类
-  // 此方法保留用于向后兼容，实际使用 filterForOpenAI()
+  // FiltrarSolicitud头 - 已Migración到 headerFilter 工具Clase
+  // 此Método保留用于向后兼容，实际使用 filterForOpenAI()
   _filterRequestHeaders(headers) {
     return filterForOpenAI(headers)
   }
 
-  // 估算费用（简化版本，实际应该根据不同的定价模型）
+  // 估算费用（简化Versión，实际应该根据不同的定价模型）
   _estimateCost(model, inputTokens, outputTokens) {
     // 这是一个简化的费用估算，实际应该根据不同的 API 提供商和模型定价
     const rates = {
@@ -880,7 +880,7 @@ class OpenAIResponsesRelayService {
     }
 
     // 查找匹配的模型定价
-    let rate = rates['gpt-3.5-turbo'] // 默认使用 GPT-3.5 的价格
+    let rate = rates['gpt-3.5-turbo'] // Predeterminado使用 GPT-3.5 的价格
     for (const [modelKey, modelRate] of Object.entries(rates)) {
       if (model.toLowerCase().includes(modelKey.toLowerCase())) {
         rate = modelRate

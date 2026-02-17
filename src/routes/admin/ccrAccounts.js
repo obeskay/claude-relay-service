@@ -11,24 +11,24 @@ const { extractErrorMessage } = require('../../utils/testPayloadHelper')
 
 const router = express.Router()
 
-// 🔧 CCR 账户管理
+// 🔧 CCR Cuenta管理
 
-// 获取所有CCR账户
+// Obtener所有CCRCuenta
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const { platform, groupId } = req.query
     let accounts = await ccrAccountService.getAllAccounts()
 
-    // 根据查询参数进行筛选
+    // 根据ConsultaParámetro进Fila筛选
     if (platform && platform !== 'all' && platform !== 'ccr') {
-      // 如果指定了其他平台，返回空数组
+      // 如果指定了其他平台，Retornar空Arreglo
       accounts = []
     }
 
-    // 如果指定了分组筛选
+    // 如果指定了Agrupar筛选
     if (groupId && groupId !== 'all') {
       if (groupId === 'ungrouped') {
-        // 筛选未分组账户
+        // 筛选未AgruparCuenta
         const filteredAccounts = []
         for (const account of accounts) {
           const groups = await accountGroupService.getAccountGroups(account.id)
@@ -38,13 +38,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
         }
         accounts = filteredAccounts
       } else {
-        // 筛选特定分组的账户
+        // 筛选特定Agrupar的Cuenta
         const groupMembers = await accountGroupService.getGroupMembers(groupId)
         accounts = accounts.filter((account) => groupMembers.includes(account.id))
       }
     }
 
-    // 为每个账户添加使用统计信息
+    // 为每个Cuenta添加使用EstadísticaInformación
     const accountsWithStats = await Promise.all(
       accounts.map(async (account) => {
         try {
@@ -54,7 +54,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
           const formattedAccount = formatAccountExpiry(account)
           return {
             ...formattedAccount,
-            // 转换schedulable为布尔值
+            // Convertirschedulable为布尔Valor
             schedulable: account.schedulable === 'true' || account.schedulable === true,
             groupInfos,
             usage: {
@@ -73,7 +73,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
             const formattedAccount = formatAccountExpiry(account)
             return {
               ...formattedAccount,
-              // 转换schedulable为布尔值
+              // Convertirschedulable为布尔Valor
               schedulable: account.schedulable === 'true' || account.schedulable === true,
               groupInfos,
               usage: {
@@ -108,7 +108,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 创建新的CCR账户
+// Crear新的CCRCuenta
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
     const {
@@ -131,19 +131,19 @@ router.post('/', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Name, API URL and API Key are required' })
     }
 
-    // 验证priority的有效性（1-100）
+    // Validarpriority的有效性（1-100）
     if (priority !== undefined && (priority < 1 || priority > 100)) {
       return res.status(400).json({ error: 'Priority must be between 1 and 100' })
     }
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (accountType && !['shared', 'dedicated', 'group'].includes(accountType)) {
       return res
         .status(400)
         .json({ error: 'Invalid account type. Must be "shared", "dedicated" or "group"' })
     }
 
-    // 如果是分组类型，验证groupId
+    // 如果是AgruparTipo，ValidargroupId
     if (accountType === 'group' && !groupId) {
       return res.status(400).json({ error: 'Group ID is required for group type accounts' })
     }
@@ -164,7 +164,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
       quotaResetTime: quotaResetTime || '00:00'
     })
 
-    // 如果是分组类型，将账户添加到分组
+    // 如果是AgruparTipo，将Cuenta添加到Agrupar
     if (accountType === 'group' && groupId) {
       await accountGroupService.addAccountToGroup(newAccount.id, groupId)
     }
@@ -178,16 +178,16 @@ router.post('/', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新CCR账户
+// ActualizarCCRCuenta
 router.put('/:accountId', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
     const updates = req.body
 
-    // ✅ 【新增】映射字段名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
+    // ✅ 【Nueva característica】映射Campo名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
     const mappedUpdates = mapExpiryField(updates, 'CCR', accountId)
 
-    // 验证priority的有效性（1-100）
+    // Validarpriority的有效性（1-100）
     if (
       mappedUpdates.priority !== undefined &&
       (mappedUpdates.priority < 1 || mappedUpdates.priority > 100)
@@ -195,7 +195,7 @@ router.put('/:accountId', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Priority must be between 1 and 100' })
     }
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (
       mappedUpdates.accountType &&
       !['shared', 'dedicated', 'group'].includes(mappedUpdates.accountType)
@@ -205,39 +205,39 @@ router.put('/:accountId', authenticateAdmin, async (req, res) => {
         .json({ error: 'Invalid account type. Must be "shared", "dedicated" or "group"' })
     }
 
-    // 如果更新为分组类型，验证groupId
+    // 如果Actualizar为AgruparTipo，ValidargroupId
     if (mappedUpdates.accountType === 'group' && !mappedUpdates.groupId) {
       return res.status(400).json({ error: 'Group ID is required for group type accounts' })
     }
 
-    // 获取账户当前信息以处理分组变更
+    // ObtenerCuenta当前Información以ProcesarAgrupar变更
     const currentAccount = await ccrAccountService.getAccount(accountId)
     if (!currentAccount) {
       return res.status(404).json({ error: 'Account not found' })
     }
 
-    // 处理分组的变更
+    // ProcesarAgrupar的变更
     if (mappedUpdates.accountType !== undefined) {
-      // 如果之前是分组类型，需要从所有分组中移除
+      // 如果之前是AgruparTipo，需要从所有Agrupar中Eliminación
       if (currentAccount.accountType === 'group') {
         const oldGroups = await accountGroupService.getAccountGroups(accountId)
         for (const oldGroup of oldGroups) {
           await accountGroupService.removeAccountFromGroup(accountId, oldGroup.id)
         }
       }
-      // 如果新类型是分组，处理多分组支持
+      // 如果新Tipo是Agrupar，Procesar多AgruparSoportar
       if (mappedUpdates.accountType === 'group') {
         if (Object.prototype.hasOwnProperty.call(mappedUpdates, 'groupIds')) {
-          // 如果明确提供了 groupIds 参数（包括空数组）
+          // 如果明确提供了 groupIds Parámetro（包括空Arreglo）
           if (mappedUpdates.groupIds && mappedUpdates.groupIds.length > 0) {
-            // 设置新的多分组
+            // Establecer新的多Agrupar
             await accountGroupService.setAccountGroups(accountId, mappedUpdates.groupIds, 'claude')
           } else {
-            // groupIds 为空数组，从所有分组中移除
+            // groupIds 为空Arreglo，从所有Agrupar中Eliminación
             await accountGroupService.removeAccountFromAllGroups(accountId)
           }
         } else if (mappedUpdates.groupId) {
-          // 向后兼容：仅当没有 groupIds 但有 groupId 时使用单分组逻辑
+          // 向后兼容：仅当没有 groupIds 但有 groupId 时使用单Agrupar逻辑
           await accountGroupService.addAccountToGroup(accountId, mappedUpdates.groupId, 'claude')
         }
       }
@@ -253,15 +253,15 @@ router.put('/:accountId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除CCR账户
+// EliminarCCRCuenta
 router.delete('/:accountId', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
 
-    // 尝试自动解绑（CCR账户实际上不会绑定API Key，但保持代码一致性）
+    // 尝试自动解绑（CCRCuenta实际上不会绑定API Key，但保持代码一致性）
     const unboundCount = await apiKeyService.unbindAccountFromAllKeys(accountId, 'ccr')
 
-    // 获取账户信息以检查是否在分组中
+    // ObtenerCuentaInformación以Verificar是否在Agrupar中
     const account = await ccrAccountService.getAccount(accountId)
     if (account && account.accountType === 'group') {
       const groups = await accountGroupService.getAccountGroups(accountId)
@@ -272,9 +272,9 @@ router.delete('/:accountId', authenticateAdmin, async (req, res) => {
 
     await ccrAccountService.deleteAccount(accountId)
 
-    let message = 'CCR账号已成功删除'
+    let message = 'CCR账号已ÉxitoEliminar'
     if (unboundCount > 0) {
-      // 理论上不会发生，但保持消息格式一致
+      // 理论上不会发生，但保持消息Formato一致
       message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
 
@@ -290,7 +290,7 @@ router.delete('/:accountId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 切换CCR账户状态
+// 切换CCRCuenta状态
 router.put('/:accountId/toggle', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -315,7 +315,7 @@ router.put('/:accountId/toggle', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 切换CCR账户调度状态
+// 切换CCRCuenta调度状态
 router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -328,7 +328,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
     const newSchedulable = !account.schedulable
     await ccrAccountService.updateAccount(accountId, { schedulable: newSchedulable })
 
-    // 如果账号被禁用，发送webhook通知
+    // 如果账号被Deshabilitar，发送webhook通知
     if (!newSchedulable) {
       await webhookNotifier.sendAccountAnomalyNotification({
         accountId: account.id,
@@ -336,7 +336,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
         platform: 'ccr',
         status: 'disabled',
         errorCode: 'CCR_MANUALLY_DISABLED',
-        reason: '账号已被管理员手动禁用调度',
+        reason: '账号已被管理员手动Deshabilitar调度',
         timestamp: new Date().toISOString()
       })
     }
@@ -355,7 +355,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
   }
 })
 
-// 获取CCR账户的使用统计
+// ObtenerCCRCuenta的使用Estadística
 router.get('/:accountId/usage', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -372,7 +372,7 @@ router.get('/:accountId/usage', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 手动重置CCR账户的每日使用量
+// 手动重置CCRCuenta的每日使用量
 router.post('/:accountId/reset-usage', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -386,7 +386,7 @@ router.post('/:accountId/reset-usage', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 重置CCR账户状态（清除所有异常状态）
+// 重置CCRCuenta状态（清除所有异常状态）
 router.post('/:accountId/reset-status', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -399,7 +399,7 @@ router.post('/:accountId/reset-status', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 手动重置所有CCR账户的每日使用量
+// 手动重置所有CCRCuenta的每日使用量
 router.post('/reset-all-usage', authenticateAdmin, async (req, res) => {
   try {
     await ccrAccountService.resetAllDailyUsage()
@@ -414,26 +414,26 @@ router.post('/reset-all-usage', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 测试 CCR 账户连通性
+// Probar CCR Cuenta连通性
 router.post('/:accountId/test', authenticateAdmin, async (req, res) => {
   const { accountId } = req.params
   const { model = 'claude-sonnet-4-20250514' } = req.body
   const startTime = Date.now()
 
   try {
-    // 获取账户信息
+    // ObtenerCuentaInformación
     const account = await ccrAccountService.getAccount(accountId)
     if (!account) {
       return res.status(404).json({ error: 'Account not found' })
     }
 
-    // 获取解密后的凭据
+    // ObtenerDescifrado后的凭据
     const credentials = await ccrAccountService.getDecryptedCredentials(accountId)
     if (!credentials) {
       return res.status(401).json({ error: 'Credentials not found or decryption failed' })
     }
 
-    // 构造测试请求
+    // 构造ProbarSolicitud
     const axios = require('axios')
     const { getProxyAgent } = require('../../utils/proxyHelper')
 
@@ -454,7 +454,7 @@ router.post('/:accountId/test', authenticateAdmin, async (req, res) => {
       timeout: 30000
     }
 
-    // 配置代理
+    // ConfiguraciónProxy
     if (account.proxy) {
       const agent = getProxyAgent(account.proxy)
       if (agent) {
@@ -466,7 +466,7 @@ router.post('/:accountId/test', authenticateAdmin, async (req, res) => {
     const response = await axios.post(apiUrl, payload, requestConfig)
     const latency = Date.now() - startTime
 
-    // 提取响应文本
+    // 提取Respuesta文本
     let responseText = ''
     if (response.data?.content?.[0]?.text) {
       responseText = response.data.content[0].text

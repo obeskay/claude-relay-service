@@ -1,6 +1,6 @@
 /**
- * 缓存监控和管理工具
- * 提供统一的缓存监控、统计和安全清理功能
+ * CachéMonitorear和管理工具
+ * 提供统一的CachéMonitorear、Estadística和SeguridadLimpiar功能
  */
 
 const logger = require('./logger')
@@ -8,31 +8,31 @@ const crypto = require('crypto')
 
 class CacheMonitor {
   constructor() {
-    this.monitors = new Map() // 存储所有被监控的缓存实例
+    this.monitors = new Map() // 存储所有被Monitorear的CachéInstancia
     this.startTime = Date.now()
     this.totalHits = 0
     this.totalMisses = 0
     this.totalEvictions = 0
 
-    // 🔒 安全配置
+    // 🔒 SeguridadConfiguración
     this.securityConfig = {
-      maxCacheAge: 15 * 60 * 1000, // 最大缓存年龄 15 分钟
-      forceCleanupInterval: 30 * 60 * 1000, // 强制清理间隔 30 分钟
-      memoryThreshold: 100 * 1024 * 1024, // 内存阈值 100MB
+      maxCacheAge: 15 * 60 * 1000, // 最大Caché年龄 15 分钟
+      forceCleanupInterval: 30 * 60 * 1000, // 强制Limpiar间隔 30 分钟
+      memoryThreshold: 100 * 1024 * 1024, // 内存阈Valor 100MB
       sensitiveDataPatterns: [/password/i, /token/i, /secret/i, /key/i, /credential/i]
     }
 
-    // 🧹 定期执行安全清理
+    // 🧹 定期EjecutarSeguridadLimpiar
     this.setupSecurityCleanup()
 
-    // 📊 定期报告统计信息
+    // 📊 定期报告EstadísticaInformación
     this.setupPeriodicReporting()
   }
 
   /**
-   * 注册缓存实例进行监控
-   * @param {string} name - 缓存名称
-   * @param {LRUCache} cache - 缓存实例
+   * 注册CachéInstancia进FilaMonitorear
+   * @param {string} name - CachéNombre
+   * @param {LRUCache} cache - CachéInstancia
    */
   registerCache(name, cache) {
     if (this.monitors.has(name)) {
@@ -50,7 +50,7 @@ class CacheMonitor {
   }
 
   /**
-   * 获取所有缓存的综合统计
+   * Obtener所有Caché的综合Estadística
    */
   getGlobalStats() {
     const stats = {
@@ -87,8 +87,8 @@ class CacheMonitor {
   }
 
   /**
-   * 🔒 执行安全清理
-   * 清理过期数据和潜在的敏感信息
+   * 🔒 EjecutarSeguridadLimpiar
+   * Limpiar过期Datos和潜在的敏感Información
    */
   performSecurityCleanup() {
     logger.info('🔒 Starting security cleanup for all caches')
@@ -98,10 +98,10 @@ class CacheMonitor {
         const { cache } = monitor
         const beforeSize = cache.cache.size
 
-        // 执行常规清理
+        // Ejecutar常规Limpiar
         cache.cleanup()
 
-        // 检查缓存年龄，如果太老则完全清空
+        // VerificarCaché年龄，如果太老则完全清空
         const cacheAge = Date.now() - monitor.registeredAt
         if (cacheAge > this.securityConfig.maxCacheAge * 2) {
           logger.warn(
@@ -124,7 +124,7 @@ class CacheMonitor {
   }
 
   /**
-   * 📊 生成详细报告
+   * 📊 Generar详细报告
    */
   generateReport() {
     const stats = this.getGlobalStats()
@@ -141,7 +141,7 @@ class CacheMonitor {
     logger.info(`🗑️  Total Evictions: ${stats.totalEvictions.toLocaleString()}`)
     logger.info('───────────────────────────────────────────')
 
-    // 详细的每个缓存统计
+    // 详细的每个CachéEstadística
     for (const [name, cacheStats] of Object.entries(stats.caches)) {
       logger.info(`\n📦 ${name}:`)
       logger.info(
@@ -158,10 +158,10 @@ class CacheMonitor {
   }
 
   /**
-   * 🧹 设置定期安全清理
+   * 🧹 Establecer定期SeguridadLimpiar
    */
   setupSecurityCleanup() {
-    // 每 10 分钟执行一次安全清理
+    // 每 10 分钟Ejecutar一次SeguridadLimpiar
     setInterval(
       () => {
         this.performSecurityCleanup()
@@ -169,7 +169,7 @@ class CacheMonitor {
       10 * 60 * 1000
     )
 
-    // 每 30 分钟强制完整清理
+    // 每 30 分钟强制完整Limpiar
     setInterval(() => {
       logger.warn('⚠️ Performing forced complete cleanup for security')
       for (const [name, monitor] of this.monitors) {
@@ -180,10 +180,10 @@ class CacheMonitor {
   }
 
   /**
-   * 📊 设置定期报告
+   * 📊 Establecer定期报告
    */
   setupPeriodicReporting() {
-    // 每 5 分钟生成一次简单统计
+    // 每 5 分钟Generar一次简单Estadística
     setInterval(
       () => {
         const stats = this.getGlobalStats()
@@ -194,7 +194,7 @@ class CacheMonitor {
       5 * 60 * 1000
     )
 
-    // 每 30 分钟生成一次详细报告
+    // 每 30 分钟Generar一次详细报告
     setInterval(
       () => {
         this.generateReport()
@@ -204,7 +204,7 @@ class CacheMonitor {
   }
 
   /**
-   * 格式化运行时间
+   * Formato化运FilaTiempo
    */
   formatUptime(seconds) {
     const hours = Math.floor(seconds / 3600)
@@ -221,16 +221,16 @@ class CacheMonitor {
   }
 
   /**
-   * 🔐 生成安全的缓存键
-   * 使用 SHA-256 哈希避免暴露原始数据
+   * 🔐 GenerarSeguridad的Caché键
+   * 使用 SHA-256 哈希避免暴露原始Datos
    */
   static generateSecureCacheKey(data) {
     return crypto.createHash('sha256').update(data).digest('hex')
   }
 
   /**
-   * 🛡️ 验证缓存数据安全性
-   * 检查是否包含敏感信息
+   * 🛡️ ValidarCachéDatosSeguridad性
+   * Verificar是否Incluir敏感Información
    */
   validateCacheSecurity(data) {
     const dataStr = typeof data === 'string' ? data : JSON.stringify(data)
@@ -246,7 +246,7 @@ class CacheMonitor {
   }
 
   /**
-   * 💾 获取内存使用估算
+   * 💾 Obtener内存使用估算
    */
   estimateMemoryUsage() {
     let totalBytes = 0
@@ -254,7 +254,7 @@ class CacheMonitor {
     for (const [, monitor] of this.monitors) {
       const { cache } = monitor.cache
       for (const [key, item] of cache) {
-        // 粗略估算：key 长度 + value 序列化长度
+        // 粗略估算：key 长度 + value Serialización长度
         totalBytes += key.length * 2 // UTF-16
         totalBytes += JSON.stringify(item).length * 2
       }
@@ -268,7 +268,7 @@ class CacheMonitor {
   }
 
   /**
-   * 🚨 紧急清理
+   * 🚨 紧急Limpiar
    * 在内存压力大时使用
    */
   emergencyCleanup() {
@@ -278,7 +278,7 @@ class CacheMonitor {
       const { cache } = monitor
       const beforeSize = cache.cache.size
 
-      // 清理一半的缓存项（LRU 会保留最近使用的）
+      // Limpiar一半的Caché项（LRU 会保留最近使用的）
       const targetSize = Math.floor(cache.maxSize / 2)
       while (cache.cache.size > targetSize) {
         const firstKey = cache.cache.keys().next().value

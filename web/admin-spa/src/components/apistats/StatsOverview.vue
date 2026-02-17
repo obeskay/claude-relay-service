@@ -3,7 +3,7 @@
     <div
       class="grid grid-cols-1 items-stretch gap-3 sm:gap-4 md:gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]"
     >
-      <!-- 基础信息 / 批量概要 -->
+      <!-- 基础Información / 批量概要 -->
       <div class="card-section">
         <header class="section-header">
           <i
@@ -14,28 +14,28 @@
                 : 'fas fa-info-circle text-blue-500'
             "
           />
-          <h3 class="header-title">{{ multiKeyMode ? '批量查询概要' : 'API Key 信息' }}</h3>
+          <h3 class="header-title">{{ multiKeyMode ? '批量查询概要' : 'API Key Información' }}</h3>
         </header>
 
         <div v-if="multiKeyMode && aggregatedStats" class="info-grid">
           <div class="info-item">
             <p class="info-label">查询 Keys 数</p>
-            <p class="info-value">{{ aggregatedStats.totalKeys }} 个</p>
+            <p class="info-value">{{ aggregatedStats.totalKeys }}  </p>
           </div>
           <div class="info-item">
-            <p class="info-label">有效 Keys 数</p>
+            <p class="info-label">Válido Keys 数</p>
             <p class="info-value text-green-600 dark:text-emerald-400">
-              <i class="fas fa-check-circle mr-1" />{{ aggregatedStats.activeKeys }} 个
+              <i class="fas fa-check-circle mr-1" />{{ aggregatedStats.activeKeys }}  
             </p>
           </div>
           <div v-if="invalidKeys.length > 0" class="info-item">
-            <p class="info-label">无效 Keys 数</p>
+            <p class="info-label">Inválido Keys 数</p>
             <p class="info-value text-red-500 dark:text-red-400">
-              <i class="fas fa-times-circle mr-1" />{{ invalidKeys.length }} 个
+              <i class="fas fa-times-circle mr-1" />{{ invalidKeys.length }}  
             </p>
           </div>
           <div class="info-item">
-            <p class="info-label">总请求数</p>
+            <p class="info-label">totalRequests</p>
             <p class="info-value">{{ formatNumber(aggregatedStats.usage.requests) }}</p>
           </div>
           <div class="info-item">
@@ -43,7 +43,7 @@
             <p class="info-value">{{ formatNumber(aggregatedStats.usage.allTokens) }}</p>
           </div>
           <div class="info-item">
-            <p class="info-label">总费用</p>
+            <p class="info-label">totalCost</p>
             <p class="info-value text-indigo-600 dark:text-indigo-300">
               {{ aggregatedStats.usage.formattedCost }}
             </p>
@@ -62,17 +62,17 @@
         <div v-else class="info-grid">
           <div
             class="info-item cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50"
-            title="点击复制"
+            title="点击Copiar"
             @click="copyText(statsData.name)"
           >
-            <p class="info-label">名称</p>
+            <p class="info-label">Nombre</p>
             <p class="info-value flex items-center gap-1 break-all">
               {{ statsData.name }}
               <i class="fas fa-copy text-xs text-gray-400" />
             </p>
           </div>
           <div class="info-item">
-            <p class="info-label">状态</p>
+            <p class="info-label">Estado</p>
             <p
               class="info-value font-semibold"
               :class="
@@ -105,7 +105,7 @@
             </div>
           </div>
           <div class="info-item">
-            <p class="info-label">创建时间</p>
+            <p class="info-label">Crear时间</p>
             <p class="info-value break-all">{{ formatDate(statsData.createdAt) }}</p>
           </div>
           <div class="info-item xl:col-span-2">
@@ -116,7 +116,7 @@
                   <i class="fas fa-pause-circle mr-1" />未激活
                 </span>
                 <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">
-                  首次使用后
+                  首veces使用siguiente
                   {{ statsData.activationDays || (statsData.activationUnit === 'hours' ? 24 : 30) }}
                   {{ statsData.activationUnit === 'hours' ? '小时' : '天' }}过期
                 </span>
@@ -146,48 +146,48 @@
         </div>
       </div>
 
-      <!-- 使用统计概览 -->
+      <!-- 使用Estadísticas概览 -->
       <div class="card-section">
         <header class="section-header">
           <i class="header-icon fas fa-chart-bar text-green-500" />
-          <h3 class="header-title">使用统计概览</h3>
-          <span class="header-tag">{{ statsPeriod === 'daily' ? '今日' : '本月' }}</span>
+          <h3 class="header-title">使用Estadísticas概览</h3>
+          <span class="header-tag">{{ statsPeriod === 'daily' ? 'Hoy' : 'Este mes' }}</span>
         </header>
         <div class="metric-grid">
           <div class="metric-card">
             <p class="metric-value text-green-600 dark:text-emerald-300">
               {{ formatNumber(currentPeriodData.requests) }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}请求数</p>
+            <p class="metric-label">{{ statsPeriod === 'daily' ? 'Hoy' : 'Este mes' }}Solicitud数</p>
           </div>
           <div class="metric-card">
             <p class="metric-value text-blue-600 dark:text-sky-300">
               {{ formatNumber(currentPeriodData.allTokens) }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}Token 数</p>
+            <p class="metric-label">{{ statsPeriod === 'daily' ? 'Hoy' : 'Este mes' }}Token 数</p>
           </div>
           <div class="metric-card">
             <p class="metric-value text-purple-600 dark:text-violet-300">
               {{ currentPeriodData.formattedCost || '$0.000000' }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}费用</p>
+            <p class="metric-label">{{ statsPeriod === 'daily' ? 'Hoy' : 'Este mes' }}Costo</p>
           </div>
           <div class="metric-card">
             <p class="metric-value text-amber-500 dark:text-amber-300">
               {{ formatNumber(currentPeriodData.inputTokens) }}
             </p>
-            <p class="metric-label">{{ statsPeriod === 'daily' ? '今日' : '本月' }}输入 Token</p>
+            <p class="metric-label">{{ statsPeriod === 'daily' ? 'Hoy' : 'Este mes' }}Entrada Token</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 专属账号运行状态，仅在单 key 且存在绑定时显示 -->
+    <!-- 专属账号运行Estado，仅en单 key 且存en绑定时显示 -->
     <div v-if="!multiKeyMode && boundAccountList.length > 0" class="card-section">
       <header class="section-header">
         <i class="header-icon fas fa-plug text-indigo-500" />
-        <h3 class="header-title">专属账号运行状态</h3>
-        <span class="header-tag">实时更新</span>
+        <h3 class="header-title">专属账号运行Estado</h3>
+        <span class="header-tag">实时Actualizar</span>
       </header>
 
       <div class="grid grid-cols-1 gap-4" :class="accountGridClass">
@@ -278,7 +278,7 @@
                   />
                 </div>
                 <div class="quota-foot">
-                  重置剩余 {{ formatCodexRemaining(account.codexUsage?.[type]) }}
+                  Restablecer剩余 {{ formatCodexRemaining(account.codexUsage?.[type]) }}
                 </div>
               </div>
             </div>
@@ -286,7 +286,7 @@
               v-else
               class="rounded-xl bg-gray-100 px-3 py-2 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-300"
             >
-              暂无额度使用数据
+              Sin额度使用数据
             </p>
           </div>
         </div>
@@ -367,20 +367,20 @@ const formatPermissions = (permissions) => {
     azure: 'Azure',
     ccr: 'CCR'
   }
-  // 空值 = 全部服务
-  if (!permissions) return '全部服务'
-  // 尝试解析字符串格式的数组
+  // 空值 = Todos los servicios
+  if (!permissions) return 'Todos los servicios'
+  // 尝试解析字符串格式数组
   let parsed = permissions
   if (typeof permissions === 'string') {
-    if (permissions === 'all' || permissions === '[]') return '全部服务'
+    if (permissions === 'all' || permissions === '[]') return 'Todos los servicios'
     try {
       parsed = JSON.parse(permissions)
     } catch {
       return map[permissions] || permissions
     }
   }
-  // 空数组 = 全部服务
-  if (Array.isArray(parsed) && parsed.length === 0) return '全部服务'
+  // 空数组 = Todos los servicios
+  if (Array.isArray(parsed) && parsed.length === 0) return 'Todos los servicios'
   // 数组格式
   if (Array.isArray(parsed)) {
     return parsed.map((p) => map[p] || p).join(', ')
@@ -431,7 +431,7 @@ const formatRateLimitTime = (minutes) => {
 const getRateLimitDisplay = (status) => {
   if (!status) {
     return {
-      text: '状态未知',
+      text: 'EstadoDesconocido',
       class: 'text-gray-400'
     }
   }
@@ -439,7 +439,7 @@ const getRateLimitDisplay = (status) => {
     const remaining = formatRateLimitTime(status.minutesRemaining)
     const suffix = remaining ? ` · 剩余约 ${remaining}` : ''
     return {
-      text: `限流中${suffix}`,
+      text: `限流en${suffix}`,
       class: 'text-red-500 dark:text-red-400'
     }
   }
@@ -450,7 +450,7 @@ const getRateLimitDisplay = (status) => {
 }
 
 const formatSessionWindowRange = (start, end) => {
-  if (!start || !end) return '暂无时间窗口信息'
+  if (!start || !end) return 'Sin时间窗口Información'
   const s = new Date(start)
   const e = new Date(end)
   const fmt = (d) => `${`${d.getHours()}`.padStart(2, '0')}:${`${d.getMinutes()}`.padStart(2, '0')}`

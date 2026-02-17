@@ -14,7 +14,7 @@ const SYSTEM_PROMPT = 'You are Droid, an AI software engineering agent built by 
 const RUNTIME_EVENT_FMT_PAYLOAD = 'fmtPayload'
 
 /**
- * Droid API 转发服务
+ * Droid API 转发Servicio
  */
 
 class DroidRelayService {
@@ -128,10 +128,10 @@ class DroidRelayService {
   async _selectApiKey(account, endpointType, sessionHash) {
     const entries = await droidAccountService.getDecryptedApiKeyEntries(account.id)
     if (!entries || entries.length === 0) {
-      throw new Error(`Droid account ${account.id} 未配置任何 API Key`)
+      throw new Error(`Droid account ${account.id} 未Configuración任何 API Key`)
     }
 
-    // 过滤掉as abnormal的API Key
+    // Filtrar掉as abnormal的API Key
     const activeEntries = entries.filter((entry) => entry.status !== 'error')
     if (!activeEntries || activeEntries.length === 0) {
       throw new Error(`Droid account ${account.id} 没有可用的 API Key（所有API Key均已异常）`)
@@ -202,14 +202,14 @@ class DroidRelayService {
         }, endpoint: ${normalizedEndpoint}${sessionHash ? `, session: ${sessionHash}` : ''}`
       )
 
-      // 选择一个可用的 Droid 账户（支持粘性会话和分组调度）
+      // 选择一个可用的 Droid Cuenta（Soportar粘性Sesión和Agrupar调度）
       account = await droidScheduler.selectAccount(keyInfo, normalizedEndpoint, sessionHash)
 
       if (!account) {
         throw new Error(`No available Droid account for endpoint type: ${normalizedEndpoint}`)
       }
 
-      // 获取认证凭据：支持 Access Token 和 API Key 两种模式
+      // Obtener认证凭据：Soportar Access Token 和 API Key 两种模式
       if (
         typeof account.authenticationMethod === 'string' &&
         account.authenticationMethod.toLowerCase().trim() === 'api_key'
@@ -220,7 +220,7 @@ class DroidRelayService {
         accessToken = await droidAccountService.getValidAccessToken(account.id)
       }
 
-      // 获取 Factory.ai API URL
+      // Obtener Factory.ai API URL
       let endpointPath = this.endpoints[normalizedEndpoint]
 
       if (typeof customPath === 'string' && customPath.trim()) {
@@ -231,7 +231,7 @@ class DroidRelayService {
 
       logger.info(`🌐 Forwarding to Factory.ai: ${apiUrl}`)
 
-      // 获取代理配置
+      // ObtenerProxyConfiguración
       const proxyConfig = account.proxy ? JSON.parse(account.proxy) : null
       const proxyAgent = proxyConfig ? ProxyHelper.createProxyAgent(proxyConfig) : null
 
@@ -239,7 +239,7 @@ class DroidRelayService {
         logger.info(`🌐 Using proxy: ${ProxyHelper.getProxyDescription(proxyConfig)}`)
       }
 
-      // 构建请求头
+      // ConstruirSolicitud头
       const headers = this._buildHeaders(
         accessToken,
         normalizedRequestBody,
@@ -254,7 +254,7 @@ class DroidRelayService {
         )
       }
 
-      // 处理请求体（注入 system prompt 等）
+      // ProcesarSolicitud体（注入 system prompt 等）
       const streamRequested = !disableStreaming && this._isStreamRequested(normalizedRequestBody)
 
       let processedBody = this._processRequestBody(normalizedRequestBody, normalizedEndpoint, {
@@ -285,12 +285,12 @@ class DroidRelayService {
         }
       }
 
-      // 发送请求
+      // 发送Solicitud
       const isStreaming = streamRequested
 
-      // 根据是否流式选择不同的处理方式
+      // 根据是否流式选择不同的Procesar方式
       if (isStreaming) {
-        // 流式响应：使用原生 https 模块以更好地控制流
+        // 流式Respuesta：使用原生 https Módulo以更好地控制流
         return await this._handleStreamRequest(
           apiUrl,
           headers,
@@ -308,13 +308,13 @@ class DroidRelayService {
           clientApiKeyId
         )
       } else {
-        // 非流式响应：使用 axios
+        // 非流式Respuesta：使用 axios
         const requestOptions = {
           method: 'POST',
           url: apiUrl,
           headers,
           data: processedBody,
-          timeout: 600 * 1000, // 10分钟超时
+          timeout: 600 * 1000, // 10分钟Tiempo de espera agotado
           responseType: 'json',
           ...(proxyAgent && {
             httpAgent: proxyAgent,
@@ -327,7 +327,7 @@ class DroidRelayService {
 
         logger.info(`✅ Factory.ai response status: ${response.status}`)
 
-        // 处理非流式响应
+        // Procesar非流式Respuesta
         return this._handleNonStreamResponse(
           response,
           account,
@@ -339,7 +339,7 @@ class DroidRelayService {
         )
       }
     } catch (error) {
-      // 客户端主动断开连接是正常情况，使用 INFO 级别
+      // Cliente主动断开Conexión是正常情况，使用 INFO 级别
       if (error.message === 'Client disconnected') {
         logger.info(`🔌 Droid relay ended: Client disconnected`)
       } else {
@@ -349,7 +349,7 @@ class DroidRelayService {
       const status = error?.response?.status
       const droidAutoProtectionDisabled =
         account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
-      // 5xx 错误
+      // 5xx Error
       if (status >= 500 && account?.id && !droidAutoProtectionDisabled) {
         await upstreamErrorHelper.markTempUnavailable(account.id, 'droid', status).catch(() => {})
       } else if (
@@ -358,7 +358,7 @@ class DroidRelayService {
         error.message !== 'Client disconnected' &&
         !droidAutoProtectionDisabled
       ) {
-        // 网络错误（非客户端断开），临时不可用
+        // 网络Error（非Cliente断开），临时不可用
         await upstreamErrorHelper.markTempUnavailable(account.id, 'droid', 503).catch(() => {})
       }
 
@@ -377,7 +377,7 @@ class DroidRelayService {
       }
 
       if (error.response) {
-        // HTTP 错误响应
+        // HTTP ErrorRespuesta
         return {
           statusCode: error.response.status,
           headers: { 'Content-Type': 'application/json' },
@@ -390,7 +390,7 @@ class DroidRelayService {
         }
       }
 
-      // 网络错误或其他错误（统一返回 4xx）
+      // 网络Error或其他Error（统一Retornar 4xx）
       const mappedStatus = this._mapNetworkErrorStatus(error)
       return {
         statusCode: mappedStatus,
@@ -401,7 +401,7 @@ class DroidRelayService {
   }
 
   /**
-   * 处理流式请求
+   * Procesar流式Solicitud
    */
   async _handleStreamRequest(
     apiUrl,
@@ -460,7 +460,7 @@ class DroidRelayService {
             responseCompleted || upstreamResponse?.complete || clientResponse.writableEnded
 
           if (isConnectionReset && (upstreamComplete || hasForwardedData)) {
-            logger.debug('🔁 Droid stream连接在响应阶段被重置，视为正常结束:', {
+            logger.debug('🔁 Droid streamConexión在Respuesta阶段被重置，视为正常结束:', {
               message: error?.message,
               code: error?.code
             })
@@ -521,7 +521,7 @@ class DroidRelayService {
         upstreamResponse = res
         logger.info(`✅ Factory.ai stream response status: ${res.statusCode}`)
 
-        // 错误响应
+        // ErrorRespuesta
         if (res.statusCode !== 200) {
           const chunks = []
 
@@ -574,32 +574,32 @@ class DroidRelayService {
 
         responseStarted = true
 
-        // 设置流式响应头
+        // Establecer流式Respuesta头
         clientResponse.setHeader('Content-Type', 'text/event-stream')
         clientResponse.setHeader('Cache-Control', 'no-cache')
         clientResponse.setHeader('Connection', 'keep-alive')
 
-        // Usage 数据收集
+        // Usage Datos收集
         let buffer = ''
         const currentUsageData = {}
         const model = requestBody.model || 'unknown'
 
-        // 处理 SSE 流
+        // Procesar SSE 流
         res.on('data', (chunk) => {
           const chunkStr = chunk.toString()
           completionWindow = (completionWindow + chunkStr).slice(-1024)
           hasForwardedData = true
 
-          // 转发数据到客户端
+          // 转发Datos到Cliente
           clientResponse.write(chunk)
           hasForwardedData = true
 
-          // 解析 usage 数据（根据端点类型）
+          // Analizar usage Datos（根据EndpointTipo）
           if (endpointType === 'anthropic') {
-            // Anthropic Messages API 格式
+            // Anthropic Messages API Formato
             this._parseAnthropicUsageFromSSE(chunkStr, buffer, currentUsageData)
           } else if (endpointType === 'openai' || endpointType === 'comm') {
-            // OpenAI Chat Completions 格式（openai 和 comm 共用）
+            // OpenAI Chat Completions Formato（openai 和 comm 共用）
             this._parseOpenAIUsageFromSSE(chunkStr, buffer, currentUsageData)
           }
 
@@ -614,7 +614,7 @@ class DroidRelayService {
           responseCompleted = true
           clientResponse.end()
 
-          // 记录 usage 数据
+          // Registro usage Datos
           if (!skipUsageRecord) {
             const normalizedUsage = await this._recordUsageFromStreamData(
               currentUsageData,
@@ -665,7 +665,7 @@ class DroidRelayService {
         })
       })
 
-      // 客户端断开连接时清理
+      // Cliente断开Conexión时Limpiar
       clientResponse.on('close', () => {
         if (req && !req.destroyed) {
           req.destroy(new Error('Client disconnected'))
@@ -680,17 +680,17 @@ class DroidRelayService {
         handleStreamError(new Error('Request timeout'))
       })
 
-      // 写入请求体
+      // EscribirSolicitud体
       req.end(bodyString)
     })
   }
 
   /**
-   * 从 SSE 流中解析 Anthropic usage 数据
+   * 从 SSE 流中Analizar Anthropic usage Datos
    */
   _parseAnthropicUsageFromSSE(chunkStr, buffer, currentUsageData) {
     try {
-      // 分割成行
+      // 分割成Fila
       const lines = (buffer + chunkStr).split('\n')
 
       for (const line of lines) {
@@ -699,7 +699,7 @@ class DroidRelayService {
             const jsonStr = line.slice(6)
             const data = JSON.parse(jsonStr)
 
-            // message_start 包含 input tokens 和 cache tokens
+            // message_start Incluir input tokens 和 cache tokens
             if (data.type === 'message_start' && data.message && data.message.usage) {
               currentUsageData.input_tokens = data.message.usage.input_tokens || 0
               currentUsageData.cache_creation_input_tokens =
@@ -707,7 +707,7 @@ class DroidRelayService {
               currentUsageData.cache_read_input_tokens =
                 data.message.usage.cache_read_input_tokens || 0
 
-              // 详细的缓存类型
+              // 详细的CachéTipo
               if (data.message.usage.cache_creation) {
                 currentUsageData.cache_creation = {
                   ephemeral_5m_input_tokens:
@@ -720,13 +720,13 @@ class DroidRelayService {
               logger.debug('📊 Droid Anthropic input usage:', currentUsageData)
             }
 
-            // message_delta 包含 output tokens
+            // message_delta Incluir output tokens
             if (data.type === 'message_delta' && data.usage) {
               currentUsageData.output_tokens = data.usage.output_tokens || 0
               logger.debug('📊 Droid Anthropic output usage:', currentUsageData.output_tokens)
             }
           } catch (parseError) {
-            // 忽略解析错误
+            // 忽略AnalizarError
           }
         }
       }
@@ -736,11 +736,11 @@ class DroidRelayService {
   }
 
   /**
-   * 从 SSE 流中解析 OpenAI usage 数据
+   * 从 SSE 流中Analizar OpenAI usage Datos
    */
   _parseOpenAIUsageFromSSE(chunkStr, buffer, currentUsageData) {
     try {
-      // OpenAI Chat Completions 流式格式
+      // OpenAI Chat Completions 流式Formato
       const lines = (buffer + chunkStr).split('\n')
 
       for (const line of lines) {
@@ -753,11 +753,11 @@ class DroidRelayService {
 
             const data = JSON.parse(jsonStr)
 
-            // 兼容传统 Chat Completions usage 字段
+            // 兼容传统 Chat Completions usage Campo
             if (data.usage) {
               currentUsageData.input_tokens = data.usage.prompt_tokens || 0
               currentUsageData.total_tokens = data.usage.total_tokens || 0
-              // completion_tokens 可能缺失（如某些模型响应），从 total_tokens - prompt_tokens 计算
+              // completion_tokens 可能缺失（如某些模型Respuesta），从 total_tokens - prompt_tokens Calcular
               if (
                 data.usage.completion_tokens !== undefined &&
                 data.usage.completion_tokens !== null
@@ -783,13 +783,13 @@ class DroidRelayService {
               logger.debug('📊 Droid OpenAI usage:', currentUsageData)
             }
 
-            // 新 Response API 在 response.usage 中返回统计
+            // 新 Response API 在 response.usage 中RetornarEstadística
             if (data.response && data.response.usage) {
               const { usage } = data.response
               currentUsageData.input_tokens =
                 usage.input_tokens || usage.prompt_tokens || usage.total_tokens || 0
               currentUsageData.total_tokens = usage.total_tokens || 0
-              // completion_tokens/output_tokens 可能缺失，从 total_tokens - input_tokens 计算
+              // completion_tokens/output_tokens 可能缺失，从 total_tokens - input_tokens Calcular
               if (usage.output_tokens !== undefined || usage.completion_tokens !== undefined) {
                 currentUsageData.output_tokens = usage.output_tokens || usage.completion_tokens || 0
               } else if (currentUsageData.total_tokens > 0 && currentUsageData.input_tokens >= 0) {
@@ -812,7 +812,7 @@ class DroidRelayService {
               logger.debug('📊 Droid OpenAI response usage:', currentUsageData)
             }
           } catch (parseError) {
-            // 忽略解析错误
+            // 忽略AnalizarError
           }
         }
       }
@@ -822,7 +822,7 @@ class DroidRelayService {
   }
 
   /**
-   * 检测流式响应是否已经包含终止标记
+   * 检测流式Respuesta是否已经Incluir终止标记
    */
   _detectStreamCompletion(windowStr, endpointType) {
     if (!windowStr) {
@@ -867,7 +867,7 @@ class DroidRelayService {
   }
 
   /**
-   * 记录从流中解析的 usage 数据
+   * Registro从流中Analizar的 usage Datos
    */
   async _recordUsageFromStreamData(usageData, apiKeyData, account, model) {
     const normalizedUsage = this._normalizeUsageSnapshot(usageData)
@@ -876,7 +876,7 @@ class DroidRelayService {
   }
 
   /**
-   * 标准化 usage 数据，确保字段完整且为数字
+   * 标准化 usage Datos，确保Campo完整且为Número
    */
   _normalizeUsageSnapshot(usageData = {}) {
     const toNumber = (value) => {
@@ -898,11 +898,11 @@ class DroidRelayService {
     )
     const totalTokens = toNumber(usageData.total_tokens ?? usageData.totalTokens)
 
-    // 尝试从多个字段获取 output_tokens
+    // 尝试从多个CampoObtener output_tokens
     let outputTokens = toNumber(
       usageData.output_tokens ?? usageData.completion_tokens ?? usageData.outputTokens
     )
-    // 如果 output_tokens 为 0 但有 total_tokens，从差值计算
+    // 如果 output_tokens 为 0 但有 total_tokens，从差ValorCalcular
     if (outputTokens === 0 && totalTokens > 0 && inputTokens >= 0) {
       outputTokens = Math.max(0, totalTokens - inputTokens)
     }
@@ -948,7 +948,7 @@ class DroidRelayService {
   }
 
   /**
-   * 计算 usage 对象的总 token 数
+   * Calcular usage Objeto的总 token 数
    */
   _getTotalTokens(usageObject = {}) {
     const toNumber = (value) => {
@@ -971,7 +971,7 @@ class DroidRelayService {
   }
 
   /**
-   * 提取账户 ID
+   * 提取Cuenta ID
    */
   _extractAccountId(account) {
     if (!account || typeof account !== 'object') {
@@ -981,7 +981,7 @@ class DroidRelayService {
   }
 
   /**
-   * 根据模型名称推断 API provider
+   * 根据模型Nombre推断 API provider
    */
   _inferProviderFromModel(model) {
     if (!model || typeof model !== 'string') {
@@ -1010,15 +1010,15 @@ class DroidRelayService {
       return 'fireworks'
     }
 
-    // 默认使用 baseten
+    // Predeterminado使用 baseten
     return 'baseten'
   }
 
   /**
-   * 构建请求头
+   * ConstruirSolicitud头
    */
   _buildHeaders(accessToken, requestBody, endpointType, clientHeaders = {}, account = null) {
-    // 使用账户配置的 userAgent 或默认值
+    // 使用CuentaConfiguración的 userAgent 或PredeterminadoValor
     const userAgent = account?.userAgent || this.userAgent
     const headers = {
       'content-type': 'application/json',
@@ -1051,20 +1051,20 @@ class DroidRelayService {
       }
     }
 
-    // Comm 端点根据模型动态设置 provider
+    // Comm Endpoint根据模型动态Establecer provider
     if (endpointType === 'comm') {
       const model = requestBody?.model
       headers['x-api-provider'] = this._inferProviderFromModel(model)
     }
 
-    // 生成会话 ID（如果客户端没有提供）
+    // GenerarSesión ID（如果Cliente没有提供）
     headers['x-session-id'] = clientHeaders['x-session-id'] || this._generateUUID()
 
     return headers
   }
 
   /**
-   * 判断请求是否要求流式响应
+   * 判断Solicitud是否要求流式Respuesta
    */
   _isStreamRequested(requestBody) {
     if (!requestBody || typeof requestBody !== 'object') {
@@ -1085,7 +1085,7 @@ class DroidRelayService {
   }
 
   /**
-   * 判断请求是否启用 Anthropic 推理模式
+   * 判断Solicitud是否Habilitar Anthropic 推理模式
    */
   _isThinkingRequested(requestBody) {
     const thinking = requestBody && typeof requestBody === 'object' ? requestBody.thinking : null
@@ -1115,7 +1115,7 @@ class DroidRelayService {
   }
 
   /**
-   * 处理请求体（注入 system prompt 等）
+   * ProcesarSolicitud体（注入 system prompt 等）
    */
   _processRequestBody(requestBody, endpointType, options = {}) {
     const { disableStreaming = false, streamRequested = false } = options
@@ -1138,7 +1138,7 @@ class DroidRelayService {
       processedBody.stream = true
     }
 
-    // Anthropic 端点：仅注入系统提示
+    // Anthropic Endpoint：仅注入系统提示
     if (endpointType === 'anthropic') {
       if (this.systemPrompt) {
         const promptBlock = { type: 'text', text: this.systemPrompt }
@@ -1155,7 +1155,7 @@ class DroidRelayService {
       }
     }
 
-    // OpenAI 端点：仅前置系统提示
+    // OpenAI Endpoint：仅前置系统提示
     if (endpointType === 'openai') {
       if (this.systemPrompt) {
         if (processedBody.instructions) {
@@ -1168,7 +1168,7 @@ class DroidRelayService {
       }
     }
 
-    // Comm 端点：在 messages 数组前注入 system 消息
+    // Comm Endpoint：在 messages Arreglo前注入 system 消息
     if (endpointType === 'comm') {
       if (this.systemPrompt && Array.isArray(processedBody.messages)) {
         const hasSystemMessage = processedBody.messages.some((m) => m && m.role === 'system')
@@ -1189,7 +1189,7 @@ class DroidRelayService {
             }
           }
         } else {
-          // 如果没有 system 消息，在 messages 数组最前面插入
+          // 如果没有 system 消息，在 messages Arreglo最前面插入
           processedBody.messages = [
             { role: 'system', content: this.systemPrompt },
             ...processedBody.messages
@@ -1198,7 +1198,7 @@ class DroidRelayService {
       }
     }
 
-    // 处理 temperature 和 top_p 参数
+    // Procesar temperature 和 top_p Parámetro
     const hasValidTemperature =
       processedBody.temperature !== undefined && processedBody.temperature !== null
     const hasValidTopP = processedBody.top_p !== undefined && processedBody.top_p !== null
@@ -1212,7 +1212,7 @@ class DroidRelayService {
   }
 
   /**
-   * 处理非流式响应
+   * Procesar非流式Respuesta
    */
   async _handleNonStreamResponse(
     response,
@@ -1226,7 +1226,7 @@ class DroidRelayService {
     const { data } = response
     const keyId = apiKeyData?.id
 
-    // 从响应中提取 usage 数据
+    // 从Respuesta中提取 usage Datos
     const usage = data.usage || {}
 
     const model = requestBody.model || 'unknown'
@@ -1276,13 +1276,13 @@ class DroidRelayService {
   }
 
   /**
-   * 记录使用统计
+   * Registro使用Estadística
    */
   async _recordUsage(apiKeyData, account, model, usageObject = {}) {
     const totalTokens = this._getTotalTokens(usageObject)
 
     if (totalTokens <= 0) {
-      logger.debug('🪙 Droid usage 数据为空，跳过记录')
+      logger.debug('🪙 Droid usage Datos为空，跳过Registro')
       return
     }
 
@@ -1317,7 +1317,7 @@ class DroidRelayService {
   }
 
   /**
-   * 处理上游 4xx 响应，移除问题 API Key 或停止账号调度
+   * Procesar上游 4xx Respuesta，Eliminación问题 API Key 或停止账号调度
    */
   async _handleUpstreamClientError(statusCode, context = {}) {
     if (!statusCode || statusCode < 400 || statusCode >= 500) {
@@ -1334,7 +1334,7 @@ class DroidRelayService {
 
     const accountId = this._extractAccountId(account)
     if (!accountId) {
-      logger.warn('⚠️ 上游 4xx 处理被跳过：缺少有效的账户信息')
+      logger.warn('⚠️ 上游 4xx Procesar被跳过：缺少有效的CuentaInformación')
       return
     }
 
@@ -1352,7 +1352,7 @@ class DroidRelayService {
         const errorMessage = `${statusCode}`
 
         try {
-          // 标记API Key为as abnormal而不是删除
+          // 标记API Key为as abnormal而不是Eliminar
           markResult = await droidAccountService.markApiKeyAsError(
             accountId,
             selectedAccountApiKey.id,
@@ -1369,15 +1369,15 @@ class DroidRelayService {
 
         if (markResult?.marked) {
           logger.warn(
-            `⚠️ 上游返回 ${statusCode}，已标记 Droid API Key ${selectedAccountApiKey.id} 为as abnormal（Account: ${accountId}）`
+            `⚠️ 上游Retornar ${statusCode}，已标记 Droid API Key ${selectedAccountApiKey.id} 为as abnormal（Account: ${accountId}）`
           )
         } else {
           logger.warn(
-            `⚠️ 上游返回 ${statusCode}，但未能标记 Droid API Key ${selectedAccountApiKey.id} as abnormal（Account: ${accountId}）：${markResult?.error || '未知错误'}`
+            `⚠️ 上游Retornar ${statusCode}，但未能标记 Droid API Key ${selectedAccountApiKey.id} as abnormal（Account: ${accountId}）：${markResult?.error || '未知Error'}`
           )
         }
 
-        // 检查是否还有可用的API Key
+        // Verificar是否还有可用的API Key
         try {
           const availableEntries = await droidAccountService.getDecryptedApiKeyEntries(accountId)
           const activeEntries = availableEntries.filter((entry) => entry.status !== 'error')
@@ -1392,7 +1392,7 @@ class DroidRelayService {
           }
         } catch (error) {
           logger.error(`❌ Failed to check available API keys（Account: ${accountId}）：`, error)
-          await this._stopDroidAccountScheduling(accountId, statusCode, 'API Key检查失败')
+          await this._stopDroidAccountScheduling(accountId, statusCode, 'API KeyVerificarFalló')
           await this._clearAccountStickyMapping(normalizedEndpoint, sessionHash, clientApiKeyId)
         }
 
@@ -1423,13 +1423,13 @@ class DroidRelayService {
       return
     }
 
-    const message = reason ? `${reason}` : '上游返回 4xx 错误'
+    const message = reason ? `${reason}` : '上游Retornar 4xx Error'
 
     try {
       await droidAccountService.updateAccount(accountId, {
         schedulable: 'false',
         status: 'error',
-        errorMessage: `上游返回 ${statusCode}：${message}`
+        errorMessage: `上游Retornar ${statusCode}：${message}`
       })
       logger.warn(
         `🚫 Stopped scheduling Droid account ${accountId} (status ${statusCode}, reason: ${message})`
@@ -1440,7 +1440,7 @@ class DroidRelayService {
   }
 
   /**
-   * 清理账号层面的粘性调度映射
+   * Limpiar账号层面的粘性调度映射
    */
   async _clearAccountStickyMapping(endpointType, sessionHash, clientApiKeyId) {
     if (!sessionHash) {
@@ -1455,12 +1455,12 @@ class DroidRelayService {
       await redis.deleteSessionAccountMapping(stickyKey)
       logger.debug(`🧹 Cleared Droid sticky session mapping：${stickyKey}`)
     } catch (error) {
-      logger.warn(`⚠️ 清理 Droid 粘性会话映射failed:${stickyKey}`, error)
+      logger.warn(`⚠️ Limpiar Droid 粘性Sesión映射failed:${stickyKey}`, error)
     }
   }
 
   /**
-   * 清理 API Key 级别的粘性映射
+   * Limpiar API Key 级别的粘性映射
    */
   async _clearApiKeyStickyMapping(accountId, endpointType, sessionHash) {
     if (!accountId || !sessionHash) {
@@ -1475,7 +1475,7 @@ class DroidRelayService {
       }
     } catch (error) {
       logger.warn(
-        `⚠️ 清理 Droid API Key 粘性映射failed:${accountId}（endpoint: ${endpointType}）`,
+        `⚠️ Limpiar Droid API Key 粘性映射failed:${accountId}（endpoint: ${endpointType}）`,
         error
       )
     }
@@ -1509,7 +1509,7 @@ class DroidRelayService {
   _buildNetworkErrorBody(error) {
     const body = {
       error: 'relay_upstream_failure',
-      message: error?.message || '上游请求失败'
+      message: error?.message || '上游SolicitudFalló'
     }
 
     if (error?.code) {
@@ -1524,7 +1524,7 @@ class DroidRelayService {
   }
 
   /**
-   * 生成 UUID
+   * Generar UUID
    */
   _generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

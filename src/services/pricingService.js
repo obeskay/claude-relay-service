@@ -22,17 +22,17 @@ class PricingService {
     this.lastUpdated = null
     this.updateInterval = 24 * 60 * 60 * 1000 // 24小时
     this.hashCheckInterval = 10 * 60 * 1000 // 10分钟哈希校验
-    this.fileWatcher = null // 文件监听器
+    this.fileWatcher = null // ArchivoEscucha
     this.reloadDebounceTimer = null // 防抖定时器
     this.hashCheckTimer = null // 哈希轮询定时器
-    this.updateTimer = null // 定时更新任务句柄
-    this.hashSyncInProgress = false // 哈希同步状态
+    this.updateTimer = null // 定时Actualizar任务句柄
+    this.hashSyncInProgress = false // 哈希Sincronización状态
 
-    // 硬编码的 1 小时缓存价格（美元/百万 token）
+    // 硬Codificación的 1 小时Caché价格（美元/百万 token）
     // ephemeral_5m 的价格使用 model_pricing.json 中的 cache_creation_input_token_cost
-    // ephemeral_1h 的价格需要硬编码
+    // ephemeral_1h 的价格需要硬Codificación
     this.ephemeral1hPricing = {
-      // Opus 系列: $30/MTok
+      // Opus 系Columna: $30/MTok
       'claude-opus-4-1': 0.00003,
       'claude-opus-4-1-20250805': 0.00003,
       'claude-opus-4': 0.00003,
@@ -41,7 +41,7 @@ class PricingService {
       'claude-3-opus-latest': 0.00003,
       'claude-3-opus-20240229': 0.00003,
 
-      // Sonnet 系列: $6/MTok
+      // Sonnet 系Columna: $6/MTok
       'claude-3-5-sonnet': 0.000006,
       'claude-3-5-sonnet-latest': 0.000006,
       'claude-3-5-sonnet-20241022': 0.000006,
@@ -54,7 +54,7 @@ class PricingService {
       'claude-sonnet-4': 0.000006,
       'claude-sonnet-4-20250514': 0.000006,
 
-      // Haiku 系列: $1.6/MTok
+      // Haiku 系Columna: $1.6/MTok
       'claude-3-5-haiku': 0.0000016,
       'claude-3-5-haiku-latest': 0.0000016,
       'claude-3-5-haiku-20241022': 0.0000016,
@@ -64,7 +64,7 @@ class PricingService {
       'claude-haiku-3-5': 0.0000016
     }
 
-    // 硬编码的 1M 上下文模型价格（美元/token）
+    // 硬Codificación的 1M 上下文模型价格（美元/token）
     // 当总输入 tokens 超过 200k 时使用这些价格
     this.longContextPricing = {
       // claude-sonnet-4-20250514[1m] 模型的 1M 上下文价格
@@ -76,22 +76,22 @@ class PricingService {
     }
   }
 
-  // 初始化价格服务
+  // Inicializando servicio de precios
   async initialize() {
     try {
-      // 确保data目录存在
+      // 确保dataDirectorio存在
       if (!fs.existsSync(this.dataDir)) {
         fs.mkdirSync(this.dataDir, { recursive: true })
         logger.info('📁 Created data directory')
       }
 
-      // 检查是否需要下载或更新价格数据
+      // Verificar是否需要下载或Actualizar价格Datos
       await this.checkAndUpdatePricing()
 
-      // 初次启动时执行一次哈希校验，确保与远端保持一致
+      // 初次启动时Ejecutar一次哈希校验，确保与远端保持一致
       await this.syncWithRemoteHash()
 
-      // 设置定时更新
+      // Establecer定时Actualizar
       if (this.updateTimer) {
         clearInterval(this.updateTimer)
       }
@@ -99,10 +99,10 @@ class PricingService {
         this.checkAndUpdatePricing()
       }, this.updateInterval)
 
-      // 设置哈希轮询
+      // Establecer哈希轮询
       this.setupHashCheck()
 
-      // 设置文件监听器
+      // EstablecerArchivoEscucha
       this.setupFileWatcher()
 
       logger.success('Pricing service initialized successfully')
@@ -111,7 +111,7 @@ class PricingService {
     }
   }
 
-  // 检查并更新价格数据
+  // Verificar并Actualizar价格Datos
   async checkAndUpdatePricing() {
     try {
       const needsUpdate = this.needsUpdate()
@@ -120,17 +120,17 @@ class PricingService {
         logger.info('🔄 Updating model pricing data...')
         await this.downloadPricingData()
       } else {
-        // 如果不需要更新，加载现有数据
+        // 如果不需要Actualizar，加载现有Datos
         await this.loadPricingData()
       }
     } catch (error) {
       logger.error('❌ Failed to check/update pricing:', error)
-      // 如果更新失败，尝试使用fallback
+      // 如果ActualizarFalló，尝试使用fallback
       await this.useFallbackPricing()
     }
   }
 
-  // 检查是否需要更新
+  // Verificar是否需要Actualizar
   needsUpdate() {
     if (!fs.existsSync(this.pricingFile)) {
       logger.info('📋 Pricing file not found, will download')
@@ -150,7 +150,7 @@ class PricingService {
     return false
   }
 
-  // 下载价格数据
+  // 下载价格Datos
   async downloadPricingData() {
     try {
       await this._downloadFromRemote()
@@ -161,7 +161,7 @@ class PricingService {
     }
   }
 
-  // 哈希轮询设置
+  // 哈希轮询Establecer
   setupHashCheck() {
     if (this.hashCheckTimer) {
       clearInterval(this.hashCheckTimer)
@@ -171,7 +171,7 @@ class PricingService {
       this.syncWithRemoteHash()
     }, this.hashCheckInterval)
 
-    logger.info('🕒 已启用价格文件哈希轮询（每10分钟校验一次）')
+    logger.info('🕒 已Habilitar价格Archivo哈希轮询（每10分钟校验一次）')
   }
 
   // 与远端哈希对比
@@ -191,28 +191,28 @@ class PricingService {
       const localHash = this.computeLocalHash()
 
       if (!localHash) {
-        logger.info('📄 本地价格文件缺失，尝试下载最新版本')
+        logger.info('📄 本地价格Archivo缺失，尝试下载最新Versión')
         await this.downloadPricingData()
         return
       }
 
       if (remoteHash !== localHash) {
-        logger.info('🔁 检测到远端价格文件更新，开始下载最新数据')
+        logger.info('🔁 检测到远端价格ArchivoActualizar，Iniciando下载最新Datos')
         await this.downloadPricingData()
       }
     } catch (error) {
-      logger.warn(`⚠️  哈希校验失败：${error.message}`)
+      logger.warn(`⚠️  哈希校验Falló：${error.message}`)
     } finally {
       this.hashSyncInProgress = false
     }
   }
 
-  // 获取远端哈希值
+  // Obtener远端哈希Valor
   fetchRemoteHash() {
     return new Promise((resolve, reject) => {
       const request = https.get(this.hashUrl, (response) => {
         if (response.statusCode !== 200) {
-          reject(new Error(`哈希文件获取失败：HTTP ${response.statusCode}`))
+          reject(new Error(`哈希ArchivoObtenerFalló：HTTP ${response.statusCode}`))
           return
         }
 
@@ -225,7 +225,7 @@ class PricingService {
           const hash = data.trim().split(/\s+/)[0]
 
           if (!hash) {
-            reject(new Error('哈希文件内容为空'))
+            reject(new Error('哈希Archivo内容为空'))
             return
           }
 
@@ -234,17 +234,17 @@ class PricingService {
       })
 
       request.on('error', (error) => {
-        reject(new Error(`网络错误：${error.message}`))
+        reject(new Error(`网络Error：${error.message}`))
       })
 
       request.setTimeout(30000, () => {
         request.destroy()
-        reject(new Error('获取哈希超时（30秒）'))
+        reject(new Error('Obtener哈希Tiempo de espera agotado（30秒）'))
       })
     })
   }
 
-  // 计算本地文件哈希
+  // Calcular本地Archivo哈希
   computeLocalHash() {
     if (!fs.existsSync(this.pricingFile)) {
       return null
@@ -261,7 +261,7 @@ class PricingService {
     return this.persistLocalHash(fileBuffer)
   }
 
-  // 写入本地哈希文件
+  // Escribir本地哈希Archivo
   persistLocalHash(content) {
     const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content, 'utf8')
     const hash = crypto.createHash('sha256').update(buffer).digest('hex')
@@ -290,17 +290,17 @@ class PricingService {
             const rawContent = buffer.toString('utf8')
             const jsonData = JSON.parse(rawContent)
 
-            // 保存到文件并更新哈希
+            // 保存到Archivo并Actualizar哈希
             fs.writeFileSync(this.pricingFile, rawContent)
             this.persistLocalHash(buffer)
 
-            // 更新内存中的数据
+            // Actualizar内存中的Datos
             this.pricingData = jsonData
             this.lastUpdated = new Date()
 
             logger.success(`Downloaded pricing data for ${Object.keys(jsonData).length} models`)
 
-            // 设置或重新设置文件监听器
+            // Establecer或重新EstablecerArchivoEscucha
             this.setupFileWatcher()
 
             resolve()
@@ -321,7 +321,7 @@ class PricingService {
     })
   }
 
-  // 加载本地价格数据
+  // 加载本地价格Datos
   async loadPricingData() {
     try {
       if (fs.existsSync(this.pricingFile)) {
@@ -344,27 +344,27 @@ class PricingService {
     }
   }
 
-  // 使用fallback价格数据
+  // 使用fallback价格Datos
   async useFallbackPricing() {
     try {
       if (fs.existsSync(this.fallbackFile)) {
         logger.info('📋 Copying fallback pricing data to data directory...')
 
-        // 读取fallback文件
+        // LeerfallbackArchivo
         const fallbackData = fs.readFileSync(this.fallbackFile, 'utf8')
         const jsonData = JSON.parse(fallbackData)
 
         const formattedJson = JSON.stringify(jsonData, null, 2)
 
-        // 保存到data目录
+        // 保存到dataDirectorio
         fs.writeFileSync(this.pricingFile, formattedJson)
         this.persistLocalHash(formattedJson)
 
-        // 更新内存中的数据
+        // Actualizar内存中的Datos
         this.pricingData = jsonData
         this.lastUpdated = new Date()
 
-        // 设置或重新设置文件监听器
+        // Establecer或重新EstablecerArchivoEscucha
         this.setupFileWatcher()
 
         logger.warn(`⚠️  Using fallback pricing data for ${Object.keys(jsonData).length} models`)
@@ -384,7 +384,7 @@ class PricingService {
     }
   }
 
-  // 获取模型价格信息
+  // Obtener模型价格Información
   getModelPricing(modelName) {
     if (!this.pricingData || !modelName) {
       return null
@@ -396,7 +396,7 @@ class PricingService {
       return this.pricingData[modelName]
     }
 
-    // 特殊处理：gpt-5-codex 回退到 gpt-5
+    // 特殊Procesar：gpt-5-codex Retirada到 gpt-5
     if (modelName === 'gpt-5-codex' && !this.pricingData['gpt-5-codex']) {
       const fallbackPricing = this.pricingData['gpt-5']
       if (fallbackPricing) {
@@ -406,7 +406,7 @@ class PricingService {
     }
 
     // 对于Bedrock区域前缀模型（如 us.anthropic.claude-sonnet-4-20250514-v1:0），
-    // 尝试去掉区域前缀进行匹配
+    // 尝试去掉区域前缀进Fila匹配
     if (modelName.includes('.anthropic.') || modelName.includes('.claude')) {
       // 提取不带区域前缀的模型名
       const withoutRegion = modelName.replace(/^(us|eu|apac)\./, '')
@@ -418,7 +418,7 @@ class PricingService {
       }
     }
 
-    // 尝试模糊匹配（处理版本号等变化）
+    // 尝试模糊匹配（ProcesarVersión号等变化）
     const normalizedModel = modelName.toLowerCase().replace(/[_-]/g, '')
 
     for (const [key, value] of Object.entries(this.pricingData)) {
@@ -446,13 +446,13 @@ class PricingService {
     return null
   }
 
-  // 确保价格对象包含缓存价格
+  // 确保价格ObjetoIncluirCaché价格
   ensureCachePricing(pricing) {
     if (!pricing) {
       return pricing
     }
 
-    // 如果缺少缓存价格，根据输入价格计算（缓存创建价格通常是输入价格的1.25倍，缓存读取是0.1倍）
+    // 如果缺少Caché价格，根据输入价格Calcular（CachéCrear价格通常是输入价格的1.25倍，CachéLeer是0.1倍）
     if (!pricing.cache_creation_input_token_cost && pricing.input_cost_per_token) {
       pricing.cache_creation_input_token_cost = pricing.input_cost_per_token * 1.25
     }
@@ -462,7 +462,7 @@ class PricingService {
     return pricing
   }
 
-  // 获取 1 小时缓存价格
+  // Obtener 1 小时Caché价格
   getEphemeral1hPricing(modelName) {
     if (!modelName) {
       return 0
@@ -473,38 +473,38 @@ class PricingService {
       return this.ephemeral1hPricing[modelName]
     }
 
-    // 处理各种模型名称变体
+    // Procesar各种模型Nombre变体
     const modelLower = modelName.toLowerCase()
 
-    // 检查是否是 Opus 系列
+    // Verificar是否是 Opus 系Columna
     if (modelLower.includes('opus')) {
       return 0.00003 // $30/MTok
     }
 
-    // 检查是否是 Sonnet 系列
+    // Verificar是否是 Sonnet 系Columna
     if (modelLower.includes('sonnet')) {
       return 0.000006 // $6/MTok
     }
 
-    // 检查是否是 Haiku 系列
+    // Verificar是否是 Haiku 系Columna
     if (modelLower.includes('haiku')) {
       return 0.0000016 // $1.6/MTok
     }
 
-    // 默认返回 0（未知模型）
+    // PredeterminadoRetornar 0（未知模型）
     logger.debug(`💰 No 1h cache pricing found for model: ${modelName}`)
     return 0
   }
 
-  // 计算使用费用
+  // Calcular使用费用
   calculateCost(usage, modelName) {
-    // 检查是否为 1M 上下文模型
+    // Verificar是否为 1M 上下文模型
     const isLongContextModel = modelName && modelName.includes('[1m]')
     let isLongContextRequest = false
     let useLongContextPricing = false
 
     if (isLongContextModel) {
-      // 计算总输入 tokens
+      // Calcular总输入 tokens
       const inputTokens = usage.input_tokens || 0
       const cacheCreationTokens = usage.cache_creation_input_tokens || 0
       const cacheReadTokens = usage.cache_read_input_tokens || 0
@@ -513,11 +513,11 @@ class PricingService {
       // 如果总输入超过 200k，使用 1M 上下文价格
       if (totalInputTokens > 200000) {
         isLongContextRequest = true
-        // 检查是否有硬编码的 1M 价格
+        // Verificar是否有硬Codificación的 1M 价格
         if (this.longContextPricing[modelName]) {
           useLongContextPricing = true
         } else {
-          // 如果没有找到硬编码价格，使用第一个 1M 模型的价格作为默认
+          // 如果没有找到硬Codificación价格，使用第一个 1M 模型的价格作为Predeterminado
           const defaultLongContextModel = Object.keys(this.longContextPricing)[0]
           if (defaultLongContextModel) {
             useLongContextPricing = true
@@ -566,33 +566,33 @@ class PricingService {
       outputCost = (usage.output_tokens || 0) * (pricing?.output_cost_per_token || 0)
     }
 
-    // 缓存价格保持不变（即使对于 1M 模型）
+    // Caché价格保持不变（即使对于 1M 模型）
     const cacheReadCost =
       (usage.cache_read_input_tokens || 0) * (pricing?.cache_read_input_token_cost || 0)
 
-    // 处理缓存创建费用：
-    // 1. 如果有详细的 cache_creation 对象，使用它
+    // ProcesarCachéCrear费用：
+    // 1. 如果有详细的 cache_creation Objeto，使用它
     // 2. 否则使用总的 cache_creation_input_tokens（向后兼容）
     let ephemeral5mCost = 0
     let ephemeral1hCost = 0
     let cacheCreateCost = 0
 
     if (usage.cache_creation && typeof usage.cache_creation === 'object') {
-      // 有详细的缓存创建数据
+      // 有详细的CachéCrearDatos
       const ephemeral5mTokens = usage.cache_creation.ephemeral_5m_input_tokens || 0
       const ephemeral1hTokens = usage.cache_creation.ephemeral_1h_input_tokens || 0
 
-      // 5分钟缓存使用标准的 cache_creation_input_token_cost
+      // 5分钟Caché使用标准的 cache_creation_input_token_cost
       ephemeral5mCost = ephemeral5mTokens * (pricing?.cache_creation_input_token_cost || 0)
 
-      // 1小时缓存使用硬编码的价格
+      // 1小时Caché使用硬Codificación的价格
       const ephemeral1hPrice = this.getEphemeral1hPricing(modelName)
       ephemeral1hCost = ephemeral1hTokens * ephemeral1hPrice
 
-      // 总的缓存创建费用
+      // 总的CachéCrear费用
       cacheCreateCost = ephemeral5mCost + ephemeral1hCost
     } else if (usage.cache_creation_input_tokens) {
-      // 旧格式，所有缓存创建 tokens 都按 5 分钟价格计算（向后兼容）
+      // 旧Formato，所有CachéCrear tokens 都按 5 分钟价格Calcular（向后兼容）
       cacheCreateCost =
         (usage.cache_creation_input_tokens || 0) * (pricing?.cache_creation_input_token_cost || 0)
       ephemeral5mCost = cacheCreateCost
@@ -628,7 +628,7 @@ class PricingService {
     }
   }
 
-  // 格式化价格显示
+  // Formato化价格显示
   formatCost(cost) {
     if (cost === 0) {
       return '$0.000000'
@@ -645,7 +645,7 @@ class PricingService {
     return `$${cost.toFixed(2)}`
   }
 
-  // 获取服务状态
+  // ObtenerServicio状态
   getStatus() {
     return {
       initialized: this.pricingData !== null,
@@ -657,7 +657,7 @@ class PricingService {
     }
   }
 
-  // 强制更新价格数据
+  // 强制Actualizar价格Datos
   async forceUpdate() {
     try {
       await this._downloadFromRemote()
@@ -673,33 +673,33 @@ class PricingService {
     }
   }
 
-  // 设置文件监听器
+  // EstablecerArchivoEscucha
   setupFileWatcher() {
     try {
-      // 如果已有监听器，先关闭
+      // 如果已有Escucha，先关闭
       if (this.fileWatcher) {
         this.fileWatcher.close()
         this.fileWatcher = null
       }
 
-      // 只有文件存在时才设置监听器
+      // 只有Archivo存在时才EstablecerEscucha
       if (!fs.existsSync(this.pricingFile)) {
         logger.debug('💰 Pricing file does not exist yet, skipping file watcher setup')
         return
       }
 
-      // 使用 fs.watchFile 作为更可靠的文件监听方式
-      // 它使用轮询，虽然性能稍差，但更可靠
+      // 使用 fs.watchFile 作为更可靠的Archivo监听方式
+      // 它使用轮询，虽然Rendimiento稍差，但更可靠
       const watchOptions = {
         persistent: true,
-        interval: 60000 // 每60秒检查一次
+        interval: 60000 // 每60秒Verificar一次
       }
 
-      // 记录初始的修改时间
+      // Registro初始的修改Tiempo
       let lastMtime = fs.statSync(this.pricingFile).mtimeMs
 
       fs.watchFile(this.pricingFile, watchOptions, (curr, _prev) => {
-        // 检查文件是否真的被修改了（不仅仅是访问）
+        // VerificarArchivo是否真的被修改了（不仅仅是访问）
         if (curr.mtimeMs !== lastMtime) {
           lastMtime = curr.mtimeMs
           logger.debug(
@@ -709,7 +709,7 @@ class PricingService {
         }
       })
 
-      // 保存引用以便清理
+      // 保存引用以便Limpiar
       this.fileWatcher = {
         close: () => fs.unwatchFile(this.pricingFile)
       }
@@ -720,51 +720,51 @@ class PricingService {
     }
   }
 
-  // 处理文件变化（带防抖）
+  // ProcesarArchivo变化（带防抖）
   handleFileChange() {
     // 清除之前的定时器
     if (this.reloadDebounceTimer) {
       clearTimeout(this.reloadDebounceTimer)
     }
 
-    // 设置新的定时器（防抖500ms）
+    // Establecer新的定时器（防抖500ms）
     this.reloadDebounceTimer = setTimeout(async () => {
       logger.info('🔄 Reloading pricing data due to file change...')
       await this.reloadPricingData()
     }, 500)
   }
 
-  // 重新加载价格数据
+  // 重新加载价格Datos
   async reloadPricingData() {
     try {
-      // 验证文件是否存在
+      // ValidarArchivo是否存在
       if (!fs.existsSync(this.pricingFile)) {
         logger.warn('💰 Pricing file was deleted, using fallback')
         await this.useFallbackPricing()
-        // 重新设置文件监听器（fallback会创建新文件）
+        // 重新EstablecerArchivoEscucha（fallback会Crear新Archivo）
         this.setupFileWatcher()
         return
       }
 
-      // 读取文件内容
+      // LeerArchivo内容
       const data = fs.readFileSync(this.pricingFile, 'utf8')
 
-      // 尝试解析JSON
+      // 尝试AnalizarJSON
       const jsonData = JSON.parse(data)
 
-      // 验证数据结构
+      // ValidarDatos结构
       if (typeof jsonData !== 'object' || Object.keys(jsonData).length === 0) {
         throw new Error('Invalid pricing data structure')
       }
 
-      // 更新内存中的数据
+      // Actualizar内存中的Datos
       this.pricingData = jsonData
       this.lastUpdated = new Date()
 
       const modelCount = Object.keys(jsonData).length
       logger.success(`Reloaded pricing data for ${modelCount} models from file`)
 
-      // 显示一些统计信息
+      // 显示一些EstadísticaInformación
       const claudeModels = Object.keys(jsonData).filter((k) => k.includes('claude')).length
       const gptModels = Object.keys(jsonData).filter((k) => k.includes('gpt')).length
       const geminiModels = Object.keys(jsonData).filter((k) => k.includes('gemini')).length
@@ -778,7 +778,7 @@ class PricingService {
     }
   }
 
-  // 清理资源
+  // Limpiar资源
   cleanup() {
     if (this.updateTimer) {
       clearInterval(this.updateTimer)

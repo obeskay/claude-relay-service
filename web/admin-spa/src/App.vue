@@ -2,7 +2,7 @@
   <div id="app">
     <router-view />
 
-    <!-- 全局组件 -->
+    <!-- Global组件 -->
     <ToastNotification ref="toastRef" />
   </div>
 </template>
@@ -18,16 +18,16 @@ const themeStore = useThemeStore()
 const toastRef = ref()
 
 onMounted(() => {
-  // 初始化主题
+  // 初始化Tema
   themeStore.initTheme()
 
-  // 监听系统主题变化
+  // 监听系统Tema变化
   themeStore.watchSystemTheme()
 
-  // 检查本地存储的认证状态
+  // 检查本地存储认证Estado
   authStore.checkAuth()
 
-  // 加载OEM设置（包括网站图标）
+  // 加载OEMConfiguración（包括网站图标）
   authStore.loadOemSettings()
 })
 </script>

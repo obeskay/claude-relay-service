@@ -1,30 +1,30 @@
 /**
- * Server-Sent Events (SSE) 解析工具
+ * Server-Sent Events (SSE) Analizar工具
  *
- * 用于解析标准 SSE 格式的数据流
- * 当前主要用于 Gemini API 的流式响应处理
+ * 用于Analizar标准 SSE Formato的Datos流
+ * 当前主要用于 Gemini API 的流式RespuestaProcesar
  *
  * @module sseParser
  */
 
 /**
- * 解析单行 SSE 数据
+ * Analizar单Fila SSE Datos
  *
- * @param {string} line - SSE 格式的行（如："data: {json}\n"）
- * @returns {Object} 解析结果
- * @returns {'data'|'control'|'other'|'invalid'} .type - 行类型
- * @returns {Object|null} .data - 解析后的 JSON 数据（仅 type='data' 时）
- * @returns {string} .line - 原始行内容
- * @returns {string} [.jsonStr] - JSON 字符串
- * @returns {Error} [.error] - 解析错误（仅 type='invalid' 时）
+ * @param {string} line - SSE Formato的Fila（如："data: {json}\n"）
+ * @returns {Object} Analizar结果
+ * @returns {'data'|'control'|'other'|'invalid'} .type - FilaTipo
+ * @returns {Object|null} .data - Analizar后的 JSON Datos（仅 type='data' 时）
+ * @returns {string} .line - 原始Fila内容
+ * @returns {string} [.jsonStr] - JSON Cadena
+ * @returns {Error} [.error] - AnalizarError（仅 type='invalid' 时）
  *
  * @example
- * // 数据行
+ * // DatosFila
  * parseSSELine('data: {"key":"value"}')
  * // => { type: 'data', data: {key: 'value'}, line: '...', jsonStr: '...' }
  *
  * @example
- * // 控制行
+ * // 控制Fila
  * parseSSELine('data: [DONE]')
  * // => { type: 'control', data: null, line: '...', jsonStr: '[DONE]' }
  */
@@ -48,8 +48,8 @@ function parseSSELine(line) {
 }
 
 /**
- * 增量 SSE 解析器类
- * 用于处理流式数据，避免每次都 split 整个 buffer
+ * 增量 SSE Analizar器Clase
+ * 用于Procesar流式Datos，避免每次都 split 整个 buffer
  */
 class IncrementalSSEParser {
   constructor() {
@@ -57,22 +57,22 @@ class IncrementalSSEParser {
   }
 
   /**
-   * 添加数据块并返回完整的事件
-   * @param {string} chunk - 数据块
-   * @returns {Array<Object>} 解析出的完整事件数组
+   * 添加Datos块并Retornar完整的Evento
+   * @param {string} chunk - Datos块
+   * @returns {Array<Object>} Analizar出的完整EventoArreglo
    */
   feed(chunk) {
     this.buffer += chunk
     const events = []
 
-    // 查找完整的事件（以 \n\n 分隔）
+    // 查找完整的Evento（以 \n\n 分隔）
     let idx
     while ((idx = this.buffer.indexOf('\n\n')) !== -1) {
       const event = this.buffer.slice(0, idx)
       this.buffer = this.buffer.slice(idx + 2)
 
       if (event.trim()) {
-        // 解析事件中的每一行
+        // AnalizarEvento中的每一Fila
         const lines = event.split('\n')
         for (const line of lines) {
           if (line.startsWith('data: ')) {
@@ -97,7 +97,7 @@ class IncrementalSSEParser {
   }
 
   /**
-   * 获取剩余的 buffer 内容
+   * Obtener剩余的 buffer 内容
    * @returns {string}
    */
   getRemaining() {
@@ -105,7 +105,7 @@ class IncrementalSSEParser {
   }
 
   /**
-   * 重置解析器
+   * 重置Analizar器
    */
   reset() {
     this.buffer = ''

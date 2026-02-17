@@ -7,10 +7,10 @@
         class="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white sm:mr-3 sm:h-8 sm:w-8 sm:text-sm"
         >{{ stepNumber }}</span
       >
-      安装 Node.js 环境
+      Instalación del entorno Node.js
     </h4>
     <p class="mb-4 text-sm text-gray-600 dark:text-gray-400 sm:mb-4 sm:mb-6 sm:text-base">
-      {{ toolName }} 需要 Node.js 环境才能运行。
+      {{ toolName }} requiere un entorno Node.js para funcionar.
     </p>
 
     <!-- Windows -->
@@ -22,32 +22,32 @@
           class="mb-2 flex items-center text-base font-semibold text-gray-800 dark:text-gray-200 sm:mb-3 sm:text-lg"
         >
           <i class="fab fa-windows mr-2 text-blue-600" />
-          Windows 安装方法
+          Métodos de instalación para Windows
         </h5>
         <div class="mb-3 sm:mb-4">
           <p class="mb-2 text-sm text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-base">
-            方法一：官网下载（推荐）
+            Método 1: Descargar desde el sitio oficial (recomendado)
           </p>
           <ol
             class="ml-2 list-inside list-decimal space-y-1 text-xs text-gray-600 dark:text-gray-400 sm:ml-4 sm:space-y-2 sm:text-sm"
           >
             <li>
-              打开浏览器访问
+              Abre tu navegador y visita
               <code
                 class="rounded bg-gray-100 px-1 py-1 text-xs dark:bg-gray-800 dark:text-yellow-400 sm:px-2 sm:text-sm"
                 >https://nodejs.org/</code
               >
             </li>
-            <li>点击 "LTS" 版本进行下载（推荐长期支持版本）</li>
+            <li>点击 "LTS" 版本进行Descargar（推荐长期支持版本）</li>
             <li>
-              下载完成后双击
+              Descargar完成siguiente双击
               <code
                 class="rounded bg-gray-100 px-1 py-1 text-xs dark:bg-gray-800 dark:text-yellow-400 sm:px-2 sm:text-sm"
                 >.msi</code
               >
               文件
             </li>
-            <li>按照安装向导完成安装，保持默认设置即可</li>
+            <li>按照安装向导完成安装，保持默认Configuración即可</li>
           </ol>
         </div>
         <div class="mb-3 sm:mb-4">
@@ -55,14 +55,14 @@
             方法二：使用包管理器
           </p>
           <p class="mb-2 text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
-            如果你安装了 Chocolatey 或 Scoop，可以使用命令行安装：
+            如果你安装 Chocolatey o Scoop，可以使用命令行安装：
           </p>
           <div
             class="overflow-x-auto rounded-lg bg-gray-900 p-3 font-mono text-xs text-green-400 dark:border dark:border-gray-700 dark:bg-gray-900 sm:p-4 sm:text-sm"
           >
             <div class="mb-2"># 使用 Chocolatey</div>
             <div class="whitespace-nowrap text-gray-300">choco install nodejs</div>
-            <div class="mb-2 mt-3"># 或使用 Scoop</div>
+            <div class="mb-2 mt-3"># o使用 Scoop</div>
             <div class="whitespace-nowrap text-gray-300">scoop install nodejs</div>
           </div>
         </div>
@@ -70,16 +70,16 @@
           class="rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-500/40 dark:bg-blue-950/30 sm:p-4"
         >
           <h6 class="mb-2 text-sm font-medium text-blue-800 dark:text-blue-300 sm:text-base">
-            Windows 注意事项
+            Windows Nota事项
           </h6>
           <ul class="space-y-1 text-xs text-blue-700 dark:text-blue-300 sm:text-sm">
             <li>• 建议使用 PowerShell 而不是 CMD</li>
-            <li>• 如果遇到权限问题，尝试以管理员身份运行</li>
+            <li>• 如果遇到权限问题，尝试以Administrador身份运行</li>
             <li>• 某些杀毒软件可能会误报，需要添加白名单</li>
           </ul>
         </div>
       </div>
-      <VerifyInstall terminal="PowerShell 或 CMD" />
+      <VerifyInstall terminal="PowerShell o CMD" />
     </div>
 
     <!-- macOS -->
@@ -96,19 +96,19 @@
         <div class="mb-4">
           <p class="mb-3 text-gray-700 dark:text-gray-300">方法一：使用 Homebrew（推荐）</p>
           <p class="mb-2 text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
-            如果你已经安装了 Homebrew，使用它安装 Node.js 会更方便：
+            如果你已经安装 Homebrew，使用它安装 Node.js 会更方便：
           </p>
           <div
             class="overflow-x-auto rounded-lg bg-gray-900 p-3 font-mono text-xs text-green-400 dark:border dark:border-gray-700 dark:bg-gray-900 sm:p-4 sm:text-sm"
           >
-            <div class="mb-2"># 更新 Homebrew</div>
+            <div class="mb-2"># Actualizar Homebrew</div>
             <div class="whitespace-nowrap text-gray-300">brew update</div>
             <div class="mb-2 mt-3"># 安装 Node.js</div>
             <div class="whitespace-nowrap text-gray-300">brew install node</div>
           </div>
         </div>
         <div class="mb-4">
-          <p class="mb-3 text-gray-700 dark:text-gray-300">方法二：官网下载</p>
+          <p class="mb-3 text-gray-700 dark:text-gray-300">方法二：官网Descargar</p>
           <ol
             class="ml-2 list-inside list-decimal space-y-1 text-xs text-gray-600 dark:text-gray-400 sm:ml-4 sm:space-y-2 sm:text-sm"
           >
@@ -119,9 +119,9 @@
                 >https://nodejs.org/</code
               >
             </li>
-            <li>下载适合 macOS 的 LTS 版本</li>
+            <li>Descargar适合 macOS  LTS 版本</li>
             <li>
-              打开下载的
+              打开Descargar
               <code
                 class="rounded bg-gray-100 px-1 py-1 text-xs dark:bg-gray-700 sm:px-2 sm:text-sm"
                 >.pkg</code
@@ -135,15 +135,15 @@
           class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-800 sm:p-4"
         >
           <h6 class="mb-2 text-sm font-medium text-gray-800 dark:text-gray-300 sm:text-base">
-            macOS 注意事项
+            macOS Nota事项
           </h6>
           <ul class="space-y-1 text-xs text-gray-700 dark:text-gray-300 sm:text-sm">
             <li>
               • 如果遇到权限问题，可能需要使用
               <code class="rounded bg-gray-200 px-1 text-xs dark:bg-gray-700 sm:text-sm">sudo</code>
             </li>
-            <li>• 首次运行可能需要在系统偏好设置中允许</li>
-            <li>• 建议使用 Terminal 或 iTerm2</li>
+            <li>• 首veces运行可能需要en系统偏好Configuraciónen允许</li>
+            <li>• 建议使用 Terminal o iTerm2</li>
           </ul>
         </div>
       </div>
@@ -164,7 +164,7 @@
         <div class="mb-4">
           <p class="mb-3 text-gray-700 dark:text-gray-300">方法一：使用 nvm（推荐）</p>
           <p class="mb-2 text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
-            nvm 可以方便地管理多个 Node.js 版本：
+            nvm 可以方便地管理多  Node.js 版本：
           </p>
           <div
             class="overflow-x-auto rounded-lg bg-gray-900 p-3 font-mono text-xs text-green-400 dark:border dark:border-gray-700 dark:bg-gray-900 sm:p-4 sm:text-sm"
@@ -199,12 +199,12 @@
           class="rounded-lg border border-orange-200 bg-orange-50 p-3 dark:border-orange-500/40 dark:bg-orange-950/30 sm:p-4"
         >
           <h6 class="mb-2 text-sm font-medium text-orange-800 dark:text-orange-300 sm:text-base">
-            Linux / WSL2 注意事项
+            Linux / WSL2 Nota事项
           </h6>
           <ul class="space-y-1 text-xs text-orange-700 dark:text-orange-300 sm:text-sm">
-            <li>• WSL2 用户建议在 Linux 子系统中安装，而不是 Windows</li>
+            <li>• WSL2 Usuario建议en Linux 子系统en安装，而不是 Windows</li>
             <li>• 使用 nvm 可以避免权限问题</li>
-            <li>• 确保 shell 配置文件正确加载了 nvm</li>
+            <li>• 确保 shell 配置文件正确加载 nvm</li>
           </ul>
         </div>
       </div>

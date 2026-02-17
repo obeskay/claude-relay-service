@@ -1,6 +1,6 @@
 /**
- * 并发管理 API 路由
- * 提供并发状态查看和手动清理功能
+ * Concurrencia管理 API Ruta
+ * 提供Concurrencia状态查看和手动Limpiar功能
  */
 
 const express = require('express')
@@ -12,13 +12,13 @@ const { calculateWaitTimeStats } = require('../../utils/statsHelper')
 
 /**
  * GET /admin/concurrency
- * 获取所有并发状态
+ * Obtener所有Concurrencia状态
  */
 router.get('/concurrency', authenticateAdmin, async (req, res) => {
   try {
     const status = await redis.getAllConcurrencyStatus()
 
-    // 为每个 API Key 获取排队计数
+    // 为每个 API Key Obtener排队计数
     const statusWithQueue = await Promise.all(
       status.map(async (s) => {
         const queueCount = await redis.getConcurrencyQueueCount(s.apiKeyId)
@@ -29,7 +29,7 @@ router.get('/concurrency', authenticateAdmin, async (req, res) => {
       })
     )
 
-    // 计算汇总统计
+    // Calcular汇总Estadística
     const summary = {
       totalKeys: statusWithQueue.length,
       totalActiveRequests: statusWithQueue.reduce((sum, s) => sum + s.activeCount, 0),
@@ -54,18 +54,18 @@ router.get('/concurrency', authenticateAdmin, async (req, res) => {
 
 /**
  * GET /admin/concurrency-queue/stats
- * 获取排队统计信息
+ * Obtener排队EstadísticaInformación
  */
 router.get('/concurrency-queue/stats', authenticateAdmin, async (req, res) => {
   try {
-    // 获取所有有统计数据的 API Key
+    // Obtener所有有EstadísticaDatos的 API Key
     const statsKeys = await redis.scanConcurrencyQueueStatsKeys()
     const queueKeys = await redis.scanConcurrencyQueueKeys()
 
     // 合并所有相关的 API Key
     const allApiKeyIds = [...new Set([...statsKeys, ...queueKeys])]
 
-    // 获取各 API Key 的详细统计
+    // Obtener各 API Key 的详细Estadística
     const perKeyStats = await Promise.all(
       allApiKeyIds.map(async (apiKeyId) => {
         const [queueCount, stats, waitTimes] = await Promise.all([
@@ -83,11 +83,11 @@ router.get('/concurrency-queue/stats', authenticateAdmin, async (req, res) => {
       })
     )
 
-    // 获取全局等待时间统计
+    // Obtener全局等待TiempoEstadística
     const globalWaitTimes = await redis.getGlobalQueueWaitTimes()
     const globalWaitTimeStats = calculateWaitTimeStats(globalWaitTimes)
 
-    // 计算全局汇总
+    // Calcular全局汇总
     const globalStats = {
       totalEntered: perKeyStats.reduce((sum, s) => sum + s.stats.entered, 0),
       totalSuccess: perKeyStats.reduce((sum, s) => sum + s.stats.success, 0),
@@ -99,7 +99,7 @@ router.get('/concurrency-queue/stats', authenticateAdmin, async (req, res) => {
         0
       ),
       currentTotalQueued: perKeyStats.reduce((sum, s) => sum + s.currentQueueCount, 0),
-      // 队列资源利用率指标
+      // Cola资源利用率Métrica
       peakQueueSize:
         perKeyStats.length > 0 ? Math.max(...perKeyStats.map((s) => s.currentQueueCount)) : 0,
       avgQueueSize:
@@ -111,7 +111,7 @@ router.get('/concurrency-queue/stats', authenticateAdmin, async (req, res) => {
       activeApiKeys: perKeyStats.filter((s) => s.currentQueueCount > 0).length
     }
 
-    // 计算成功率
+    // CalcularÉxito率
     if (globalStats.totalEntered > 0) {
       globalStats.successRate = Math.round(
         (globalStats.totalSuccess / globalStats.totalEntered) * 100
@@ -124,15 +124,15 @@ router.get('/concurrency-queue/stats', authenticateAdmin, async (req, res) => {
       )
     }
 
-    // 从全局等待时间统计中提取关键指标
+    // 从全局等待TiempoEstadística中提取关键Métrica
     if (globalWaitTimeStats) {
       globalStats.avgWaitTimeMs = globalWaitTimeStats.avg
       globalStats.p50WaitTimeMs = globalWaitTimeStats.p50
       globalStats.p90WaitTimeMs = globalWaitTimeStats.p90
       globalStats.p99WaitTimeMs = globalWaitTimeStats.p99
-      // 多实例采样策略标记（详见 design.md Decision 9）
-      // 全局 P90 仅用于可视化和监控，不用于系统决策
-      // 健康检查使用 API Key 级别的 P90（每 Key 独立采样）
+      // 多Instancia采样Política标记（详见 design.md Decision 9）
+      // 全局 P90 仅用于可视化和Monitorear，不用于系统决策
+      // Verificación de salud使用 API Key 级别的 P90（每 Key 独立采样）
       globalWaitTimeStats.globalP90ForVisualizationOnly = true
     }
 
@@ -154,7 +154,7 @@ router.get('/concurrency-queue/stats', authenticateAdmin, async (req, res) => {
 
 /**
  * DELETE /admin/concurrency-queue/:apiKeyId
- * 清理特定 API Key 的排队计数
+ * Limpiar特定 API Key 的排队计数
  */
 router.delete('/concurrency-queue/:apiKeyId', authenticateAdmin, async (req, res) => {
   try {
@@ -179,7 +179,7 @@ router.delete('/concurrency-queue/:apiKeyId', authenticateAdmin, async (req, res
 
 /**
  * DELETE /admin/concurrency-queue
- * 清理所有排队计数
+ * Limpiar所有排队计数
  */
 router.delete('/concurrency-queue', authenticateAdmin, async (req, res) => {
   try {
@@ -204,7 +204,7 @@ router.delete('/concurrency-queue', authenticateAdmin, async (req, res) => {
 
 /**
  * GET /admin/concurrency/:apiKeyId
- * 获取特定 API Key 的并发状态详情
+ * Obtener特定 API Key 的Concurrencia状态详情
  */
 router.get('/concurrency/:apiKeyId', authenticateAdmin, async (req, res) => {
   try {
@@ -231,7 +231,7 @@ router.get('/concurrency/:apiKeyId', authenticateAdmin, async (req, res) => {
 
 /**
  * DELETE /admin/concurrency/:apiKeyId
- * 强制清理特定 API Key 的并发计数
+ * 强制Limpiar特定 API Key 的Concurrencia计数
  */
 router.delete('/concurrency/:apiKeyId', authenticateAdmin, async (req, res) => {
   try {
@@ -259,7 +259,7 @@ router.delete('/concurrency/:apiKeyId', authenticateAdmin, async (req, res) => {
 
 /**
  * DELETE /admin/concurrency
- * 强制清理所有并发计数
+ * 强制Limpiar所有Concurrencia计数
  */
 router.delete('/concurrency', authenticateAdmin, async (req, res) => {
   try {
@@ -284,7 +284,7 @@ router.delete('/concurrency', authenticateAdmin, async (req, res) => {
 
 /**
  * POST /admin/concurrency/cleanup
- * 清理过期的并发条目（不影响活跃请求）
+ * Limpiar过期的Concurrencia条目（不影响活跃Solicitud）
  */
 router.post('/concurrency/cleanup', authenticateAdmin, async (req, res) => {
   try {

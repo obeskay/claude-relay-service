@@ -1,18 +1,18 @@
 /**
- * 标准 Gemini API 路由模块
+ * 标准 Gemini API RutaMódulo
  *
- * 该模块处理标准 Gemini API 格式的请求：
+ * 该MóduloProcesar标准 Gemini API Formato的Solicitud：
  * - v1beta/models/:modelName:generateContent
  * - v1beta/models/:modelName:streamGenerateContent
  * - v1beta/models/:modelName:countTokens
  * - v1beta/models/:modelName:loadCodeAssist
  * - v1beta/models/:modelName:onboardUser
  * - v1/models/:modelName:* (同上)
- * - v1internal:* (内部格式)
- * - v1beta/models, v1/models (模型列表)
+ * - v1internal:* (内部Formato)
+ * - v1beta/models, v1/models (模型ColumnaTabla)
  * - v1beta/models/:modelName, v1/models/:modelName (模型详情)
  *
- * 所有处理函数都从 geminiHandlers.js 导入，以避免代码重复。
+ * 所有ProcesarFunción都从 geminiHandlers.js 导入，以避免代码重复。
  */
 
 const express = require('express')
@@ -20,7 +20,7 @@ const router = express.Router()
 const { authenticateApiKey } = require('../middleware/auth')
 const logger = require('../utils/logger')
 
-// 从 handlers/geminiHandlers.js 导入所有处理函数
+// 从 handlers/geminiHandlers.js 导入所有ProcesarFunción
 const {
   ensureGeminiPermissionMiddleware,
   handleLoadCodeAssist,
@@ -35,7 +35,7 @@ const {
 } = require('../handlers/geminiHandlers')
 
 // ============================================================================
-// v1beta 版本的标准路由 - 支持动态模型名称
+// v1beta Versión的标准Ruta - Soportar动态模型Nombre
 // ============================================================================
 
 /**
@@ -79,7 +79,7 @@ router.post(
 
 /**
  * POST /v1beta/models/:modelName:generateContent
- * 使用专门的标准 API 处理函数（支持 OAuth 和 API 账户）
+ * 使用专门的标准 API ProcesarFunción（Soportar OAuth 和 API Cuenta）
  */
 router.post(
   '/v1beta/models/:modelName\\:generateContent',
@@ -90,7 +90,7 @@ router.post(
 
 /**
  * POST /v1beta/models/:modelName:streamGenerateContent
- * 使用专门的标准 API 流式处理函数（支持 OAuth 和 API 账户）
+ * 使用专门的标准 API 流式ProcesarFunción（Soportar OAuth 和 API Cuenta）
  */
 router.post(
   '/v1beta/models/:modelName\\:streamGenerateContent',
@@ -100,7 +100,7 @@ router.post(
 )
 
 // ============================================================================
-// v1 版本的标准路由（为了完整性，虽然 Gemini 主要使用 v1beta）
+// v1 Versión的标准Ruta（为了完整性，虽然 Gemini 主要使用 v1beta）
 // ============================================================================
 
 /**
@@ -137,7 +137,7 @@ router.post(
 )
 
 // ============================================================================
-// v1internal 版本的标准路由（这些使用内部格式的处理函数）
+// v1internal Versión的标准Ruta（这些使用内部Formato的ProcesarFunción）
 // ============================================================================
 
 /**
@@ -181,7 +181,7 @@ router.post(
 
 /**
  * POST /v1internal:generateContent
- * v1internal 格式使用内部格式的处理函数
+ * v1internal Formato使用内部Formato的ProcesarFunción
  */
 router.post(
   '/v1internal\\:generateContent',
@@ -195,7 +195,7 @@ router.post(
 
 /**
  * POST /v1internal:streamGenerateContent
- * v1internal 格式使用内部格式的处理函数
+ * v1internal Formato使用内部Formato的ProcesarFunción
  */
 router.post(
   '/v1internal\\:streamGenerateContent',
@@ -208,12 +208,12 @@ router.post(
 )
 
 // ============================================================================
-// 模型列表端点
+// 模型ColumnaTablaEndpoint
 // ============================================================================
 
 /**
  * GET /v1beta/models
- * 获取模型列表（v1beta 版本）
+ * Obtener模型ColumnaTabla（v1beta Versión）
  */
 router.get('/v1beta/models', authenticateApiKey, ensureGeminiPermissionMiddleware, (req, res) => {
   logger.info('Standard Gemini API models request (v1beta)')
@@ -222,7 +222,7 @@ router.get('/v1beta/models', authenticateApiKey, ensureGeminiPermissionMiddlewar
 
 /**
  * GET /v1/models
- * 获取模型列表（v1 版本）
+ * Obtener模型ColumnaTabla（v1 Versión）
  */
 router.get('/v1/models', authenticateApiKey, ensureGeminiPermissionMiddleware, (req, res) => {
   logger.info('Standard Gemini API models request (v1)')
@@ -230,12 +230,12 @@ router.get('/v1/models', authenticateApiKey, ensureGeminiPermissionMiddleware, (
 })
 
 // ============================================================================
-// 模型详情端点
+// 模型详情Endpoint
 // ============================================================================
 
 /**
  * GET /v1beta/models/:modelName
- * 获取模型详情（v1beta 版本）
+ * Obtener模型详情（v1beta Versión）
  */
 router.get(
   '/v1beta/models/:modelName',
@@ -246,7 +246,7 @@ router.get(
 
 /**
  * GET /v1/models/:modelName
- * 获取模型详情（v1 版本）
+ * Obtener模型详情（v1 Versión）
  */
 router.get(
   '/v1/models/:modelName',
@@ -256,7 +256,7 @@ router.get(
 )
 
 // ============================================================================
-// 初始化日志
+// InicializarRegistro
 // ============================================================================
 
 logger.info('Standard Gemini API routes initialized')

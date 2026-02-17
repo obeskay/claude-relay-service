@@ -2,7 +2,7 @@
   <div class="min-w-[200px] space-y-1">
     <div v-if="loading" class="flex items-center gap-2">
       <i class="fas fa-spinner fa-spin text-gray-400 dark:text-gray-500"></i>
-      <span class="text-xs text-gray-500 dark:text-gray-400">加载中...</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Cargando...</span>
     </div>
 
     <div v-else-if="requestError" class="flex items-center gap-2">
@@ -110,25 +110,25 @@
             {{ quotaInfo.percentage.toFixed(1) }}% 已使用
           </span>
           <span v-if="quotaInfo.resetAt" class="text-gray-400 dark:text-gray-500">
-            重置: {{ formatResetTime(quotaInfo.resetAt) }}
+            Restablecer: {{ formatResetTime(quotaInfo.resetAt) }}
           </span>
         </div>
       </div>
 
       <div v-else-if="balanceData.quota?.unlimited" class="flex items-center gap-2">
         <i class="fas fa-infinity text-blue-500 dark:text-blue-400"></i>
-        <span class="text-xs text-gray-600 dark:text-gray-400">无限制</span>
+        <span class="text-xs text-gray-600 dark:text-gray-400">无Límite</span>
       </div>
 
       <div
         v-if="balanceData.cacheExpiresAt && balanceData.source === 'cache'"
         class="text-xs text-gray-400 dark:text-gray-500"
       >
-        缓存至: {{ formatCacheExpiry(balanceData.cacheExpiresAt) }}
+        Cachéa: {{ formatCacheExpiry(balanceData.cacheExpiresAt) }}
       </div>
     </div>
 
-    <div v-else class="text-xs text-gray-400 dark:text-gray-500">暂无余额数据</div>
+    <div v-else class="text-xs text-gray-400 dark:text-gray-500">Sin余额数据</div>
   </div>
 </template>
 
@@ -165,7 +165,7 @@ const sourceClass = computed(() => {
 
 const sourceLabel = computed(() => {
   const source = balanceData.value?.source
-  return { api: 'API', cache: '缓存', local: '本地' }[source] || '未知'
+  return { api: 'API', cache: 'Caché', local: '本地' }[source] || 'Desconocido'
 })
 
 const quotaInfo = computed(() => {
@@ -225,12 +225,12 @@ const quotaBarClass = computed(() => {
 })
 
 const canRefresh = computed(() => {
-  // antigravity 配额：允许直接触发 Provider 刷新（无需脚本）
+  // antigravity 配额：允许直接触发 Provider Actualizar（无需脚本）
   if (props.queryMode === 'api' || props.queryMode === 'auto') {
     return true
   }
 
-  // 其他平台：仅在“已启用脚本且该账户配置了脚本”时允许刷新，避免误导（非脚本 Provider 多为降级策略）
+  // OtroPlataforma：仅en“已Habilitar脚本且该Cuenta配置脚本”时允许Actualizar，避免误导（非脚本 Provider 多para降级策略）
   const data = balanceData.value
   if (!data) return false
   if (data.scriptEnabled === false) return false
@@ -238,17 +238,17 @@ const canRefresh = computed(() => {
 })
 
 const refreshTitle = computed(() => {
-  if (refreshing.value) return '刷新中...'
+  if (refreshing.value) return 'Actualizaren...'
   if (!canRefresh.value) {
     if (balanceData.value?.scriptEnabled === false) {
-      return '余额脚本功能已禁用'
+      return '余额脚本功能已Deshabilitar'
     }
     return '请先配置余额脚本'
   }
   if (isAntigravityQuota.value) {
-    return '刷新配额（调用 Antigravity API）'
+    return 'Actualizar配额（调用 Antigravity API）'
   }
-  return '刷新余额（调用脚本配置的余额 API）'
+  return 'Actualizar余额（调用脚本配置余额 API）'
 })
 
 const primaryText = computed(() => {
@@ -256,7 +256,7 @@ const primaryText = computed(() => {
     return balanceData.value.balance.formattedAmount
   }
   const dailyCost = Number(balanceData.value?.statistics?.dailyCost || 0)
-  return `今日成本 ${formatCurrency(dailyCost)}`
+  return `HoyCosto ${formatCurrency(dailyCost)}`
 })
 
 const load = async () => {
@@ -274,7 +274,7 @@ const load = async () => {
   if (response?.success) {
     balanceData.value = response.data
   } else {
-    requestError.value = response?.error || '加载失败'
+    requestError.value = response?.error || '加载Fallido'
   }
   loading.value = false
 }
@@ -292,7 +292,7 @@ const refresh = async () => {
     balanceData.value = response.data
     emit('refreshed', response.data)
   } else {
-    requestError.value = response?.error || '刷新失败'
+    requestError.value = response?.error || 'ActualizarFallido'
   }
   refreshing.value = false
 }
@@ -323,7 +323,7 @@ const formatResetTime = (isoString) => {
   const date = new Date(isoString)
   const now = new Date()
   const diff = date.getTime() - now.getTime()
-  if (!Number.isFinite(diff)) return '未知'
+  if (!Number.isFinite(diff)) return 'Desconocido'
   if (diff < 0) return '已过期'
 
   const minutes = Math.floor(diff / (1000 * 60))
@@ -331,14 +331,14 @@ const formatResetTime = (isoString) => {
   const remainMinutes = minutes % 60
   if (hours >= 24) {
     const days = Math.floor(hours / 24)
-    return `${days}天后`
+    return `${days}天siguiente`
   }
   return `${hours}小时${remainMinutes}分钟`
 }
 
 const formatCacheExpiry = (isoString) => {
   const date = new Date(isoString)
-  if (Number.isNaN(date.getTime())) return '未知'
+  if (Number.isNaN(date.getTime())) return 'Desconocido'
   return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 

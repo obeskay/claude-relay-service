@@ -13,15 +13,15 @@ function hasDroidPermission(apiKeyData) {
 }
 
 /**
- * Droid API 转发路由
+ * Droid API 转发Ruta
  *
- * 支持的 Factory.ai 端点:
+ * Soportar的 Factory.ai Endpoint:
  * - /droid/claude - Anthropic (Claude) Messages API
  * - /droid/openai - OpenAI Responses API
  * - /droid/comm   - OpenAI Chat Completions API
  */
 
-// Claude (Anthropic) 端点 - /v1/messages
+// Claude (Anthropic) Endpoint - /v1/messages
 router.post('/claude/v1/messages', authenticateApiKey, async (req, res) => {
   try {
     const sessionHash = sessionHelper.generateSessionHash(req.body)
@@ -45,12 +45,12 @@ router.post('/claude/v1/messages', authenticateApiKey, async (req, res) => {
       { endpointType: 'anthropic', sessionHash }
     )
 
-    // 如果是流式响应，已经在 relayService 中处理了
+    // 如果是流式Respuesta，已经在 relayService 中Procesar了
     if (result.streaming) {
       return
     }
 
-    // 非流式响应
+    // 非流式Respuesta
     res.status(result.statusCode).set(result.headers).send(result.body)
   } catch (error) {
     logger.error('Droid Claude relay error:', error)
@@ -61,7 +61,7 @@ router.post('/claude/v1/messages', authenticateApiKey, async (req, res) => {
   }
 })
 
-// Comm 端点 - /v1/chat/completions（OpenAI Chat Completions 格式）
+// Comm Endpoint - /v1/chat/completions（OpenAI Chat Completions Formato）
 router.post('/comm/v1/chat/completions', authenticateApiKey, async (req, res) => {
   try {
     const sessionId =
@@ -108,7 +108,7 @@ router.post('/comm/v1/chat/completions', authenticateApiKey, async (req, res) =>
   }
 })
 
-// OpenAI 端点 - /v1/responses
+// OpenAI Endpoint - /v1/responses
 router.post(['/openai/v1/responses', '/openai/responses'], authenticateApiKey, async (req, res) => {
   try {
     const sessionId =
@@ -155,10 +155,10 @@ router.post(['/openai/v1/responses', '/openai/responses'], authenticateApiKey, a
   }
 })
 
-// 模型列表端点（兼容性）
+// 模型ColumnaTablaEndpoint（兼容性）
 router.get('/*/v1/models', authenticateApiKey, async (req, res) => {
   try {
-    // 返回可用的模型列表
+    // Retornar可用的模型ColumnaTabla
     const models = [
       {
         id: 'claude-opus-4-1-20250805',

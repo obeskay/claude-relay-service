@@ -1,17 +1,17 @@
 <template>
   <div class="theme-toggle-container">
-    <!-- 紧凑模式：仅显示图标按钮 -->
+    <!-- Modo compacto: solo mostrar botones de icono -->
     <div v-if="mode === 'compact'" class="flex items-center gap-2">
-      <!-- 色系切换按钮 -->
+      <!-- Botón de cambio del esquema de color -->
       <div class="relative">
         <button
           class="color-scheme-button"
-          :title="`色系: ${themeStore.currentColorScheme.name}`"
+          :title="`Esquema: ${themeStore.currentColorScheme.name}`"
           @click="toggleColorMenu"
         >
           <span class="color-dot" :style="{ background: themeStore.currentColorScheme.primary }" />
         </button>
-        <!-- 色系下拉菜单 -->
+        <!-- Menú desplegable del esquema de color -->
         <transition name="dropdown">
           <div v-if="showColorMenu" class="color-menu">
             <button
@@ -33,7 +33,7 @@
           </div>
         </transition>
       </div>
-      <!-- 主题切换按钮 -->
+      <!-- Botón de cambio de tema -->
       <button class="theme-toggle-button" :title="themeTooltip" @click="handleCycleTheme">
         <transition mode="out-in" name="fade">
           <i v-if="themeStore.themeMode === 'light'" key="sun" class="fas fa-sun" />
@@ -43,13 +43,13 @@
       </button>
     </div>
 
-    <!-- 下拉菜单模式 - 改为创意切换开关 -->
+    <!-- Modo menú desplegable - Cambiado a interruptor creativo -->
     <div v-else-if="mode === 'dropdown'" class="theme-switch-wrapper">
-      <!-- 色系切换按钮 -->
+      <!-- Botón de cambio del esquema de color -->
       <div class="relative mr-3">
         <button
           class="color-scheme-button-lg"
-          :title="`色系: ${themeStore.currentColorScheme.name}`"
+          :title="`Esquema: ${themeStore.currentColorScheme.name}`"
           @click="toggleColorMenu"
         >
           <span
@@ -60,7 +60,7 @@
           />
           <i class="fas fa-palette ml-1 text-xs opacity-60" />
         </button>
-        <!-- 色系下拉菜单 -->
+        <!-- Menú desplegable del esquema de color -->
         <transition name="dropdown">
           <div v-if="showColorMenu" class="color-menu">
             <button
@@ -135,16 +135,19 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useThemeStore } from '@/stores/theme'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Props
 defineProps({
-  // 显示模式：compact（紧凑）、dropdown（下拉）、segmented（分段）
+  // 显示模式：compact（紧凑）、dropdown（abajo拉）、segmented（分段）
   mode: {
     type: String,
     default: 'compact',
     validator: (value) => ['compact', 'dropdown', 'segmented'].includes(value)
   },
-  // 是否显示文字标签
+  // 是否显示文字Etiqueta
   showLabel: {
     type: Boolean,
     default: false
@@ -154,38 +157,38 @@ defineProps({
 // Store
 const themeStore = useThemeStore()
 
-// 色系菜单状态
+// Estado del menú de esquemas de color
 const showColorMenu = ref(false)
 
-// 主题选项配置
-const themeOptions = [
+// Configuración de opciones de tema
+const themeOptions = computed(() => [
   {
     value: 'light',
-    label: '浅色模式',
-    shortLabel: '浅色',
+    label: t('theme.light'),
+    shortLabel: t('theme.light_short'),
     icon: 'fas fa-sun'
   },
   {
     value: 'dark',
-    label: '深色模式',
-    shortLabel: '深色',
+    label: t('theme.dark'),
+    shortLabel: t('theme.dark_short'),
     icon: 'fas fa-moon'
   },
   {
     value: 'auto',
-    label: '跟随系统',
-    shortLabel: '自动',
+    label: t('theme.auto'),
+    shortLabel: t('theme.auto_short'),
     icon: 'fas fa-circle-half-stroke'
   }
-]
+])
 
-// 计算属性
+// Propiedades computadas
 const themeTooltip = computed(() => {
-  const current = themeOptions.find((opt) => opt.value === themeStore.themeMode)
-  return current ? `点击切换主题 - ${current.label}` : '切换主题'
+  const current = themeOptions.value.find((opt) => opt.value === themeStore.themeMode)
+  return current ? t('theme.toggle_tooltip', { mode: current.label }) : t('theme.toggle_tooltip', { mode: '' })
 })
 
-// 方法
+// Métodos
 const handleCycleTheme = () => {
   themeStore.cycleThemeMode()
 }
@@ -203,7 +206,7 @@ const selectColorScheme = (scheme) => {
   showColorMenu.value = false
 }
 
-// 点击外部关闭菜单
+// Cerrar menú al hacer clic fuera
 const handleClickOutside = (e) => {
   if (
     !e.target.closest('.color-scheme-button') &&
@@ -224,14 +227,14 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 容器样式 */
+/* Estilos del contenedor */
 .theme-toggle-container {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
-/* 基础按钮样式 - 更简洁优雅 */
+/* Estilos básicos de botón - más simple y elegante */
 .theme-toggle-button {
   @apply flex items-center justify-center;
   @apply h-9 w-9 rounded-full;
@@ -240,14 +243,14 @@ onUnmounted(() => {
   @apply text-gray-600 dark:text-gray-300;
   @apply border border-gray-200/50 dark:border-gray-600/50;
   @apply transition-all duration-200 ease-out;
-  /* 移除 backdrop-blur 减少 GPU 负担 */
+  /* Quitar backdrop-blur para reducir carga en GPU */
   @apply shadow-md hover:shadow-lg;
   @apply hover:scale-110 active:scale-95;
   position: relative;
   overflow: hidden;
 }
 
-/* 简化的 hover 效果 */
+/* Efectos hover simplificados */
 .theme-toggle-button::before {
   content: '';
   position: absolute;
@@ -263,7 +266,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-/* 图标样式优化 - 简洁高效 */
+/* Optimización de estilos de iconos - simple y eficiente */
 .theme-toggle-button i {
   @apply text-base;
   transition: transform 0.2s ease;
@@ -273,7 +276,7 @@ onUnmounted(() => {
   transform: scale(1.1);
 }
 
-/* 不同主题的图标颜色 */
+/* Colores de iconos para diferentes temas */
 .theme-toggle-button i.fa-sun {
   @apply text-amber-500;
 }
@@ -289,7 +292,7 @@ onUnmounted(() => {
   -webkit-text-fill-color: transparent;
 }
 
-/* 创意切换开关样式 */
+/* Estilos del interruptor creativo */
 .theme-switch-wrapper {
   @apply inline-flex items-center;
 }
@@ -338,7 +341,7 @@ onUnmounted(() => {
     inset 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
-/* 自动模式样式 - 使用主题色混合 */
+/* 自动模式样式 - 使用Tema色混合 */
 .theme-switch.is-auto {
   background: linear-gradient(
     135deg,
@@ -359,7 +362,7 @@ onUnmounted(() => {
     inset 0 -1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* 自动模式的分割线效果 */
+/* 自动模式分割线效果 */
 .theme-switch.is-auto::before {
   content: '';
   position: absolute;
@@ -482,7 +485,7 @@ onUnmounted(() => {
     0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* 自动模式滑块位置 - 优化后的半透明设计 */
+/* 自动模式滑块位置 - 优化siguiente半透明设计 */
 .theme-switch.is-auto .switch-handle {
   transform: translateY(-50%) translateX(19px);
   background: rgba(255, 255, 255, 0.25);
@@ -645,7 +648,7 @@ onUnmounted(() => {
   transform: scale(1.1);
 }
 
-/* 色系下拉菜单 */
+/* 色系abajo拉菜单 */
 .color-menu {
   @apply absolute left-0 top-full mt-2;
   @apply bg-white dark:bg-gray-800;

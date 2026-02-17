@@ -2,35 +2,35 @@ const logger = require('../../utils/logger')
 const { CLIENT_DEFINITIONS } = require('../clientDefinitions')
 
 /**
- * Codex CLI 验证器
- * 验证请求是否来自 Codex CLI
+ * Codex CLI Validar器
+ * ValidarSolicitud是否来自 Codex CLI
  */
 class CodexCliValidator {
   /**
-   * 获取客户端ID
+   * ObtenerClienteID
    */
   static getId() {
     return CLIENT_DEFINITIONS.CODEX_CLI.id
   }
 
   /**
-   * 获取客户端名称
+   * ObtenerClienteNombre
    */
   static getName() {
     return CLIENT_DEFINITIONS.CODEX_CLI.name
   }
 
   /**
-   * 获取客户端描述
+   * ObtenerCliente描述
    */
   static getDescription() {
     return CLIENT_DEFINITIONS.CODEX_CLI.description
   }
 
   /**
-   * 验证请求是否来自 Codex CLI
-   * @param {Object} req - Express 请求对象
-   * @returns {boolean} 验证结果
+   * ValidarSolicitud是否来自 Codex CLI
+   * @param {Object} req - Express SolicitudObjeto
+   * @returns {boolean} Validar结果
    */
   static validate(req) {
     try {
@@ -38,8 +38,8 @@ class CodexCliValidator {
       const originator = req.headers['originator'] || ''
       const sessionId = req.headers['session_id']
 
-      // 1. 基础 User-Agent 检查
-      // Codex CLI 的 UA 格式:
+      // 1. 基础 User-Agent Verificar
+      // Codex CLI 的 UA Formato:
       // - codex_vscode/0.35.0 (Windows 10.0.26100; x86_64) unknown (Cursor; 0.4.10)
       // - codex_cli_rs/0.38.0 (Ubuntu 22.4.0; x86_64) WindowsTerminal
       // - codex_exec/0.89.0 (Mac OS 26.2.0; arm64) xterm-256color (非交互式/脚本模式)
@@ -51,19 +51,19 @@ class CodexCliValidator {
         return false
       }
 
-      // 2. 对于特定路径，进行额外的严格验证
-      // 对于 /openai 和 /azure 路径需要完整验证
+      // 2. 对于特定Ruta，进Fila额外的严格Validar
+      // 对于 /openai 和 /azure Ruta需要完整Validar
       const strictValidationPaths = ['/openai', '/azure']
       const needsStrictValidation =
         req.path && strictValidationPaths.some((path) => req.path.startsWith(path))
 
       if (!needsStrictValidation) {
-        // 其他路径，只要 User-Agent 匹配就认为是 Codex CLI
+        // 其他Ruta，只要 User-Agent 匹配就认为是 Codex CLI
         logger.debug(`Codex CLI detected for path: ${req.path}, allowing access`)
         return true
       }
 
-      // 3. 验证 originator 头必须与 UA 中的客户端类型匹配
+      // 3. Validar originator 头必须与 UA 中的ClienteTipo匹配
       const clientType = uaMatch[1].toLowerCase()
       if (originator.toLowerCase() !== clientType) {
         logger.debug(
@@ -72,13 +72,13 @@ class CodexCliValidator {
         return false
       }
 
-      // 4. 检查 session_id - 必须存在且长度大于20
+      // 4. Verificar session_id - 必须存在且长度大于20
       if (!sessionId || sessionId.length <= 20) {
         logger.debug(`Codex CLI validation failed - session_id missing or too short: ${sessionId}`)
         return false
       }
 
-      // 5. 对于 /openai/responses 和 /azure/response 路径，额外检查 body 中的 instructions 字段
+      // 5. 对于 /openai/responses 和 /azure/response Ruta，额外Verificar body 中的 instructions Campo
       if (
         req.path &&
         (req.path.includes('/openai/responses') || req.path.includes('/azure/response'))
@@ -97,25 +97,25 @@ class CodexCliValidator {
           return false
         }
 
-        // 额外检查 model 字段应该是 gpt-5-codex
+        // 额外Verificar model Campo应该是 gpt-5-codex
         if (req.body.model && req.body.model !== 'gpt-5-codex') {
           logger.debug(`Codex CLI validation warning - unexpected model: ${req.body.model}`)
-          // 只记录警告，不拒绝请求
+          // 只RegistroAdvertencia，不拒绝Solicitud
         }
       }
 
-      // 所有必要检查通过
+      // 所有必要Verificar通过
       logger.debug(`Codex CLI validation passed for UA: ${userAgent}`)
       return true
     } catch (error) {
       logger.error('Error in CodexCliValidator:', error)
-      // 验证出错时默认拒绝
+      // Validar出错时Predeterminado拒绝
       return false
     }
   }
 
   /**
-   * 比较版本号
+   * 比较Versión号
    * @returns {number} -1: v1 < v2, 0: v1 = v2, 1: v1 > v2
    */
   static compareVersions(v1, v2) {
@@ -138,7 +138,7 @@ class CodexCliValidator {
   }
 
   /**
-   * 获取验证器信息
+   * ObtenerValidar器Información
    */
   static getInfo() {
     return {

@@ -46,7 +46,7 @@ class RuntimeAddonBus {
           current = result
         }
       } catch (error) {
-        this._log('warn', `本地扩展处理 ${eventId} 失败: ${error.message}`, error)
+        this._log('warn', `本地ExtensiónProcesar ${eventId} Falló: ${error.message}`, error)
       }
     }
 
@@ -70,7 +70,7 @@ class RuntimeAddonBus {
       try {
         entries = fs.readdirSync(dir, { withFileTypes: true })
       } catch (error) {
-        this._log('warn', `读取本地扩展目录 ${dir} 失败: ${error.message}`, error)
+        this._log('warn', `Leer本地ExtensiónDirectorio ${dir} Falló: ${error.message}`, error)
         continue
       }
 
@@ -97,7 +97,7 @@ class RuntimeAddonBus {
             registrar(this)
           }
         } catch (error) {
-          this._log('warn', `加载本地扩展 ${entry.name} 失败: ${error.message}`, error)
+          this._log('warn', `加载本地Extensión ${entry.name} Falló: ${error.message}`, error)
         }
       }
     }

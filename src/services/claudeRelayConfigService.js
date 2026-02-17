@@ -1,6 +1,6 @@
 /**
- * Claude 转发配置服务
- * 管理全局 Claude Code 限制和会话绑定配置
+ * Claude 转发ConfiguraciónServicio
+ * 管理全局 Claude Code Límite和Sesión绑定Configuración
  */
 
 const redis = require('../models/redis')
@@ -9,25 +9,25 @@ const logger = require('../utils/logger')
 const CONFIG_KEY = 'claude_relay_config'
 const SESSION_BINDING_PREFIX = 'original_session_binding:'
 
-// 默认配置
+// PredeterminadoConfiguración
 const DEFAULT_CONFIG = {
   claudeCodeOnlyEnabled: false,
   globalSessionBindingEnabled: false,
   sessionBindingErrorMessage: 'Su sesión local está contaminada, límpiela antes de usarla.',
-  sessionBindingTtlDays: 30, // 会话绑定 TTL（天），默认30天
-  // 用户消息队列配置
-  userMessageQueueEnabled: false, // 是否启用用户消息队列（默认关闭）
-  userMessageQueueDelayMs: 200, // 请求间隔（毫秒）
-  userMessageQueueTimeoutMs: 60000, // 队列等待超时（毫秒）
+  sessionBindingTtlDays: 30, // Sesión绑定 TTL（天），Predeterminado30天
+  // Usuario消息ColaConfiguración
+  userMessageQueueEnabled: false, // 是否HabilitarUsuario消息Cola（Predeterminado关闭）
+  userMessageQueueDelayMs: 200, // Solicitud间隔（毫秒）
+  userMessageQueueTimeoutMs: 60000, // Cola等待Tiempo de espera agotado（毫秒）
   userMessageQueueLockTtlMs: 120000, // 锁TTL（毫秒）
-  // 并发请求排队配置
-  concurrentRequestQueueEnabled: false, // 是否启用并发请求排队（默认关闭）
-  concurrentRequestQueueMaxSize: 3, // 固定最小排队数（默认3）
-  concurrentRequestQueueMaxSizeMultiplier: 0, // 并发数的倍数（默认0，仅使用固定值）
-  concurrentRequestQueueTimeoutMs: 10000, // 排队超时（毫秒，默认10秒）
-  concurrentRequestQueueMaxRedisFailCount: 5, // 连续 Redis 失败阈值（默认5次）
-  // 排队健康检查配置
-  concurrentRequestQueueHealthCheckEnabled: true, // 是否启用排队健康检查（默认开启）
+  // ConcurrenciaSolicitud排队Configuración
+  concurrentRequestQueueEnabled: false, // 是否HabilitarConcurrenciaSolicitud排队（Predeterminado关闭）
+  concurrentRequestQueueMaxSize: 3, // 固定最小排队数（Predeterminado3）
+  concurrentRequestQueueMaxSizeMultiplier: 0, // Nivel de concurrencia的倍数（Predeterminado0，仅使用固定Valor）
+  concurrentRequestQueueTimeoutMs: 10000, // 排队Tiempo de espera agotado（毫秒，Predeterminado10秒）
+  concurrentRequestQueueMaxRedisFailCount: 5, // 连续 Redis Falló阈Valor（Predeterminado5次）
+  // 排队Verificación de saludConfiguración
+  concurrentRequestQueueHealthCheckEnabled: true, // 是否Habilitar排队Verificación de salud（Predeterminado开启）
   concurrentRequestQueueHealthThreshold: 0.8,
   globalForcedModel: '',
   globalModelMapping: {},
@@ -35,16 +35,16 @@ const DEFAULT_CONFIG = {
   updatedBy: null
 }
 
-// 内存缓存（避免频繁 Redis 查询）
+// 内存Caché（避免频繁 Redis Consulta）
 let configCache = null
 let configCacheTime = 0
-const CONFIG_CACHE_TTL = 60000 // 1分钟缓存
+const CONFIG_CACHE_TTL = 60000 // 1分钟Caché
 
 class ClaudeRelayConfigService {
   /**
    * 从 metadata.user_id 中提取原始 sessionId
-   * 格式: user_{64位十六进制}_account__session_{uuid}
-   * @param {Object} requestBody - 请求体
+   * Formato: user_{64位十六进制}_account__session_{uuid}
+   * @param {Object} requestBody - Solicitud体
    * @returns {string|null} 原始 sessionId 或 null
    */
   extractOriginalSessionId(requestBody) {
@@ -58,12 +58,12 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 获取配置（带缓存）
-   * @returns {Promise<Object>} 配置对象
+   * ObtenerConfiguración（带Caché）
+   * @returns {Promise<Object>} ConfiguraciónObjeto
    */
   async getConfig() {
     try {
-      // 检查缓存
+      // VerificarCaché
       if (configCache && Date.now() - configCacheTime < CONFIG_CACHE_TTL) {
         return configCache
       }
@@ -91,10 +91,10 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 更新配置
-   * @param {Object} newConfig - 新配置
-   * @param {string} updatedBy - 更新者
-   * @returns {Promise<Object>} 更新后的配置
+   * ActualizarConfiguración
+   * @param {Object} newConfig - 新Configuración
+   * @param {string} updatedBy - Actualizar者
+   * @returns {Promise<Object>} Actualizar后的Configuración
    */
   async updateConfig(newConfig, updatedBy) {
     try {
@@ -110,7 +110,7 @@ class ClaudeRelayConfigService {
 
       await client.set(CONFIG_KEY, JSON.stringify(updatedConfig))
 
-      // 更新缓存
+      // ActualizarCaché
       configCache = updatedConfig
       configCacheTime = Date.now()
 
@@ -128,7 +128,7 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 检查是否启用全局 Claude Code 限制
+   * Verificar是否Habilitar全局 Claude Code Límite
    * @returns {Promise<boolean>}
    */
   async isClaudeCodeOnlyEnabled() {
@@ -137,7 +137,7 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 检查是否启用全局会话绑定
+   * Verificar是否Habilitar全局Sesión绑定
    * @returns {Promise<boolean>}
    */
   async isGlobalSessionBindingEnabled() {
@@ -146,7 +146,7 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 获取会话绑定错误信息
+   * ObtenerSesión绑定ErrorInformación
    * @returns {Promise<string>}
    */
   async getSessionBindingErrorMessage() {
@@ -155,9 +155,9 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 获取原始会话绑定
-   * @param {string} originalSessionId - 原始会话ID
-   * @returns {Promise<Object|null>} 绑定信息或 null
+   * Obtener原始Sesión绑定
+   * @param {string} originalSessionId - 原始SesiónID
+   * @returns {Promise<Object|null>} 绑定Información或 null
    */
   async getOriginalSessionBinding(originalSessionId) {
     if (!originalSessionId) {
@@ -184,11 +184,11 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 设置原始会话绑定
-   * @param {string} originalSessionId - 原始会话ID
-   * @param {string} accountId - 账户ID
-   * @param {string} accountType - 账户类型
-   * @returns {Promise<Object>} 绑定信息
+   * Establecer原始Sesión绑定
+   * @param {string} originalSessionId - 原始SesiónID
+   * @param {string} accountId - CuentaID
+   * @param {string} accountType - CuentaTipo
+   * @returns {Promise<Object>} 绑定Información
    */
   async setOriginalSessionBinding(originalSessionId, accountId, accountType) {
     if (!originalSessionId || !accountId || !accountType) {
@@ -206,7 +206,7 @@ class ClaudeRelayConfigService {
         lastUsedAt: new Date().toISOString()
       }
 
-      // 使用配置的 TTL（默认30天）
+      // 使用Configuración的 TTL（Predeterminado30天）
       const cfg = await this.getConfig()
       const ttlDays = cfg.sessionBindingTtlDays || DEFAULT_CONFIG.sessionBindingTtlDays
       const ttlSeconds = Math.floor(ttlDays * 24 * 3600)
@@ -225,8 +225,8 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 更新会话绑定的最后使用时间（续期）
-   * @param {string} originalSessionId - 原始会话ID
+   * ActualizarSesión绑定的最后使用Tiempo（续期）
+   * @param {string} originalSessionId - 原始SesiónID
    */
   async touchOriginalSessionBinding(originalSessionId) {
     if (!originalSessionId) {
@@ -244,7 +244,7 @@ class ClaudeRelayConfigService {
       const client = redis.getClientSafe()
       const key = `${SESSION_BINDING_PREFIX}${originalSessionId}`
 
-      // 使用配置的 TTL（默认30天）
+      // 使用Configuración的 TTL（Predeterminado30天）
       const cfg = await this.getConfig()
       const ttlDays = cfg.sessionBindingTtlDays || DEFAULT_CONFIG.sessionBindingTtlDays
       const ttlSeconds = Math.floor(ttlDays * 24 * 3600)
@@ -256,8 +256,8 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 检查原始会话是否已绑定
-   * @param {string} originalSessionId - 原始会话ID
+   * Verificar原始Sesión是否已绑定
+   * @param {string} originalSessionId - 原始SesiónID
    * @returns {Promise<boolean>}
    */
   async isOriginalSessionBound(originalSessionId) {
@@ -266,8 +266,8 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 验证绑定的账户是否可用
-   * @param {Object} binding - 绑定信息
+   * Validar绑定的Cuenta是否可用
+   * @param {Object} binding - 绑定Información
    * @returns {Promise<boolean>}
    */
   async validateBoundAccount(binding) {
@@ -300,7 +300,7 @@ class ClaudeRelayConfigService {
 
       const account = await accountService.getAccount(accountId)
 
-      // getAccount() 直接返回账户数据对象或 null，不是 { success, data } 格式
+      // getAccount() 直接RetornarCuentaDatosObjeto或 null，不是 { success, data } Formato
       if (!account) {
         logger.warn(`Session binding account not found: ${accountId} (${accountType})`)
         return false
@@ -308,7 +308,7 @@ class ClaudeRelayConfigService {
 
       const accountData = account
 
-      // 检查账户是否激活
+      // VerificarCuenta是否激活
       if (accountData.isActive === false || accountData.isActive === 'false') {
         logger.warn(
           `Session binding account not active: ${accountId} (${accountType}), isActive: ${accountData.isActive}`
@@ -316,7 +316,7 @@ class ClaudeRelayConfigService {
         return false
       }
 
-      // 检查账户状态（如果存在）
+      // VerificarCuenta状态（如果存在）
       if (accountData.status && accountData.status === 'error') {
         logger.warn(
           `Session binding account has error status: ${accountId} (${accountType}), status: ${accountData.status}`
@@ -332,9 +332,9 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 验证新会话请求
-   * @param {Object} _requestBody - 请求体（预留参数，当前未使用）
-   * @param {string} originalSessionId - 原始会话ID
+   * Validar新SesiónSolicitud
+   * @param {Object} _requestBody - Solicitud体（预留Parámetro，当前未使用）
+   * @param {string} originalSessionId - 原始SesiónID
    * @returns {Promise<Object>} { valid: boolean, error?: string, binding?: object, isNewSession?: boolean }
    */
   async validateNewSession(_requestBody, originalSessionId) {
@@ -344,17 +344,17 @@ class ClaudeRelayConfigService {
       return { valid: true }
     }
 
-    // 如果没有 sessionId，跳过验证（可能是非 Claude Code 客户端）
+    // 如果没有 sessionId，跳过Validar（可能是非 Claude Code Cliente）
     if (!originalSessionId) {
       return { valid: true }
     }
 
     const existingBinding = await this.getOriginalSessionBinding(originalSessionId)
 
-    // 如果会话已存在绑定
+    // 如果Sesión已存在绑定
     if (existingBinding) {
-      // ⚠️ 只有 claude-official 类型账户受全局会话绑定限制
-      // 其他类型（bedrock, ccr, claude-console等）忽略绑定，走正常调度
+      // ⚠️ 只有 claude-official TipoCuenta受全局Sesión绑定Límite
+      // 其他Tipo（bedrock, ccr, claude-console等）忽略绑定，走正常调度
       if (existingBinding.accountType !== 'claude-official') {
         logger.info(
           `🔗 Session binding ignored for non-official account type: ${existingBinding.accountType}`
@@ -375,19 +375,19 @@ class ClaudeRelayConfigService {
       // 续期
       await this.touchOriginalSessionBinding(originalSessionId)
 
-      // 已有绑定，允许继续（这是正常的会话延续）
+      // 已有绑定，允许继续（这是正常的Sesión延续）
       return { valid: true, binding: existingBinding }
     }
 
-    // 没有绑定，是新会话
-    // 注意：messages.length 检查在此处无法执行，因为我们不知道最终会调度到哪种账户类型
-    // 绑定会在调度后创建，仅针对 claude-official 账户
+    // 没有绑定，是新Sesión
+    // 注意：messages.length Verificar在此处无法Ejecutar，因为我们不知道最终会调度到哪种CuentaTipo
+    // 绑定会在调度后Crear，仅针对 claude-official Cuenta
     return { valid: true, isNewSession: true }
   }
 
   /**
-   * 删除原始会话绑定
-   * @param {string} originalSessionId - 原始会话ID
+   * Eliminar原始Sesión绑定
+   * @param {string} originalSessionId - 原始SesiónID
    */
   async deleteOriginalSessionBinding(originalSessionId) {
     if (!originalSessionId) {
@@ -409,7 +409,7 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 获取会话绑定统计
+   * ObtenerSesión绑定Estadística
    * @returns {Promise<Object>}
    */
   async getSessionBindingStats() {
@@ -444,7 +444,7 @@ class ClaudeRelayConfigService {
   }
 
   /**
-   * 清除配置缓存（用于测试或强制刷新）
+   * 清除ConfiguraciónCaché（用于Probar或强制刷新）
    */
   clearCache() {
     configCache = null

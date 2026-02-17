@@ -1,6 +1,6 @@
 /**
- * 性能优化工具模块
- * 提供 HTTP keep-alive 连接池、定价数据缓存等优化功能
+ * RendimientoOptimización工具Módulo
+ * 提供 HTTP keep-alive Conexión池、定价DatosCaché等Optimización功能
  */
 
 const https = require('https')
@@ -8,13 +8,13 @@ const http = require('http')
 const fs = require('fs')
 const LRUCache = require('./lruCache')
 
-// 连接池配置（从环境变量读取）
+// Conexión池Configuración（从Variable de entornoLeer）
 const STREAM_MAX_SOCKETS = parseInt(process.env.HTTPS_MAX_SOCKETS_STREAM) || 65535
 const NON_STREAM_MAX_SOCKETS = parseInt(process.env.HTTPS_MAX_SOCKETS_NON_STREAM) || 16384
 const MAX_FREE_SOCKETS = parseInt(process.env.HTTPS_MAX_FREE_SOCKETS) || 2048
 const FREE_SOCKET_TIMEOUT = parseInt(process.env.HTTPS_FREE_SOCKET_TIMEOUT) || 30000
 
-// 流式请求 agent：高 maxSockets，timeout=0（不限制）
+// 流式Solicitud agent：高 maxSockets，timeout=0（不Límite）
 const httpsAgentStream = new https.Agent({
   keepAlive: true,
   maxSockets: STREAM_MAX_SOCKETS,
@@ -23,12 +23,12 @@ const httpsAgentStream = new https.Agent({
   freeSocketTimeout: FREE_SOCKET_TIMEOUT
 })
 
-// 非流式请求 agent：较小 maxSockets
+// 非流式Solicitud agent：较小 maxSockets
 const httpsAgentNonStream = new https.Agent({
   keepAlive: true,
   maxSockets: NON_STREAM_MAX_SOCKETS,
   maxFreeSockets: MAX_FREE_SOCKETS,
-  timeout: 0, // 不限制，由请求层 REQUEST_TIMEOUT 控制
+  timeout: 0, // 不Límite，由Solicitud层 REQUEST_TIMEOUT 控制
   freeSocketTimeout: FREE_SOCKET_TIMEOUT
 })
 
@@ -37,42 +37,42 @@ const httpAgent = new http.Agent({
   keepAlive: true,
   maxSockets: NON_STREAM_MAX_SOCKETS,
   maxFreeSockets: MAX_FREE_SOCKETS,
-  timeout: 0, // 不限制，由请求层 REQUEST_TIMEOUT 控制
+  timeout: 0, // 不Límite，由Solicitud层 REQUEST_TIMEOUT 控制
   freeSocketTimeout: FREE_SOCKET_TIMEOUT
 })
 
-// 定价数据缓存（按文件路径区分）
+// 定价DatosCaché（按ArchivoRuta区分）
 const pricingDataCache = new Map()
 const PRICING_CACHE_TTL = 5 * 60 * 1000 // 5分钟
 
-// Redis 配置缓存（短 TTL）
+// Redis ConfiguraciónCaché（短 TTL）
 const configCache = new LRUCache(100)
 const CONFIG_CACHE_TTL = 30 * 1000 // 30秒
 
 /**
- * 获取流式请求的 HTTPS agent
+ * Obtener流式Solicitud的 HTTPS agent
  */
 function getHttpsAgentForStream() {
   return httpsAgentStream
 }
 
 /**
- * 获取非流式请求的 HTTPS agent
+ * Obtener非流式Solicitud的 HTTPS agent
  */
 function getHttpsAgentForNonStream() {
   return httpsAgentNonStream
 }
 
 /**
- * 获取定价数据（带缓存，按路径区分）
- * @param {string} pricingFilePath - 定价文件路径
- * @returns {Object|null} 定价数据
+ * Obtener定价Datos（带Caché，按Ruta区分）
+ * @param {string} pricingFilePath - 定价ArchivoRuta
+ * @returns {Object|null} 定价Datos
  */
 function getPricingData(pricingFilePath) {
   const now = Date.now()
   const cached = pricingDataCache.get(pricingFilePath)
 
-  // 检查缓存是否有效
+  // VerificarCaché是否有效
   if (cached && now - cached.loadTime < PRICING_CACHE_TTL) {
     return cached.data
   }
@@ -91,8 +91,8 @@ function getPricingData(pricingFilePath) {
 }
 
 /**
- * 清除定价数据缓存（用于热更新）
- * @param {string} pricingFilePath - 可选，指定路径则只清除该路径缓存
+ * 清除定价DatosCaché（用于热Actualizar）
+ * @param {string} pricingFilePath - Opcional，指定Ruta则只清除该RutaCaché
  */
 function clearPricingCache(pricingFilePath = null) {
   if (pricingFilePath) {
@@ -103,18 +103,18 @@ function clearPricingCache(pricingFilePath = null) {
 }
 
 /**
- * 获取缓存的配置
- * @param {string} key - 缓存键
- * @returns {*} 缓存值
+ * ObtenerCaché的Configuración
+ * @param {string} key - Caché键
+ * @returns {*} CachéValor
  */
 function getCachedConfig(key) {
   return configCache.get(key)
 }
 
 /**
- * 设置配置缓存
- * @param {string} key - 缓存键
- * @param {*} value - 值
+ * EstablecerConfiguraciónCaché
+ * @param {string} key - Caché键
+ * @param {*} value - Valor
  * @param {number} ttl - TTL（毫秒）
  */
 function setCachedConfig(key, value, ttl = CONFIG_CACHE_TTL) {
@@ -122,15 +122,15 @@ function setCachedConfig(key, value, ttl = CONFIG_CACHE_TTL) {
 }
 
 /**
- * 删除配置缓存
- * @param {string} key - 缓存键
+ * EliminarConfiguraciónCaché
+ * @param {string} key - Caché键
  */
 function deleteCachedConfig(key) {
   configCache.cache.delete(key)
 }
 
 /**
- * 获取连接池统计信息
+ * ObtenerConexión池EstadísticaInformación
  */
 function getAgentStats() {
   return {

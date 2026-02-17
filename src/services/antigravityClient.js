@@ -34,12 +34,12 @@ function getAntigravityApiUrlCandidates() {
   const daily = 'https://daily-cloudcode-pa.sandbox.googleapis.com'
   const prod = 'https://cloudcode-pa.googleapis.com'
 
-  // 若显式配置了自定义 base url，则只使用该地址（不做 fallback，避免意外路由到别的环境）。
+  // 若显式Configuración了自定义 base url，则只使用该地址（不做 fallback，避免意外Ruta到别的环境）。
   if (process.env.ANTIGRAVITY_API_URL) {
     return [configured]
   }
 
-  // 默认行为：优先 daily（与旧逻辑一致），失败时再尝试 prod（对齐 CLIProxyAPI）。
+  // PredeterminadoFila为：优先 daily（与旧逻辑一致），Falló时再尝试 prod（对齐 CLIProxyAPI）。
   if (configured === normalizeBaseUrl(daily)) {
     return [configured, prod]
   }
@@ -199,7 +199,7 @@ function normalizeAntigravityEnvelope(envelope) {
     delete requestPayload.safetySettings
   }
 
-  // 对齐 CLIProxyAPI：有 tools 时默认启用 VALIDATED（除非显式 NONE）
+  // 对齐 CLIProxyAPI：有 tools 时PredeterminadoHabilitar VALIDATED（除非显式 NONE）
   if (Array.isArray(requestPayload.tools) && requestPayload.tools.length > 0) {
     const existing = requestPayload?.toolConfig?.functionCallingConfig || null
     if (existing?.mode !== 'NONE') {
@@ -208,7 +208,7 @@ function normalizeAntigravityEnvelope(envelope) {
     }
   }
 
-  // 对齐 CLIProxyAPI：非 Claude 模型移除 maxOutputTokens（Antigravity 环境不稳定）
+  // 对齐 CLIProxyAPI：非 Claude 模型Eliminación maxOutputTokens（Antigravity 环境不稳定）
   normalizeAntigravityThinking(model, requestPayload)
   if (!model.includes('claude')) {
     if (requestPayload.generationConfig && typeof requestPayload.generationConfig === 'object') {
@@ -279,7 +279,7 @@ async function request({
   let endpoints = getAntigravityApiUrlCandidates()
 
   // Claude 模型在 sandbox(daily) 环境下对 tool_use/tool_result 的兼容性不稳定，优先走 prod。
-  // 保持可配置优先：若用户显式设置了 ANTIGRAVITY_API_URL，则不改变顺序。
+  // 保持可Configuración优先：若Usuario显式Establecer了 ANTIGRAVITY_API_URL，则不改变顺序。
   if (!process.env.ANTIGRAVITY_API_URL && String(model).includes('claude')) {
     const prodHost = 'cloudcode-pa.googleapis.com'
     const dailyHost = 'daily-cloudcode-pa.sandbox.googleapis.com'
@@ -305,7 +305,7 @@ async function request({
   }
 
   const isRetryable = (error) => {
-    // 处理网络层面的连接重置或超时（常见于长请求被中间节点切断）
+    // Procesar网络层面的Conexión重置或Tiempo de espera agotado（常见于长Solicitud被中间节点切断）
     if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
       return true
     }
@@ -315,7 +315,7 @@ async function request({
       return true
     }
 
-    // 400/404 的 “model unavailable / not found” 在不同环境间可能表现不同，允许 fallback。
+    // 400/404 的 “model unavailable / not found” 在不同环境间可能Tabla现不同，允许 fallback。
     if (status === 400 || status === 404) {
       const data = error?.response?.data
       const safeToString = (value) => {
@@ -325,7 +325,7 @@ async function request({
         if (value === null || value === undefined) {
           return ''
         }
-        // axios responseType=stream 时，data 可能是 stream（存在循环引用），不能 JSON.stringify
+        // axios responseType=stream 时，data 可能是 stream（存在Bucle引用），不能 JSON.stringify
         if (typeof value === 'object' && typeof value.pipe === 'function') {
           return ''
         }
@@ -431,12 +431,12 @@ async function request({
   try {
     return await attemptRequest()
   } catch (error) {
-    // 如果是 429 RESOURCE_EXHAUSTED 且尚未重试过，等待 2 秒后重试一次
+    // 如果是 429 RESOURCE_EXHAUSTED 且尚未Reintentar过，等待 2 秒后Reintentar一次
     const status = error?.response?.status
     if (status === 429 && !retriedAfterDelay && !signal?.aborted) {
       const data = error?.response?.data
 
-      // 安全地将 data 转为字符串，避免 stream 对象导致循环引用崩溃
+      // Seguridad地将 data 转为Cadena，避免 stream Objeto导致Bucle引用崩溃
       const safeDataToString = (value) => {
         if (typeof value === 'string') {
           return value
@@ -444,7 +444,7 @@ async function request({
         if (value === null || value === undefined) {
           return ''
         }
-        // stream 对象存在循环引用，不能 JSON.stringify
+        // stream Objeto存在Bucle引用，不能 JSON.stringify
         if (typeof value === 'object' && typeof value.pipe === 'function') {
           return ''
         }

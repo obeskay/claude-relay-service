@@ -50,18 +50,18 @@ class ClaudeAccountService {
 
     this.maxFiveHourWarningsPerWindow = Math.min(maxWarnings, 10)
 
-    // 加密相关常量
+    // Cifrado相关常量
     this.ENCRYPTION_ALGORITHM = 'aes-256-cbc'
     this.ENCRYPTION_SALT = 'salt'
 
-    // 🚀 性能优化：缓存派生的加密密钥，避免每次重复计算
-    // scryptSync 是 CPU 密集型操作，缓存可以减少 95%+ 的 CPU 占用
+    // 🚀 RendimientoOptimización：Caché派生的CifradoClave，避免每次重复Calcular
+    // scryptSync 是 CPU 密集型Operación，Caché可以减少 95%+ 的 CPU 占用
     this._encryptionKeyCache = null
 
-    // 🔄 解密结果缓存，提高解密性能
+    // 🔄 Descifrado结果Caché，提高DescifradoRendimiento
     this._decryptCache = new LRUCache(500)
 
-    // 🧹 定期清理缓存（每10分钟）
+    // 🧹 定期LimpiarCaché（每10分钟）
     setInterval(
       () => {
         this._decryptCache.cleanup()
@@ -71,7 +71,7 @@ class ClaudeAccountService {
     )
   }
 
-  // 🏢 创建Claude账户
+  // 🏢 CrearClaudeCuenta
   async createAccount(options = {}) {
     const {
       name = 'Unnamed Account',
@@ -79,22 +79,22 @@ class ClaudeAccountService {
       email = '',
       password = '',
       refreshToken = '',
-      claudeAiOauth = null, // Claude标准格式的OAuth数据
+      claudeAiOauth = null, // Claude标准Formato的OAuthDatos
       proxy = null, // { type: 'socks5', host: 'localhost', port: 1080, username: '', password: '' }
       isActive = true,
       accountType = 'shared', // 'dedicated' or 'shared'
       platform = 'claude',
-      priority = 50, // 调度优先级 (1-100，数字越小优先级越高)
+      priority = 50, // 调度优先级 (1-100，Número越小优先级越高)
       schedulable = true, // 是否可被调度
-      subscriptionInfo = null, // 手动设置的订阅信息
-      autoStopOnWarning = false, // 5小时使用量接近限制时自动停止调度
-      useUnifiedUserAgent = false, // 是否使用统一Claude Code版本的User-Agent
-      useUnifiedClientId = false, // 是否使用统一的客户端标识
-      unifiedClientId = '', // 统一的客户端标识
-      expiresAt = null, // 账户订阅到期时间
-      extInfo = null, // 额外扩展信息
-      maxConcurrency = 0, // 账户级用户消息串行队列：0=使用全局配置，>0=强制启用串行
-      interceptWarmup = false // 拦截预热请求（标题生成、Warmup等）
+      subscriptionInfo = null, // 手动Establecer的订阅Información
+      autoStopOnWarning = false, // 5小时使用量接近Límite时自动停止调度
+      useUnifiedUserAgent = false, // 是否使用统一Claude CodeVersión的User-Agent
+      useUnifiedClientId = false, // 是否使用统一的Cliente标识
+      unifiedClientId = '', // 统一的Cliente标识
+      expiresAt = null, // Cuenta订阅到期Tiempo
+      extInfo = null, // 额外ExtensiónInformación
+      maxConcurrency = 0, // Cuenta级Usuario消息串FilaCola：0=使用全局Configuración，>0=强制Habilitar串Fila
+      interceptWarmup = false // 拦截预热Solicitud（标题Generar、Warmup等）
     } = options
 
     const accountId = uuidv4()
@@ -103,7 +103,7 @@ class ClaudeAccountService {
     const normalizedExtInfo = this._normalizeExtInfo(extInfo, claudeAiOauth)
 
     if (claudeAiOauth) {
-      // 使用Claude标准格式的OAuth数据
+      // 使用Claude标准Formato的OAuthDatos
       accountData = {
         id: accountId,
         name,
@@ -117,36 +117,36 @@ class ClaudeAccountService {
         scopes: claudeAiOauth.scopes.join(' '),
         proxy: proxy ? JSON.stringify(proxy) : '',
         isActive: isActive.toString(),
-        accountType, // 账号类型：'dedicated' 或 'shared' 或 'group'
+        accountType, // 账号Tipo：'dedicated' 或 'shared' 或 'group'
         platform,
         priority: priority.toString(), // 调度优先级
         createdAt: new Date().toISOString(),
         lastUsedAt: '',
         lastRefreshAt: '',
-        status: 'active', // 有OAuth数据的账户直接设为active
+        status: 'active', // 有OAuthDatos的Cuenta直接设为active
         errorMessage: '',
         schedulable: schedulable.toString(), // 是否可被调度
-        autoStopOnWarning: autoStopOnWarning.toString(), // 5小时使用量接近限制时自动停止调度
-        useUnifiedUserAgent: useUnifiedUserAgent.toString(), // 是否使用统一Claude Code版本的User-Agent
-        useUnifiedClientId: useUnifiedClientId.toString(), // 是否使用统一的客户端标识
-        unifiedClientId: unifiedClientId || '', // 统一的客户端标识
-        // 优先使用手动设置的订阅信息，否则使用OAuth数据中的，否则默认为空
+        autoStopOnWarning: autoStopOnWarning.toString(), // 5小时使用量接近Límite时自动停止调度
+        useUnifiedUserAgent: useUnifiedUserAgent.toString(), // 是否使用统一Claude CodeVersión的User-Agent
+        useUnifiedClientId: useUnifiedClientId.toString(), // 是否使用统一的Cliente标识
+        unifiedClientId: unifiedClientId || '', // 统一的Cliente标识
+        // 优先使用手动Establecer的订阅Información，否则使用OAuthDatos中的，否则Predeterminado为空
         subscriptionInfo: subscriptionInfo
           ? JSON.stringify(subscriptionInfo)
           : claudeAiOauth.subscriptionInfo
             ? JSON.stringify(claudeAiOauth.subscriptionInfo)
             : '',
-        // 账户订阅到期时间
+        // Cuenta订阅到期Tiempo
         subscriptionExpiresAt: expiresAt || '',
-        // 扩展信息
+        // ExtensiónInformación
         extInfo: normalizedExtInfo ? JSON.stringify(normalizedExtInfo) : '',
-        // 账户级用户消息串行队列限制
+        // Cuenta级Usuario消息串FilaColaLímite
         maxConcurrency: maxConcurrency.toString(),
-        // 拦截预热请求
+        // 拦截预热Solicitud
         interceptWarmup: interceptWarmup.toString()
       }
     } else {
-      // 兼容旧格式
+      // 兼容旧Formato
       accountData = {
         id: accountId,
         name,
@@ -159,7 +159,7 @@ class ClaudeAccountService {
         scopes: '',
         proxy: proxy ? JSON.stringify(proxy) : '',
         isActive: isActive.toString(),
-        accountType, // 账号类型：'dedicated' 或 'shared' 或 'group'
+        accountType, // 账号Tipo：'dedicated' 或 'shared' 或 'group'
         platform,
         priority: priority.toString(), // 调度优先级
         createdAt: new Date().toISOString(),
@@ -168,17 +168,17 @@ class ClaudeAccountService {
         status: 'created', // created, active, expired, error
         errorMessage: '',
         schedulable: schedulable.toString(), // 是否可被调度
-        autoStopOnWarning: autoStopOnWarning.toString(), // 5小时使用量接近限制时自动停止调度
-        useUnifiedUserAgent: useUnifiedUserAgent.toString(), // 是否使用统一Claude Code版本的User-Agent
-        // 手动设置的订阅信息
+        autoStopOnWarning: autoStopOnWarning.toString(), // 5小时使用量接近Límite时自动停止调度
+        useUnifiedUserAgent: useUnifiedUserAgent.toString(), // 是否使用统一Claude CodeVersión的User-Agent
+        // 手动Establecer的订阅Información
         subscriptionInfo: subscriptionInfo ? JSON.stringify(subscriptionInfo) : '',
-        // 账户订阅到期时间
+        // Cuenta订阅到期Tiempo
         subscriptionExpiresAt: expiresAt || '',
-        // 扩展信息
+        // ExtensiónInformación
         extInfo: normalizedExtInfo ? JSON.stringify(normalizedExtInfo) : '',
-        // 账户级用户消息串行队列限制
+        // Cuenta级Usuario消息串FilaColaLímite
         maxConcurrency: maxConcurrency.toString(),
-        // 拦截预热请求
+        // 拦截预热Solicitud
         interceptWarmup: interceptWarmup.toString()
       }
     }
@@ -187,9 +187,9 @@ class ClaudeAccountService {
 
     logger.success(`🏢 Created Claude account: ${name} (${accountId})`)
 
-    // 如果有 OAuth 数据和 accessToken，且包含 user:profile 权限，尝试获取 profile 信息
+    // 如果有 OAuth Datos和 accessToken，且Incluir user:profile Permiso，尝试Obtener profile Información
     if (claudeAiOauth && claudeAiOauth.accessToken) {
-      // 检查是否有 user:profile 权限（标准 OAuth 有，Setup Token 没有）
+      // Verificar是否有 user:profile Permiso（标准 OAuth 有，Setup Token 没有）
       const hasProfileScope = claudeAiOauth.scopes && claudeAiOauth.scopes.includes('user:profile')
 
       if (hasProfileScope) {
@@ -232,7 +232,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔄 刷新Claude账户token
+  // 🔄 刷新ClaudeCuentatoken
   async refreshAccountToken(accountId) {
     let lockAcquired = false
 
@@ -249,20 +249,20 @@ class ClaudeAccountService {
         throw new Error('No refresh token available - manual token update required')
       }
 
-      // 尝试获取分布式锁
+      // 尝试Obtener分布式锁
       lockAcquired = await tokenRefreshService.acquireRefreshLock(accountId, 'claude')
 
       if (!lockAcquired) {
-        // 如果无法获取锁，说明另一个进程正在刷新
+        // 如果无法Obtener锁，说明另一个ProcesoEn progreso刷新
         logger.info(
           `🔒 Token refresh already in progress for account: ${accountData.name} (${accountId})`
         )
         logRefreshSkipped(accountId, accountData.name, 'claude', 'already_locked')
 
-        // 等待一段时间后返回，期望其他进程已完成刷新
+        // 等待一段Tiempo后Retornar，期望其他Proceso已Completado刷新
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
-        // 重新获取账户数据（可能已被其他进程刷新）
+        // 重新ObtenerCuentaDatos（可能已被其他Proceso刷新）
         const updatedData = await redis.getClaudeAccount(accountId)
         if (updatedData && updatedData.accessToken) {
           const accessToken = this._decryptSensitiveData(updatedData.accessToken)
@@ -276,11 +276,11 @@ class ClaudeAccountService {
         throw new Error('Token refresh in progress by another process')
       }
 
-      // 记录开始刷新
+      // RegistroIniciando刷新
       logRefreshStart(accountId, accountData.name, 'claude', 'manual_refresh')
       logger.info(`🔄 Starting token refresh for account: ${accountData.name} (${accountId})`)
 
-      // 创建代理agent
+      // CrearProxyagent
       const agent = this._createProxyAgent(accountData.proxy)
 
       const axiosConfig = {
@@ -312,10 +312,10 @@ class ClaudeAccountService {
       )
 
       if (response.status === 200) {
-        // 记录完整的响应数据到专门的认证详细日志
+        // Registro完整的RespuestaDatos到专门的认证详细Registro
         logger.authDetail('Token refresh response', response.data)
 
-        // 记录简化版本到主日志
+        // Registro简化Versión到主Registro
         logger.info('📊 Token refresh response (analyzing for subscription info):', {
           status: response.status,
           hasData: !!response.data,
@@ -324,7 +324,7 @@ class ClaudeAccountService {
 
         const { access_token, refresh_token, expires_in } = response.data
 
-        // 检查是否有套餐信息
+        // Verificar是否有套餐Información
         if (
           response.data.subscription ||
           response.data.plan ||
@@ -341,11 +341,11 @@ class ClaudeAccountService {
           }
           logger.info('🎯 Found subscription info in refresh response:', subscriptionInfo)
 
-          // 将套餐信息存储在账户数据中
+          // 将套餐Información存储在CuentaDatos中
           accountData.subscriptionInfo = JSON.stringify(subscriptionInfo)
         }
 
-        // 更新账户数据
+        // ActualizarCuentaDatos
         accountData.accessToken = this._encryptSensitiveData(access_token)
         accountData.refreshToken = this._encryptSensitiveData(refresh_token)
         accountData.expiresAt = (Date.now() + expires_in * 1000).toString()
@@ -355,8 +355,8 @@ class ClaudeAccountService {
 
         await redis.setClaudeAccount(accountId, accountData)
 
-        // 刷新成功后，如果有 user:profile 权限，尝试获取账号 profile 信息
-        // 检查账户的 scopes 是否包含 user:profile（标准 OAuth 有，Setup Token 没有）
+        // 刷新Éxito后，如果有 user:profile Permiso，尝试Obtener账号 profile Información
+        // VerificarCuenta的 scopes 是否Incluir user:profile（标准 OAuth 有，Setup Token 没有）
         const hasProfileScope = accountData.scopes && accountData.scopes.includes('user:profile')
 
         if (hasProfileScope) {
@@ -371,7 +371,7 @@ class ClaudeAccountService {
           )
         }
 
-        // 记录刷新成功
+        // Registro刷新Éxito
         logRefreshSuccess(accountId, accountData.name, 'claude', {
           accessToken: access_token,
           refreshToken: refresh_token,
@@ -392,7 +392,7 @@ class ClaudeAccountService {
         throw new Error(`Token refresh failed with status: ${response.status}`)
       }
     } catch (error) {
-      // 记录刷新失败
+      // Registro刷新Falló
       const accountData = await redis.getClaudeAccount(accountId)
       if (accountData) {
         logRefreshError(accountId, accountData.name, 'claude', error)
@@ -427,7 +427,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔍 获取账户信息
+  // 🔍 ObtenerCuentaInformación
   async getAccount(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -443,7 +443,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🎯 获取有效的访问token
+  // 🎯 Obtener有效的访问token
   async getValidAccessToken(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -456,12 +456,12 @@ class ClaudeAccountService {
         throw new Error('Account is disabled')
       }
 
-      // 检查token是否过期
+      // Verificartoken是否过期
       const expiresAt = parseInt(accountData.expiresAt)
       const now = Date.now()
       const isExpired = !expiresAt || now >= expiresAt - 60000 // 60秒提前刷新
 
-      // 记录token使用情况
+      // Registrotoken使用情况
       logTokenUsage(accountId, accountData.name, 'claude', accountData.expiresAt, isExpired)
 
       if (isExpired) {
@@ -471,7 +471,7 @@ class ClaudeAccountService {
           return refreshResult.accessToken
         } catch (refreshError) {
           logger.warn(`⚠️ Token refresh failed for account ${accountId}: ${refreshError.message}`)
-          // 如果刷新失败，仍然尝试使用当前token（可能是手动添加的长期有效token）
+          // 如果刷新Falló，仍然尝试使用当前token（可能是手动添加的长期有效token）
           const currentToken = this._decryptSensitiveData(accountData.accessToken)
           if (currentToken) {
             logger.info(`🔄 Using current token for account ${accountId} (refresh failed)`)
@@ -487,7 +487,7 @@ class ClaudeAccountService {
         throw new Error('No access token available')
       }
 
-      // 更新最后使用时间和会话窗口
+      // Actualizar最后使用Tiempo和Sesión窗口
       accountData.lastUsedAt = new Date().toISOString()
       await this.updateSessionWindow(accountId, accountData)
       await redis.setClaudeAccount(accountId, accountData)
@@ -499,24 +499,24 @@ class ClaudeAccountService {
     }
   }
 
-  // 📋 获取所有Claude账户
+  // 📋 Obtener所有ClaudeCuenta
   async getAllAccounts() {
     try {
       const accounts = await redis.getAllClaudeAccounts()
 
-      // 处理返回数据，移除敏感信息并添加限流状态和会话窗口信息
+      // ProcesarRetornarDatos，Eliminación敏感Información并添加限流状态和Sesión窗口Información
       const processedAccounts = await Promise.all(
         accounts.map(async (account) => {
-          // 获取限流状态信息
+          // Obtener限流状态Información
           const rateLimitInfo = await this.getAccountRateLimitInfo(account.id)
 
-          // 获取会话窗口信息
+          // ObtenerSesión窗口Información
           const sessionWindowInfo = await this.getSessionWindowInfo(account.id)
 
-          // 构建 Claude Usage 快照（从 Redis 读取）
+          // Construir Claude Usage 快照（从 Redis Leer）
           const claudeUsage = this.buildClaudeUsageSnapshot(account)
 
-          // 判断授权类型：检查 scopes 是否包含 OAuth 相关权限
+          // 判断授权Tipo：Verificar scopes 是否Incluir OAuth 相关Permiso
           const scopes = account.scopes && account.scopes.trim() ? account.scopes.split(' ') : []
           const isOAuth = scopes.includes('user:profile') && scopes.includes('user:inference')
           const authType = isOAuth ? 'oauth' : 'setup-token'
@@ -531,8 +531,8 @@ class ClaudeAccountService {
             proxy: account.proxy ? JSON.parse(account.proxy) : null,
             status: account.status,
             errorMessage: account.errorMessage,
-            accountType: account.accountType || 'shared', // 兼容旧数据，默认为共享
-            priority: parseInt(account.priority) || 50, // 兼容旧数据，默认优先级50
+            accountType: account.accountType || 'shared', // 兼容旧Datos，Predeterminado为共享
+            priority: parseInt(account.priority) || 50, // 兼容旧Datos，Predeterminado优先级50
             platform: account.platform || 'claude', // 添加平台标识，用于前端区分
             authType, // OAuth 或 Setup Token
             createdAt: account.createdAt,
@@ -543,16 +543,16 @@ class ClaudeAccountService {
               account.subscriptionExpiresAt && account.subscriptionExpiresAt !== ''
                 ? account.subscriptionExpiresAt
                 : null,
-            // 添加 scopes 字段用于判断认证方式
-            // 处理空字符串的情况，避免返回 ['']
+            // 添加 scopes Campo用于判断认证方式
+            // Procesar空Cadena的情况，避免Retornar ['']
             scopes: account.scopes && account.scopes.trim() ? account.scopes.split(' ') : [],
-            // 添加 refreshToken 是否存在的标记（不返回实际值）
+            // 添加 refreshToken 是否存在的标记（不Retornar实际Valor）
             hasRefreshToken: !!account.refreshToken,
-            // 添加套餐信息（如果存在）
+            // 添加套餐Información（如果存在）
             subscriptionInfo: account.subscriptionInfo
               ? JSON.parse(account.subscriptionInfo)
               : null,
-            // 添加限流状态信息
+            // 添加限流状态Información
             rateLimitStatus: rateLimitInfo
               ? {
                   isRateLimited: rateLimitInfo.isRateLimited,
@@ -560,7 +560,7 @@ class ClaudeAccountService {
                   minutesRemaining: rateLimitInfo.minutesRemaining
                 }
               : null,
-            // 添加会话窗口信息
+            // 添加Sesión窗口Información
             sessionWindow: sessionWindowInfo || {
               hasActiveWindow: false,
               windowStart: null,
@@ -569,27 +569,27 @@ class ClaudeAccountService {
               remainingTime: null,
               lastRequestTime: null
             },
-            // 添加 Claude Usage 信息（三窗口）
+            // 添加 Claude Usage Información（三窗口）
             claudeUsage: claudeUsage || null,
             // 添加调度状态
-            schedulable: account.schedulable !== 'false', // 默认为true，兼容历史数据
-            // 添加自动停止调度设置
-            autoStopOnWarning: account.autoStopOnWarning === 'true', // 默认为false
+            schedulable: account.schedulable !== 'false', // Predeterminado为true，兼容历史Datos
+            // 添加自动停止调度Establecer
+            autoStopOnWarning: account.autoStopOnWarning === 'true', // Predeterminado为false
             // 添加5小时自动停止状态
             fiveHourAutoStopped: account.fiveHourAutoStopped === 'true',
             fiveHourStoppedAt: account.fiveHourStoppedAt || null,
-            // 添加统一User-Agent设置
-            useUnifiedUserAgent: account.useUnifiedUserAgent === 'true', // 默认为false
-            // 添加统一客户端标识设置
-            useUnifiedClientId: account.useUnifiedClientId === 'true', // 默认为false
-            unifiedClientId: account.unifiedClientId || '', // 统一的客户端标识
+            // 添加统一User-AgentEstablecer
+            useUnifiedUserAgent: account.useUnifiedUserAgent === 'true', // Predeterminado为false
+            // 添加统一Cliente标识Establecer
+            useUnifiedClientId: account.useUnifiedClientId === 'true', // Predeterminado为false
+            unifiedClientId: account.unifiedClientId || '', // 统一的Cliente标识
             // 添加停止原因
             stoppedReason: account.stoppedReason || null,
-            // 扩展信息
+            // ExtensiónInformación
             extInfo: parsedExtInfo,
-            // 账户级用户消息串行队列限制
+            // Cuenta级Usuario消息串FilaColaLímite
             maxConcurrency: parseInt(account.maxConcurrency || '0', 10),
-            // 拦截预热请求
+            // 拦截预热Solicitud
             interceptWarmup: account.interceptWarmup === 'true'
           }
         })
@@ -602,7 +602,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📋 获取单个账号的概要信息（用于前端展示会话窗口等状态）
+  // 📋 Obtener单个账号的概要Información（用于前端展示Sesión窗口等状态）
   async getAccountOverview(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -655,7 +655,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📝 更新Claude账户
+  // 📝 ActualizarClaudeCuenta
   async updateAccount(accountId, updates) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -690,7 +690,7 @@ class ClaudeAccountService {
       let shouldClearAutoStopFields = false
       let extInfoProvided = false
 
-      // 检查是否新增了 refresh token
+      // Verificar是否Nueva característica了 refresh token
       const oldRefreshToken = this._decryptSensitiveData(accountData.refreshToken)
 
       for (const [field, value] of Object.entries(updates)) {
@@ -702,17 +702,17 @@ class ClaudeAccountService {
           } else if (field === 'priority' || field === 'maxConcurrency') {
             updatedData[field] = value.toString()
           } else if (field === 'subscriptionInfo') {
-            // 处理订阅信息更新
+            // Procesar订阅InformaciónActualizar
             updatedData[field] = typeof value === 'string' ? value : JSON.stringify(value)
           } else if (field === 'subscriptionExpiresAt') {
-            // 处理订阅到期时间，允许 null 值（永不过期）
+            // Procesar订阅到期Tiempo，允许 null Valor（永不过期）
             updatedData[field] = value ? value.toString() : ''
           } else if (field === 'extInfo') {
             const normalized = this._normalizeExtInfo(value, updates.claudeAiOauth)
             updatedData.extInfo = normalized ? JSON.stringify(normalized) : ''
             extInfoProvided = true
           } else if (field === 'claudeAiOauth') {
-            // 更新 Claude AI OAuth 数据
+            // Actualizar Claude AI OAuth Datos
             if (value) {
               updatedData.claudeAiOauth = this._encryptSensitiveData(JSON.stringify(value))
               updatedData.accessToken = this._encryptSensitiveData(value.accessToken)
@@ -736,7 +736,7 @@ class ClaudeAccountService {
         }
       }
 
-      // 如果新增了 refresh token（之前没有，现在有了），更新过期时间为10分钟
+      // 如果Nueva característica了 refresh token（之前没有，现在有了），Actualizar过期Tiempo为10分钟
       if (updates.refreshToken && !oldRefreshToken && updates.refreshToken.trim()) {
         const newExpiresAt = Date.now() + 10 * 60 * 1000 // 10分钟
         updatedData.expiresAt = newExpiresAt.toString()
@@ -745,9 +745,9 @@ class ClaudeAccountService {
         )
       }
 
-      // 如果通过 claudeAiOauth 更新，也要检查是否新增了 refresh token
+      // 如果通过 claudeAiOauth Actualizar，也要Verificar是否Nueva característica了 refresh token
       if (updates.claudeAiOauth && updates.claudeAiOauth.refreshToken && !oldRefreshToken) {
-        // 如果 expiresAt 设置的时间过长（超过1小时），调整为10分钟
+        // 如果 expiresAt Establecer的Tiempo过长（超过1小时），调整为10分钟
         const providedExpiry = parseInt(updates.claudeAiOauth.expiresAt)
         const now = Date.now()
         const oneHour = 60 * 60 * 1000
@@ -763,21 +763,21 @@ class ClaudeAccountService {
 
       updatedData.updatedAt = new Date().toISOString()
 
-      // 如果是手动修改调度状态，清除所有自动停止相关的字段
+      // 如果是手动修改调度状态，清除所有自动停止相关的Campo
       if (Object.prototype.hasOwnProperty.call(updates, 'schedulable')) {
-        // 清除所有自动停止的标记，防止自动恢复
+        // 清除所有自动停止的标记，防止自动Restauración
         delete updatedData.rateLimitAutoStopped
         delete updatedData.fiveHourAutoStopped
         delete updatedData.fiveHourStoppedAt
         delete updatedData.tempErrorAutoStopped
-        // 兼容旧的标记（逐步迁移）
+        // 兼容旧的标记（逐步Migración）
         delete updatedData.autoStoppedAt
         delete updatedData.stoppedReason
         shouldClearAutoStopFields = true
 
         await this._clearFiveHourWarningMetadata(accountId, updatedData)
 
-        // 如果是手动启用调度，记录日志
+        // 如果是手动Habilitar调度，RegistroRegistro
         if (updates.schedulable === true || updates.schedulable === 'true') {
           logger.info(`✅ Manually enabled scheduling for account ${accountId}`)
         } else {
@@ -785,7 +785,7 @@ class ClaudeAccountService {
         }
       }
 
-      // 检查是否手动禁用了账号，如果是则发送webhook通知
+      // Verificar是否手动Deshabilitar了账号，如果是则发送webhook通知
       if (updates.isActive === 'false' && accountData.isActive === 'true') {
         try {
           const webhookNotifier = require('../../utils/webhookNotifier')
@@ -828,10 +828,10 @@ class ClaudeAccountService {
     }
   }
 
-  // 🗑️ 删除Claude账户
+  // 🗑️ EliminarClaudeCuenta
   async deleteAccount(accountId) {
     try {
-      // 首先从所有分组中移除此账户
+      // 首先从所有Agrupar中Eliminación此Cuenta
       const accountGroupService = require('../accountGroupService')
       await accountGroupService.removeAccountFromAllGroups(accountId)
 
@@ -851,13 +851,13 @@ class ClaudeAccountService {
   }
 
   /**
-   * 检查账户订阅是否过期
-   * @param {Object} account - 账户对象
+   * VerificarCuenta订阅是否过期
+   * @param {Object} account - CuentaObjeto
    * @returns {boolean} - true: 已过期, false: 未过期
    */
   isSubscriptionExpired(account) {
     if (!account.subscriptionExpiresAt) {
-      return false // 未设置过期时间，视为永不过期
+      return false // 未Establecer过期Tiempo，视为永不过期
     }
 
     const expiryDate = new Date(account.subscriptionExpiresAt)
@@ -873,7 +873,7 @@ class ClaudeAccountService {
     return false
   }
 
-  // 🎯 智能选择可用账户（支持sticky会话和模型过滤）
+  // 🎯 智能选择可用Cuenta（SoportarstickySesión和模型Filtrar）
   async selectAvailableAccount(sessionHash = null, modelName = null) {
     try {
       const accounts = await redis.getAllClaudeAccounts()
@@ -926,14 +926,14 @@ class ClaudeAccountService {
         throw new Error('No active Claude accounts available')
       }
 
-      // 如果有会话哈希，检查是否有已映射的账户
+      // 如果有Sesión哈希，Verificar是否有已映射的Cuenta
       if (sessionHash) {
         const mappedAccountId = await redis.getSessionAccountMapping(sessionHash)
         if (mappedAccountId) {
-          // 验证映射的账户是否仍然可用
+          // Validar映射的Cuenta是否仍然可用
           const mappedAccount = activeAccounts.find((acc) => acc.id === mappedAccountId)
           if (mappedAccount) {
-            // 🚀 智能会话续期：剩余时间少于14天时自动续期到15天
+            // 🚀 智能Sesión续期：剩余Tiempo少于14天时自动续期到15天
             await redis.extendSessionAccountMappingTTL(sessionHash)
             logger.info(
               `🎯 Using sticky session account: ${mappedAccount.name} (${mappedAccountId}) for session ${sessionHash}`
@@ -943,14 +943,14 @@ class ClaudeAccountService {
             logger.warn(
               `⚠️ Mapped account ${mappedAccountId} is no longer available, selecting new account`
             )
-            // 清理无效的映射
+            // Limpiar无效的映射
             await redis.deleteSessionAccountMapping(sessionHash)
           }
         }
       }
 
-      // 如果没有映射或映射无效，选择新账户
-      // 优先选择最久未使用的账户（负载均衡）
+      // 如果没有映射或映射无效，选择新Cuenta
+      // 优先选择最久未使用的Cuenta（Balanceo de carga）
       const sortedAccounts = activeAccounts.sort((a, b) => {
         const aLastUsed = new Date(a.lastUsedAt || 0).getTime()
         const bLastUsed = new Date(b.lastUsedAt || 0).getTime()
@@ -959,9 +959,9 @@ class ClaudeAccountService {
 
       const selectedAccountId = sortedAccounts[0].id
 
-      // 如果有会话哈希，建立新的映射
+      // 如果有Sesión哈希，建立新的映射
       if (sessionHash) {
-        // 从配置获取TTL（小时），转换为秒
+        // 从ConfiguraciónObtenerTTL（小时），Convertir为秒
         const ttlSeconds = (config.session?.stickyTtlHours || 1) * 60 * 60
         await redis.setSessionAccountMapping(sessionHash, selectedAccountId, ttlSeconds)
         logger.info(
@@ -976,10 +976,10 @@ class ClaudeAccountService {
     }
   }
 
-  // 🎯 基于API Key选择账户（支持专属绑定、共享池和模型过滤）
+  // 🎯 基于API Key选择Cuenta（Soportar专属绑定、共享池和模型Filtrar）
   async selectAccountForApiKey(apiKeyData, sessionHash = null, modelName = null) {
     try {
-      // 如果API Key绑定了专属账户，优先使用
+      // 如果API Key绑定了专属Cuenta，优先使用
       if (apiKeyData.claudeAccountId) {
         const boundAccount = await redis.getClaudeAccount(apiKeyData.claudeAccountId)
         if (
@@ -1000,7 +1000,7 @@ class ClaudeAccountService {
         }
       }
 
-      // 如果没有绑定账户或绑定账户不可用，从共享池选择
+      // 如果没有绑定Cuenta或绑定Cuenta不可用，从共享池选择
       const accounts = await redis.getAllClaudeAccounts()
 
       let sharedAccounts = accounts.filter(
@@ -1008,7 +1008,7 @@ class ClaudeAccountService {
           account.isActive === 'true' &&
           account.status !== 'error' &&
           account.schedulable !== 'false' &&
-          (account.accountType === 'shared' || !account.accountType) && // 兼容旧数据
+          (account.accountType === 'shared' || !account.accountType) && // 兼容旧Datos
           !this.isSubscriptionExpired(account)
       )
 
@@ -1052,14 +1052,14 @@ class ClaudeAccountService {
         throw new Error('No active shared Claude accounts available')
       }
 
-      // 如果有会话哈希，检查是否有已映射的账户
+      // 如果有Sesión哈希，Verificar是否有已映射的Cuenta
       if (sessionHash) {
         const mappedAccountId = await redis.getSessionAccountMapping(sessionHash)
         if (mappedAccountId) {
-          // 验证映射的账户是否仍然在共享池中且可用
+          // Validar映射的Cuenta是否仍然在共享池中且可用
           const mappedAccount = sharedAccounts.find((acc) => acc.id === mappedAccountId)
           if (mappedAccount) {
-            // 如果映射的账户被限流了，删除映射并重新选择
+            // 如果映射的Cuenta被限流了，Eliminar映射并重新选择
             const isRateLimited = await this.isAccountRateLimited(mappedAccountId)
             if (isRateLimited) {
               logger.warn(
@@ -1067,7 +1067,7 @@ class ClaudeAccountService {
               )
               await redis.deleteSessionAccountMapping(sessionHash)
             } else {
-              // 🚀 智能会话续期：剩余时间少于14天时自动续期到15天
+              // 🚀 智能Sesión续期：剩余Tiempo少于14天时自动续期到15天
               await redis.extendSessionAccountMappingTTL(sessionHash)
               logger.info(
                 `🎯 Using sticky session shared account: ${mappedAccount.name} (${mappedAccountId}) for session ${sessionHash}`
@@ -1078,13 +1078,13 @@ class ClaudeAccountService {
             logger.warn(
               `⚠️ Mapped shared account ${mappedAccountId} is no longer available, selecting new account`
             )
-            // 清理无效的映射
+            // Limpiar无效的映射
             await redis.deleteSessionAccountMapping(sessionHash)
           }
         }
       }
 
-      // 将账户分为限流和非限流两组
+      // 将Cuenta分为限流和非限流两组
       const nonRateLimitedAccounts = []
       const rateLimitedAccounts = []
 
@@ -1092,17 +1092,17 @@ class ClaudeAccountService {
         const isRateLimited = await this.isAccountRateLimited(account.id)
         if (isRateLimited) {
           const rateLimitInfo = await this.getAccountRateLimitInfo(account.id)
-          account._rateLimitInfo = rateLimitInfo // 临时存储限流信息
+          account._rateLimitInfo = rateLimitInfo // 临时存储限流Información
           rateLimitedAccounts.push(account)
         } else {
           nonRateLimitedAccounts.push(account)
         }
       }
 
-      // 优先从非限流账户中选择
+      // 优先从非限流Cuenta中选择
       let candidateAccounts = nonRateLimitedAccounts
 
-      // 如果没有非限流账户，则从限流账户中选择（按限流时间排序，最早限流的优先）
+      // 如果没有非限流Cuenta，则从限流Cuenta中选择（按限流TiempoOrdenar，最早限流的优先）
       if (candidateAccounts.length === 0) {
         logger.warn('⚠️ All shared accounts are rate limited, selecting from rate limited pool')
         candidateAccounts = rateLimitedAccounts.sort((a, b) => {
@@ -1111,7 +1111,7 @@ class ClaudeAccountService {
           return aRateLimitedAt - bRateLimitedAt // 最早限流的优先
         })
       } else {
-        // 非限流账户按最后使用时间排序（最久未使用的优先）
+        // 非限流Cuenta按最后使用TiempoOrdenar（最久未使用的优先）
         candidateAccounts = candidateAccounts.sort((a, b) => {
           const aLastUsed = new Date(a.lastUsedAt || 0).getTime()
           const bLastUsed = new Date(b.lastUsedAt || 0).getTime()
@@ -1125,9 +1125,9 @@ class ClaudeAccountService {
 
       const selectedAccountId = candidateAccounts[0].id
 
-      // 如果有会话哈希，建立新的映射
+      // 如果有Sesión哈希，建立新的映射
       if (sessionHash) {
-        // 从配置获取TTL（小时），转换为秒
+        // 从ConfiguraciónObtenerTTL（小时），Convertir为秒
         const ttlSeconds = (config.session?.stickyTtlHours || 1) * 60 * 60
         await redis.setSessionAccountMapping(sessionHash, selectedAccountId, ttlSeconds)
         logger.info(
@@ -1145,7 +1145,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🌐 创建代理agent（使用统一的代理工具）
+  // 🌐 CrearProxyagent（使用统一的Proxy工具）
   _createProxyAgent(proxyConfig) {
     const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
     if (proxyAgent) {
@@ -1160,7 +1160,7 @@ class ClaudeAccountService {
     return proxyAgent
   }
 
-  // 🔐 加密敏感数据
+  // 🔐 Cifrado敏感Datos
   _encryptSensitiveData(data) {
     if (!data) {
       return ''
@@ -1174,7 +1174,7 @@ class ClaudeAccountService {
       let encrypted = cipher.update(data, 'utf8', 'hex')
       encrypted += cipher.final('hex')
 
-      // 将IV和加密数据一起返回，用:分隔
+      // 将IV和CifradoDatos一起Retornar，用:分隔
       return `${iv.toString('hex')}:${encrypted}`
     } catch (error) {
       logger.error('❌ Encryption error:', error)
@@ -1182,13 +1182,13 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔓 解密敏感数据
+  // 🔓 Descifrado敏感Datos
   _decryptSensitiveData(encryptedData) {
     if (!encryptedData) {
       return ''
     }
 
-    // 🎯 检查缓存
+    // 🎯 VerificarCaché
     const cacheKey = crypto.createHash('sha256').update(encryptedData).digest('hex')
     const cached = this._decryptCache.get(cacheKey)
     if (cached !== undefined) {
@@ -1198,9 +1198,9 @@ class ClaudeAccountService {
     try {
       let decrypted = ''
 
-      // 检查是否是新格式（包含IV）
+      // Verificar是否是新Formato（IncluirIV）
       if (encryptedData.includes(':')) {
-        // 新格式：iv:encryptedData
+        // 新Formato：iv:encryptedData
         const parts = encryptedData.split(':')
         if (parts.length === 2) {
           const key = this._generateEncryptionKey()
@@ -1211,10 +1211,10 @@ class ClaudeAccountService {
           decrypted = decipher.update(encrypted, 'hex', 'utf8')
           decrypted += decipher.final('utf8')
 
-          // 💾 存入缓存（5分钟过期）
+          // 💾 存入Caché（5分钟过期）
           this._decryptCache.set(cacheKey, decrypted, 5 * 60 * 1000)
 
-          // 📊 定期打印缓存统计
+          // 📊 定期打印CachéEstadística
           if ((this._decryptCache.hits + this._decryptCache.misses) % 1000 === 0) {
             this._decryptCache.printStats()
           }
@@ -1223,19 +1223,19 @@ class ClaudeAccountService {
         }
       }
 
-      // 旧格式或格式错误，尝试旧方式解密（向后兼容）
-      // 注意：在新版本Node.js中这将失败，但我们会捕获错误
+      // 旧Formato或FormatoError，尝试旧方式Descifrado（向后兼容）
+      // 注意：在新VersiónNode.js中这将Falló，但我们会捕获Error
       try {
         const decipher = crypto.createDecipher('aes-256-cbc', config.security.encryptionKey)
         decrypted = decipher.update(encryptedData, 'hex', 'utf8')
         decrypted += decipher.final('utf8')
 
-        // 💾 旧格式也存入缓存
+        // 💾 旧Formato也存入Caché
         this._decryptCache.set(cacheKey, decrypted, 5 * 60 * 1000)
 
         return decrypted
       } catch (oldError) {
-        // 如果旧方式也失败，返回原数据
+        // 如果旧方式也Falló，Retornar原Datos
         logger.warn('⚠️ Could not decrypt data, returning as-is:', oldError.message)
         return encryptedData
       }
@@ -1245,14 +1245,14 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔑 生成加密密钥（辅助方法）
+  // 🔑 GenerarCifradoClave（辅助Método）
   _generateEncryptionKey() {
-    // 性能优化：缓存密钥派生结果，避免重复的 CPU 密集计算
-    // scryptSync 是故意设计为慢速的密钥派生函数（防暴力破解）
-    // 但在高并发场景下，每次都重新计算会导致 CPU 100% 占用
+    // RendimientoOptimización：CachéClave派生结果，避免重复的 CPU 密集Calcular
+    // scryptSync 是故意设计为慢速的Clave派生Función（防暴力破解）
+    // 但在高Concurrencia场景下，每次都重新Calcular会导致 CPU 100% 占用
     if (!this._encryptionKeyCache) {
-      // 只在第一次调用时计算，后续使用缓存
-      // 由于输入参数固定，派生结果永远相同，不影响数据兼容性
+      // 只在第一次调用时Calcular，后续使用Caché
+      // 由于输入Parámetro固定，派生结果永远相同，不影响Datos兼容性
       this._encryptionKeyCache = crypto.scryptSync(
         config.security.encryptionKey,
         this.ENCRYPTION_SALT,
@@ -1278,7 +1278,7 @@ class ClaudeAccountService {
     return `${maskedUsername}@${domain}`
   }
 
-  // 🔢 安全转换为数字或null
+  // 🔢 SeguridadConvertir为Número或null
   _toNumberOrNull(value) {
     if (value === undefined || value === null || value === '') {
       return null
@@ -1288,7 +1288,7 @@ class ClaudeAccountService {
     return Number.isFinite(num) ? num : null
   }
 
-  // 🧹 清理错误账户
+  // 🧹 LimpiarErrorCuenta
   async cleanupErrorAccounts() {
     try {
       const accounts = await redis.getAllClaudeAccounts()
@@ -1300,7 +1300,7 @@ class ClaudeAccountService {
           const now = new Date()
           const hoursSinceLastRefresh = (now - lastRefresh) / (1000 * 60 * 60)
 
-          // 如果错误状态超过24小时，尝试重新激活
+          // 如果Error状态超过24小时，尝试重新激活
           if (hoursSinceLastRefresh > 24) {
             account.status = 'created'
             account.errorMessage = ''
@@ -1329,7 +1329,7 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 设置限流状态和时间
+      // Establecer限流状态和Tiempo
       const updatedAccountData = { ...accountData }
       updatedAccountData.rateLimitedAt = new Date().toISOString()
       updatedAccountData.rateLimitStatus = 'limited'
@@ -1338,13 +1338,13 @@ class ClaudeAccountService {
       // 使用独立的限流自动停止标记，避免与其他自动停止冲突
       updatedAccountData.rateLimitAutoStopped = 'true'
 
-      // 如果提供了准确的限流重置时间戳（来自API响应头）
+      // 如果提供了准确的限流重置Tiempo戳（来自APIRespuesta头）
       if (rateLimitResetTimestamp) {
-        // 将Unix时间戳（秒）转换为毫秒并创建Date对象
+        // 将UnixTiempo戳（秒）Convertir为毫秒并CrearDateObjeto
         const resetTime = new Date(rateLimitResetTimestamp * 1000)
         updatedAccountData.rateLimitEndAt = resetTime.toISOString()
 
-        // 计算当前会话窗口的开始时间（重置时间减去5小时）
+        // Calcular当前Sesión窗口的IniciandoTiempo（重置Tiempo减去5小时）
         const windowStartTime = new Date(resetTime.getTime() - 5 * 60 * 60 * 1000)
         updatedAccountData.sessionWindowStart = windowStartTime.toISOString()
         updatedAccountData.sessionWindowEnd = resetTime.toISOString()
@@ -1355,11 +1355,11 @@ class ClaudeAccountService {
           `🚫 Account marked as rate limited with accurate reset time: ${accountData.name} (${accountId}) - ${minutesUntilEnd} minutes remaining until ${resetTime.toISOString()}`
         )
       } else {
-        // 获取或创建会话窗口（预估方式）
+        // Obtener或CrearSesión窗口（预估方式）
         const windowData = await this.updateSessionWindow(accountId, updatedAccountData)
         Object.assign(updatedAccountData, windowData)
 
-        // 限流结束时间 = 会话窗口结束时间
+        // 限流结束Tiempo = Sesión窗口结束Tiempo
         if (updatedAccountData.sessionWindowEnd) {
           updatedAccountData.rateLimitEndAt = updatedAccountData.sessionWindowEnd
           const windowEnd = new Date(updatedAccountData.sessionWindowEnd)
@@ -1369,7 +1369,7 @@ class ClaudeAccountService {
             `🚫 Account marked as rate limited until estimated session window ends: ${accountData.name} (${accountId}) - ${minutesUntilEnd} minutes remaining`
           )
         } else {
-          // 如果没有会话窗口，使用默认1小时（兼容旧逻辑）
+          // 如果没有Sesión窗口，使用Predeterminado1小时（兼容旧逻辑）
           const oneHourLater = new Date(Date.now() + 60 * 60 * 1000)
           updatedAccountData.rateLimitEndAt = oneHourLater.toISOString()
           logger.warn(
@@ -1380,7 +1380,7 @@ class ClaudeAccountService {
 
       await redis.setClaudeAccount(accountId, updatedAccountData)
 
-      // 如果有会话哈希，删除粘性会话映射
+      // 如果有Sesión哈希，Eliminar粘性Sesión映射
       if (sessionHash) {
         await redis.deleteSessionAccountMapping(sessionHash)
         logger.info(`🗑️ Deleted sticky session mapping for rate limited account: ${accountId}`)
@@ -1428,7 +1428,7 @@ class ClaudeAccountService {
           `🚫 Account ${accountData.name} (${accountId}) reached Opus weekly cap, resets at ${resetTime.toISOString()}`
         )
       } else {
-        // 如果缺少准确时间戳，保留现有值但记录警告，便于后续人工干预
+        // 如果缺少准确Tiempo戳，保留现有Valor但RegistroAdvertencia，便于后续人工干预
         logger.warn(
           `⚠️ Account ${accountData.name} (${accountId}) reported Opus limit without reset timestamp`
         )
@@ -1469,7 +1469,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔍 检查账号是否处于 Opus 限流状态（自动清理过期标记）
+  // 🔍 Verificar账号是否处于 Opus 限流状态（自动Limpiar过期标记）
   async isAccountOpusRateLimited(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1500,7 +1500,7 @@ class ClaudeAccountService {
     }
   }
 
-  // ♻️ 检查并清理已过期的 Opus 限流标记
+  // ♻️ Verificar并Limpiar已过期的 Opus 限流标记
   async clearExpiredOpusRateLimit(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1524,7 +1524,7 @@ class ClaudeAccountService {
     }
   }
 
-  // ✅ 移除账号的限流状态
+  // ✅ Eliminación账号的限流状态
   async removeAccountRateLimit(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1539,11 +1539,11 @@ class ClaudeAccountService {
       await redis.client.hdel(redisKey, 'rateLimitedAt', 'rateLimitStatus', 'rateLimitEndAt')
       delete accountData.rateLimitedAt
       delete accountData.rateLimitStatus
-      delete accountData.rateLimitEndAt // 清除限流结束时间
+      delete accountData.rateLimitEndAt // 清除限流结束Tiempo
 
       const hadAutoStop = accountData.rateLimitAutoStopped === 'true'
 
-      // 只恢复因限流而自动停止的账户
+      // 只Restauración因限流而自动停止的Cuenta
       if (hadAutoStop && accountData.schedulable === 'false') {
         accountData.schedulable = 'true'
         logger.info(`✅ Auto-resuming scheduling for account ${accountId} after rate limit cleared`)
@@ -1562,7 +1562,7 @@ class ClaudeAccountService {
       }
       await redis.setClaudeAccount(accountId, accountData)
 
-      // 显式删除Redis中的限流字段，避免旧标记阻止账号恢复调度
+      // 显式EliminarRedis中的限流Campo，避免旧标记阻止账号Restauración调度
       await redis.client.hdel(
         accountKey,
         'rateLimitedAt',
@@ -1580,7 +1580,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔍 检查账号是否处于限流状态
+  // 🔍 Verificar账号是否处于限流状态
   async isAccountRateLimited(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1590,16 +1590,16 @@ class ClaudeAccountService {
 
       const now = new Date()
 
-      // 检查是否有限流状态（包括字段缺失但有自动停止标记的情况）
+      // Verificar是否有限流状态（包括Campo缺失但有自动停止标记的情况）
       if (
         (accountData.rateLimitStatus === 'limited' && accountData.rateLimitedAt) ||
         (accountData.rateLimitAutoStopped === 'true' && accountData.rateLimitEndAt)
       ) {
-        // 优先使用 rateLimitEndAt（基于会话窗口）
+        // 优先使用 rateLimitEndAt（基于Sesión窗口）
         if (accountData.rateLimitEndAt) {
           const rateLimitEndAt = new Date(accountData.rateLimitEndAt)
 
-          // 如果当前时间超过限流结束时间，自动解除
+          // 如果当前Tiempo超过限流结束Tiempo，自动解除
           if (now >= rateLimitEndAt) {
             await this.removeAccountRateLimit(accountId)
             return false
@@ -1607,7 +1607,7 @@ class ClaudeAccountService {
 
           return true
         } else if (accountData.rateLimitedAt) {
-          // 兼容旧数据：使用1小时限流
+          // 兼容旧Datos：使用1小时限流
           const rateLimitedAt = new Date(accountData.rateLimitedAt)
           const hoursSinceRateLimit = (now - rateLimitedAt) / (1000 * 60 * 60)
 
@@ -1628,7 +1628,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📊 获取账号的限流信息
+  // 📊 Obtener账号的限流Información
   async getAccountRateLimitInfo(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1644,15 +1644,15 @@ class ClaudeAccountService {
         let minutesRemaining
         let rateLimitEndAt
 
-        // 优先使用 rateLimitEndAt（基于会话窗口）
+        // 优先使用 rateLimitEndAt（基于Sesión窗口）
         if (accountData.rateLimitEndAt) {
           ;({ rateLimitEndAt } = accountData)
           const endTime = new Date(accountData.rateLimitEndAt)
           minutesRemaining = Math.max(0, Math.ceil((endTime - now) / (1000 * 60)))
         } else {
-          // 兼容旧数据：使用1小时限流
+          // 兼容旧Datos：使用1小时限流
           minutesRemaining = Math.max(0, 60 - minutesSinceRateLimit)
-          // 计算预期的结束时间
+          // Calcular预期的结束Tiempo
           const endTime = new Date(rateLimitedAt.getTime() + 60 * 60 * 1000)
           rateLimitEndAt = endTime.toISOString()
         }
@@ -1662,7 +1662,7 @@ class ClaudeAccountService {
           rateLimitedAt: accountData.rateLimitedAt,
           minutesSinceRateLimit,
           minutesRemaining,
-          rateLimitEndAt // 新增：限流结束时间
+          rateLimitEndAt // Nueva característica：限流结束Tiempo
         }
       }
 
@@ -1679,10 +1679,10 @@ class ClaudeAccountService {
     }
   }
 
-  // 🕐 更新会话窗口
+  // 🕐 ActualizarSesión窗口
   async updateSessionWindow(accountId, accountData = null) {
     try {
-      // 如果没有传入accountData，从Redis获取
+      // 如果没有传入accountData，从RedisObtener
       if (!accountData) {
         accountData = await redis.getClaudeAccount(accountId)
         if (!accountData || Object.keys(accountData).length === 0) {
@@ -1696,33 +1696,33 @@ class ClaudeAccountService {
       let shouldClearSessionStatus = false
       let shouldClearFiveHourFlags = false
 
-      // 检查当前是否有活跃的会话窗口
+      // Verificar当前是否有活跃的Sesión窗口
       if (accountData.sessionWindowStart && accountData.sessionWindowEnd) {
         const windowEnd = new Date(accountData.sessionWindowEnd).getTime()
 
-        // 如果当前时间在窗口内，只更新最后请求时间
+        // 如果当前Tiempo在窗口内，只Actualizar最后SolicitudTiempo
         if (currentTime < windowEnd) {
           accountData.lastRequestTime = now.toISOString()
           return accountData
         }
 
-        // 窗口已过期，记录日志
+        // 窗口已过期，RegistroRegistro
         const windowStart = new Date(accountData.sessionWindowStart)
         logger.info(
           `⏰ Session window expired for account ${accountData.name} (${accountId}): ${windowStart.toISOString()} - ${new Date(windowEnd).toISOString()}`
         )
       }
 
-      // 基于当前时间计算新的会话窗口
+      // 基于当前TiempoCalcular新的Sesión窗口
       const windowStart = this._calculateSessionWindowStart(now)
       const windowEnd = this._calculateSessionWindowEnd(windowStart)
 
-      // 更新会话窗口信息
+      // ActualizarSesión窗口Información
       accountData.sessionWindowStart = windowStart.toISOString()
       accountData.sessionWindowEnd = windowEnd.toISOString()
       accountData.lastRequestTime = now.toISOString()
 
-      // 清除会话窗口状态，因为进入了新窗口
+      // 清除Sesión窗口状态，因为进入了新窗口
       if (accountData.sessionWindowStatus) {
         delete accountData.sessionWindowStatus
         delete accountData.sessionWindowStatusUpdatedAt
@@ -1730,7 +1730,7 @@ class ClaudeAccountService {
         shouldClearSessionStatus = true
       }
 
-      // 如果账户因为5小时限制被自动停止，现在恢复调度
+      // 如果Cuenta因为5小时Límite被自动停止，现在Restauración调度
       if (accountData.fiveHourAutoStopped === 'true' && accountData.schedulable === 'false') {
         logger.info(
           `✅ Auto-resuming scheduling for account ${accountData.name} (${accountId}) - new session window started`
@@ -1750,7 +1750,7 @@ class ClaudeAccountService {
             platform: 'claude',
             status: 'resumed',
             errorCode: 'CLAUDE_5H_LIMIT_RESUMED',
-            reason: '进入新的5小时窗口，已自动恢复调度',
+            reason: '进入新的5小时窗口，已自动Restauración调度',
             timestamp: getISOStringWithTimezone(new Date())
           })
         } catch (webhookError) {
@@ -1780,9 +1780,9 @@ class ClaudeAccountService {
     }
   }
 
-  // 🕐 计算会话窗口开始时间
+  // 🕐 CalcularSesión窗口IniciandoTiempo
   _calculateSessionWindowStart(requestTime) {
-    // 从当前时间开始创建窗口，只将分钟取整到整点
+    // 从当前TiempoIniciandoCrear窗口，只将分钟取整到整点
     const windowStart = new Date(requestTime)
     windowStart.setMinutes(0)
     windowStart.setSeconds(0)
@@ -1791,7 +1791,7 @@ class ClaudeAccountService {
     return windowStart
   }
 
-  // 🕐 计算会话窗口结束时间
+  // 🕐 CalcularSesión窗口结束Tiempo
   _calculateSessionWindowEnd(startTime) {
     const endTime = new Date(startTime)
     endTime.setHours(endTime.getHours() + 5) // 加5小时
@@ -1821,7 +1821,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📊 获取会话窗口信息
+  // 📊 ObtenerSesión窗口Información
   async getSessionWindowInfo(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1829,7 +1829,7 @@ class ClaudeAccountService {
         return null
       }
 
-      // 如果没有会话窗口信息，返回null
+      // 如果没有Sesión窗口Información，Retornarnull
       if (!accountData.sessionWindowStart || !accountData.sessionWindowEnd) {
         return {
           hasActiveWindow: false,
@@ -1847,7 +1847,7 @@ class ClaudeAccountService {
       const windowEnd = new Date(accountData.sessionWindowEnd)
       const currentTime = now.getTime()
 
-      // 检查窗口是否已过期
+      // Verificar窗口是否已过期
       if (currentTime >= windowEnd.getTime()) {
         return {
           hasActiveWindow: false,
@@ -1860,12 +1860,12 @@ class ClaudeAccountService {
         }
       }
 
-      // 计算进度百分比
+      // Calcular进度百分比
       const totalDuration = windowEnd.getTime() - windowStart.getTime()
       const elapsedTime = currentTime - windowStart.getTime()
       const progress = Math.round((elapsedTime / totalDuration) * 100)
 
-      // 计算剩余时间（分钟）
+      // Calcular剩余Tiempo（分钟）
       const remainingTime = Math.round((windowEnd.getTime() - currentTime) / (1000 * 60))
 
       return {
@@ -1883,7 +1883,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📊 获取 OAuth Usage 数据
+  // 📊 Obtener OAuth Usage Datos
   async fetchOAuthUsage(accountId, accessToken = null, agent = null) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -1891,19 +1891,19 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 如果没有提供 accessToken，使用 getValidAccessToken 自动检查过期并刷新
+      // 如果没有提供 accessToken，使用 getValidAccessToken 自动Verificar过期并刷新
       if (!accessToken) {
         accessToken = await this.getValidAccessToken(accountId)
       }
 
-      // 如果没有提供 agent，创建代理
+      // 如果没有提供 agent，CrearProxy
       if (!agent) {
         agent = this._createProxyAgent(accountData.proxy)
       }
 
       logger.debug(`📊 Fetching OAuth usage for account: ${accountData.name} (${accountId})`)
 
-      // 请求 OAuth usage 接口
+      // Solicitud OAuth usage Interfaz
       const axiosConfig = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -1938,7 +1938,7 @@ class ClaudeAccountService {
       logger.warn(`⚠️ Failed to fetch OAuth usage for account ${accountId}: ${response.status}`)
       return null
     } catch (error) {
-      // 403 错误通常表示使用的是 Setup Token 而非 OAuth
+      // 403 Error通常Tabla示使用的是 Setup Token 而非 OAuth
       if (error.response?.status === 403) {
         logger.debug(
           `⚠️ OAuth usage API returned 403 for account ${accountId}. This account likely uses Setup Token instead of OAuth.`
@@ -1946,7 +1946,7 @@ class ClaudeAccountService {
         return null
       }
 
-      // 其他错误正常记录
+      // 其他Error正常Registro
       logger.error(
         `❌ Failed to fetch OAuth usage for account ${accountId}:`,
         error.response?.data || error.message
@@ -1955,7 +1955,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📊 构建 Claude Usage 快照（从 Redis 数据）
+  // 📊 Construir Claude Usage 快照（从 Redis Datos）
   buildClaudeUsageSnapshot(accountData) {
     const updatedAt = accountData.claudeUsageUpdatedAt
 
@@ -2002,7 +2002,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📊 更新 Claude Usage 快照到 Redis
+  // 📊 Actualizar Claude Usage 快照到 Redis
   async updateClaudeUsageSnapshot(accountId, usageData) {
     if (!usageData || typeof usageData !== 'object') {
       return
@@ -2057,7 +2057,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 📊 获取账号 Profile 信息并更新账号类型
+  // 📊 Obtener账号 Profile Información并Actualizar账号Tipo
   async fetchAndUpdateAccountProfile(accountId, accessToken = null, agent = null) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -2065,7 +2065,7 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 检查账户是否有 user:profile 权限
+      // VerificarCuenta是否有 user:profile Permiso
       const hasProfileScope = accountData.scopes && accountData.scopes.includes('user:profile')
       if (!hasProfileScope) {
         logger.warn(
@@ -2082,14 +2082,14 @@ class ClaudeAccountService {
         }
       }
 
-      // 如果没有提供 agent，创建代理
+      // 如果没有提供 agent，CrearProxy
       if (!agent) {
         agent = this._createProxyAgent(accountData.proxy)
       }
 
       logger.info(`📊 Fetching profile info for account: ${accountData.name} (${accountId})`)
 
-      // 请求 profile 接口
+      // Solicitud profile Interfaz
       const axiosConfig = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -2119,9 +2119,9 @@ class ClaudeAccountService {
           organizationType: profileData.organization?.organization_type
         })
 
-        // 构建订阅信息
+        // Construir订阅Información
         const subscriptionInfo = {
-          // 账号信息
+          // 账号Información
           email: profileData.account?.email,
           fullName: profileData.account?.full_name,
           displayName: profileData.account?.display_name,
@@ -2129,14 +2129,14 @@ class ClaudeAccountService {
           hasClaudePro: profileData.account?.has_claude_pro || false,
           accountUuid: profileData.account?.uuid,
 
-          // 组织信息
+          // 组织Información
           organizationName: profileData.organization?.name,
           organizationUuid: profileData.organization?.uuid,
           billingType: profileData.organization?.billing_type,
           rateLimitTier: profileData.organization?.rate_limit_tier,
           organizationType: profileData.organization?.organization_type,
 
-          // 账号类型（基于 has_claude_max 和 has_claude_pro 判断）
+          // 账号Tipo（基于 has_claude_max 和 has_claude_pro 判断）
           accountType:
             profileData.account?.has_claude_max === true
               ? 'claude_max'
@@ -2144,15 +2144,15 @@ class ClaudeAccountService {
                 ? 'claude_pro'
                 : 'free',
 
-          // 更新时间
+          // ActualizarTiempo
           profileFetchedAt: new Date().toISOString()
         }
 
-        // 更新账户数据
+        // ActualizarCuentaDatos
         accountData.subscriptionInfo = JSON.stringify(subscriptionInfo)
         accountData.profileUpdatedAt = new Date().toISOString()
 
-        // 如果提供了邮箱，更新邮箱字段
+        // 如果提供了邮箱，Actualizar邮箱Campo
         if (profileData.account?.email) {
           accountData.email = this._encryptSensitiveData(profileData.account.email)
         }
@@ -2181,7 +2181,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔄 手动更新所有账号的 Profile 信息
+  // 🔄 手动Actualizar所有账号的 Profile Información
   async updateAllAccountProfiles() {
     try {
       logger.info('🔄 Starting batch profile update for all accounts...')
@@ -2192,13 +2192,13 @@ class ClaudeAccountService {
       const results = []
 
       for (const account of accounts) {
-        // 跳过未激活或错误状态的账号
+        // 跳过未激活或Error状态的账号
         if (account.isActive !== 'true' || account.status === 'error') {
           logger.info(`⏩ Skipping inactive/error account: ${account.name} (${account.id})`)
           continue
         }
 
-        // 跳过没有 user:profile 权限的账号（Setup Token 账号）
+        // 跳过没有 user:profile Permiso的账号（Setup Token 账号）
         const hasProfileScope = account.scopes && account.scopes.includes('user:profile')
         if (!hasProfileScope) {
           logger.info(
@@ -2214,7 +2214,7 @@ class ClaudeAccountService {
         }
 
         try {
-          // 获取有效的 access token
+          // Obtener有效的 access token
           const accessToken = await this.getValidAccessToken(account.id)
           if (accessToken) {
             const profileInfo = await this.fetchAndUpdateAccountProfile(account.id, accessToken)
@@ -2257,7 +2257,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔄 初始化所有账户的会话窗口（从历史数据恢复）
+  // 🔄 Inicializar所有Cuenta的Sesión窗口（从历史DatosRestauración）
   async initializeSessionWindows(forceRecalculate = false) {
     try {
       logger.info('🔄 Initializing session windows for all Claude accounts...')
@@ -2269,7 +2269,7 @@ class ClaudeAccountService {
       const now = new Date()
 
       for (const account of accounts) {
-        // 如果强制重算，清除现有窗口信息
+        // 如果强制重算，清除现有窗口Información
         if (forceRecalculate && (account.sessionWindowStart || account.sessionWindowEnd)) {
           logger.info(`🔄 Force recalculating window for account ${account.name} (${account.id})`)
           delete account.sessionWindowStart
@@ -2278,7 +2278,7 @@ class ClaudeAccountService {
           await redis.setClaudeAccount(account.id, account)
         }
 
-        // 检查现有会话窗口
+        // Verificar现有Sesión窗口
         if (account.sessionWindowStart && account.sessionWindowEnd) {
           const windowEnd = new Date(account.sessionWindowEnd)
           const windowStart = new Date(account.sessionWindowStart)
@@ -2297,7 +2297,7 @@ class ClaudeAccountService {
               `⏰ Account ${account.name} (${account.id}) window expired: ${windowStart.toISOString()} - ${windowEnd.toISOString()}`
             )
 
-            // 清除过期的窗口信息
+            // 清除过期的窗口Información
             delete account.sessionWindowStart
             delete account.sessionWindowEnd
             delete account.lastRequestTime
@@ -2335,7 +2335,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🚫 通用的账户错误标记方法
+  // 🚫 通用的CuentaError标记Método
   async markAccountError(accountId, errorType, sessionHash = null) {
     const ERROR_CONFIG = {
       unauthorized: {
@@ -2365,17 +2365,17 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 更新账户状态
+      // ActualizarCuenta状态
       const updatedAccountData = { ...accountData }
       updatedAccountData.status = errorConfig.status
-      updatedAccountData.schedulable = 'false' // 设置为不可调度
+      updatedAccountData.schedulable = 'false' // Establecer为不可调度
       updatedAccountData.errorMessage = errorConfig.errorMessage
       updatedAccountData[errorConfig.timestampField] = new Date().toISOString()
 
-      // 保存更新后的账户数据
+      // 保存Actualizar后的CuentaDatos
       await redis.setClaudeAccount(accountId, updatedAccountData)
 
-      // 如果有sessionHash，删除粘性会话映射
+      // 如果有sessionHash，Eliminar粘性Sesión映射
       if (sessionHash) {
         await redis.client.del(`sticky_session:${sessionHash}`)
         logger.info(`🗑️ Deleted sticky session mapping for hash: ${sessionHash}`)
@@ -2408,17 +2408,17 @@ class ClaudeAccountService {
     }
   }
 
-  // 🚫 标记账户为未授权状态（401错误）
+  // 🚫 标记Cuenta为未授权状态（401Error）
   async markAccountUnauthorized(accountId, sessionHash = null) {
     return this.markAccountError(accountId, 'unauthorized', sessionHash)
   }
 
-  // 🚫 标记账户为被封锁状态（403错误）
+  // 🚫 标记Cuenta为被封锁状态（403Error）
   async markAccountBlocked(accountId, sessionHash = null) {
     return this.markAccountError(accountId, 'blocked', sessionHash)
   }
 
-  // 🔄 重置账户所有异常状态
+  // 🔄 重置Cuenta所有异常状态
   async resetAccountStatus(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -2426,17 +2426,17 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 重置账户状态
+      // 重置Cuenta状态
       const updatedAccountData = { ...accountData }
 
-      // 根据是否有有效的accessToken来设置status
+      // 根据是否有有效的accessToken来Establecerstatus
       if (updatedAccountData.accessToken) {
         updatedAccountData.status = 'active'
       } else {
         updatedAccountData.status = 'created'
       }
 
-      // 恢复可调度状态（管理员手动重置时恢复调度是合理的）
+      // Restauración可调度状态（管理员手动重置时Restauración调度是合理的）
       updatedAccountData.schedulable = 'true'
       // 清除所有自动停止相关的标记
       delete updatedAccountData.rateLimitAutoStopped
@@ -2450,7 +2450,7 @@ class ClaudeAccountService {
       delete updatedAccountData.autoStoppedAt
       delete updatedAccountData.stoppedReason
 
-      // 清除错误相关字段
+      // 清除Error相关Campo
       delete updatedAccountData.errorMessage
       delete updatedAccountData.unauthorizedAt
       delete updatedAccountData.blockedAt
@@ -2461,10 +2461,10 @@ class ClaudeAccountService {
       delete updatedAccountData.sessionWindowStart
       delete updatedAccountData.sessionWindowEnd
 
-      // 保存更新后的账户数据
+      // 保存Actualizar后的CuentaDatos
       await redis.setClaudeAccount(accountId, updatedAccountData)
 
-      // 显式从 Redis 中删除这些字段（因为 HSET 不会删除现有字段）
+      // 显式从 Redis 中Eliminar这些Campo（因为 HSET 不会Eliminar现有Campo）
       const fieldsToDelete = [
         'errorMessage',
         'unauthorizedAt',
@@ -2489,7 +2489,7 @@ class ClaudeAccountService {
       ]
       await redis.client.hdel(`claude:account:${accountId}`, ...fieldsToDelete)
 
-      // 清除401错误计数
+      // 清除401Error计数
       const errorKey = `claude_account:${accountId}:401_errors`
       await redis.client.del(errorKey)
 
@@ -2497,7 +2497,7 @@ class ClaudeAccountService {
       const rateLimitKey = `ratelimit:${accountId}`
       await redis.client.del(rateLimitKey)
 
-      // 清除5xx错误计数
+      // 清除5xxError计数
       const serverErrorKey = `claude_account:${accountId}:5xx_errors`
       await redis.client.del(serverErrorKey)
 
@@ -2527,12 +2527,12 @@ class ClaudeAccountService {
     }
   }
 
-  // 🧹 清理临时错误账户
+  // 🧹 Limpiar临时ErrorCuenta
   async cleanupTempErrorAccounts() {
     try {
       const accounts = await redis.getAllClaudeAccounts()
       let cleanedCount = 0
-      const TEMP_ERROR_RECOVERY_MINUTES = 5 // 临时错误状态恢复时间（分钟）
+      const TEMP_ERROR_RECOVERY_MINUTES = 5 // 临时Error状态RestauraciónTiempo（分钟）
 
       for (const account of accounts) {
         if (account.status === 'temp_error' && account.tempErrorAt) {
@@ -2540,19 +2540,19 @@ class ClaudeAccountService {
           const now = new Date()
           const minutesSinceTempError = (now - tempErrorAt) / (1000 * 60)
 
-          // 如果临时错误状态超过指定时间，尝试重新激活
+          // 如果临时Error状态超过指定Tiempo，尝试重新激活
           if (minutesSinceTempError > TEMP_ERROR_RECOVERY_MINUTES) {
-            account.status = 'active' // 恢复为 active 状态
-            // 只恢复因临时错误而自动停止的账户
+            account.status = 'active' // Restauración为 active 状态
+            // 只Restauración因临时Error而自动停止的Cuenta
             if (account.tempErrorAutoStopped === 'true') {
-              account.schedulable = 'true' // 恢复为可调度
+              account.schedulable = 'true' // Restauración为可调度
               delete account.tempErrorAutoStopped
             }
             delete account.errorMessage
             delete account.tempErrorAt
             await redis.setClaudeAccount(account.id, account)
 
-            // 显式从 Redis 中删除这些字段（因为 HSET 不会删除现有字段）
+            // 显式从 Redis 中Eliminar这些Campo（因为 HSET 不会Eliminar现有Campo）
             await redis.client.hdel(
               `claude:account:${account.id}`,
               'errorMessage',
@@ -2560,7 +2560,7 @@ class ClaudeAccountService {
               'tempErrorAutoStopped'
             )
 
-            // 同时清除500错误计数
+            // 同时清除500Error计数
             await this.clearInternalErrors(account.id)
             cleanedCount++
             logger.success(`🧹 Reset temp_error status for account ${account.name} (${account.id})`)
@@ -2579,12 +2579,12 @@ class ClaudeAccountService {
     }
   }
 
-  // 记录5xx服务器错误
+  // Registro5xxServicio器Error
   async recordServerError(accountId, statusCode) {
     try {
       const key = `claude_account:${accountId}:5xx_errors`
 
-      // 增加错误计数，设置5分钟过期时间
+      // 增加Error计数，Establecer5分钟过期Tiempo
       await redis.client.incr(key)
       await redis.client.expire(key, 300) // 5分钟
 
@@ -2594,12 +2594,12 @@ class ClaudeAccountService {
     }
   }
 
-  // 记录500内部错误(保留以便向后兼容)
+  // Registro500内部Error(保留以便向后兼容)
   async recordInternalError(accountId) {
     return this.recordServerError(accountId, 500)
   }
 
-  // 获取5xx错误计数
+  // Obtener5xxError计数
   async getServerErrorCount(accountId) {
     try {
       const key = `claude_account:${accountId}:5xx_errors`
@@ -2612,12 +2612,12 @@ class ClaudeAccountService {
     }
   }
 
-  // 获取500错误计数(保留以便向后兼容)
+  // Obtener500Error计数(保留以便向后兼容)
   async getInternalErrorCount(accountId) {
     return this.getServerErrorCount(accountId)
   }
 
-  // 清除500错误计数
+  // 清除500Error计数
   async clearInternalErrors(accountId) {
     try {
       const key = `claude_account:${accountId}:5xx_errors`
@@ -2629,7 +2629,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 标记账号为临时错误状态
+  // 标记账号为临时Error状态
   async markAccountTempError(accountId, sessionHash = null) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -2637,33 +2637,33 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 更新账户状态
+      // ActualizarCuenta状态
       const updatedAccountData = { ...accountData }
-      updatedAccountData.status = 'temp_error' // 新增的临时错误状态
-      updatedAccountData.schedulable = 'false' // 设置为不可调度
+      updatedAccountData.status = 'temp_error' // Nueva característica的临时Error状态
+      updatedAccountData.schedulable = 'false' // Establecer为不可调度
       updatedAccountData.errorMessage = 'Account temporarily disabled due to consecutive 500 errors'
       updatedAccountData.tempErrorAt = new Date().toISOString()
-      // 使用独立的临时错误自动停止标记
+      // 使用独立的临时Error自动停止标记
       updatedAccountData.tempErrorAutoStopped = 'true'
 
-      // 保存更新后的账户数据
+      // 保存Actualizar后的CuentaDatos
       await redis.setClaudeAccount(accountId, updatedAccountData)
 
-      // 设置 5 分钟后自动恢复（一次性定时器）
+      // Establecer 5 分钟后自动Restauración（一次性定时器）
       setTimeout(
         async () => {
           try {
             const account = await redis.getClaudeAccount(accountId)
             if (account && account.status === 'temp_error' && account.tempErrorAt) {
-              // 验证是否确实过了 5 分钟（防止重复定时器）
+              // Validar是否确实过了 5 分钟（防止重复定时器）
               const tempErrorAt = new Date(account.tempErrorAt)
               const now = new Date()
               const minutesSince = (now - tempErrorAt) / (1000 * 60)
 
               if (minutesSince >= 5) {
-                // 恢复账户
+                // RestauraciónCuenta
                 account.status = 'active'
-                // 只恢复因临时错误而自动停止的账户
+                // 只Restauración因临时Error而自动停止的Cuenta
                 if (account.tempErrorAutoStopped === 'true') {
                   account.schedulable = 'true'
                   delete account.tempErrorAutoStopped
@@ -2673,7 +2673,7 @@ class ClaudeAccountService {
 
                 await redis.setClaudeAccount(accountId, account)
 
-                // 显式删除 Redis 字段
+                // 显式Eliminar Redis Campo
                 await redis.client.hdel(
                   `claude:account:${accountId}`,
                   'errorMessage',
@@ -2681,7 +2681,7 @@ class ClaudeAccountService {
                   'tempErrorAutoStopped'
                 )
 
-                // 清除 500 错误计数
+                // 清除 500 Error计数
                 await this.clearInternalErrors(accountId)
 
                 logger.success(
@@ -2698,9 +2698,9 @@ class ClaudeAccountService {
           }
         },
         6 * 60 * 1000
-      ) // 6 分钟后执行，确保已过 5 分钟
+      ) // 6 分钟后Ejecutar，确保已过 5 分钟
 
-      // 如果有sessionHash，删除粘性会话映射
+      // 如果有sessionHash，Eliminar粘性Sesión映射
       if (sessionHash) {
         await redis.client.del(`sticky_session:${sessionHash}`)
         logger.info(`🗑️ Deleted sticky session mapping for hash: ${sessionHash}`)
@@ -2732,10 +2732,10 @@ class ClaudeAccountService {
     }
   }
 
-  // 更新会话窗口状态（allowed, allowed_warning, rejected）
+  // ActualizarSesión窗口状态（allowed, allowed_warning, rejected）
   async updateSessionWindowStatus(accountId, status) {
     try {
-      // 参数验证
+      // ParámetroValidar
       if (!accountId || !status) {
         logger.warn(
           `Invalid parameters for updateSessionWindowStatus: accountId=${accountId}, status=${status}`
@@ -2749,7 +2749,7 @@ class ClaudeAccountService {
         return
       }
 
-      // 验证状态值是否有效
+      // Validar状态Valor是否有效
       const validStatuses = ['allowed', 'allowed_warning', 'rejected']
       if (!validStatuses.includes(status)) {
         logger.warn(`Invalid session window status: ${status} for account ${accountId}`)
@@ -2759,11 +2759,11 @@ class ClaudeAccountService {
       const now = new Date()
       const nowIso = now.toISOString()
 
-      // 更新会话窗口状态
+      // ActualizarSesión窗口状态
       accountData.sessionWindowStatus = status
       accountData.sessionWindowStatusUpdatedAt = nowIso
 
-      // 如果状态是 allowed_warning 且账户设置了自动停止调度
+      // 如果状态是 allowed_warning 且CuentaEstablecer了自动停止调度
       if (status === 'allowed_warning' && accountData.autoStopOnWarning === 'true') {
         const alreadyAutoStopped =
           accountData.schedulable === 'false' && accountData.fiveHourAutoStopped === 'true'
@@ -2784,10 +2784,10 @@ class ClaudeAccountService {
             `⚠️ Account ${accountData.name} (${accountId}) approaching 5h limit, auto-stopping scheduling`
           )
           accountData.schedulable = 'false'
-          // 使用独立的5小时限制自动停止标记
+          // 使用独立的5小时Límite自动停止标记
           accountData.fiveHourAutoStopped = 'true'
           accountData.fiveHourStoppedAt = nowIso
-          // 设置停止原因，供前端显示
+          // Establecer停止原因，供前端显示
           accountData.stoppedReason =
             'El uso de 5 horas está cerca del límite, la programación se ha detenido automáticamente'
 
@@ -2840,7 +2840,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🚫 标记账号为过载状态（529错误）
+  // 🚫 标记账号为过载状态（529Error）
   async markAccountOverloaded(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -2848,7 +2848,7 @@ class ClaudeAccountService {
         throw new Error('Account not found')
       }
 
-      // 获取配置的过载处理时间（分钟）
+      // ObtenerConfiguración的过载ProcesarTiempo（分钟）
       const overloadMinutes = config.overloadHandling?.enabled || 0
 
       if (overloadMinutes === 0) {
@@ -2857,7 +2857,7 @@ class ClaudeAccountService {
       }
 
       const overloadKey = `account:overload:${accountId}`
-      const ttl = overloadMinutes * 60 // 转换为秒
+      const ttl = overloadMinutes * 60 // Convertir为秒
 
       await redis.setex(
         overloadKey,
@@ -2874,10 +2874,10 @@ class ClaudeAccountService {
         `🚫 Account ${accountData.name} (${accountId}) marked as overloaded for ${overloadMinutes} minutes`
       )
 
-      // 在账号上记录最后一次529错误
+      // 在账号上Registro最后一次529Error
       const updates = {
         lastOverloadAt: new Date().toISOString(),
-        errorMessage: `529错误 - 过载${overloadMinutes}分钟`
+        errorMessage: `529Error - 过载${overloadMinutes}分钟`
       }
 
       const updatedAccountData = { ...accountData, ...updates }
@@ -2886,15 +2886,15 @@ class ClaudeAccountService {
       return { success: true, accountName: accountData.name, duration: overloadMinutes }
     } catch (error) {
       logger.error(`❌ Failed to mark account as overloaded: ${accountId}`, error)
-      // 不抛出错误，避免影响主请求流程
+      // 不抛出Error，避免影响主Solicitud流程
       return { success: false, error: error.message }
     }
   }
 
-  // ✅ 检查账号是否过载
+  // ✅ Verificar账号是否过载
   async isAccountOverloaded(accountId) {
     try {
-      // 如果529处理未启用，直接返回false
+      // 如果529Procesar未Habilitar，直接Retornarfalse
       const overloadMinutes = config.overloadHandling?.enabled || 0
       if (overloadMinutes === 0) {
         return false
@@ -2916,7 +2916,7 @@ class ClaudeAccountService {
     }
   }
 
-  // 🔄 移除账号的过载状态
+  // 🔄 Eliminación账号的过载状态
   async removeAccountOverload(accountId) {
     try {
       const accountData = await redis.getClaudeAccount(accountId)
@@ -2929,8 +2929,8 @@ class ClaudeAccountService {
 
       logger.info(`✅ Account ${accountData.name} (${accountId}) overload status removed`)
 
-      // 清理账号上的错误信息
-      if (accountData.errorMessage && accountData.errorMessage.includes('529错误')) {
+      // Limpiar账号上的ErrorInformación
+      if (accountData.errorMessage && accountData.errorMessage.includes('529Error')) {
         const updatedAccountData = { ...accountData }
         delete updatedAccountData.errorMessage
         delete updatedAccountData.lastOverloadAt
@@ -2938,13 +2938,13 @@ class ClaudeAccountService {
       }
     } catch (error) {
       logger.error(`❌ Failed to remove overload status for account: ${accountId}`, error)
-      // 不抛出错误，移除过载状态失败不应该影响主流程
+      // 不抛出Error，Eliminación过载状态Falló不应该影响主流程
     }
   }
 
   /**
-   * 检查并恢复因5小时限制被自动停止的账号
-   * 用于定时任务自动恢复
+   * Verificar并Restauración因5小时Límite被自动停止的账号
+   * 用于Tarea programada自动Restauración
    * @returns {Promise<{checked: number, recovered: number, accounts: Array}>}
    */
   async checkAndRecoverFiveHourStoppedAccounts() {
@@ -2959,18 +2959,18 @@ class ClaudeAccountService {
       const now = new Date()
 
       for (const account of accounts) {
-        // 只检查因5小时限制被自动停止的账号
-        // 重要：不恢复手动停止的账号（没有fiveHourAutoStopped标记的）
+        // 只Verificar因5小时Límite被自动停止的账号
+        // 重要：不Restauración手动停止的账号（没有fiveHourAutoStopped标记的）
         if (account.fiveHourAutoStopped === true && account.schedulable === false) {
           result.checked++
 
-          // 使用分布式锁防止并发修改
+          // 使用分布式锁防止Concurrencia修改
           const lockKey = `lock:account:${account.id}:recovery`
           const lockValue = `${Date.now()}_${Math.random()}`
-          const lockTTL = 5000 // 5秒锁超时
+          const lockTTL = 5000 // 5秒锁Tiempo de espera agotado
 
           try {
-            // 尝试获取锁
+            // 尝试Obtener锁
             const lockAcquired = await redis.setAccountLock(lockKey, lockValue, lockTTL)
             if (!lockAcquired) {
               logger.debug(
@@ -2979,7 +2979,7 @@ class ClaudeAccountService {
               continue
             }
 
-            // 重新获取账号数据，确保是最新的
+            // 重新Obtener账号Datos，确保是最新的
             const latestAccount = await redis.getClaudeAccount(account.id)
             if (
               !latestAccount ||
@@ -2991,7 +2991,7 @@ class ClaudeAccountService {
               continue
             }
 
-            // 检查当前时间是否已经进入新的5小时窗口
+            // Verificar当前Tiempo是否已经进入新的5小时窗口
             let shouldRecover = false
             let newWindowStart = null
             let newWindowEnd = null
@@ -2999,12 +2999,12 @@ class ClaudeAccountService {
             if (latestAccount.sessionWindowEnd) {
               const windowEnd = new Date(latestAccount.sessionWindowEnd)
 
-              // 使用严格的时间比较，添加1分钟缓冲避免边界问题
+              // 使用严格的Tiempo比较，添加1分钟缓冲避免边界问题
               if (now.getTime() > windowEnd.getTime() + 60000) {
                 shouldRecover = true
 
-                // 计算新的窗口时间（基于窗口结束时间，而不是当前时间）
-                // 这样可以保证窗口时间的连续性
+                // Calcular新的窗口Tiempo（基于窗口结束Tiempo，而不是当前Tiempo）
+                // 这样可以保证窗口Tiempo的连续性
                 newWindowStart = new Date(windowEnd)
                 newWindowStart.setMilliseconds(newWindowStart.getMilliseconds() + 1)
                 newWindowEnd = new Date(newWindowStart)
@@ -3017,7 +3017,7 @@ class ClaudeAccountService {
                 )
               }
             } else {
-              // 如果没有窗口结束时间，但有停止时间，检查是否已经过了5小时
+              // 如果没有窗口结束Tiempo，但有停止Tiempo，Verificar是否已经过了5小时
               if (latestAccount.fiveHourStoppedAt) {
                 const stoppedAt = new Date(latestAccount.fiveHourStoppedAt)
                 const hoursSinceStopped = (now.getTime() - stoppedAt.getTime()) / (1000 * 60 * 60)
@@ -3037,27 +3037,27 @@ class ClaudeAccountService {
             }
 
             if (shouldRecover) {
-              // 恢复账号调度
+              // Restauración账号调度
               const updatedAccountData = { ...latestAccount }
 
-              // 恢复调度状态
+              // Restauración调度状态
               updatedAccountData.schedulable = 'true'
               delete updatedAccountData.fiveHourAutoStopped
               delete updatedAccountData.fiveHourStoppedAt
               await this._clearFiveHourWarningMetadata(account.id, updatedAccountData)
               delete updatedAccountData.stoppedReason
 
-              // 更新会话窗口（如果有新窗口）
+              // ActualizarSesión窗口（如果有新窗口）
               if (newWindowStart && newWindowEnd) {
                 updatedAccountData.sessionWindowStart = newWindowStart.toISOString()
                 updatedAccountData.sessionWindowEnd = newWindowEnd.toISOString()
 
-                // 清除会话窗口状态
+                // 清除Sesión窗口状态
                 delete updatedAccountData.sessionWindowStatus
                 delete updatedAccountData.sessionWindowStatusUpdatedAt
               }
 
-              // 保存更新
+              // 保存Actualizar
               await redis.setClaudeAccount(account.id, updatedAccountData)
 
               const fieldsToRemove = ['fiveHourAutoStopped', 'fiveHourStoppedAt']
@@ -3123,10 +3123,10 @@ class ClaudeAccountService {
   }
 
   /**
-   * 规范化扩展信息，提取组织与账户UUID
-   * @param {object|string|null} extInfoSource - 原始扩展信息
-   * @param {object|null} oauthPayload - OAuth 数据载荷
-   * @returns {object|null} 规范化后的扩展信息
+   * 规范化ExtensiónInformación，提取组织与CuentaUUID
+   * @param {object|string|null} extInfoSource - 原始ExtensiónInformación
+   * @param {object|null} oauthPayload - OAuth Datos载荷
+   * @returns {object|null} 规范化后的ExtensiónInformación
    */
   _normalizeExtInfo(extInfoSource, oauthPayload) {
     let extInfo = null
@@ -3191,9 +3191,9 @@ class ClaudeAccountService {
   }
 
   /**
-   * 安全解析 JSON 字符串
-   * @param {string} value - 需要解析的字符串
-   * @returns {object|null} 解析结果
+   * SeguridadAnalizar JSON Cadena
+   * @param {string} value - 需要Analizar的Cadena
+   * @returns {object|null} Analizar结果
    */
   _safeParseJson(value) {
     if (!value || typeof value !== 'string') {
@@ -3204,7 +3204,7 @@ class ClaudeAccountService {
       const parsed = JSON.parse(value)
       return parsed && typeof parsed === 'object' ? parsed : null
     } catch (error) {
-      logger.warn('⚠️ 解析扩展信息失败，已忽略：', error.message)
+      logger.warn('⚠️ AnalizarExtensiónInformaciónFalló，已忽略：', error.message)
       return null
     }
   }
@@ -3224,11 +3224,11 @@ class ClaudeAccountService {
     try {
       await redis.client.hdel(accountKey, ...filteredFields)
       logger.debug(
-        `🧹 已在 ${context} 阶段为账号 ${accountId} 删除字段 [${filteredFields.join(', ')}]`
+        `🧹 已在 ${context} 阶段为账号 ${accountId} EliminarCampo [${filteredFields.join(', ')}]`
       )
     } catch (error) {
       logger.error(
-        `❌ 无法在 ${context} 阶段为账号 ${accountId} 删除字段 [${filteredFields.join(', ')}]:`,
+        `❌ 无法在 ${context} 阶段为账号 ${accountId} EliminarCampo [${filteredFields.join(', ')}]:`,
         error
       )
     }

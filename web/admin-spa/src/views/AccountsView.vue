@@ -4,16 +4,16 @@
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <div>
           <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-            账户管理
+            Gestión de Cuentas
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-            管理 Claude、Gemini、OpenAI 等账户与代理配置
+            Administra cuentas y configuraciones de proxy para Claude, Gemini, OpenAI, etc.
           </p>
         </div>
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <!-- 筛选器组 -->
+          <!-- Grupo de filtros -->
           <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-            <!-- 排序选择器 -->
+            <!-- Selector de ordenamiento -->
             <div class="group relative min-w-[160px]">
               <div
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-indigo-500 to-blue-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -23,12 +23,12 @@
                 :icon="accountsSortOrder === 'asc' ? 'fa-sort-amount-up' : 'fa-sort-amount-down'"
                 icon-color="text-indigo-500"
                 :options="sortOptions"
-                placeholder="选择排序"
+                placeholder="Seleccionar ordenamiento"
                 @change="handleDropdownSort"
               />
             </div>
 
-            <!-- 平台筛选器 -->
+            <!-- Filtro de plataforma -->
             <div class="group relative min-w-[140px]">
               <div
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -38,12 +38,12 @@
                 icon="fa-server"
                 icon-color="text-blue-500"
                 :options="platformOptions"
-                placeholder="选择平台"
+                placeholder="Seleccionar plataforma"
                 @change="filterByPlatform"
               />
             </div>
 
-            <!-- 分组筛选器 -->
+            <!-- Filtro de grupos -->
             <div class="group relative min-w-[160px]">
               <div
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -53,12 +53,12 @@
                 icon="fa-layer-group"
                 icon-color="text-purple-500"
                 :options="groupOptions"
-                placeholder="选择分组"
+                placeholder="Seleccionar grupo"
                 @change="filterByGroup"
               />
             </div>
 
-            <!-- 状态筛选器 -->
+            <!-- Filtro de estado -->
             <div class="group relative min-w-[120px]">
               <div
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -68,11 +68,11 @@
                 icon="fa-check-circle"
                 icon-color="text-green-500"
                 :options="statusOptions"
-                placeholder="选择状态"
+                placeholder="Seleccionar estado"
               />
             </div>
 
-            <!-- 搜索框 -->
+            <!-- Cuadro de búsqueda -->
             <div class="group relative min-w-[200px]">
               <div
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
@@ -81,7 +81,7 @@
                 <input
                   v-model="searchKeyword"
                   class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 pl-9 text-sm text-gray-700 placeholder-gray-400 shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 dark:hover:border-gray-500"
-                  placeholder="搜索账户名称..."
+                  placeholder="Buscar nombre de cuenta..."
                   type="text"
                 />
                 <i class="fas fa-search absolute left-3 text-sm text-cyan-500" />
@@ -97,9 +97,9 @@
           </div>
 
           <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
-            <!-- 账户统计按钮 -->
+            <!-- Botón de estadísticas de cuentas -->
             <div class="relative">
-              <el-tooltip content="查看账户统计汇总" effect="dark" placement="bottom">
+              <el-tooltip content="Ver resumen de estadísticas de cuentas" effect="dark" placement="bottom">
                 <button
                   class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:w-auto"
                   @click="showAccountStatsModal = true"
@@ -108,15 +108,15 @@
                     class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                   ></div>
                   <i class="fas fa-chart-bar relative text-violet-500" />
-                  <span class="relative">统计</span>
+                  <span class="relative">Estadísticas</span>
                 </button>
               </el-tooltip>
             </div>
 
-            <!-- 刷新按钮 -->
+            <!-- Botón de actualización -->
             <div class="relative">
               <el-tooltip
-                content="刷新数据 (Ctrl/⌘+点击强制刷新所有缓存)"
+                content="Actualizar datos (Ctrl/⌘+clic para forzar la actualización de todos los cachés)"
                 effect="dark"
                 placement="bottom"
               >
@@ -136,12 +136,12 @@
                       accountsLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'
                     ]"
                   />
-                  <span class="relative">刷新</span>
+                  <span class="relative">Actualizar</span>
                 </button>
               </el-tooltip>
             </div>
 
-            <!-- 刷新余额按钮 -->
+            <!-- Actualizar saldobotón -->
             <div class="relative">
               <el-tooltip :content="refreshBalanceTooltip" effect="dark" placement="bottom">
                 <button
@@ -158,23 +158,23 @@
                       refreshingBalances ? 'fa-spinner fa-spin' : 'fa-wallet'
                     ]"
                   />
-                  <span class="relative">刷新余额</span>
+                  <span class="relative">Actualizar saldo</span>
                 </button>
               </el-tooltip>
             </div>
 
-            <!-- 选择/取消选择按钮 -->
+            <!-- Botón de seleccionar/cancelar selección -->
             <button
               class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-md dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               @click="toggleSelectionMode"
             >
               <i :class="showCheckboxes ? 'fas fa-times' : 'fas fa-check-square'"></i>
-              <span>{{ showCheckboxes ? '取消选择' : '选择' }}</span>
+              <span>{{ showCheckboxes ? 'Cancelar selección' : 'Seleccionar' }}</span>
             </button>
 
-            <!-- 分组管理按钮 -->
+            <!-- Botón de gestión de grupos -->
             <div class="relative">
-              <el-tooltip content="管理账户分组" effect="dark" placement="bottom">
+              <el-tooltip content="Administrar grupos de cuentas" effect="dark" placement="bottom">
                 <button
                   class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:w-auto"
                   @click="showGroupManagementModal = true"
@@ -183,12 +183,12 @@
                     class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
                   ></div>
                   <i class="fas fa-layer-group relative text-purple-500" />
-                  <span class="relative">分组</span>
+                  <span class="relative">Grupos</span>
                 </button>
               </el-tooltip>
             </div>
 
-            <!-- 批量删除按钮 -->
+            <!-- Botón de eliminación por lotes -->
             <button
               v-if="selectedAccounts.length > 0"
               class="group relative flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 shadow-sm transition-all duration-200 hover:border-red-300 hover:bg-red-100 hover:shadow-md dark:border-red-700 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 sm:w-auto"
@@ -198,16 +198,16 @@
                 class="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 opacity-0 blur transition duration-300 group-hover:opacity-20"
               ></div>
               <i class="fas fa-trash relative text-red-600 dark:text-red-400" />
-              <span class="relative">删除选中 ({{ selectedAccounts.length }})</span>
+              <span class="relative">Eliminar seleccionados ({{ selectedAccounts.length }})</span>
             </button>
 
-            <!-- 添加账户按钮 -->
+            <!-- Botón de agregar cuenta -->
             <button
               class="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all duration-200 hover:from-green-600 hover:to-green-700 hover:shadow-lg sm:w-auto"
               @click.stop="openCreateAccountModal"
             >
               <i class="fas fa-plus"></i>
-              <span>添加账户</span>
+              <span>Agregar cuenta</span>
             </button>
           </div>
         </div>
@@ -215,7 +215,7 @@
 
       <div v-if="accountsLoading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4" />
-        <p class="text-gray-500 dark:text-gray-400">正在加载账户...</p>
+        <p class="text-gray-500 dark:text-gray-400">Cargando cuentas...</p>
       </div>
 
       <div v-else-if="sortedAccounts.length === 0" class="py-12 text-center">
@@ -224,11 +224,11 @@
         >
           <i class="fas fa-user-circle text-xl text-gray-400" />
         </div>
-        <p class="text-lg text-gray-500 dark:text-gray-400">暂无账户</p>
-        <p class="mt-2 text-sm text-gray-400 dark:text-gray-500">点击上方按钮添加您的第一个账户</p>
+        <p class="text-lg text-gray-500 dark:text-gray-400">No hay cuentas</p>
+        <p class="mt-2 text-sm text-gray-400 dark:text-gray-500">Haz clic en el botón de arriba para agregar tu primera cuenta</p>
       </div>
 
-      <!-- 桌面端表格视图 -->
+      <!-- Vista de tabla de escritorio -->
       <div v-else class="table-wrapper hidden md:block">
         <div ref="tableContainerRef" class="table-container">
           <table class="w-full">
@@ -255,7 +255,7 @@
                   :class="shouldShowCheckboxes ? 'left-[50px]' : 'left-0'"
                   @click="sortAccounts('name')"
                 >
-                  名称
+                  Nombre
                   <i
                     v-if="accountsSortBy === 'name'"
                     :class="[
@@ -270,7 +270,7 @@
                   class="min-w-[220px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="sortAccounts('platform')"
                 >
-                  平台/类型
+                  Plataforma/Tipo
                   <i
                     v-if="accountsSortBy === 'platform'"
                     :class="[
@@ -285,7 +285,7 @@
                   class="w-[120px] min-w-[180px] max-w-[200px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="sortAccounts('status')"
                 >
-                  状态
+                  Estado
                   <i
                     v-if="accountsSortBy === 'status'"
                     :class="[
@@ -299,18 +299,18 @@
                 <th
                   class="min-w-[150px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                 >
-                  今日使用
+                  Uso de hoy
                 </th>
                 <th
                   class="min-w-[220px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                 >
-                  余额/配额
+                  Saldo/Cuota
                 </th>
                 <th
                   class="min-w-[210px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                 >
                   <div class="flex items-center gap-2">
-                    <span>会话窗口</span>
+                    <span>Ventana de sesión</span>
                     <el-tooltip placement="top">
                       <template #content>
                         <div
@@ -318,10 +318,10 @@
                         >
                           <div class="space-y-2">
                             <div class="text-sm font-semibold text-white dark:text-gray-900">
-                              Claude 系列
+                              Serie Claude
                             </div>
                             <div class="text-gray-200 dark:text-gray-600">
-                              会话窗口进度表示 5 小时窗口的时间推移，颜色提示当前调度状态。
+                              Ventana de sesiónprogreso表示 5 小cuandoventana推移，colorsugerencia当antes deProgramarEstado。
                             </div>
                             <div class="space-y-1 pt-1 text-gray-200 dark:text-gray-600">
                               <div class="flex items-center gap-2">
@@ -329,7 +329,7 @@
                                   class="h-2 w-16 rounded bg-gradient-to-r from-blue-500 to-indigo-600"
                                 ></div>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >正常：请求正常处理</span
+                                  >Normal: Solicitudes procesadas normalmente</span
                                 >
                               </div>
                               <div class="flex items-center gap-2">
@@ -337,7 +337,7 @@
                                   class="h-2 w-16 rounded bg-gradient-to-r from-yellow-500 to-orange-500"
                                 ></div>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >警告：接近限制</span
+                                  >Advertencia: Cerca del límite</span
                                 >
                               </div>
                               <div class="flex items-center gap-2">
@@ -345,7 +345,7 @@
                                   class="h-2 w-16 rounded bg-gradient-to-r from-red-500 to-red-600"
                                 ></div>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >拒绝：达到速率限制</span
+                                  >Rechazado: Límite de tasa alcanzado</span
                                 >
                               </div>
                             </div>
@@ -356,19 +356,19 @@
                               OpenAI
                             </div>
                             <div class="text-gray-200 dark:text-gray-600">
-                              进度条分别展示 5h 与周限窗口的额度使用比例，颜色含义与上方保持一致。
+                              Las barras de progreso muestran la proporción de uso de cuota de las ventanas de 5h y semanal, los colores tienen el mismo significado que arriba.
                             </div>
                             <div class="space-y-1 text-gray-200 dark:text-gray-600">
                               <div class="flex items-start gap-2">
                                 <i class="fas fa-clock mt-[2px] text-[10px] text-blue-500"></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >5h 窗口：5小时使用量进度，到达重置时间后会自动归零。</span
+                                  >Ventana 5h: Progreso de uso de 5 horas, se restablece automáticamente al llegar al tiempo de reinicio.</span
                                 >
                               </div>
                               <div class="flex items-start gap-2">
                                 <i class="fas fa-history mt-[2px] text-[10px] text-emerald-500"></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >周限窗口：7天使用量进度，重置时同样回到 0%。</span
+                                  >Ventana semanal: Progreso de uso de 7 días, también vuelve a 0% al reiniciarse.</span
                                 >
                               </div>
                               <div class="flex items-start gap-2">
@@ -376,7 +376,7 @@
                                   class="fas fa-info-circle mt-[2px] text-[10px] text-indigo-500"
                                 ></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >当"重置剩余"为 0 时，进度条与百分比会同步清零。</span
+                                  >Cuando "Restante para reinicio" es 0, la barra de progreso y el porcentaje se restablecen simultáneamente.</span
                                 >
                               </div>
                             </div>
@@ -384,16 +384,16 @@
                           <div class="h-px bg-gray-200 dark:bg-gray-600/50"></div>
                           <div class="space-y-2">
                             <div class="text-sm font-semibold text-white dark:text-gray-900">
-                              Claude OAuth 账户
+                              Cuenta Claude OAuth
                             </div>
                             <div class="text-gray-200 dark:text-gray-600">
-                              展示三个窗口的使用率（utilization百分比），颜色含义同上。
+                              Muestra la tasa de uso de tres ventanas (porcentaje de utilización), los colores tienen el mismo significado.
                             </div>
                             <div class="space-y-1 text-gray-200 dark:text-gray-600">
                               <div class="flex items-start gap-2">
                                 <i class="fas fa-clock mt-[2px] text-[10px] text-indigo-500"></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >5h 窗口：5小时滑动窗口的使用率。</span
+                                  >Ventana 5h: Tasa de uso de la ventana deslizante de 5 horas.</span
                                 >
                               </div>
                               <div class="flex items-start gap-2">
@@ -401,19 +401,19 @@
                                   class="fas fa-calendar-alt mt-[2px] text-[10px] text-emerald-500"
                                 ></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >7d 窗口：7天总限额的使用率。</span
+                                  >Ventana 7d: Tasa de uso del límite total de 7 días.</span
                                 >
                               </div>
                               <div class="flex items-start gap-2">
                                 <i class="fas fa-gem mt-[2px] text-[10px] text-purple-500"></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >Sonnet窗口：7天Sonnet模型专用限额。</span
+                                  >Ventana Sonnet: Límite dedicado para el modelo Sonnet de 7 días.</span
                                 >
                               </div>
                               <div class="flex items-start gap-2">
                                 <i class="fas fa-sync-alt mt-[2px] text-[10px] text-blue-500"></i>
                                 <span class="font-medium text-white dark:text-gray-900"
-                                  >到达重置时间后自动归零。</span
+                                  >Se restablece automáticamente al llegar al tiempo de reinicio.</span
                                 >
                               </div>
                             </div>
@@ -429,13 +429,13 @@
                 <th
                   class="min-w-[80px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                 >
-                  最后使用
+                  Último uso
                 </th>
                 <th
                   class="min-w-[80px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="sortAccounts('priority')"
                 >
-                  优先级
+                  Prioridad
                   <i
                     v-if="accountsSortBy === 'priority'"
                     :class="[
@@ -449,13 +449,13 @@
                 <th
                   class="min-w-[150px] px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                 >
-                  代理
+                  Proxy
                 </th>
                 <th
                   class="min-w-[110px] cursor-pointer px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                   @click="sortAccounts('expiresAt')"
                 >
-                  到期时间
+                  Tiempo de expiración
                   <i
                     v-if="accountsSortBy === 'expiresAt'"
                     :class="[
@@ -470,7 +470,7 @@
                   class="operations-column sticky right-0 z-20 px-3 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300"
                   :class="needsHorizontalScroll ? 'min-w-[170px]' : 'min-w-[200px]'"
                 >
-                  操作
+                  Operaciones
                 </th>
               </tr>
             </thead>
@@ -504,7 +504,7 @@
                       <div class="flex items-center gap-2">
                         <div
                           class="cursor-pointer truncate text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-                          title="点击复制"
+                          title="Clic para copiar"
                           @click.stop="copyText(account.name)"
                         >
                           {{ account.name }}
@@ -513,22 +513,22 @@
                           v-if="account.accountType === 'dedicated'"
                           class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800"
                         >
-                          <i class="fas fa-lock mr-1" />专属
+                          <i class="fas fa-lock mr-1" />Exclusiva
                         </span>
                         <span
                           v-else-if="account.accountType === 'group'"
                           class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800"
                         >
-                          <i class="fas fa-layer-group mr-1" />分组调度
+                          <i class="fas fa-layer-group mr-1" />GruposProgramar
                         </span>
                         <span
                           v-else
                           class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
                         >
-                          <i class="fas fa-share-alt mr-1" />共享
+                          <i class="fas fa-share-alt mr-1" />Compartida
                         </span>
                       </div>
-                      <!-- 显示所有分组 - 换行显示 -->
+                      <!-- Mostrar todos los grupos - Mostrar en líneas separadas -->
                       <div
                         v-if="account.groupInfos && account.groupInfos.length > 0"
                         class="my-2 flex flex-wrap items-center gap-2"
@@ -537,7 +537,7 @@
                           v-for="group in account.groupInfos"
                           :key="group.id"
                           class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400"
-                          :title="`所属分组: ${group.name}`"
+                          :title="`所属Grupos: ${group.name}`"
                         >
                           <i class="fas fa-folder mr-1" />{{ group.name }}
                         </span>
@@ -553,7 +553,7 @@
                 </td>
                 <td class="px-3 py-4">
                   <div class="flex items-center gap-1">
-                    <!-- 平台图标和名称 -->
+                    <!-- Icono y nombre de plataforma -->
                     <div
                       v-if="account.platform === 'gemini'"
                       class="flex items-center gap-1.5 rounded-lg border border-yellow-200 bg-gradient-to-r from-yellow-100 to-amber-100 px-2.5 py-1"
@@ -686,7 +686,7 @@
                       class="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gradient-to-r from-gray-100 to-gray-200 px-2.5 py-1"
                     >
                       <i class="fas fa-question text-xs text-gray-700" />
-                      <span class="text-xs font-semibold text-gray-800">未知</span>
+                      <span class="text-xs font-semibold text-gray-800">Desconocido</span>
                     </div>
                   </div>
                 </td>
@@ -722,14 +722,14 @@
                       />
                       {{
                         account.status === 'blocked'
-                          ? '已封锁'
+                          ? 'Bloqueada'
                           : account.status === 'unauthorized'
-                            ? '异常'
+                            ? 'Anormal'
                             : account.status === 'temp_error'
-                              ? '临时异常'
+                              ? 'Anormalidad temporal'
                               : account.isActive
-                                ? '正常'
-                                : '异常'
+                                ? 'Normal'
+                                : 'Anormal'
                       }}
                     </span>
                     <span
@@ -740,7 +740,7 @@
                       class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800"
                     >
                       <i class="fas fa-exclamation-triangle mr-1" />
-                      限流中
+                      Limitando
                       <span
                         v-if="
                           account.rateLimitStatus &&
@@ -755,7 +755,7 @@
                       class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700"
                     >
                       <i class="fas fa-pause-circle mr-1" />
-                      不可调度
+                      No programable
                       <el-tooltip
                         v-if="getSchedulableReason(account)"
                         :content="getSchedulableReason(account)"
@@ -776,7 +776,7 @@
                       v-if="account.accountType === 'dedicated'"
                       class="text-xs text-gray-500 dark:text-gray-400"
                     >
-                      绑定: {{ account.boundApiKeysCount || 0 }} 个API Key
+                      Vinculada: {{ account.boundApiKeysCount || 0 }} claves API
                     </span>
                   </div>
                 </td>
@@ -785,7 +785,7 @@
                     <div class="flex items-center gap-2">
                       <div class="h-2 w-2 rounded-full bg-blue-500" />
                       <span class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >{{ account.usage.daily.requests || 0 }} 次</span
+                        >{{ account.usage.daily.requests || 0 }} veces</span
                       >
                     </div>
                     <div class="flex items-center gap-2">
@@ -804,10 +804,10 @@
                       v-if="account.usage.averages && account.usage.averages.rpm > 0"
                       class="text-xs text-gray-500 dark:text-gray-400"
                     >
-                      平均 {{ account.usage.averages.rpm.toFixed(2) }} RPM
+                      Promedio {{ account.usage.averages.rpm.toFixed(2) }} RPM
                     </div>
                   </div>
-                  <div v-else class="text-xs text-gray-400">暂无数据</div>
+                  <div v-else class="text-xs text-gray-400">Sin datos</div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-4">
                   <BalanceDisplay
@@ -830,15 +830,15 @@
                       class="text-blue-500 hover:underline dark:text-blue-300"
                       @click="openBalanceScriptModal(account)"
                     >
-                      配置余额脚本
+                      Configurar script de saldo
                     </button>
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-4">
                   <div v-if="account.platform === 'claude'" class="space-y-2">
-                    <!-- OAuth 账户：显示三窗口 OAuth usage -->
+                    <!-- Cuenta OAuth: Mostrar uso de OAuth en tres ventanas -->
                     <div v-if="isClaudeOAuth(account) && account.claudeUsage" class="space-y-2">
-                      <!-- 5小时窗口 -->
+                      <!-- Ventana de 5 horas -->
                       <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                         <div class="flex items-center gap-2">
                           <span
@@ -868,10 +868,10 @@
                           </div>
                         </div>
                         <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                          重置剩余 {{ formatClaudeRemaining(account.claudeUsage.fiveHour) }}
+                          Restante para reinicio {{ formatClaudeRemaining(account.claudeUsage.fiveHour) }}
                         </div>
                       </div>
-                      <!-- 7天窗口 -->
+                      <!-- Ventana de 7 días -->
                       <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                         <div class="flex items-center gap-2">
                           <span
@@ -901,10 +901,10 @@
                           </div>
                         </div>
                         <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                          重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDay) }}
+                          Restante para reinicio {{ formatClaudeRemaining(account.claudeUsage.sevenDay) }}
                         </div>
                       </div>
-                      <!-- 7天Opus窗口 -->
+                      <!-- Ventana Opus de 7 días -->
                       <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                         <div class="flex items-center gap-2">
                           <span
@@ -934,11 +934,11 @@
                           </div>
                         </div>
                         <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                          重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDayOpus) }}
+                          Restante para reinicio {{ formatClaudeRemaining(account.claudeUsage.sevenDayOpus) }}
                         </div>
                       </div>
                     </div>
-                    <!-- Setup Token 账户：显示原有的会话窗口时间进度 -->
+                    <!-- Setup Token cuenta：pantalla原conVentana de sesiónprogreso -->
                     <div
                       v-else-if="
                         !isClaudeOAuth(account) &&
@@ -947,7 +947,7 @@
                       "
                       class="space-y-2"
                     >
-                      <!-- 使用统计在顶部 -->
+                      <!-- Estadísticas de uso en la parte superior -->
                       <div
                         v-if="account.usage && account.usage.sessionWindow"
                         class="flex items-center gap-3 text-xs"
@@ -966,7 +966,7 @@
                         </div>
                       </div>
 
-                      <!-- 进度条 -->
+                      <!-- Barra de progreso -->
                       <div class="flex items-center gap-2">
                         <div class="h-2 w-24 rounded-full bg-gray-200 dark:bg-gray-700">
                           <div
@@ -987,7 +987,7 @@
                         </span>
                       </div>
 
-                      <!-- 时间信息 -->
+                      <!-- Información de tiempo -->
                       <div class="text-xs text-gray-600 dark:text-gray-400">
                         <div>
                           {{
@@ -1001,18 +1001,18 @@
                           v-if="account.sessionWindow.remainingTime > 0"
                           class="font-medium text-indigo-600 dark:text-indigo-400"
                         >
-                          剩余 {{ formatRemainingTime(account.sessionWindow.remainingTime) }}
+                          Restante {{ formatRemainingTime(account.sessionWindow.remainingTime) }}
                         </div>
                       </div>
                     </div>
-                    <div v-else class="text-xs text-gray-400">暂无统计</div>
+                    <div v-else class="text-xs text-gray-400">Sin estadísticas</div>
                   </div>
-                  <!-- Claude Console: 显示每日额度和并发状态 -->
+                  <!-- Claude Console: Mostrar cuota diaria y estado de concurrencia -->
                   <div v-else-if="account.platform === 'claude-console'" class="space-y-3">
                     <div>
                       <template v-if="Number(account.dailyQuota) > 0">
                         <div class="flex items-center justify-between text-xs">
-                          <span class="text-gray-600 dark:text-gray-300">额度进度</span>
+                          <span class="text-gray-600 dark:text-gray-300">Progreso de cuota</span>
                           <span class="font-medium text-gray-700 dark:text-gray-200">
                             {{ getQuotaUsagePercent(account).toFixed(1) }}%
                           </span>
@@ -1036,9 +1036,9 @@
                           </span>
                         </div>
                         <div class="text-xs text-gray-600 dark:text-gray-400">
-                          剩余 ${{ formatRemainingQuota(account) }}
+                          Restante ${{ formatRemainingQuota(account) }}
                           <span class="ml-2 text-gray-400"
-                            >重置 {{ account.quotaResetTime || '00:00' }}</span
+                            >Reinicio {{ account.quotaResetTime || '00:00' }}</span
                           >
                         </div>
                       </template>
@@ -1051,7 +1051,7 @@
 
                     <div class="space-y-1">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-gray-600 dark:text-gray-300">并发状态</span>
+                        <span class="text-gray-600 dark:text-gray-300">Estado de concurrencia</span>
                         <span
                           v-if="Number(account.maxConcurrentTasks || 0) > 0"
                           class="font-medium text-gray-700 dark:text-gray-200"
@@ -1088,7 +1088,7 @@
                         v-else
                         class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-300"
                       >
-                        <i class="fas fa-infinity mr-1" />并发无限制
+                        <i class="fas fa-infinity mr-1" />Sin límite de concurrencia
                       </div>
                     </div>
                   </div>
@@ -1123,7 +1123,7 @@
                           </div>
                         </div>
                         <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                          重置剩余 {{ formatCodexRemaining(account.codexUsage.primary) }}
+                          Restante para reinicio {{ formatCodexRemaining(account.codexUsage.primary) }}
                         </div>
                       </div>
                       <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
@@ -1155,7 +1155,7 @@
                           </div>
                         </div>
                         <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                          重置剩余 {{ formatCodexRemaining(account.codexUsage.secondary) }}
+                          Restante para reinicio {{ formatCodexRemaining(account.codexUsage.secondary) }}
                         </div>
                       </div>
                     </div>
@@ -1208,11 +1208,11 @@
                   >
                     {{ formatProxyDisplay(account.proxy) }}
                   </div>
-                  <div v-else class="text-gray-400">无代理</div>
+                  <div v-else class="text-gray-400">Sin proxy</div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-4">
                   <div class="flex flex-col gap-1">
-                    <!-- 已设置过期时间 -->
+                    <!-- Tiempo de expiración establecido -->
                     <span v-if="account.expiresAt">
                       <span
                         v-if="isExpired(account.expiresAt)"
@@ -1221,7 +1221,7 @@
                         @click.stop="startEditAccountExpiry(account)"
                       >
                         <i class="fas fa-exclamation-circle mr-1 text-xs" />
-                        已过期
+                        Expirado
                       </span>
                       <span
                         v-else-if="isExpiringSoon(account.expiresAt)"
@@ -1241,7 +1241,7 @@
                         {{ formatExpireDate(account.expiresAt) }}
                       </span>
                     </span>
-                    <!-- 永不过期 -->
+                    <!-- Nunca expira -->
                     <span
                       v-else
                       class="inline-flex cursor-pointer items-center text-gray-400 hover:underline dark:text-gray-500"
@@ -1249,14 +1249,14 @@
                       @click.stop="startEditAccountExpiry(account)"
                     >
                       <i class="fas fa-infinity mr-1 text-xs" />
-                      永不过期
+                      Nunca expira
                     </span>
                   </div>
                 </td>
                 <td
                   class="operations-column sticky right-0 z-10 whitespace-nowrap px-3 py-4 text-sm font-medium"
                 >
-                  <!-- 宽度足够时显示所有按钮 -->
+                  <!-- Mostrar todos los botones cuando el ancho sea suficiente -->
                   <div v-if="!needsHorizontalScroll" class="flex items-center gap-1">
                     <button
                       v-if="showResetButton(account)"
@@ -1267,11 +1267,11 @@
                           : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
                       ]"
                       :disabled="account.isResetting"
-                      :title="account.isResetting ? '重置中...' : '重置所有异常状态'"
+                      :title="account.isResetting ? 'Reiniciando...' : 'Reiniciotodos los estados anormales'"
                       @click="resetAccountStatus(account)"
                     >
                       <i :class="['fas fa-redo', account.isResetting ? 'animate-spin' : '']" />
-                      <span class="ml-1">重置状态</span>
+                      <span class="ml-1">ReinicioEstado</span>
                     </button>
                     <button
                       :class="[
@@ -1283,57 +1283,57 @@
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       ]"
                       :disabled="account.isTogglingSchedulable"
-                      :title="account.schedulable ? '点击禁用调度' : '点击启用调度'"
+                      :title="account.schedulable ? 'Clic para deshabilitar programación' : 'Clic para habilitar programación'"
                       @click="toggleSchedulable(account)"
                     >
                       <i :class="['fas', account.schedulable ? 'fa-toggle-on' : 'fa-toggle-off']" />
-                      <span class="ml-1">{{ account.schedulable ? '调度' : '停用' }}</span>
+                      <span class="ml-1">{{ account.schedulable ? 'Programar' : 'Deshabilitar' }}</span>
                     </button>
                     <button
                       v-if="canViewUsage(account)"
                       class="rounded bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-200"
-                      title="查看使用详情"
+                      title="Ver detalles de uso"
                       @click="openAccountUsageModal(account)"
                     >
                       <i class="fas fa-chart-line" />
-                      <span class="ml-1">详情</span>
+                      <span class="ml-1">Detalles</span>
                     </button>
                     <button
                       v-if="canTestAccount(account)"
                       class="rounded bg-cyan-100 px-2.5 py-1 text-xs font-medium text-cyan-700 transition-colors hover:bg-cyan-200 dark:bg-cyan-900/40 dark:text-cyan-300 dark:hover:bg-cyan-800/50"
-                      title="测试账户连通性"
+                      title="Probar conectividad de cuenta"
                       @click="openAccountTestModal(account)"
                     >
                       <i class="fas fa-vial" />
-                      <span class="ml-1">测试</span>
+                      <span class="ml-1">Probar</span>
                     </button>
                     <button
                       v-if="canTestAccount(account)"
                       class="rounded bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:hover:bg-amber-800/50"
-                      title="定时测试配置"
+                      title="ProgramadoConfiguración de prueba"
                       @click="openScheduledTestModal(account)"
                     >
                       <i class="fas fa-clock" />
-                      <span class="ml-1">定时</span>
+                      <span class="ml-1">Programado</span>
                     </button>
                     <button
                       class="rounded bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200"
-                      title="编辑账户"
+                      title="Editar cuenta"
                       @click="editAccount(account)"
                     >
                       <i class="fas fa-edit" />
-                      <span class="ml-1">编辑</span>
+                      <span class="ml-1">Editar</span>
                     </button>
                     <button
                       class="rounded bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200"
-                      title="删除账户"
+                      title="Eliminar cuenta"
                       @click="deleteAccount(account)"
                     >
                       <i class="fas fa-trash" />
-                      <span class="ml-1">删除</span>
+                      <span class="ml-1">Eliminar</span>
                     </button>
                   </div>
-                  <!-- 需要横向滚动时使用缩减形式：2个快捷按钮 + 下拉菜单 -->
+                  <!-- Usar forma reducida al necesitar desplazamiento horizontal: 2 botones de acceso directo + menú desplegable -->
                   <div v-else class="flex items-center gap-1">
                     <button
                       :class="[
@@ -1345,19 +1345,19 @@
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       ]"
                       :disabled="account.isTogglingSchedulable"
-                      :title="account.schedulable ? '点击禁用调度' : '点击启用调度'"
+                      :title="account.schedulable ? 'Clic para deshabilitar programación' : 'Clic para habilitar programación'"
                       @click="toggleSchedulable(account)"
                     >
                       <i :class="['fas', account.schedulable ? 'fa-toggle-on' : 'fa-toggle-off']" />
-                      <span class="ml-1">{{ account.schedulable ? '调度' : '停用' }}</span>
+                      <span class="ml-1">{{ account.schedulable ? 'Programar' : 'Deshabilitar' }}</span>
                     </button>
                     <button
                       class="rounded bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200"
-                      title="编辑账户"
+                      title="Editar cuenta"
                       @click="editAccount(account)"
                     >
                       <i class="fas fa-edit" />
-                      <span class="ml-1">编辑</span>
+                      <span class="ml-1">Editar</span>
                     </button>
                     <ActionDropdown :actions="getAccountActions(account)" />
                   </div>
@@ -1368,14 +1368,14 @@
         </div>
       </div>
 
-      <!-- 移动端卡片视图 -->
+      <!-- Vista de tarjetas móviles -->
       <div v-if="!accountsLoading && sortedAccounts.length > 0" class="space-y-3 md:hidden">
         <div
           v-for="account in paginatedAccounts"
           :key="account.id"
           class="card p-4 transition-shadow hover:shadow-lg"
         >
-          <!-- 卡片头部 -->
+          <!-- Cabecera de tarjeta -->
           <div class="mb-3 flex items-start justify-between">
             <div class="flex items-center gap-3">
               <input
@@ -1426,7 +1426,7 @@
               <div>
                 <h4
                   class="cursor-pointer text-sm font-semibold text-gray-900 hover:text-blue-600 dark:hover:text-blue-400"
-                  title="点击复制"
+                  title="Clic para copiar"
                   @click.stop="copyText(account.name || account.email)"
                 >
                   {{ account.name || account.email }}
@@ -1453,15 +1453,15 @@
             </span>
           </div>
 
-          <!-- 使用统计 -->
+          <!-- Estadísticas de uso -->
           <div class="mb-3 grid grid-cols-2 gap-3">
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">今日使用</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">Uso de hoy</p>
               <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-blue-500" />
                   <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {{ account.usage?.daily?.requests || 0 }} 次
+                    {{ account.usage?.daily?.requests || 0 }} veces
                   </p>
                 </div>
                 <div class="flex items-center gap-1.5">
@@ -1479,7 +1479,7 @@
               </div>
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400">会话窗口</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">Ventana de sesión</p>
               <div v-if="account.usage && account.usage.sessionWindow" class="space-y-1">
                 <div class="flex items-center gap-1.5">
                   <div class="h-1.5 w-1.5 rounded-full bg-purple-500" />
@@ -1498,9 +1498,9 @@
             </div>
           </div>
 
-          <!-- 余额/配额 -->
+          <!-- Saldo/Cuota -->
           <div class="mb-3">
-            <p class="mb-1 text-xs text-gray-500 dark:text-gray-400">余额/配额</p>
+            <p class="mb-1 text-xs text-gray-500 dark:text-gray-400">Saldo/Cuota</p>
             <BalanceDisplay
               :account-id="account.id"
               :initial-balance="account.balanceInfo"
@@ -1519,18 +1519,18 @@
                 class="text-blue-500 hover:underline dark:text-blue-300"
                 @click="openBalanceScriptModal(account)"
               >
-                配置余额脚本
+                Configurar script de saldo
               </button>
             </div>
           </div>
 
-          <!-- 状态信息 -->
+          <!-- Información de estado -->
           <div class="mb-3 space-y-2">
-            <!-- 会话窗口 -->
+            <!-- Ventana de sesión -->
             <div v-if="account.platform === 'claude'" class="space-y-2">
-              <!-- OAuth 账户：显示三窗口 OAuth usage -->
+              <!-- Cuenta OAuth: Mostrar uso de OAuth en tres ventanas -->
               <div v-if="isClaudeOAuth(account) && account.claudeUsage" class="space-y-2">
-                <!-- 5小时窗口 -->
+                <!-- Ventana de 5 horas -->
                 <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                   <div class="flex items-center gap-2">
                     <span
@@ -1560,10 +1560,10 @@
                     </div>
                   </div>
                   <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                    重置剩余 {{ formatClaudeRemaining(account.claudeUsage.fiveHour) }}
+                    Restante para reinicio {{ formatClaudeRemaining(account.claudeUsage.fiveHour) }}
                   </div>
                 </div>
-                <!-- 7天窗口 -->
+                <!-- Ventana de 7 días -->
                 <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                   <div class="flex items-center gap-2">
                     <span
@@ -1593,10 +1593,10 @@
                     </div>
                   </div>
                   <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                    重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDay) }}
+                    Restante para reinicio {{ formatClaudeRemaining(account.claudeUsage.sevenDay) }}
                   </div>
                 </div>
-                <!-- 7天Opus窗口 -->
+                <!-- Ventana Opus de 7 días -->
                 <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700/70">
                   <div class="flex items-center gap-2">
                     <span
@@ -1626,11 +1626,11 @@
                     </div>
                   </div>
                   <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                    重置剩余 {{ formatClaudeRemaining(account.claudeUsage.sevenDayOpus) }}
+                    Restante para reinicio {{ formatClaudeRemaining(account.claudeUsage.sevenDayOpus) }}
                   </div>
                 </div>
               </div>
-              <!-- Setup Token 账户：显示原有的会话窗口时间进度 -->
+              <!-- Setup Token cuenta：pantalla原conVentana de sesiónprogreso -->
               <div
                 v-else-if="
                   !isClaudeOAuth(account) &&
@@ -1641,9 +1641,9 @@
               >
                 <div class="flex items-center justify-between text-xs">
                   <div class="flex items-center gap-1">
-                    <span class="font-medium text-gray-600 dark:text-gray-300">会话窗口</span>
+                    <span class="font-medium text-gray-600 dark:text-gray-300">Ventana de sesión</span>
                     <el-tooltip
-                      content="会话窗口进度不代表使用量，仅表示距离下一个5小时窗口的剩余时间"
+                      content="Ventana de sesiónprogresono代表usar量，仅表示距离abajo一 Ventana de 5 horasRestante"
                       placement="top"
                     >
                       <i
@@ -1677,12 +1677,12 @@
                     v-if="account.sessionWindow.remainingTime > 0"
                     class="font-medium text-indigo-600"
                   >
-                    剩余 {{ formatRemainingTime(account.sessionWindow.remainingTime) }}
+                    Restante {{ formatRemainingTime(account.sessionWindow.remainingTime) }}
                   </span>
-                  <span v-else class="text-gray-500"> 已结束 </span>
+                  <span v-else class="text-gray-500"> Finalizado </span>
                 </div>
               </div>
-              <div v-else class="text-xs text-gray-400">暂无统计</div>
+              <div v-else class="text-xs text-gray-400">Sin estadísticas</div>
             </div>
             <div v-else-if="account.platform === 'openai'" class="space-y-2">
               <div v-if="account.codexUsage" class="space-y-2">
@@ -1715,7 +1715,7 @@
                     </div>
                   </div>
                   <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                    重置剩余 {{ formatCodexRemaining(account.codexUsage.primary) }}
+                    Restante para reinicio {{ formatCodexRemaining(account.codexUsage.primary) }}
                   </div>
                 </div>
                 <div class="rounded-lg bg-gray-50 p-2 dark:bg-gray-700">
@@ -1747,42 +1747,42 @@
                     </div>
                   </div>
                   <div class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                    重置剩余 {{ formatCodexRemaining(account.codexUsage.secondary) }}
+                    Restante para reinicio {{ formatCodexRemaining(account.codexUsage.secondary) }}
                   </div>
                 </div>
               </div>
-              <div v-if="!account.codexUsage" class="text-xs text-gray-400">暂无统计</div>
+              <div v-if="!account.codexUsage" class="text-xs text-gray-400">Sin estadísticas</div>
             </div>
 
-            <!-- 最后使用时间 -->
+            <!-- Último uso -->
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500 dark:text-gray-400">最后使用</span>
+              <span class="text-gray-500 dark:text-gray-400">Último uso</span>
               <span class="text-gray-700 dark:text-gray-200">
-                {{ account.lastUsedAt ? formatRelativeTime(account.lastUsedAt) : '从未使用' }}
+                {{ account.lastUsedAt ? formatRelativeTime(account.lastUsedAt) : 'Nunca usado' }}
               </span>
             </div>
 
-            <!-- 代理配置 -->
+            <!-- Configuración de proxy -->
             <div
               v-if="account.proxyConfig && account.proxyConfig.type !== 'none'"
               class="flex items-center justify-between text-xs"
             >
-              <span class="text-gray-500 dark:text-gray-400">代理</span>
+              <span class="text-gray-500 dark:text-gray-400">Proxy</span>
               <span class="text-gray-700 dark:text-gray-200">
                 {{ account.proxyConfig.type.toUpperCase() }}
               </span>
             </div>
 
-            <!-- 调度优先级 -->
+            <!-- ProgramarPrioridad -->
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500 dark:text-gray-400">优先级</span>
+              <span class="text-gray-500 dark:text-gray-400">Prioridad</span>
               <span class="font-medium text-gray-700 dark:text-gray-200">
                 {{ account.priority || 50 }}
               </span>
             </div>
           </div>
 
-          <!-- 操作按钮 -->
+          <!-- Botones de operaciones -->
           <div class="mt-3 flex gap-2 border-t border-gray-100 pt-3">
             <button
               class="flex flex-1 items-center justify-center gap-1 rounded-lg px-3 py-2 text-xs transition-colors"
@@ -1795,7 +1795,7 @@
               @click="toggleSchedulable(account)"
             >
               <i :class="['fas', account.schedulable ? 'fa-pause' : 'fa-play']" />
-              {{ account.schedulable ? '暂停' : '启用' }}
+              {{ account.schedulable ? 'Pausar' : 'Habilitar' }}
             </button>
 
             <button
@@ -1804,7 +1804,7 @@
               @click="openAccountUsageModal(account)"
             >
               <i class="fas fa-chart-line" />
-              详情
+              Detalles
             </button>
             <button
               v-if="canTestAccount(account)"
@@ -1812,7 +1812,7 @@
               @click="openAccountTestModal(account)"
             >
               <i class="fas fa-vial" />
-              测试
+              Probar
             </button>
 
             <button
@@ -1821,7 +1821,7 @@
               @click="openScheduledTestModal(account)"
             >
               <i class="fas fa-clock" />
-              定时
+              Programado
             </button>
 
             <button
@@ -1829,7 +1829,7 @@
               @click="editAccount(account)"
             >
               <i class="fas fa-edit mr-1" />
-              编辑
+              Editar
             </button>
 
             <button
@@ -1849,10 +1849,10 @@
     >
       <div class="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
         <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">
-          共 {{ sortedAccounts.length }} 条记录
+          Total de {{ sortedAccounts.length }} registros
         </span>
         <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">每页显示</span>
+          <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">Mostrar por página</span>
           <select
             v-model="pageSize"
             class="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 sm:text-sm"
@@ -1862,7 +1862,7 @@
               {{ size }}
             </option>
           </select>
-          <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">条</span>
+          <span class="text-xs text-gray-600 dark:text-gray-400 sm:text-sm">registros</span>
         </div>
       </div>
 
@@ -1931,7 +1931,7 @@
       </div>
     </div>
 
-    <!-- 添加账户模态框 -->
+    <!-- Modal de agregar cuenta -->
     <AccountForm
       v-if="showCreateAccountModal && (!newAccountPlatform || newAccountPlatform !== 'ccr')"
       @close="closeCreateAccountModal"
@@ -1944,7 +1944,7 @@
       @success="handleCreateSuccess"
     />
 
-    <!-- 编辑账户模态框 -->
+    <!-- Modal de editar cuenta -->
     <CcrAccountForm
       v-if="showEditAccountModal && editingAccount && editingAccount.platform === 'ccr'"
       :account="editingAccount"
@@ -1958,7 +1958,7 @@
       @success="handleEditSuccess"
     />
 
-    <!-- 确认弹窗 -->
+    <!-- Ventana emergente de confirmación -->
     <ConfirmModal
       :cancel-text="confirmOptions.cancelText"
       :confirm-text="confirmOptions.confirmText"
@@ -1981,7 +1981,7 @@
       @close="closeAccountUsageModal"
     />
 
-    <!-- 账户过期时间编辑弹窗 -->
+    <!-- cuentaexpirarEditarventana emergente -->
     <AccountExpiryEditModal
       ref="expiryEditModalRef"
       :account="editingExpiryAccount || { id: null, expiresAt: null, name: '' }"
@@ -1990,14 +1990,14 @@
       @save="handleSaveAccountExpiry"
     />
 
-    <!-- 账户测试弹窗 -->
+    <!-- Ventana emergente de prueba de cuenta -->
     <AccountTestModal
       :account="testingAccount"
       :show="showAccountTestModal"
       @close="closeAccountTestModal"
     />
 
-    <!-- 定时测试配置弹窗 -->
+    <!-- Ventana emergente de configuración de prueba programada -->
     <AccountScheduledTestModal
       :account="scheduledTestAccount"
       :show="showScheduledTestModal"
@@ -2012,11 +2012,11 @@
       @saved="handleBalanceScriptSaved"
     />
 
-    <!-- 账户统计弹窗 -->
+    <!-- Ventana emergente de estadísticas de cuenta -->
     <el-dialog
       v-model="showAccountStatsModal"
       :style="{ maxWidth: '1200px' }"
-      title="账户统计汇总"
+      title="Resumen de estadísticas de cuentas"
       width="90%"
     >
       <div class="space-y-4">
@@ -2025,36 +2025,36 @@
             <thead class="bg-gray-100 dark:bg-gray-700">
               <tr>
                 <th class="border border-gray-300 px-4 py-2 text-left dark:border-gray-600">
-                  平台类型
+                  Tipo de plataforma
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  正常
+                  Normal
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  不可调度
+                  No programable
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  限流0-1h
+                  limitación0-1h
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  限流1-5h
+                  limitación1-5h
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  限流5-12h
+                  limitación5-12h
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  限流12-24h
+                  limitación12-24h
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  限流>24h
+                  limitación>24h
                 </th>
                 <th class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
-                  其他
+                  Otro
                 </th>
                 <th
                   class="border border-gray-300 bg-blue-50 px-4 py-2 text-center font-bold dark:border-gray-600 dark:bg-blue-900/30"
                 >
-                  合计
+                  Total
                 </th>
               </tr>
             </thead>
@@ -2100,7 +2100,7 @@
                 </td>
               </tr>
               <tr class="bg-blue-50 font-bold dark:bg-blue-900/30">
-                <td class="border border-gray-300 px-4 py-2 dark:border-gray-600">合计</td>
+                <td class="border border-gray-300 px-4 py-2 dark:border-gray-600">Total</td>
                 <td class="border border-gray-300 px-4 py-2 text-center dark:border-gray-600">
                   <span class="text-green-600 dark:text-green-400">{{
                     accountStatsTotal.normal
@@ -2147,12 +2147,12 @@
           </table>
         </div>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          注：限流时间列表示剩余限流时间在指定范围内的账户数量
+          注：limitaciónlista示Restantelimitaciónen指定rangodentrocuentacantidad
         </p>
       </div>
     </el-dialog>
 
-    <!-- 分组管理弹窗 -->
+    <!-- Gruposadministrarventana emergente -->
     <GroupManagementModal
       v-if="showGroupManagementModal"
       @close="showGroupManagementModal = false"
@@ -2179,11 +2179,11 @@ import GroupManagementModal from '@/components/accounts/GroupManagementModal.vue
 import BalanceDisplay from '@/components/accounts/BalanceDisplay.vue'
 import AccountBalanceScriptModal from '@/components/accounts/AccountBalanceScriptModal.vue'
 
-// 确认弹窗状态
+// Ventana emergente de confirmaciónEstado
 const showConfirmModal = ref(false)
-const confirmOptions = ref({ title: '', message: '', confirmText: '继续', cancelText: '取消' })
+const confirmOptions = ref({ title: '', message: '', confirmText: 'Continuar', cancelText: 'Cancelar' })
 let confirmResolve = null
-const showConfirm = (title, message, confirmText = '继续', cancelText = '取消') => {
+const showConfirm = (title, message, confirmText = 'Continuar', cancelText = 'Cancelar') => {
   return new Promise((resolve) => {
     confirmOptions.value = { title, message, confirmText, cancelText }
     confirmResolve = resolve
@@ -2201,18 +2201,18 @@ const handleCancel = () => {
   confirmResolve = null
 }
 
-// 数据状态
+// datosEstado
 const accounts = ref([])
 const accountsLoading = ref(false)
 const refreshingBalances = ref(false)
 const accountsSortBy = ref('name')
 const accountsSortOrder = ref('asc')
-const apiKeys = ref([]) // 保留用于其他功能（如删除账户时显示绑定信息）
-const bindingCounts = ref({}) // 轻量级绑定计数，用于显示"绑定: X 个API Key"
+const apiKeys = ref([]) // 保留usar于Otrofunción（comoEliminar cuentacuandopantallavincularinformación）
+const bindingCounts = ref({}) // 轻量级vincular计数，usar于pantalla"vincular: X  API Key"
 const accountGroups = ref([])
 const groupFilter = ref('all')
 const platformFilter = ref('all')
-const statusFilter = ref('all') // 状态过滤 (normal/rateLimited/other/all)
+const statusFilter = ref('all') // Estado过滤 (normal/rateLimited/other/all)
 const searchKeyword = ref('')
 const PAGE_SIZE_STORAGE_KEY = 'accountsPageSize'
 const getInitialPageSize = () => {
@@ -2229,13 +2229,13 @@ const pageSizeOptions = [10, 20, 50, 100]
 const pageSize = ref(getInitialPageSize())
 const currentPage = ref(1)
 
-// 多选状态
+// 多选Estado
 const selectedAccounts = ref([])
 const selectAllChecked = ref(false)
 const isIndeterminate = ref(false)
 const showCheckboxes = ref(false)
 
-// 账号使用详情弹窗状态
+// 账号usarDetallesventana emergenteEstado
 const showAccountUsageModal = ref(false)
 const accountUsageLoading = ref(false)
 const selectedAccountForUsage = ref(null)
@@ -2255,50 +2255,50 @@ const supportedUsagePlatforms = [
   'bedrock'
 ]
 
-// 过期时间编辑弹窗状态
+// expirarEditarventana emergenteEstado
 const editingExpiryAccount = ref(null)
 const expiryEditModalRef = ref(null)
 
-// 测试弹窗状态
+// Probarventana emergenteEstado
 const showAccountTestModal = ref(false)
 const testingAccount = ref(null)
 
-// 定时测试配置弹窗状态
+// Ventana emergente de configuración de prueba programadaEstado
 const showScheduledTestModal = ref(false)
 const scheduledTestAccount = ref(null)
 
-// 账户统计弹窗状态
+// Ventana emergente de estadísticas de cuentaEstado
 const showAccountStatsModal = ref(false)
 
-// 分组管理弹窗状态
+// Gruposadministrarventana emergenteEstado
 const showGroupManagementModal = ref(false)
 
-// 表格横向滚动检测
+// tabla横向desplazamientodetectar
 const tableContainerRef = ref(null)
 const needsHorizontalScroll = ref(false)
 
-// 缓存状态标志
-const apiKeysLoaded = ref(false) // 用于其他功能
-const bindingCountsLoaded = ref(false) // 轻量级绑定计数缓存
+// cachéEstado标志
+const apiKeysLoaded = ref(false) // usar于Otrofunción
+const bindingCountsLoaded = ref(false) // 轻量级vincular计数caché
 const groupsLoaded = ref(false)
 const groupMembersLoaded = ref(false)
 const accountGroupMap = ref(new Map()) // Map<accountId, Array<groupInfo>>
 
-// 下拉选项数据
+// abajo拉opcióndatos
 const sortOptions = ref([
-  { value: 'name', label: '按名称排序', icon: 'fa-font' },
-  { value: 'dailyTokens', label: '按今日Token排序', icon: 'fa-coins' },
-  { value: 'dailyRequests', label: '按今日请求数排序', icon: 'fa-chart-line' },
-  { value: 'totalTokens', label: '按总Token排序', icon: 'fa-database' },
-  { value: 'lastUsed', label: '按最后使用排序', icon: 'fa-clock' },
-  { value: 'rateLimitTime', label: '按限流时间排序', icon: 'fa-hourglass' }
+  { value: 'name', label: '按Nombreordenar', icon: 'fa-font' },
+  { value: 'dailyTokens', label: '按HoyTokenordenar', icon: 'fa-coins' },
+  { value: 'dailyRequests', label: '按Hoysolicitud数ordenar', icon: 'fa-chart-line' },
+  { value: 'totalTokens', label: '按总Tokenordenar', icon: 'fa-database' },
+  { value: 'lastUsed', label: '按Último usoordenar', icon: 'fa-clock' },
+  { value: 'rateLimitTime', label: '按limitaciónordenar', icon: 'fa-hourglass' }
 ])
 
-// 平台层级结构定义
+// plataformajerarquía结构definición
 const platformHierarchy = [
   {
     value: 'group-claude',
-    label: 'Claude（全部）',
+    label: 'Claude（todo）',
     icon: 'fa-brain',
     children: [
       { value: 'claude', label: 'Claude 官方/OAuth', icon: 'fa-brain' },
@@ -2309,7 +2309,7 @@ const platformHierarchy = [
   },
   {
     value: 'group-openai',
-    label: 'Codex / OpenAI（全部）',
+    label: 'Codex / OpenAI（todo）',
     icon: 'fa-openai',
     children: [
       { value: 'openai', label: 'OpenAI 官方', icon: 'fa-openai' },
@@ -2319,7 +2319,7 @@ const platformHierarchy = [
   },
   {
     value: 'group-gemini',
-    label: 'Gemini（全部）',
+    label: 'Gemini（todo）',
     icon: 'fab fa-google',
     children: [
       { value: 'gemini', label: 'Gemini OAuth', icon: 'fab fa-google' },
@@ -2328,13 +2328,13 @@ const platformHierarchy = [
   },
   {
     value: 'group-droid',
-    label: 'Droid（全部）',
+    label: 'Droid（todo）',
     icon: 'fa-robot',
     children: [{ value: 'droid', label: 'Droid', icon: 'fa-robot' }]
   }
 ]
 
-// 平台分组映射
+// plataformaGruposmapear
 const platformGroupMap = {
   'group-claude': ['claude', 'claude-console', 'bedrock', 'ccr'],
   'group-openai': ['openai', 'openai-responses', 'azure_openai'],
@@ -2342,7 +2342,7 @@ const platformGroupMap = {
   'group-droid': ['droid']
 }
 
-// 平台请求处理器
+// plataformasolicitudmanejo器
 const platformRequestHandlers = {
   claude: () => httpApis.getClaudeAccountsApi(),
   'claude-console': () => httpApis.getClaudeConsoleAccountsApi(),
@@ -2358,7 +2358,7 @@ const platformRequestHandlers = {
 
 const allPlatformKeys = Object.keys(platformRequestHandlers)
 
-// 根据过滤器获取需要加载的平台列表
+// 根据filtroobtenernecesita要cargarplataformalista
 const getPlatformsForFilter = (filter) => {
   if (filter === 'all') return allPlatformKeys
   if (platformGroupMap[filter]) return platformGroupMap[filter]
@@ -2366,9 +2366,9 @@ const getPlatformsForFilter = (filter) => {
   return allPlatformKeys
 }
 
-// 平台选项（两级结构）
+// plataformaopción（两级结构）
 const platformOptions = computed(() => {
-  const options = [{ value: 'all', label: '所有平台', icon: 'fa-globe', indent: 0 }]
+  const options = [{ value: 'all', label: 'todosplataforma', icon: 'fa-globe', indent: 0 }]
 
   platformHierarchy.forEach((group) => {
     options.push({ ...group, indent: 0, isGroup: true })
@@ -2381,17 +2381,17 @@ const platformOptions = computed(() => {
 })
 
 const statusOptions = ref([
-  { value: 'normal', label: '正常', icon: 'fa-check-circle' },
-  { value: 'unschedulable', label: '不可调度', icon: 'fa-ban' },
-  { value: 'rateLimited', label: '限流', icon: 'fa-hourglass-half' },
-  { value: 'other', label: '其他', icon: 'fa-exclamation-triangle' },
-  { value: 'all', label: '全部状态', icon: 'fa-list' }
+  { value: 'normal', label: 'Normal', icon: 'fa-check-circle' },
+  { value: 'unschedulable', label: 'No programable', icon: 'fa-ban' },
+  { value: 'rateLimited', label: 'limitación', icon: 'fa-hourglass-half' },
+  { value: 'other', label: 'Otro', icon: 'fa-exclamation-triangle' },
+  { value: 'all', label: 'todoEstado', icon: 'fa-list' }
 ])
 
 const groupOptions = computed(() => {
   const options = [
-    { value: 'all', label: '所有账户', icon: 'fa-globe' },
-    { value: 'ungrouped', label: '未分组账户', icon: 'fa-user' }
+    { value: 'all', label: 'todoscuenta', icon: 'fa-globe' },
+    { value: 'ungrouped', label: 'sinGruposcuenta', icon: 'fa-user' }
   ]
   accountGroups.value.forEach((group) => {
     options.push({
@@ -2412,9 +2412,9 @@ const groupOptions = computed(() => {
 
 const shouldShowCheckboxes = computed(() => showCheckboxes.value)
 
-// 模态框状态
+// modalEstado
 const showCreateAccountModal = ref(false)
-const newAccountPlatform = ref(null) // 跟踪新建账户选择的平台
+const newAccountPlatform = ref(null) // 跟踪新建cuentaSeleccionarplataforma
 const showEditAccountModal = ref(false)
 const editingAccount = ref(null)
 
@@ -2480,7 +2480,7 @@ const accountMatchesKeyword = (account, normalizedKeyword) => {
 
 const canViewUsage = (account) => !!account && supportedUsagePlatforms.includes(account.platform)
 
-// 判断是否显示重置状态按钮
+// 判断es否pantallaReinicioEstadobotón
 const showResetButton = (account) => {
   const supportedPlatforms = [
     'claude',
@@ -2501,54 +2501,54 @@ const showResetButton = (account) => {
   )
 }
 
-// 获取账户操作菜单项（用于小屏下拉菜单）
+// obtenercuentaOperacionesmenú项（usar于小屏abajo拉menú）
 const getAccountActions = (account) => {
   const actions = []
 
-  // 重置状态（仅在需要时显示）
+  // ReinicioEstado（仅ennecesita要cuandopantalla）
   if (showResetButton(account)) {
     actions.push({
       key: 'reset',
-      label: '重置状态',
+      label: 'ReinicioEstado',
       icon: 'fa-redo',
       color: 'orange',
       handler: () => resetAccountStatus(account)
     })
   }
 
-  // 查看详情
+  // verDetalles
   if (canViewUsage(account)) {
     actions.push({
       key: 'usage',
-      label: '详情',
+      label: 'Detalles',
       icon: 'fa-chart-line',
       color: 'indigo',
       handler: () => openAccountUsageModal(account)
     })
   }
 
-  // 测试账户
+  // Probarcuenta
   if (canTestAccount(account)) {
     actions.push({
       key: 'test',
-      label: '测试',
+      label: 'Probar',
       icon: 'fa-vial',
       color: 'blue',
       handler: () => openAccountTestModal(account)
     })
     actions.push({
       key: 'scheduled-test',
-      label: '定时测试',
+      label: 'ProgramadoProbar',
       icon: 'fa-clock',
       color: 'amber',
       handler: () => openScheduledTestModal(account)
     })
   }
 
-  // 删除
+  // Eliminar
   actions.push({
     key: 'delete',
-    label: '删除',
+    label: 'Eliminar',
     icon: 'fa-trash',
     color: 'red',
     handler: () => deleteAccount(account)
@@ -2559,7 +2559,7 @@ const getAccountActions = (account) => {
 
 const openAccountUsageModal = async (account) => {
   if (!canViewUsage(account)) {
-    showToast('该账户类型暂不支持查看详情', 'warning')
+    showToast('该cuentatipo暂nosoportarverDetalles', 'warning')
     return
   }
 
@@ -2579,7 +2579,7 @@ const openAccountUsageModal = async (account) => {
     accountUsageOverview.value = data.overview || {}
     accountUsageGeneratedAt.value = data.generatedAt || ''
   } else {
-    showToast(response.error || '加载账号使用详情失败', 'error')
+    showToast(response.error || 'cargar账号usarDetallesfallido', 'error')
   }
   accountUsageLoading.value = false
 }
@@ -2590,7 +2590,7 @@ const closeAccountUsageModal = () => {
   selectedAccountForUsage.value = null
 }
 
-// 测试账户连通性相关函数
+// Probar conectividad de cuenta相关función
 const supportedTestPlatforms = [
   'claude',
   'claude-console',
@@ -2608,7 +2608,7 @@ const canTestAccount = (account) => {
 
 const openAccountTestModal = (account) => {
   if (!canTestAccount(account)) {
-    showToast('该账户类型暂不支持测试', 'warning')
+    showToast('该cuentatipo暂nosoportarProbar', 'warning')
     return
   }
   testingAccount.value = account
@@ -2620,10 +2620,10 @@ const closeAccountTestModal = () => {
   testingAccount.value = null
 }
 
-// 定时测试配置相关函数
+// ProgramadoConfiguración de prueba相关función
 const openScheduledTestModal = (account) => {
   if (!canTestAccount(account)) {
-    showToast('该账户类型暂不支持定时测试', 'warning')
+    showToast('该cuentatipo暂nosoportarProgramadoProbar', 'warning')
     return
   }
   scheduledTestAccount.value = account
@@ -2636,10 +2636,10 @@ const closeScheduledTestModal = () => {
 }
 
 const handleScheduledTestSaved = () => {
-  showToast('定时测试配置已保存', 'success')
+  showToast('ProgramadoConfiguración de pruebayaguardar', 'success')
 }
 
-// 余额脚本配置
+// saldoscriptconfigurar
 const showBalanceScriptModal = ref(false)
 const selectedAccountForScript = ref(null)
 
@@ -2654,7 +2654,7 @@ const closeBalanceScriptModal = () => {
 }
 
 const handleBalanceScriptSaved = async () => {
-  showToast('余额脚本已保存', 'success')
+  showToast('saldoscriptyaguardar', 'success')
   const account = selectedAccountForScript.value
   closeBalanceScriptModal()
 
@@ -2662,7 +2662,7 @@ const handleBalanceScriptSaved = async () => {
     return
   }
 
-  // 重新拉取一次余额信息，用于刷新 scriptConfigured 状态（启用"刷新余额"按钮）
+  // volver atirar一vecessaldoinformación，usar于Actualizar scriptConfigured Estado（Habilitar"Actualizar saldo"botón）
   try {
     const res = await httpApis.getAccountBalanceApi(account.id, {
       platform: account.platform,
@@ -2676,7 +2676,7 @@ const handleBalanceScriptSaved = async () => {
   }
 }
 
-// 计算排序后的账户列表
+// calcularordenardespués decuentalista
 const sortedAccounts = computed(() => {
   let sourceAccounts = accounts.value
 
@@ -2688,27 +2688,27 @@ const sortedAccounts = computed(() => {
     )
   }
 
-  // 状态过滤 (normal/unschedulable/rateLimited/other/all)
-  // 限流: isActive && rate-limited (最高优先级)
-  // 正常: isActive && !rate-limited && !blocked && schedulable
-  // 不可调度: isActive && !rate-limited && !blocked && schedulable === false
-  // 其他: 非限流的（未激活 || 被阻止）
+  // Estado过滤 (normal/unschedulable/rateLimited/other/all)
+  // limitación: isActive && rate-limited (最高Prioridad)
+  // Normal: isActive && !rate-limited && !blocked && schedulable
+  // No programable: isActive && !rate-limited && !blocked && schedulable === false
+  // Otro: nolimitación（sinactivar || 被prevenir）
   if (statusFilter.value !== 'all') {
     sourceAccounts = sourceAccounts.filter((account) => {
       const isRateLimited = isAccountRateLimited(account)
       const isBlocked = account.status === 'blocked' || account.status === 'unauthorized'
 
       if (statusFilter.value === 'rateLimited') {
-        // 限流: 激活且限流中（优先判断）
+        // limitación: activaryLimitando（优先判断）
         return account.isActive && isRateLimited
       } else if (statusFilter.value === 'normal') {
-        // 正常: 激活且非限流且非阻止且可调度
+        // Normal: activarynolimitaciónynopreveniry可Programar
         return account.isActive && !isRateLimited && !isBlocked && account.schedulable !== false
       } else if (statusFilter.value === 'unschedulable') {
-        // 不可调度: 激活且非限流且非阻止但不可调度
+        // No programable: activarynolimitaciónynoprevenirperoNo programable
         return account.isActive && !isRateLimited && !isBlocked && account.schedulable === false
       } else if (statusFilter.value === 'other') {
-        // 其他: 非限流的异常账户（未激活或被阻止）
+        // Otro: nolimitaciónAnormalcuenta（sinactivaro被prevenir）
         return !isRateLimited && (!account.isActive || isBlocked)
       }
       return true
@@ -2721,7 +2721,7 @@ const sortedAccounts = computed(() => {
     let aVal = a[accountsSortBy.value]
     let bVal = b[accountsSortBy.value]
 
-    // 处理统计数据
+    // manejoEstadísticasdatos
     if (accountsSortBy.value === 'dailyTokens') {
       aVal = a.usage?.daily?.allTokens || 0
       bVal = b.usage?.daily?.allTokens || 0
@@ -2733,30 +2733,30 @@ const sortedAccounts = computed(() => {
       bVal = b.usage?.total?.allTokens || 0
     }
 
-    // 处理最后使用时间
+    // manejoÚltimo uso
     if (accountsSortBy.value === 'lastUsed') {
       aVal = a.lastUsedAt ? new Date(a.lastUsedAt).getTime() : 0
       bVal = b.lastUsedAt ? new Date(b.lastUsedAt).getTime() : 0
     }
 
-    // 处理状态
+    // manejoEstado
     if (accountsSortBy.value === 'status') {
       aVal = a.isActive ? 1 : 0
       bVal = b.isActive ? 1 : 0
     }
 
-    // 处理限流时间排序: 未限流优先，然后按剩余时间从小到大
+    // manejolimitaciónordenar: sinlimitación优先，然después de按Restantedesde小a大
     if (accountsSortBy.value === 'rateLimitTime') {
       const aIsRateLimited = isAccountRateLimited(a)
       const bIsRateLimited = isAccountRateLimited(b)
       const aMinutes = aIsRateLimited ? getRateLimitRemainingMinutes(a) : 0
       const bMinutes = bIsRateLimited ? getRateLimitRemainingMinutes(b) : 0
 
-      // 未限流的排在前面
+      // sinlimitación排enantes de面
       if (!aIsRateLimited && bIsRateLimited) return -1
       if (aIsRateLimited && !bIsRateLimited) return 1
 
-      // 都未限流或都限流时，按剩余时间升序
+      // 都sinlimitacióno都limitacióncuando，按Restante升序
       if (aMinutes < bMinutes) return -1
       if (aMinutes > bMinutes) return 1
       return 0
@@ -2775,7 +2775,7 @@ const totalPages = computed(() => {
   return Math.ceil(total / pageSize.value) || 0
 })
 
-// 账户统计数据（按平台和状态分类）
+// cuentaEstadísticasdatos（按plataformayEstado分clase）
 const accountStats = computed(() => {
   const platforms = [
     { value: 'claude', label: 'Claude' },
@@ -2794,24 +2794,24 @@ const accountStats = computed(() => {
     .map((p) => {
       const platformAccounts = accounts.value.filter((acc) => acc.platform === p.value)
 
-      // 先筛选限流账户（优先级最高）
+      // 先filtrarlimitacióncuenta（Prioridad最高）
       const rateLimitedAccounts = platformAccounts.filter((acc) => isAccountRateLimited(acc))
 
-      // 正常: 非限流 && 激活 && 非阻止 && 可调度
+      // Normal: nolimitación && activar && noprevenir && 可Programar
       const normal = platformAccounts.filter((acc) => {
         const isRateLimited = isAccountRateLimited(acc)
         const isBlocked = acc.status === 'blocked' || acc.status === 'unauthorized'
         return !isRateLimited && acc.isActive && !isBlocked && acc.schedulable !== false
       }).length
 
-      // 不可调度: 非限流 && 激活 && 非阻止 && 不可调度
+      // No programable: nolimitación && activar && noprevenir && No programable
       const unschedulable = platformAccounts.filter((acc) => {
         const isRateLimited = isAccountRateLimited(acc)
         const isBlocked = acc.status === 'blocked' || acc.status === 'unauthorized'
         return !isRateLimited && acc.isActive && !isBlocked && acc.schedulable === false
       }).length
 
-      // 其他: 非限流的异常账户（未激活或被阻止）
+      // Otro: nolimitaciónAnormalcuenta（sinactivaro被prevenir）
       const other = platformAccounts.filter((acc) => {
         const isRateLimited = isAccountRateLimited(acc)
         const isBlocked = acc.status === 'blocked' || acc.status === 'unauthorized'
@@ -2857,10 +2857,10 @@ const accountStats = computed(() => {
         total: platformAccounts.length
       }
     })
-    .filter((stat) => stat.total > 0) // 只显示有账户的平台
+    .filter((stat) => stat.total > 0) // 只pantallaconcuentaplataforma
 })
 
-// 账户统计合计
+// cuentaEstadísticasTotal
 const accountStatsTotal = computed(() => {
   return accountStats.value.reduce(
     (total, stat) => {
@@ -2959,13 +2959,13 @@ const canRefreshVisibleBalances = computed(() => {
 })
 
 const refreshBalanceTooltip = computed(() => {
-  if (accountsLoading.value) return '正在加载账户...'
-  if (refreshingBalances.value) return '刷新中...'
-  if (!canRefreshVisibleBalances.value) return '当前页未配置余额脚本，无法刷新'
-  return '刷新当前页余额（仅对已配置余额脚本的账户生效）'
+  if (accountsLoading.value) return 'Cargando cuentas...'
+  if (refreshingBalances.value) return 'Actualizaren...'
+  if (!canRefreshVisibleBalances.value) return '当antes de页sinConfigurar script de saldo，sin法Actualizar'
+  return 'Actualizar当antes de页saldo（仅paryaConfigurar script de saldocuenta生效）'
 })
 
-// 余额刷新成功回调
+// saldoActualizarexitosodevolución de llamada
 const handleBalanceRefreshed = (accountId, balanceInfo) => {
   accounts.value = accounts.value.map((account) => {
     if (account.id !== accountId) return account
@@ -2973,13 +2973,13 @@ const handleBalanceRefreshed = (accountId, balanceInfo) => {
   })
 }
 
-// 余额请求错误回调（仅提示，不中断页面）
+// saldosolicitudincorrectodevolución de llamada（仅sugerencia，nointerrumpirpágina）
 const handleBalanceError = (_accountId, error) => {
-  const message = error?.message || '余额查询失败'
+  const message = error?.message || 'saldoconsultafallido'
   showToast(message, 'error')
 }
 
-// 批量刷新当前页余额（触发查询）
+// loteActualizar当antes de页saldo（activarconsulta）
 const refreshVisibleBalances = async () => {
   if (refreshingBalances.value) return
 
@@ -2994,7 +2994,7 @@ const refreshVisibleBalances = async () => {
   })
 
   if (eligibleTargets.length === 0) {
-    showToast('当前页没有配置余额脚本的账户', 'warning')
+    showToast('当antes de页没conConfigurar script de saldocuenta', 'warning')
     return
   }
 
@@ -3010,7 +3010,7 @@ const refreshVisibleBalances = async () => {
           })
           return { id: account.id, success: !!response?.success, data: response?.data || null }
         } catch (error) {
-          return { id: account.id, success: false, error: error?.message || '刷新失败' }
+          return { id: account.id, success: false, error: error?.message || 'Actualizarfallido' }
         }
       })
     )
@@ -3025,7 +3025,7 @@ const refreshVisibleBalances = async () => {
     const successCount = results.filter((r) => r.success).length
     const failCount = results.length - successCount
 
-    const skippedText = skippedCount > 0 ? `，跳过 ${skippedCount} 个未配置脚本` : ''
+    const skippedText = skippedCount > 0 ? `，跳过 ${skippedCount}  No configuradoscript` : ''
     if (Object.keys(updatedMap).length > 0) {
       accounts.value = accounts.value.map((account) => {
         const balanceInfo = updatedMap[account.id]
@@ -3035,9 +3035,9 @@ const refreshVisibleBalances = async () => {
     }
 
     if (failCount === 0) {
-      showToast(`成功刷新 ${successCount} 个账户余额${skippedText}`, 'success')
+      showToast(`exitosoActualizar ${successCount}  cuentasaldo${skippedText}`, 'success')
     } else {
-      showToast(`刷新完成：${successCount} 成功，${failCount} 失败${skippedText}`, 'warning')
+      showToast(`Actualizarcompletado：${successCount} exitoso，${failCount} fallido${skippedText}`, 'warning')
     }
   } finally {
     refreshingBalances.value = false
@@ -3094,7 +3094,7 @@ const cleanupSelectedAccounts = () => {
   updateSelectAllState()
 }
 
-// 异步加载余额缓存（按平台批量拉取，避免逐行请求）
+// asincrónicocargarsaldocaché（按plataformalotetirar，避免逐行solicitud）
 const loadBalanceCacheForAccounts = async () => {
   const current = accounts.value
   if (!Array.isArray(current) || current.length === 0) {
@@ -3140,11 +3140,11 @@ const loadBalanceCacheForAccounts = async () => {
   }))
 }
 
-// 加载账户列表
+// cargarcuentalista
 const loadAccounts = async (forceReload = false) => {
   accountsLoading.value = true
   try {
-    // 构建查询参数（用于其他筛选情况）
+    // 构建consultaparámetro（usar于Otrofiltrarsituación）
     const params = {}
     if (platformFilter.value !== 'all' && !platformGroupMap[platformFilter.value]) {
       params.platform = platformFilter.value
@@ -3155,10 +3155,10 @@ const loadAccounts = async (forceReload = false) => {
 
     const platformsToFetch = getPlatformsForFilter(platformFilter.value)
 
-    // 使用缓存机制加载绑定计数和分组数据（不再加载完整的 API Keys 数据）
+    // usarcaché机制cargarvincular计数yGruposdatos（no再cargar完整 API Keys datos）
     await Promise.all([loadBindingCounts(forceReload), loadAccountGroups(forceReload)])
 
-    // 后端账户API已经包含分组信息，不需要单独加载分组成员关系
+    // backendcuentaAPIya经incluirGruposinformación，nonecesita要单独cargarGruposmiembro关系
     // await loadGroupMembers(forceReload)
 
     const platformResults = await Promise.all(
@@ -3277,21 +3277,21 @@ const loadAccounts = async (forceReload = false) => {
       allAccounts.push(...responsesAccounts)
     }
 
-    // 根据分组筛选器过滤账户
+    // 根据Filtro de grupos过滤cuenta
     let filteredAccounts = allAccounts
     if (groupFilter.value !== 'all') {
       if (groupFilter.value === 'ungrouped') {
-        // 筛选未分组的账户（没有 groupInfos 或 groupInfos 为空数组）
+        // filtrarsinGruposcuenta（没con groupInfos o groupInfos para空arreglo）
         filteredAccounts = allAccounts.filter((account) => {
           return !account.groupInfos || account.groupInfos.length === 0
         })
       } else {
-        // 筛选属于特定分组的账户
+        // filtrar属于特定Gruposcuenta
         filteredAccounts = allAccounts.filter((account) => {
           if (!account.groupInfos || account.groupInfos.length === 0) {
             return false
           }
-          // 检查账户是否属于选中的分组
+          // verificarcuentaes否属于seleccionadoGrupos
           return account.groupInfos.some((group) => group.id === groupFilter.value)
         })
       }
@@ -3308,25 +3308,25 @@ const loadAccounts = async (forceReload = false) => {
     accounts.value = filteredAccounts
     cleanupSelectedAccounts()
 
-    // 异步加载 Claude OAuth 账户的 usage 数据
+    // asincrónicocargar Cuenta Claude OAuth usage datos
     if (filteredAccounts.some((acc) => acc.platform === 'claude')) {
       loadClaudeUsage().catch((err) => {
         console.debug('Claude usage loading failed:', err)
       })
     }
 
-    // 异步加载余额缓存（按平台批量）
+    // asincrónicocargarsaldocaché（按plataformalote）
     loadBalanceCacheForAccounts().catch((err) => {
       console.debug('Balance cache loading failed:', err)
     })
   } catch (error) {
-    showToast('加载账户失败', 'error')
+    showToast('cargarcuentafallido', 'error')
   } finally {
     accountsLoading.value = false
   }
 }
 
-// 异步加载 Claude 账户的 Usage 数据
+// asincrónicocargar Claude cuenta Usage datos
 const loadClaudeUsage = async () => {
   const response = await httpApis.getClaudeAccountsUsageApi()
   if (response.success && response.data) {
@@ -3340,10 +3340,10 @@ const loadClaudeUsage = async () => {
   }
 }
 
-// 记录上一次的排序字段，用于判断下拉选择是否是同一字段被再次选择
+// registrararriba一vecesordenarcampo，usar于判断abajo拉Seleccionares否es同一campo被再vecesSeleccionar
 let lastDropdownSortField = 'name'
 
-// 排序账户（表头点击使用）
+// ordenarcuenta（表头clicusar）
 const sortAccounts = (field) => {
   if (field) {
     if (accountsSortBy.value === field) {
@@ -3352,37 +3352,37 @@ const sortAccounts = (field) => {
       accountsSortBy.value = field
       accountsSortOrder.value = 'asc'
     }
-    // 同步下拉选择器的状态记录
+    // sincronizarabajo拉Seleccionar器Estadoregistrar
     lastDropdownSortField = field
   }
 }
 
-// 下拉选择器排序处理（支持再次选择同一选项时切换排序方向）
+// abajo拉Seleccionar器ordenarmanejo（soportar再vecesSeleccionar同一opcióncuando切换ordenar方向）
 const handleDropdownSort = (field) => {
   if (field === lastDropdownSortField) {
-    // 选择同一字段，切换排序方向
+    // Seleccionar同一campo，切换ordenar方向
     accountsSortOrder.value = accountsSortOrder.value === 'asc' ? 'desc' : 'asc'
   } else {
-    // 选择不同字段，重置为升序
+    // Seleccionarno同campo，Reiniciopara升序
     accountsSortOrder.value = 'asc'
   }
   lastDropdownSortField = field
 }
 
-// 格式化数字（与原版保持一致）
+// formato化数字（de原版保持一致）
 
-// 格式化最后使用时间
+// formato化Último uso
 const formatLastUsed = (dateString) => {
-  if (!dateString) return '从未使用'
+  if (!dateString) return 'Nunca usado'
 
   const date = new Date(dateString)
   const now = new Date()
   const diff = now - date
 
   if (diff < 60000) return '刚刚'
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`
-  if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟antes de`
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小cuandoantes de`
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天antes de`
 
   return date.toLocaleDateString('zh-CN')
 }
@@ -3392,7 +3392,7 @@ const clearSearch = () => {
   currentPage.value = 1
 }
 
-// 加载绑定计数（轻量级接口，用于显示"绑定: X 个API Key"）
+// cargarvincular计数（轻量级interfaz，usar于pantalla"vincular: X  API Key"）
 const loadBindingCounts = async (forceReload = false) => {
   if (!forceReload && bindingCountsLoaded.value) return
   const response = await httpApis.getAccountsBindingCountsApi()
@@ -3402,7 +3402,7 @@ const loadBindingCounts = async (forceReload = false) => {
   }
 }
 
-// 加载API Keys列表（保留用于其他功能，如删除账户时显示绑定信息）
+// cargarAPI Keyslista（保留usar于Otrofunción，comoEliminar cuentacuandopantallavincularinformación）
 const loadApiKeys = async (forceReload = false) => {
   if (!forceReload && apiKeysLoaded.value) return
   const response = await httpApis.getApiKeysApi()
@@ -3412,7 +3412,7 @@ const loadApiKeys = async (forceReload = false) => {
   }
 }
 
-// 加载账户分组列表（缓存版本）
+// cargarcuentaGruposlista（cachéversión）
 const loadAccountGroups = async (forceReload = false) => {
   if (!forceReload && groupsLoaded.value) return
   const response = await httpApis.getAccountGroupsApi()
@@ -3422,7 +3422,7 @@ const loadAccountGroups = async (forceReload = false) => {
   }
 }
 
-// 清空缓存的函数
+// 清空cachéfunción
 const clearCache = () => {
   apiKeysLoaded.value = false
   bindingCountsLoaded.value = false
@@ -3431,19 +3431,19 @@ const clearCache = () => {
   accountGroupMap.value.clear()
 }
 
-// 按平台筛选账户
+// 按plataformafiltrarcuenta
 const filterByPlatform = () => {
   currentPage.value = 1
   loadAccounts()
 }
 
-// 按分组筛选账户
+// 按Gruposfiltrarcuenta
 const filterByGroup = () => {
   currentPage.value = 1
   loadAccounts()
 }
 
-// 规范化代理配置，支持字符串与对象
+// norma化Configuración de proxy，soportar字符串deobjeto
 function normalizeProxyData(proxy) {
   if (!proxy) {
     return null
@@ -3505,7 +3505,7 @@ function normalizeProxyData(proxy) {
   }
 }
 
-// 格式化代理信息显示
+// formato化Proxyinformaciónpantalla
 const formatProxyDisplay = (proxy) => {
   const parsed = normalizeProxyData(proxy)
   if (!parsed) {
@@ -3528,7 +3528,7 @@ const formatProxyDisplay = (proxy) => {
   return display
 }
 
-// 格式化会话窗口时间
+// formato化Ventana de sesión
 const formatSessionWindow = (windowStart, windowEnd) => {
   if (!windowStart || !windowEnd) return '--'
 
@@ -3543,56 +3543,56 @@ const formatSessionWindow = (windowStart, windowEnd) => {
   return `${startHour}:${startMin} - ${endHour}:${endMin}`
 }
 
-// 格式化剩余时间
+// formato化Restante
 const formatRemainingTime = (minutes) => {
-  if (!minutes || minutes <= 0) return '已结束'
+  if (!minutes || minutes <= 0) return 'Finalizado'
 
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
 
   if (hours > 0) {
-    return `${hours}小时${mins}分钟`
+    return `${hours}小cuando${mins}分钟`
   }
   return `${mins}分钟`
 }
 
-// 格式化限流时间（支持显示天数）
+// formato化limitación（soportarpantalla天数）
 const formatRateLimitTime = (minutes) => {
   if (!minutes || minutes <= 0) return ''
 
-  // 转换为整数，避免小数
+  // 转换para整数，避免小数
   minutes = Math.floor(minutes)
 
-  // 计算天数、小时和分钟
+  // calcular天数、小cuandoy分钟
   const days = Math.floor(minutes / 1440) // 1天 = 1440分钟
   const remainingAfterDays = minutes % 1440
   const hours = Math.floor(remainingAfterDays / 60)
   const mins = remainingAfterDays % 60
 
-  // 根据时间长度返回不同格式
+  // 根据longituddevolverno同formato
   if (days > 0) {
-    // 超过1天，显示天数和小时
+    // 超过1天，pantalla天数y小cuando
     if (hours > 0) {
-      return `${days}天${hours}小时`
+      return `${days}天${hours}小cuando`
     }
     return `${days}天`
   } else if (hours > 0) {
-    // 超过1小时但不到1天，显示小时和分钟
+    // 超过1小cuandoperonoa1天，pantalla小cuandoy分钟
     if (mins > 0) {
-      return `${hours}小时${mins}分钟`
+      return `${hours}小cuando${mins}分钟`
     }
-    return `${hours}小时`
+    return `${hours}小cuando`
   } else {
-    // 不到1小时，只显示分钟
+    // noa1小cuando，只pantalla分钟
     return `${mins}分钟`
   }
 }
 
-// 检查账户是否被限流
+// verificarcuentaes否被limitación
 const isAccountRateLimited = (account) => {
   if (!account) return false
 
-  // 检查 rateLimitStatus
+  // verificar rateLimitStatus
   if (account.rateLimitStatus) {
     if (typeof account.rateLimitStatus === 'string' && account.rateLimitStatus === 'limited') {
       return true
@@ -3608,7 +3608,7 @@ const isAccountRateLimited = (account) => {
   return false
 }
 
-// 获取限流剩余时间（分钟）
+// obtenerlimitaciónRestante（分钟）
 const getRateLimitRemainingMinutes = (account) => {
   if (!account || !account.rateLimitStatus) return 0
 
@@ -3629,7 +3629,7 @@ const getRateLimitRemainingMinutes = (account) => {
     }
   }
 
-  // 如果有 rateLimitUntil 字段，计算剩余时间
+  // como果con rateLimitUntil campo，calcularRestante
   if (account.rateLimitUntil) {
     const now = new Date().getTime()
     const untilTime = new Date(account.rateLimitUntil).getTime()
@@ -3640,19 +3640,19 @@ const getRateLimitRemainingMinutes = (account) => {
   return 0
 }
 
-// 打开创建账户模态框
+// abrircrearcuentamodal
 const openCreateAccountModal = () => {
-  newAccountPlatform.value = null // 重置选择的平台
+  newAccountPlatform.value = null // ReinicioSeleccionarplataforma
   showCreateAccountModal.value = true
 }
 
-// 关闭创建账户模态框
+// cerrarcrearcuentamodal
 const closeCreateAccountModal = () => {
   showCreateAccountModal.value = false
   newAccountPlatform.value = null
 }
 
-// 编辑账户
+// Editar cuenta
 const editAccount = (account) => {
   editingAccount.value = account
   showEditAccountModal.value = true
@@ -3703,25 +3703,25 @@ const resolveAccountDeleteEndpoint = (account) => {
 
 const performAccountDeletion = async (account) => {
   const endpoint = resolveAccountDeleteEndpoint(account)
-  if (!endpoint) return { success: false, message: '不支持的账户类型' }
+  if (!endpoint) return { success: false, message: 'nosoportarcuentatipo' }
   const data = await httpApis.deleteAccountByEndpointApi(endpoint)
   if (data.success) return { success: true, data }
-  return { success: false, message: data.message || '删除失败' }
+  return { success: false, message: data.message || 'Eliminarfallido' }
 }
 
-// 删除账户
+// Eliminar cuenta
 const deleteAccount = async (account) => {
   const boundKeys = getBoundApiKeysForAccount(account)
   const boundKeysCount = boundKeys.length
 
-  let confirmMessage = `确定要删除账户 "${account.name}" 吗？`
+  let confirmMessage = `Confirmar要Eliminar cuenta "${account.name}" 吗？`
   if (boundKeysCount > 0) {
-    confirmMessage += `\n\n⚠️ 注意：此账号有 ${boundKeysCount} 个 API Key 绑定。`
-    confirmMessage += `\n删除后，这些 API Key 将自动切换为共享池模式。`
+    confirmMessage += `\n\n⚠️ Nota：此账号con ${boundKeysCount}   API Key vincular。`
+    confirmMessage += `\nEliminardespués de，这些 API Key 将automático切换paraCompartida池modo。`
   }
-  confirmMessage += '\n\n此操作不可恢复。'
+  confirmMessage += '\n\n此Operacionesno可recuperar。'
 
-  const confirmed = await showConfirm('删除账户', confirmMessage, '删除', '取消')
+  const confirmed = await showConfirm('Eliminar cuenta', confirmMessage, 'Eliminar', 'Cancelar')
 
   if (!confirmed) return
 
@@ -3729,9 +3729,9 @@ const deleteAccount = async (account) => {
 
   if (result.success) {
     const data = result.data
-    let toastMessage = '账户已成功删除'
+    let toastMessage = 'cuentayaexitosoEliminar'
     if (data?.unboundKeys > 0) {
-      toastMessage += `，${data.unboundKeys} 个 API Key 已切换为共享池模式`
+      toastMessage += `，${data.unboundKeys}   API Key ya切换paraCompartida池modo`
     }
     showToast(toastMessage, 'success')
 
@@ -3742,17 +3742,17 @@ const deleteAccount = async (account) => {
     apiKeysLoaded.value = false
     bindingCountsLoaded.value = false
     loadAccounts()
-    loadApiKeys(true) // 刷新完整 API Keys 列表（用于其他功能）
-    loadBindingCounts(true) // 刷新绑定计数
+    loadApiKeys(true) // Actualizar完整 API Keys lista（usar于Otrofunción）
+    loadBindingCounts(true) // Actualizarvincular计数
   } else {
-    showToast(result.message || '删除失败', 'error')
+    showToast(result.message || 'Eliminarfallido', 'error')
   }
 }
 
-// 批量删除账户
+// loteEliminar cuenta
 const batchDeleteAccounts = async () => {
   if (selectedAccounts.value.length === 0) {
-    showToast('请先选择要删除的账户', 'warning')
+    showToast('请先Seleccionar要Eliminarcuenta', 'warning')
     return
   }
 
@@ -3762,29 +3762,29 @@ const batchDeleteAccounts = async () => {
     .filter((account) => !!account)
 
   if (targets.length === 0) {
-    showToast('选中的账户已不存在', 'warning')
+    showToast('seleccionadocuentayano存en', 'warning')
     selectedAccounts.value = []
     updateSelectAllState()
     return
   }
 
-  let confirmMessage = `确定要删除选中的 ${targets.length} 个账户吗？此操作不可恢复。`
+  let confirmMessage = `Confirmar要Eliminar seleccionados ${targets.length}  cuenta吗？此Operacionesno可recuperar。`
   const boundInfo = targets
     .map((account) => ({ account, boundKeys: getBoundApiKeysForAccount(account) }))
     .filter((item) => item.boundKeys.length > 0)
 
   if (boundInfo.length > 0) {
-    confirmMessage += '\n\n⚠️ 以下账户存在绑定的 API Key，将自动解绑：'
+    confirmMessage += '\n\n⚠️ 以abajocuenta存envincular API Key，将automático解绑：'
     boundInfo.forEach(({ account, boundKeys }) => {
       const displayName = account.name || account.email || account.accountName || account.id
-      confirmMessage += `\n- ${displayName}: ${boundKeys.length} 个`
+      confirmMessage += `\n- ${displayName}: ${boundKeys.length}  `
     })
-    confirmMessage += '\n删除后，这些 API Key 将切换为共享池模式。'
+    confirmMessage += '\nEliminardespués de，这些 API Key 将切换paraCompartida池modo。'
   }
 
-  confirmMessage += '\n\n请再次确认是否继续。'
+  confirmMessage += '\n\n请再vecesconfirmares否Continuar。'
 
-  const confirmed = await showConfirm('批量删除账户', confirmMessage, '删除', '取消')
+  const confirmed = await showConfirm('loteEliminar cuenta', confirmMessage, 'Eliminar', 'Cancelar')
   if (!confirmed) return
 
   let successCount = 0
@@ -3801,15 +3801,15 @@ const batchDeleteAccounts = async () => {
       failedCount += 1
       failedDetails.push({
         name: account.name || account.email || account.accountName || account.id,
-        message: result.message || '删除失败'
+        message: result.message || 'Eliminarfallido'
       })
     }
   }
 
   if (successCount > 0) {
-    let toastMessage = `成功删除 ${successCount} 个账户`
+    let toastMessage = `exitosoEliminar ${successCount}  cuenta`
     if (totalUnboundKeys > 0) {
-      toastMessage += `，${totalUnboundKeys} 个 API Key 已切换为共享池模式`
+      toastMessage += `，${totalUnboundKeys}   API Key ya切换paraCompartida池modo`
     }
     showToast(toastMessage, failedCount > 0 ? 'warning' : 'success')
 
@@ -3825,7 +3825,7 @@ const batchDeleteAccounts = async () => {
   if (failedCount > 0) {
     const detailMessage = failedDetails.map((item) => `${item.name}: ${item.message}`).join('\n')
     showToast(
-      `有 ${failedCount} 个账户删除失败:\n${detailMessage}`,
+      `con ${failedCount}  cuentaEliminarfallido:\n${detailMessage}`,
       successCount > 0 ? 'warning' : 'error'
     )
   }
@@ -3833,15 +3833,15 @@ const batchDeleteAccounts = async () => {
   updateSelectAllState()
 }
 
-// 重置账户状态
+// ReiniciocuentaEstado
 const resetAccountStatus = async (account) => {
   if (account.isResetting) return
 
   const confirmed = await showConfirm(
-    '重置账户状态',
-    '确定要重置此账户的所有异常状态吗？这将清除限流状态、401错误计数等所有异常标记。',
-    '确定重置',
-    '取消',
+    'ReiniciocuentaEstado',
+    'Confirmar要Reinicio此cuentatodos los estados anormales吗？这将清除limitaciónEstado、401incorrecto计数etctodosAnormalmarca。',
+    'ConfirmarReinicio',
+    'Cancelar',
     'warning'
   )
 
@@ -3850,7 +3850,7 @@ const resetAccountStatus = async (account) => {
   try {
     account.isResetting = true
 
-    // 根据账户平台选择不同的 API 端点
+    // 根据cuentaplataformaSeleccionarno同 API 端点
     let endpoint = ''
     if (account.platform === 'openai') {
       endpoint = `/admin/openai-accounts/${account.id}/reset-status`
@@ -3869,26 +3869,26 @@ const resetAccountStatus = async (account) => {
     } else if (account.platform === 'gemini') {
       endpoint = `/admin/gemini-accounts/${account.id}/reset-status`
     } else {
-      showToast('不支持的账户类型', 'error')
+      showToast('nosoportarcuentatipo', 'error')
       account.isResetting = false
       return
     }
 
     const data = await httpApis.testAccountByEndpointApi(endpoint)
     if (data.success) {
-      showToast('账户状态已重置', 'success')
+      showToast('cuentaEstadoyaReinicio', 'success')
       loadAccounts(true)
     } else {
-      showToast(data.message || '状态重置失败', 'error')
+      showToast(data.message || 'EstadoReiniciofallido', 'error')
     }
     account.isResetting = false
   } catch (error) {
-    showToast(error.message || '状态重置失败', 'error')
+    showToast(error.message || 'EstadoReiniciofallido', 'error')
     account.isResetting = false
   }
 }
 
-// 切换调度状态
+// 切换ProgramarEstado
 const toggleSchedulable = async (account) => {
   if (account.isTogglingSchedulable) return
   account.isTogglingSchedulable = true
@@ -3915,7 +3915,7 @@ const toggleSchedulable = async (account) => {
   } else if (account.platform === 'gemini-api') {
     endpoint = `/admin/gemini-api-accounts/${account.id}/toggle-schedulable`
   } else {
-    showToast('该账户类型暂不支持调度控制', 'warning')
+    showToast('该cuentatipo暂nosoportarProgramar控制', 'warning')
     account.isTogglingSchedulable = false
     return
   }
@@ -3923,53 +3923,53 @@ const toggleSchedulable = async (account) => {
   const data = await httpApis.toggleAccountStatusApi(endpoint)
   if (data.success) {
     account.schedulable = data.schedulable
-    showToast(data.schedulable ? '已启用调度' : '已禁用调度', 'success')
+    showToast(data.schedulable ? 'yaHabilitarProgramar' : 'yadeshabilitadoProgramar', 'success')
   } else {
-    showToast(data.message || '操作失败', 'error')
+    showToast(data.message || 'Operacionesfallido', 'error')
   }
   account.isTogglingSchedulable = false
 }
 
-// 处理创建成功
+// manejocrearexitoso
 const handleCreateSuccess = () => {
   showCreateAccountModal.value = false
-  showToast('账户创建成功', 'success')
-  // 清空缓存，因为可能涉及分组关系变化
+  showToast('cuentacrearexitoso', 'success')
+  // 清空caché，因para可能涉及Grupos关系变化
   clearCache()
   loadAccounts()
 }
 
-// 处理编辑成功
+// manejoEditarexitoso
 const handleEditSuccess = () => {
   showEditAccountModal.value = false
-  showToast('账户更新成功', 'success')
-  // 清空分组成员缓存，因为账户类型和分组可能发生变化
+  showToast('cuentaactualizarexitoso', 'success')
+  // 清空Gruposmiembrocaché，因paracuentatipoyGrupos可能发生变化
   groupMembersLoaded.value = false
   loadAccounts()
 }
 
-// 获取 Claude 账号的添加方式
+// obtener Claude 账号agregarmanera
 const getClaudeAuthType = (account) => {
-  // 基于 lastRefreshAt 判断：如果为空说明是 Setup Token（不能刷新），否则是 OAuth
+  // 基于 lastRefreshAt 判断：como果para空explicaciónes Setup Token（no能Actualizar），否entonceses OAuth
   if (!account.lastRefreshAt || account.lastRefreshAt === '') {
-    return 'Setup' // 缩短显示文本
+    return 'Setup' // 缩短pantalla文本
   }
   return 'OAuth'
 }
 
-// 获取 Gemini 账号的添加方式
+// obtener Gemini 账号agregarmanera
 const getGeminiAuthType = () => {
-  // Gemini 统一显示 OAuth
+  // Gemini 统一pantalla OAuth
   return 'OAuth'
 }
 
-// 获取 OpenAI 账号的添加方式
+// obtener OpenAI 账号agregarmanera
 const getOpenAIAuthType = () => {
-  // OpenAI 统一显示 OAuth
+  // OpenAI 统一pantalla OAuth
   return 'OAuth'
 }
 
-// 获取 Droid 账号的认证方式
+// obtener Droid 账号autenticaciónmanera
 const getDroidAuthType = (account) => {
   if (!account || typeof account !== 'object') {
     return 'OAuth'
@@ -4015,31 +4015,31 @@ const getDroidAuthType = (account) => {
   return 'OAuth'
 }
 
-// 判断是否为 API Key 模式的 Droid 账号
+// 判断es否para API Key modo Droid 账号
 const isDroidApiKeyMode = (account) => getDroidAuthType(account) === 'API Key'
 
-// 获取 Droid 账号的 API Key 数量
+// obtener Droid 账号 API Key cantidad
 const getDroidApiKeyCount = (account) => {
   if (!account || typeof account !== 'object') {
     return 0
   }
 
-  // 优先使用 apiKeys 数组来计算正常状态的 API Keys
+  // 优先usar apiKeys arreglo来calcularNormalEstado API Keys
   if (Array.isArray(account.apiKeys)) {
-    // 只计算状态不是 'error' 的 API Keys
+    // 只calcularEstadonoes 'error'  API Keys
     return account.apiKeys.filter((apiKey) => apiKey.status !== 'error').length
   }
 
-  // 如果是字符串格式的 apiKeys，尝试解析
+  // como果es字符串formato apiKeys，尝试análisis
   if (typeof account.apiKeys === 'string' && account.apiKeys.trim()) {
     try {
       const parsed = JSON.parse(account.apiKeys)
       if (Array.isArray(parsed)) {
-        // 只计算状态不是 'error' 的 API Keys
+        // 只calcularEstadonoes 'error'  API Keys
         return parsed.filter((apiKey) => apiKey.status !== 'error').length
       }
     } catch (error) {
-      // 忽略解析错误，继续使用其他字段
+      // 忽略análisisincorrecto，ContinuarusarOtrocampo
     }
   }
 
@@ -4060,7 +4060,7 @@ const getDroidApiKeyCount = (account) => {
   return 0
 }
 
-// 根据数量返回徽标样式
+// 根据cantidaddevolver徽标estilo
 const getDroidApiKeyBadgeClasses = (account) => {
   const count = getDroidApiKeyCount(account)
   const baseClass =
@@ -4079,20 +4079,20 @@ const getDroidApiKeyBadgeClasses = (account) => {
   ]
 }
 
-// 获取 Claude 账号类型显示
+// obtener Claude 账号tipopantalla
 const getClaudeAccountType = (account) => {
-  // 如果有订阅信息
+  // como果con订阅información
   if (account.subscriptionInfo) {
     try {
-      // 如果 subscriptionInfo 是字符串，尝试解析
+      // como果 subscriptionInfo es字符串，尝试análisis
       const info =
         typeof account.subscriptionInfo === 'string'
           ? JSON.parse(account.subscriptionInfo)
           : account.subscriptionInfo
 
-      // 订阅信息已解析
+      // 订阅informaciónyaanálisis
 
-      // 根据 has_claude_max 和 has_claude_pro 判断
+      // 根据 has_claude_max y has_claude_pro 判断
       if (info.hasClaudeMax === true) {
         return 'Claude Max'
       } else if (info.hasClaudePro === true) {
@@ -4101,51 +4101,51 @@ const getClaudeAccountType = (account) => {
         return 'Claude Free'
       }
     } catch (e) {
-      // 解析失败，返回默认值
+      // análisisfallido，devolverpredeterminadovalor
       return 'Claude'
     }
   }
 
-  // 没有订阅信息，保持原有显示
+  // 没con订阅información，保持原conpantalla
   return 'Claude'
 }
 
-// 获取停止调度的原因
+// obtenerdetenerProgramar原因
 const getSchedulableReason = (account) => {
   if (account.schedulable !== false) return null
 
-  // Claude Console 账户的错误状态
+  // Claude Console cuentaincorrectoEstado
   if (account.platform === 'claude-console') {
     if (account.status === 'unauthorized') {
-      return 'API Key无效或已过期（401错误）'
+      return 'API KeyinválidooExpirado（401incorrecto）'
     }
-    // 检查配额超限状态
+    // verificarcuota超限Estado
     if (account.status === 'quota_exceeded') {
-      return '余额不足'
+      return 'saldono足'
     }
     if (account.overloadStatus === 'overloaded') {
-      return '服务过载（529错误）'
+      return 'servicio过载（529incorrecto）'
     }
     if (account.rateLimitStatus === 'limited') {
-      return '触发限流（429错误）'
+      return 'activarlimitación（429incorrecto）'
     }
-    // 检查配额超限状态（quotaAutoStopped 或 quotaStoppedAt 任一存在即表示配额超限）
+    // verificarcuota超限Estado（quotaAutoStopped o quotaStoppedAt 任一存enes decir表示cuota超限）
     if (
       account.quotaAutoStopped === 'true' ||
       account.quotaAutoStopped === true ||
       account.quotaStoppedAt
     ) {
-      return '余额不足'
+      return 'saldono足'
     }
     if (account.status === 'blocked' && account.errorMessage) {
       return account.errorMessage
     }
   }
 
-  // Claude 官方账户的错误状态
+  // Claude 官方cuentaincorrectoEstado
   if (account.platform === 'claude') {
     if (account.status === 'unauthorized') {
-      return '认证失败（401错误）'
+      return 'autenticaciónfallido（401incorrecto）'
     }
     if (account.status === 'temp_error' && account.errorMessage) {
       return account.errorMessage
@@ -4154,56 +4154,56 @@ const getSchedulableReason = (account) => {
       return account.errorMessage
     }
     if (account.isRateLimited) {
-      return '触发限流（429错误）'
+      return 'activarlimitación（429incorrecto）'
     }
-    // 自动停止调度的原因
+    // automáticodetenerProgramar原因
     if (account.stoppedReason) {
       return account.stoppedReason
     }
-    // 检查5小时限制自动停止标志（备用方案）
+    // verificar5小cuandolimitaciónautomáticodetener标志（备usarsolución）
     if (account.fiveHourAutoStopped === 'true' || account.fiveHourAutoStopped === true) {
-      return '5小时使用量接近限制，已自动停止调度'
+      return '5小cuandousar量接近limitación，yaautomáticodetenerProgramar'
     }
   }
 
-  // OpenAI 账户的错误状态
+  // OpenAI cuentaincorrectoEstado
   if (account.platform === 'openai') {
     if (account.status === 'unauthorized') {
-      return '认证失败（401错误）'
+      return 'autenticaciónfallido（401incorrecto）'
     }
-    // 检查限流状态 - 兼容嵌套的 rateLimitStatus 对象
+    // verificarlimitaciónEstado - compatible嵌套 rateLimitStatus objeto
     if (
       (account.rateLimitStatus && account.rateLimitStatus.isRateLimited) ||
       account.isRateLimited
     ) {
-      return '触发限流（429错误）'
+      return 'activarlimitación（429incorrecto）'
     }
     if (account.status === 'error' && account.errorMessage) {
       return account.errorMessage
     }
   }
 
-  // OpenAI-Responses 账户的错误状态
+  // OpenAI-Responses cuentaincorrectoEstado
   if (account.platform === 'openai-responses') {
     if (account.status === 'unauthorized') {
-      return '认证失败（401错误）'
+      return 'autenticaciónfallido（401incorrecto）'
     }
-    // 检查限流状态 - 兼容嵌套的 rateLimitStatus 对象
+    // verificarlimitaciónEstado - compatible嵌套 rateLimitStatus objeto
     if (
       (account.rateLimitStatus && account.rateLimitStatus.isRateLimited) ||
       account.isRateLimited
     ) {
-      return '触发限流（429错误）'
+      return 'activarlimitación（429incorrecto）'
     }
     if (account.status === 'error' && account.errorMessage) {
       return account.errorMessage
     }
     if (account.status === 'rateLimited') {
-      return '触发限流（429错误）'
+      return 'activarlimitación（429incorrecto）'
     }
   }
 
-  // 通用原因
+  // 通usar原因
   if (account.stoppedReason) {
     return account.stoppedReason
   }
@@ -4211,11 +4211,11 @@ const getSchedulableReason = (account) => {
     return account.errorMessage
   }
 
-  // 默认为手动停止
-  return '手动停止调度'
+  // predeterminadoparamanualdetener
+  return 'manualdetenerProgramar'
 }
 
-// 检查是否是配额超限状态（用于状态显示判断）
+// verificares否escuota超限Estado（usar于Estadopantalla判断）
 const isQuotaExceeded = (account) => {
   return (
     account.quotaAutoStopped === 'true' ||
@@ -4224,31 +4224,31 @@ const isQuotaExceeded = (account) => {
   )
 }
 
-// 获取账户状态文本
+// obtenercuentaEstado文本
 const getAccountStatusText = (account) => {
-  // 检查是否被封锁
-  if (account.status === 'blocked') return '已封锁'
-  // 检查是否未授权（401错误）
-  if (account.status === 'unauthorized') return '异常'
-  // 检查是否限流
+  // verificares否被bloquear
+  if (account.status === 'blocked') return 'Bloqueada'
+  // verificares否sinautorización（401incorrecto）
+  if (account.status === 'unauthorized') return 'Anormal'
+  // verificares否limitación
   if (
     account.isRateLimited ||
     account.status === 'rate_limited' ||
     (account.rateLimitStatus && account.rateLimitStatus.isRateLimited) ||
     account.rateLimitStatus === 'limited'
   )
-    return '限流中'
-  // 检查是否临时错误
-  if (account.status === 'temp_error') return '临时异常'
-  // 检查是否错误
-  if (account.status === 'error' || !account.isActive) return '错误'
-  // 配额超限时显示"正常"（不显示"已暂停"）
-  if (account.schedulable === false && !isQuotaExceeded(account)) return '已暂停'
-  // 否则正常（包括配额超限状态）
-  return '正常'
+    return 'Limitando'
+  // verificares否temporalincorrecto
+  if (account.status === 'temp_error') return 'Anormalidad temporal'
+  // verificares否incorrecto
+  if (account.status === 'error' || !account.isActive) return 'incorrecto'
+  // cuota超限cuandopantalla"Normal"（nopantalla"yaPausar"）
+  if (account.schedulable === false && !isQuotaExceeded(account)) return 'yaPausar'
+  // 否entoncesNormal（包括cuota超限Estado）
+  return 'Normal'
 }
 
-// 获取账户状态样式类
+// obtenercuentaEstadoestiloclase
 const getAccountStatusClass = (account) => {
   if (account.status === 'blocked') {
     return 'bg-red-100 text-red-800'
@@ -4270,14 +4270,14 @@ const getAccountStatusClass = (account) => {
   if (account.status === 'error' || !account.isActive) {
     return 'bg-red-100 text-red-800'
   }
-  // 配额超限时显示绿色（正常）
+  // cuota超限cuandopantalla绿色（Normal）
   if (account.schedulable === false && !isQuotaExceeded(account)) {
     return 'bg-gray-100 text-gray-800'
   }
   return 'bg-green-100 text-green-800'
 }
 
-// 获取账户状态点样式类
+// obtenercuentaEstado点estiloclase
 const getAccountStatusDotClass = (account) => {
   if (account.status === 'blocked') {
     return 'bg-red-500'
@@ -4299,14 +4299,14 @@ const getAccountStatusDotClass = (account) => {
   if (account.status === 'error' || !account.isActive) {
     return 'bg-red-500'
   }
-  // 配额超限时显示绿色（正常）
+  // cuota超限cuandopantalla绿色（Normal）
   if (account.schedulable === false && !isQuotaExceeded(account)) {
     return 'bg-gray-500'
   }
   return 'bg-green-500'
 }
 
-// 获取会话窗口百分比
+// obtenerVentana de sesiónporcentaje
 // const getSessionWindowPercentage = (account) => {
 //   if (!account.sessionWindow) return 100
 //   const { remaining, total } = account.sessionWindow
@@ -4314,17 +4314,17 @@ const getAccountStatusDotClass = (account) => {
 //   return Math.round((remaining / total) * 100)
 // }
 
-// 格式化相对时间
+// formato化相par
 
-// 获取会话窗口进度条的样式类
+// obtenerVentana de sesiónBarra de progresoestiloclase
 const getSessionProgressBarClass = (status, account = null) => {
-  // 根据状态返回不同的颜色类，包含防御性检查
+  // 根据Estadodevolverno同colorclase，incluir防御性verificar
   if (!status) {
-    // 无状态信息时默认为蓝色
+    // sinInformación de estadocuandopredeterminadopara蓝色
     return 'bg-gradient-to-r from-blue-500 to-indigo-600'
   }
 
-  // 检查账号是否处于限流状态
+  // verificar账号es否处于limitaciónEstado
   const isRateLimited =
     account &&
     (account.isRateLimited ||
@@ -4332,34 +4332,34 @@ const getSessionProgressBarClass = (status, account = null) => {
       (account.rateLimitStatus && account.rateLimitStatus.isRateLimited) ||
       account.rateLimitStatus === 'limited')
 
-  // 如果账号处于限流状态，显示红色
+  // como果账号处于limitaciónEstado，pantalla红色
   if (isRateLimited) {
     return 'bg-gradient-to-r from-red-500 to-red-600'
   }
 
-  // 转换为小写进行比较，避免大小写问题
+  // 转换para小写进行比较，避免tamaño写problema
   const normalizedStatus = String(status).toLowerCase()
 
   if (normalizedStatus === 'rejected') {
     // 被拒绝 - 红色
     return 'bg-gradient-to-r from-red-500 to-red-600'
   } else if (normalizedStatus === 'allowed_warning') {
-    // 警告状态 - 橙色/黄色
+    // advertenciaEstado - 橙色/黄色
     return 'bg-gradient-to-r from-yellow-500 to-orange-500'
   } else {
-    // 正常状态（allowed 或其他） - 蓝色
+    // NormalEstado（allowed oOtro） - 蓝色
     return 'bg-gradient-to-r from-blue-500 to-indigo-600'
   }
 }
 
-// ====== Claude OAuth Usage 相关函数 ======
+// ====== Claude OAuth Usage 相关función ======
 
-// 判断 Claude 账户是否为 OAuth 授权
+// 判断 Claude cuentaes否para OAuth autorización
 const isClaudeOAuth = (account) => {
   return account.authType === 'oauth'
 }
 
-// 格式化 Claude 使用率百分比
+// formato化 Claude usar率porcentaje
 const formatClaudeUsagePercent = (window) => {
   if (!window || window.utilization === null || window.utilization === undefined) {
     return '-'
@@ -4367,7 +4367,7 @@ const formatClaudeUsagePercent = (window) => {
   return `${window.utilization}%`
 }
 
-// 获取 Claude 使用率宽度
+// obtener Claude usar率ancho
 const getClaudeUsageWidth = (window) => {
   if (!window || window.utilization === null || window.utilization === undefined) {
     return '0%'
@@ -4375,7 +4375,7 @@ const getClaudeUsageWidth = (window) => {
   return `${window.utilization}%`
 }
 
-// 获取 Claude 使用率进度条颜色
+// obtener Claude usar率Barra de progresocolor
 const getClaudeUsageBarClass = (window) => {
   const util = window?.utilization || 0
   if (util < 60) {
@@ -4387,7 +4387,7 @@ const getClaudeUsageBarClass = (window) => {
   return 'bg-gradient-to-r from-red-500 to-red-600'
 }
 
-// 格式化 Claude 剩余时间
+// formato化 Claude Restante
 const formatClaudeRemaining = (window) => {
   if (!window || !window.remainingSeconds) {
     return '-'
@@ -4400,15 +4400,15 @@ const formatClaudeRemaining = (window) => {
 
   if (days > 0) {
     if (hours > 0) {
-      return `${days}天${hours}小时`
+      return `${days}天${hours}小cuando`
     }
     return `${days}天`
   }
   if (hours > 0) {
     if (minutes > 0) {
-      return `${hours}小时${minutes}分钟`
+      return `${hours}小cuando${minutes}分钟`
     }
-    return `${hours}小时`
+    return `${hours}小cuando`
   }
   if (minutes > 0) {
     return `${minutes}分钟`
@@ -4416,7 +4416,7 @@ const formatClaudeRemaining = (window) => {
   return `${Math.floor(seconds % 60)}秒`
 }
 
-// 归一化 OpenAI 会话窗口使用率
+// 归一化 OpenAI Ventana de sesiónusar率
 const normalizeCodexUsagePercent = (usageItem) => {
   if (!usageItem) {
     return null
@@ -4453,7 +4453,7 @@ const normalizeCodexUsagePercent = (usageItem) => {
   return Math.max(0, Math.min(100, basePercent))
 }
 
-// OpenAI 限额进度条颜色
+// OpenAI cuota límiteBarra de progresocolor
 const getCodexUsageBarClass = (usageItem) => {
   const percent = normalizeCodexUsagePercent(usageItem)
   if (percent === null) {
@@ -4468,7 +4468,7 @@ const getCodexUsageBarClass = (usageItem) => {
   return 'bg-gradient-to-r from-emerald-500 to-teal-500'
 }
 
-// 百分比显示
+// porcentajepantalla
 const formatCodexUsagePercent = (usageItem) => {
   const percent = normalizeCodexUsagePercent(usageItem)
   if (percent === null) {
@@ -4477,7 +4477,7 @@ const formatCodexUsagePercent = (usageItem) => {
   return `${percent.toFixed(1)}%`
 }
 
-// 进度条宽度
+// Barra de progresoancho
 const getCodexUsageWidth = (usageItem) => {
   const percent = normalizeCodexUsagePercent(usageItem)
   if (percent === null) {
@@ -4486,7 +4486,7 @@ const getCodexUsageWidth = (usageItem) => {
   return `${percent}%`
 }
 
-// 时间窗口标签
+// ventanaetiqueta
 const getCodexWindowLabel = (type) => {
   if (type === 'secondary') {
     return '周限'
@@ -4494,7 +4494,7 @@ const getCodexWindowLabel = (type) => {
   return '5h'
 }
 
-// 格式化剩余时间
+// formato化Restante
 const formatCodexRemaining = (usageItem) => {
   if (!usageItem) {
     return '--'
@@ -4518,15 +4518,15 @@ const formatCodexRemaining = (usageItem) => {
 
   if (days > 0) {
     if (hours > 0) {
-      return `${days}天${hours}小时`
+      return `${days}天${hours}小cuando`
     }
     return `${days}天`
   }
   if (hours > 0) {
     if (minutes > 0) {
-      return `${hours}小时${minutes}分钟`
+      return `${hours}小cuando${minutes}分钟`
     }
-    return `${hours}小时`
+    return `${hours}小cuando`
   }
   if (minutes > 0) {
     return `${minutes}分钟`
@@ -4534,7 +4534,7 @@ const formatCodexRemaining = (usageItem) => {
   return `${secs}秒`
 }
 
-// 格式化费用显示
+// formato化费usarpantalla
 const formatCost = (cost) => {
   if (!cost || cost === 0) return '0.0000'
   if (cost < 0.0001) return cost.toExponential(2)
@@ -4543,7 +4543,7 @@ const formatCost = (cost) => {
   return cost.toFixed(2)
 }
 
-// 额度使用百分比（Claude Console）
+// límiteusarporcentaje（Claude Console）
 const getQuotaUsagePercent = (account) => {
   const used = Number(account?.usage?.daily?.cost || 0)
   const quota = Number(account?.dailyQuota || 0)
@@ -4551,14 +4551,14 @@ const getQuotaUsagePercent = (account) => {
   return (used / quota) * 100
 }
 
-// 额度进度条颜色（Claude Console）
+// límiteBarra de progresocolor（Claude Console）
 const getQuotaBarClass = (percent) => {
   if (percent >= 90) return 'bg-red-500'
   if (percent >= 70) return 'bg-yellow-500'
   return 'bg-green-500'
 }
 
-// 并发使用百分比（Claude Console）
+// concurrenciausarporcentaje（Claude Console）
 const getConsoleConcurrencyPercent = (account) => {
   const max = Number(account?.maxConcurrentTasks || 0)
   if (!max || max <= 0) return 0
@@ -4566,14 +4566,14 @@ const getConsoleConcurrencyPercent = (account) => {
   return Math.min(100, (active / max) * 100)
 }
 
-// 并发进度条颜色（Claude Console）
+// concurrenciaBarra de progresocolor（Claude Console）
 const getConcurrencyBarClass = (percent) => {
   if (percent >= 100) return 'bg-red-500'
   if (percent >= 80) return 'bg-yellow-500'
   return 'bg-green-500'
 }
 
-// 并发标签颜色（Claude Console）
+// concurrenciaetiquetacolor（Claude Console）
 const getConcurrencyLabelClass = (account) => {
   const max = Number(account?.maxConcurrentTasks || 0)
   if (!max || max <= 0) return 'text-gray-500 dark:text-gray-400'
@@ -4587,7 +4587,7 @@ const getConcurrencyLabelClass = (account) => {
   return 'text-gray-700 dark:text-gray-200'
 }
 
-// 剩余额度（Claude Console）
+// Restantelímite（Claude Console）
 const formatRemainingQuota = (account) => {
   const used = Number(account?.usage?.daily?.cost || 0)
   const quota = Number(account?.dailyQuota || 0)
@@ -4595,20 +4595,20 @@ const formatRemainingQuota = (account) => {
   return Math.max(0, quota - used).toFixed(2)
 }
 
-// 计算每日费用（使用后端返回的精确费用数据）
+// calcular每日费usar（usarbackenddevolver精确费usardatos）
 const calculateDailyCost = (account) => {
   if (!account.usage || !account.usage.daily) return '0.0000'
 
-  // 如果后端已经返回了计算好的费用，直接使用
+  // como果backendya经devolvercalcular好费usar，直接usar
   if (account.usage.daily.cost !== undefined) {
     return formatCost(account.usage.daily.cost)
   }
 
-  // 如果后端没有返回费用（旧版本），返回0
+  // como果backend没condevolver费usar（旧versión），devolver0
   return '0.0000'
 }
 
-// 切换调度状态
+// 切换ProgramarEstado
 // const toggleDispatch = async (account) => {
 //   await toggleSchedulable(account)
 // }
@@ -4633,7 +4633,7 @@ watch(
   }
 )
 
-// 监听排序选择变化 - 已重构为 handleDropdownSort，此处注释保留原逻辑参考
+// escucharordenarSeleccionar变化 - ya重构para handleDropdownSort，此处notas保留原lógica参考
 // watch(accountSortBy, (newVal) => {
 //   const fieldMap = {
 //     name: 'name',
@@ -4654,7 +4654,7 @@ watch(currentPage, () => {
 
 watch(paginatedAccounts, () => {
   updateSelectAllState()
-  // 数据变化后重新检测是否需要横向滚动
+  // datos变化después devolver adetectares否necesita要横向desplazamiento
   nextTick(() => {
     checkHorizontalScroll()
   })
@@ -4663,7 +4663,7 @@ watch(paginatedAccounts, () => {
 watch(accounts, () => {
   cleanupSelectedAccounts()
 })
-// 到期时间相关方法
+// Tiempo de expiración相关método
 const formatExpireDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
@@ -4687,29 +4687,29 @@ const isExpiringSoon = (expiresAt) => {
   return daysUntilExpire > 0 && daysUntilExpire <= 7
 }
 
-// 开始编辑账户过期时间
+// iniciarEditar cuentaexpirar
 const startEditAccountExpiry = (account) => {
   editingExpiryAccount.value = account
 }
 
-// 关闭账户过期时间编辑
+// cerrarcuentaexpirarEditar
 const closeAccountExpiryEdit = () => {
   editingExpiryAccount.value = null
 }
 
-// 保存账户过期时间
+// guardarcuentaexpirar
 const handleSaveAccountExpiry = async ({ accountId, expiresAt }) => {
   try {
-    // 根据账号平台选择正确的 API 端点
+    // 根据账号plataformaSeleccionarcorrecto API 端点
     const account = accounts.value.find((acc) => acc.id === accountId)
 
     if (!account) {
-      showToast('未找到账户', 'error')
+      showToast('sin找acuenta', 'error')
       return
     }
 
-    // 定义每个平台的端点和参数名
-    // 注意：部分平台使用 :accountId，部分使用 :id
+    // definicióncadaplataforma端点yparámetro名
+    // Nota：parteplataformausar :accountId，parteusar :id
     let endpoint = ''
     switch (account.platform) {
       case 'claude':
@@ -4729,19 +4729,19 @@ const handleSaveAccountExpiry = async ({ accountId, expiresAt }) => {
         endpoint = `/admin/ccr-accounts/${accountId}`
         break
       case 'openai':
-        endpoint = `/admin/openai-accounts/${accountId}` // 使用 :id
+        endpoint = `/admin/openai-accounts/${accountId}` // usar :id
         break
       case 'droid':
-        endpoint = `/admin/droid-accounts/${accountId}` // 使用 :id
+        endpoint = `/admin/droid-accounts/${accountId}` // usar :id
         break
       case 'azure_openai':
-        endpoint = `/admin/azure-openai-accounts/${accountId}` // 使用 :id
+        endpoint = `/admin/azure-openai-accounts/${accountId}` // usar :id
         break
       case 'openai-responses':
-        endpoint = `/admin/openai-responses-accounts/${accountId}` // 使用 :id
+        endpoint = `/admin/openai-responses-accounts/${accountId}` // usar :id
         break
       default:
-        showToast(`不支持的平台类型: ${account.platform}`, 'error')
+        showToast(`nosoportarTipo de plataforma: ${account.platform}`, 'error')
         return
     }
 
@@ -4749,20 +4749,20 @@ const handleSaveAccountExpiry = async ({ accountId, expiresAt }) => {
       expiresAt: expiresAt || null
     })
     if (data.success) {
-      showToast('账户到期时间已更新', 'success')
+      showToast('cuentaTiempo de expiraciónyaactualizar', 'success')
       account.expiresAt = expiresAt || null
       closeAccountExpiryEdit()
     } else {
-      showToast(data.message || '更新失败', 'error')
+      showToast(data.message || 'actualizarfallido', 'error')
       if (expiryEditModalRef.value) expiryEditModalRef.value.resetSaving()
     }
   } catch (error) {
-    showToast(error.message || '更新失败', 'error')
+    showToast(error.message || 'actualizarfallido', 'error')
     if (expiryEditModalRef.value) expiryEditModalRef.value.resetSaving()
   }
 }
 
-// 检测表格是否需要横向滚动
+// detectartablaes否necesita要横向desplazamiento
 const checkHorizontalScroll = () => {
   if (tableContainerRef.value) {
     needsHorizontalScroll.value =
@@ -4770,14 +4770,14 @@ const checkHorizontalScroll = () => {
   }
 }
 
-// 窗口大小变化时重新检测
+// ventanatamaño变化cuandovolver adetectar
 let resizeObserver = null
 
 onMounted(() => {
-  // 首次加载时强制刷新所有数据
+  // 首vecescargarcuando强制Actualizartodosdatos
   loadAccounts(true)
 
-  // 设置ResizeObserver监听表格容器大小变化
+  // configurarResizeObserverescuchartablacontenedortamaño变化
   nextTick(() => {
     if (tableContainerRef.value) {
       resizeObserver = new ResizeObserver(() => {
@@ -4788,7 +4788,7 @@ onMounted(() => {
     }
   })
 
-  // 监听窗口大小变化
+  // escucharventanatamaño变化
   window.addEventListener('resize', checkHorizontalScroll)
 })
 
@@ -4805,7 +4805,7 @@ onUnmounted(() => {
   min-height: calc(100vh - 300px);
 }
 
-/* 加载动画 */
+/* cargar动画 */
 .loading-spinner {
   width: 24px;
   height: 24px;
@@ -4824,7 +4824,7 @@ onUnmounted(() => {
   }
 }
 
-/* 表格外层包装器 - 圆角和边框 */
+/* tablafueracapaenvoltorio - redondeadoyborde */
 .table-wrapper {
   overflow: hidden;
   border-radius: 12px;
@@ -4835,7 +4835,7 @@ onUnmounted(() => {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 表格内层容器 - 横向滚动 */
+/* tabladentrocapacontenedor - 横向desplazamiento */
 .table-container {
   overflow-x: auto;
   overflow-y: hidden;
@@ -4846,14 +4846,14 @@ onUnmounted(() => {
   -webkit-overflow-scrolling: touch;
 }
 
-/* 防止表格内容溢出，保证横向滚动 */
+/* 防止tablacontenido溢出，保证横向desplazamiento */
 .table-container table {
   min-width: 1400px;
   border-collapse: collapse;
   table-layout: auto;
 }
 
-/* 滚动条样式 */
+/* desplazamientoregistrosestilo */
 .table-container::-webkit-scrollbar {
   height: 8px;
 }
@@ -4884,7 +4884,7 @@ onUnmounted(() => {
   background: var(--text-secondary);
 }
 
-/* 统一 hover 背景 - 所有 td 使用主题色 */
+/* 统一 hover fondo - todos td usartema色 */
 .table-container tbody tr:hover > td {
   background-color: rgba(var(--primary-rgb), 0.06) !important;
 }
@@ -4893,7 +4893,7 @@ onUnmounted(() => {
   background-color: rgba(var(--primary-rgb), 0.16) !important;
 }
 
-/* 所有 td 的斑马纹背景 */
+/* todos td 斑马纹fondo */
 .table-container tbody tr:nth-child(odd) > td {
   background-color: #ffffff;
 }
@@ -4910,7 +4910,7 @@ onUnmounted(() => {
   background-color: var(--bg-gradient-mid);
 }
 
-/* 表头左侧固定列背景 - 使用纯色避免滚动时重叠 */
+/* 表头izquierda侧fijo列fondo - usar纯色避免desplazamientocuando重叠 */
 .table-container thead .checkbox-column,
 .table-container thead .name-column {
   z-index: 30;
@@ -4922,7 +4922,7 @@ onUnmounted(() => {
   background: linear-gradient(to bottom, var(--bg-gradient-mid), var(--bg-gradient-start));
 }
 
-/* 表头右侧操作列背景 - 使用纯色避免滚动时重叠 */
+/* 表头derecha侧Operaciones列fondo - usar纯色避免desplazamientocuando重叠 */
 .table-container thead .operations-column {
   z-index: 30;
   background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
@@ -4932,7 +4932,7 @@ onUnmounted(() => {
   background: linear-gradient(to bottom, var(--bg-gradient-mid), var(--bg-gradient-start));
 }
 
-/* 名称列右侧阴影（分隔效果） */
+/* Nombre列derecha侧sombra（分隔效果） */
 .table-container tbody .name-column {
   box-shadow: 8px 0 12px -8px rgba(15, 23, 42, 0.16);
 }
@@ -4941,7 +4941,7 @@ onUnmounted(() => {
   box-shadow: 8px 0 12px -8px rgba(30, 41, 59, 0.45);
 }
 
-/* 操作列左侧阴影 */
+/* Operaciones列izquierda侧sombra */
 .table-container tbody .operations-column {
   box-shadow: -8px 0 12px -8px rgba(15, 23, 42, 0.16);
 }

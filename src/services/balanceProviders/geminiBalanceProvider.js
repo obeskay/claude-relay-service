@@ -202,7 +202,7 @@ class GeminiBalanceProvider extends BaseBalanceProvider {
     const proxyConfig = account?.proxyConfig || account?.proxy || null
 
     if (!accessToken) {
-      throw new Error('Antigravity 账户缺少 accessToken')
+      throw new Error('Antigravity Cuenta缺少 accessToken')
     }
 
     const fetch = async (token) =>

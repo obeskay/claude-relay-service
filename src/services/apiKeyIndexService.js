@@ -1,6 +1,6 @@
 /**
- * API Key 索引服务
- * 维护 Sorted Set 索引以支持高效分页查询
+ * API Key ÍndiceServicio
+ * 维护 Sorted Set Índice以Soportar高效分页Consulta
  */
 
 const { randomUUID } = require('crypto')
@@ -10,11 +10,11 @@ class ApiKeyIndexService {
   constructor() {
     this.redis = null
     this.INDEX_VERSION_KEY = 'apikey:index:version'
-    this.CURRENT_VERSION = 2 // 版本升级，触发重建
+    this.CURRENT_VERSION = 2 // Versión升级，触发重建
     this.isBuilding = false
     this.buildProgress = { current: 0, total: 0 }
 
-    // 索引键名
+    // Índice键名
     this.INDEX_KEYS = {
       CREATED_AT: 'apikey:idx:createdAt',
       LAST_USED_AT: 'apikey:idx:lastUsedAt',
@@ -27,7 +27,7 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 初始化服务
+   * InicializarServicio
    */
   init(redis) {
     this.redis = redis
@@ -35,7 +35,7 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 启动时检查并重建索引
+   * 启动时Verificar并重建Índice
    */
   async checkAndRebuild() {
     if (!this.redis) {
@@ -47,22 +47,22 @@ class ApiKeyIndexService {
       const client = this.redis.getClientSafe()
       const version = await client.get(this.INDEX_VERSION_KEY)
 
-      // 始终检查并回填 hash_map（幂等操作，确保升级兼容）
+      // 始终Verificar并回填 hash_map（幂等Operación，确保升级兼容）
       this.rebuildHashMap().catch((err) => {
-        logger.error('❌ API Key hash_map 回填失败:', err)
+        logger.error('❌ API Key hash_map 回填Falló:', err)
       })
 
       if (parseInt(version) >= this.CURRENT_VERSION) {
-        logger.info('✅ API Key 索引已是最新版本')
+        logger.info('✅ API Key Índice已是最新Versión')
         return
       }
 
-      // 后台异步重建，不阻塞启动
+      // 后台Asíncrono重建，不Bloqueante启动
       this.rebuildIndexes().catch((err) => {
-        logger.error('❌ API Key 索引重建失败:', err)
+        logger.error('❌ API Key Índice重建Falló:', err)
       })
     } catch (error) {
-      logger.error('❌ 检查 API Key 索引版本失败:', error)
+      logger.error('❌ Verificar API Key ÍndiceVersiónFalló:', error)
     }
   }
 
@@ -86,20 +86,20 @@ class ApiKeyIndexService {
         const batch = keyIds.slice(i, i + BATCH_SIZE)
         const pipeline = client.pipeline()
 
-        // 批量获取 API Key 数据
+        // 批量Obtener API Key Datos
         for (const keyId of batch) {
           pipeline.hgetall(`apikey:${keyId}`)
         }
         const results = await pipeline.exec()
 
-        // 检查并回填缺失的映射
+        // Verificar并回填缺失的映射
         const fillPipeline = client.pipeline()
         let needFill = false
 
         for (let j = 0; j < batch.length; j++) {
           const keyData = results[j]?.[1]
           if (keyData && keyData.apiKey) {
-            // keyData.apiKey 存储的是哈希值
+            // keyData.apiKey 存储的是哈希Valor
             const exists = await client.hexists('apikey:hash_map', keyData.apiKey)
             if (!exists) {
               fillPipeline.hset('apikey:hash_map', keyData.apiKey, batch[j])
@@ -118,13 +118,13 @@ class ApiKeyIndexService {
         logger.info(`🔧 回填了 ${rebuilt} 个 API Key 到 hash_map`)
       }
     } catch (error) {
-      logger.error('❌ 回填 hash_map 失败:', error)
+      logger.error('❌ 回填 hash_map Falló:', error)
       throw error
     }
   }
 
   /**
-   * 检查索引是否可用
+   * VerificarÍndice是否可用
    */
   async isIndexReady() {
     if (!this.redis || this.isBuilding) {
@@ -141,11 +141,11 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 重建所有索引
+   * 重建所有Índice
    */
   async rebuildIndexes() {
     if (this.isBuilding) {
-      logger.warn('⚠️ API Key 索引正在重建中，跳过')
+      logger.warn('⚠️ API Key ÍndiceEn progreso重建中，跳过')
       return
     }
 
@@ -154,17 +154,17 @@ class ApiKeyIndexService {
 
     try {
       const client = this.redis.getClientSafe()
-      logger.info('🔨 开始重建 API Key 索引...')
+      logger.info('🔨 Iniciando重建 API Key Índice...')
 
-      // 0. 先删除版本号，让 _checkIndexReady 返回 false，查询回退到 SCAN
+      // 0. 先EliminarVersión号，让 _checkIndexReady Retornar false，ConsultaRetirada到 SCAN
       await client.del(this.INDEX_VERSION_KEY)
 
-      // 1. 清除旧索引
+      // 1. 清除旧Índice
       const indexKeys = Object.values(this.INDEX_KEYS)
       for (const key of indexKeys) {
         await client.del(key)
       }
-      // 清除标签索引（用 SCAN 避免阻塞）
+      // 清除标签Índice（用 SCAN 避免Bloqueante）
       let cursor = '0'
       do {
         const [newCursor, keys] = await client.scan(cursor, 'MATCH', 'apikey:tag:*', 'COUNT', 100)
@@ -178,9 +178,9 @@ class ApiKeyIndexService {
       const keyIds = await this.redis.scanApiKeyIds()
       this.buildProgress = { current: 0, total: keyIds.length }
 
-      logger.info(`📊 发现 ${keyIds.length} 个 API Key，开始建立索引...`)
+      logger.info(`📊 发现 ${keyIds.length} 个 API Key，Iniciando建立Índice...`)
 
-      // 3. 批量处理（每批 500 个）
+      // 3. 批量Procesar（每批 500 个）
       const BATCH_SIZE = 500
       for (let i = 0; i < keyIds.length; i += BATCH_SIZE) {
         const batch = keyIds.slice(i, i + BATCH_SIZE)
@@ -200,13 +200,13 @@ class ApiKeyIndexService {
           const isActive = apiKey.isActive === true || apiKey.isActive === 'true'
           const isDeleted = apiKey.isDeleted === true || apiKey.isDeleted === 'true'
 
-          // 创建时间索引
+          // CrearTiempoÍndice
           pipeline.zadd(this.INDEX_KEYS.CREATED_AT, createdAt, keyId)
 
-          // 最后使用时间索引
+          // 最后使用TiempoÍndice
           pipeline.zadd(this.INDEX_KEYS.LAST_USED_AT, lastUsedAt, keyId)
 
-          // 名称索引（用于排序，存储格式：name\0keyId）
+          // NombreÍndice（用于Ordenar，存储Formato：name\0keyId）
           pipeline.zadd(this.INDEX_KEYS.NAME, 0, `${name}\x00${keyId}`)
 
           // 全部集合
@@ -219,7 +219,7 @@ class ApiKeyIndexService {
             pipeline.sadd(this.INDEX_KEYS.ACTIVE_SET, keyId)
           }
 
-          // 标签索引
+          // 标签Índice
           const tags = Array.isArray(apiKey.tags) ? apiKey.tags : []
           for (const tag of tags) {
             if (tag && typeof tag === 'string') {
@@ -236,13 +236,13 @@ class ApiKeyIndexService {
         await new Promise((resolve) => setTimeout(resolve, 10))
       }
 
-      // 4. 更新版本号
+      // 4. ActualizarVersión号
       await client.set(this.INDEX_VERSION_KEY, this.CURRENT_VERSION)
 
       const duration = ((Date.now() - startTime) / 1000).toFixed(2)
-      logger.success(`✅ API Key 索引重建完成，共 ${keyIds.length} 条，耗时 ${duration}s`)
+      logger.success(`✅ API Key Índice重建Completado，共 ${keyIds.length} 条，耗时 ${duration}s`)
     } catch (error) {
-      logger.error('❌ API Key 索引重建失败:', error)
+      logger.error('❌ API Key Índice重建Falló:', error)
       throw error
     } finally {
       this.isBuilding = false
@@ -250,7 +250,7 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 添加单个 API Key 到索引
+   * 添加单个 API Key 到Índice
    */
   async addToIndex(apiKey) {
     if (!this.redis || !apiKey || !apiKey.id) {
@@ -284,7 +284,7 @@ class ApiKeyIndexService {
         pipeline.srem(this.INDEX_KEYS.DELETED_SET, keyId)
       }
 
-      // 标签索引
+      // 标签Índice
       const tags = Array.isArray(apiKey.tags) ? apiKey.tags : []
       for (const tag of tags) {
         if (tag && typeof tag === 'string') {
@@ -295,12 +295,12 @@ class ApiKeyIndexService {
 
       await pipeline.exec()
     } catch (error) {
-      logger.error(`❌ 添加 API Key ${apiKey.id} 到索引失败:`, error)
+      logger.error(`❌ 添加 API Key ${apiKey.id} 到ÍndiceFalló:`, error)
     }
   }
 
   /**
-   * 更新索引（状态、名称、标签变化时调用）
+   * ActualizarÍndice（状态、Nombre、标签变化时调用）
    */
   async updateIndex(keyId, updates, oldData = {}) {
     if (!this.redis || !keyId) {
@@ -311,7 +311,7 @@ class ApiKeyIndexService {
       const client = this.redis.getClientSafe()
       const pipeline = client.pipeline()
 
-      // 更新名称索引
+      // ActualizarNombreÍndice
       if (updates.name !== undefined) {
         const oldName = (oldData.name || '').toLowerCase()
         const newName = (updates.name || '').toLowerCase()
@@ -321,13 +321,13 @@ class ApiKeyIndexService {
         }
       }
 
-      // 更新最后使用时间索引
+      // Actualizar最后使用TiempoÍndice
       if (updates.lastUsedAt !== undefined) {
         const lastUsedAt = updates.lastUsedAt ? new Date(updates.lastUsedAt).getTime() : 0
         pipeline.zadd(this.INDEX_KEYS.LAST_USED_AT, lastUsedAt, keyId)
       }
 
-      // 更新状态集合
+      // Actualizar状态集合
       if (updates.isActive !== undefined || updates.isDeleted !== undefined) {
         const isActive = updates.isActive ?? oldData.isActive
         const isDeleted = updates.isDeleted ?? oldData.isDeleted
@@ -344,13 +344,13 @@ class ApiKeyIndexService {
         }
       }
 
-      // 更新标签索引
+      // Actualizar标签Índice
       const removedTags = []
       if (updates.tags !== undefined) {
         const oldTags = Array.isArray(oldData.tags) ? oldData.tags : []
         const newTags = Array.isArray(updates.tags) ? updates.tags : []
 
-        // 移除旧标签
+        // Eliminación旧标签
         for (const tag of oldTags) {
           if (tag && !newTags.includes(tag)) {
             pipeline.srem(`apikey:tag:${tag}`, keyId)
@@ -368,7 +368,7 @@ class ApiKeyIndexService {
 
       await pipeline.exec()
 
-      // 检查被移除的标签集合是否为空，为空则从 tags:all 移除
+      // Verificar被Eliminación的标签集合是否为空，为空则从 tags:all Eliminación
       for (const tag of removedTags) {
         const count = await client.scard(`apikey:tag:${tag}`)
         if (count === 0) {
@@ -376,12 +376,12 @@ class ApiKeyIndexService {
         }
       }
     } catch (error) {
-      logger.error(`❌ 更新 API Key ${keyId} 索引失败:`, error)
+      logger.error(`❌ Actualizar API Key ${keyId} ÍndiceFalló:`, error)
     }
   }
 
   /**
-   * 从索引中移除 API Key
+   * 从Índice中Eliminación API Key
    */
   async removeFromIndex(keyId, oldData = {}) {
     if (!this.redis || !keyId) {
@@ -401,7 +401,7 @@ class ApiKeyIndexService {
       pipeline.srem(this.INDEX_KEYS.ACTIVE_SET, keyId)
       pipeline.srem(this.INDEX_KEYS.DELETED_SET, keyId)
 
-      // 移除标签索引
+      // Eliminación标签Índice
       const tags = Array.isArray(oldData.tags) ? oldData.tags : []
       for (const tag of tags) {
         if (tag) {
@@ -411,7 +411,7 @@ class ApiKeyIndexService {
 
       await pipeline.exec()
 
-      // 检查标签集合是否为空，为空则从 tags:all 移除
+      // Verificar标签集合是否为空，为空则从 tags:all Eliminación
       for (const tag of tags) {
         if (tag) {
           const count = await client.scard(`apikey:tag:${tag}`)
@@ -421,13 +421,13 @@ class ApiKeyIndexService {
         }
       }
     } catch (error) {
-      logger.error(`❌ 从索引移除 API Key ${keyId} 失败:`, error)
+      logger.error(`❌ 从ÍndiceEliminación API Key ${keyId} Falló:`, error)
     }
   }
 
   /**
-   * 使用索引进行分页查询
-   * 使用 ZINTERSTORE 优化，避免全量拉回内存
+   * 使用Índice进Fila分页Consulta
+   * 使用 ZINTERSTORE Optimización，避免全量拉回内存
    */
   async queryWithIndex(options = {}) {
     const {
@@ -444,7 +444,7 @@ class ApiKeyIndexService {
     const tempSets = []
 
     try {
-      // 1. 构建筛选集合
+      // 1. Construir筛选集合
       let filterSet = this.INDEX_KEYS.ALL_SET
 
       // 状态筛选
@@ -468,7 +468,7 @@ class ApiKeyIndexService {
         filterSet = tempKey
         tempSets.push(tempKey)
       } else if (excludeDeleted) {
-        // 排除已删除：ALL - DELETED
+        // Excluir已Eliminar：ALL - DELETED
         const tempKey = `apikey:tmp:notdeleted:${randomUUID()}`
         await client.sdiffstore(tempKey, this.INDEX_KEYS.ALL_SET, this.INDEX_KEYS.DELETED_SET)
         await client.expire(tempKey, 60)
@@ -486,10 +486,10 @@ class ApiKeyIndexService {
         tempSets.push(tempKey)
       }
 
-      // 2. 获取筛选后的 keyId 集合
+      // 2. Obtener筛选后的 keyId 集合
       const filterMembers = await client.smembers(filterSet)
       if (filterMembers.length === 0) {
-        // 没有匹配的数据
+        // 没有匹配的Datos
         return {
           items: [],
           pagination: { page: 1, pageSize, total: 0, totalPages: 1 },
@@ -497,18 +497,18 @@ class ApiKeyIndexService {
         }
       }
 
-      // 3. 排序
+      // 3. Ordenar
       let sortedKeyIds
 
       if (sortBy === 'name') {
-        // 优化：只拉筛选后 keyId 的 name 字段，避免全量扫描 name 索引
+        // Optimización：只拉筛选后 keyId 的 name Campo，避免全量扫描 name Índice
         const pipeline = client.pipeline()
         for (const keyId of filterMembers) {
           pipeline.hget(`apikey:${keyId}`, 'name')
         }
         const results = await pipeline.exec()
 
-        // 组装并排序
+        // 组装并Ordenar
         const items = filterMembers.map((keyId, i) => ({
           keyId,
           name: (results[i]?.[1] || '').toLowerCase()
@@ -518,12 +518,12 @@ class ApiKeyIndexService {
         )
         sortedKeyIds = items.map((item) => item.keyId)
       } else {
-        // createdAt / lastUsedAt 索引成员是 keyId，可以用 ZINTERSTORE
+        // createdAt / lastUsedAt Índice成员是 keyId，可以用 ZINTERSTORE
         const sortIndex = this._getSortIndex(sortBy)
         const tempSortedKey = `apikey:tmp:sorted:${randomUUID()}`
         tempSets.push(tempSortedKey)
 
-        // 将 filterSet 转换为 Sorted Set（所有分数为 0）
+        // 将 filterSet Convertir为 Sorted Set（所有分数为 0）
         const filterZsetKey = `apikey:tmp:filter:${randomUUID()}`
         tempSets.push(filterZsetKey)
 
@@ -534,11 +534,11 @@ class ApiKeyIndexService {
         await client.zadd(filterZsetKey, ...zaddArgs)
         await client.expire(filterZsetKey, 60)
 
-        // ZINTERSTORE：取交集，使用排序索引的分数（WEIGHTS 0 1）
+        // ZINTERSTORE：取交集，使用OrdenarÍndice的分数（WEIGHTS 0 1）
         await client.zinterstore(tempSortedKey, 2, filterZsetKey, sortIndex, 'WEIGHTS', 0, 1)
         await client.expire(tempSortedKey, 60)
 
-        // 获取排序后的 keyId
+        // ObtenerOrdenar后的 keyId
         sortedKeyIds =
           sortOrder === 'desc'
             ? await client.zrevrange(tempSortedKey, 0, -1)
@@ -552,10 +552,10 @@ class ApiKeyIndexService {
       const start = (validPage - 1) * pageSize
       const pageKeyIds = sortedKeyIds.slice(start, start + pageSize)
 
-      // 5. 获取数据
+      // 5. ObtenerDatos
       const items = await this.redis.batchGetApiKeys(pageKeyIds)
 
-      // 6. 获取所有标签
+      // 6. Obtener所有标签
       const availableTags = await this._getAvailableTags(client)
 
       return {
@@ -569,7 +569,7 @@ class ApiKeyIndexService {
         availableTags
       }
     } finally {
-      // 7. 清理临时集合
+      // 7. Limpiar临时集合
       for (const tempKey of tempSets) {
         client.del(tempKey).catch(() => {})
       }
@@ -577,7 +577,7 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 获取排序索引键名
+   * ObtenerOrdenarÍndice键名
    */
   _getSortIndex(sortBy) {
     switch (sortBy) {
@@ -593,7 +593,7 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 获取所有可用标签（从 tags:all 集合）
+   * Obtener所有可用标签（从 tags:all 集合）
    */
   async _getAvailableTags(client) {
     try {
@@ -605,7 +605,7 @@ class ApiKeyIndexService {
   }
 
   /**
-   * 更新 lastUsedAt 索引（供 recordUsage 调用）
+   * Actualizar lastUsedAt Índice（供 recordUsage 调用）
    */
   async updateLastUsedAt(keyId, lastUsedAt) {
     if (!this.redis || !keyId) {
@@ -617,12 +617,12 @@ class ApiKeyIndexService {
       const timestamp = lastUsedAt ? new Date(lastUsedAt).getTime() : Date.now()
       await client.zadd(this.INDEX_KEYS.LAST_USED_AT, timestamp, keyId)
     } catch (error) {
-      logger.error(`❌ 更新 API Key ${keyId} lastUsedAt 索引失败:`, error)
+      logger.error(`❌ Actualizar API Key ${keyId} lastUsedAt ÍndiceFalló:`, error)
     }
   }
 
   /**
-   * 获取索引状态
+   * ObtenerÍndice状态
    */
   async getStatus() {
     if (!this.redis) {

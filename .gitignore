@@ -247,3 +247,20 @@ web/apiStats/
 
 # Admin SPA build files
 web/admin-spa/dist/
+
+# Backup directories (for sync scripts)
+.backup-before-sync*/
+.backup*/
+
+# Migration and planning documentation (optional - remove if you want to track)
+# MIGRATION_*.md
+# FULL_MIGRATION_PLAN.md
+# CURRENT_TASK.md
+# MANUAL_DEPLOYMENT_GUIDE.md
+# GITHUB_SECRETS.md
+# TRANSLATION_GUIDE.md
+
+# OpenClaw PI Agent state and metrics
+.openclaw-state.json
+.openclaw-metrics/
+pi-agent/.pi-agent-setup.png

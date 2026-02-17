@@ -1,14 +1,14 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center justify-between">
-      <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">代理设置 (可选)</h4>
+      <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">代理Configuración (可选)</h4>
       <label class="flex cursor-pointer items-center">
         <input
           v-model="proxy.enabled"
           class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
           type="checkbox"
         />
-        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">启用代理</span>
+        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Habilitar代理</span>
       </label>
     </div>
 
@@ -22,27 +22,27 @@
         </div>
         <div class="flex-1">
           <p class="text-sm text-gray-700 dark:text-gray-300">
-            配置代理以访问受限的网络资源。支持 SOCKS5 和 HTTP 代理。
+            配置代理以访问受限网络资源。支持 SOCKS5 y HTTP 代理。
           </p>
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            请确保代理服务器稳定可用，否则会影响账户的正常使用。
+            请确保代理服务器稳定可用，否则会影响Cuenta正常使用。
           </p>
         </div>
       </div>
 
-      <!-- 快速配置输入框 -->
+      <!-- 快速配置Entrada框 -->
       <div>
         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
           快速配置
           <span class="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400">
-            (粘贴完整代理URL自动填充)
+            (Pegar完整代理URL自动填充)
           </span>
         </label>
         <div class="relative">
           <input
             v-model="proxyUrl"
             class="form-input w-full border-gray-300 pr-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-            placeholder="例如: socks5://username:password@host:port 或 http://host:port"
+            placeholder="例如: socks5://username:password@host:port o http://host:port"
             type="text"
             @input="handleInput"
             @keyup.enter="parseProxyUrl"
@@ -71,7 +71,7 @@
 
       <div>
         <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >代理类型</label
+          >代理Tipo</label
         >
         <select
           v-model="proxy.type"
@@ -127,24 +127,24 @@
         <div v-if="showAuth" class="grid grid-cols-2 gap-4">
           <div>
             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >用户名</label
+              >Nombre de usuario</label
             >
             <input
               v-model="proxy.username"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="代理用户名"
+              placeholder="代理Nombre de usuario"
               type="text"
             />
           </div>
           <div>
             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >密码</label
+              >Contraseña</label
             >
             <div class="relative">
               <input
                 v-model="proxy.password"
                 class="form-input w-full border-gray-300 pr-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="代理密码"
+                placeholder="代理Contraseña"
                 :type="showPassword ? 'text' : 'password'"
               />
               <button
@@ -164,8 +164,8 @@
       >
         <p class="text-xs text-blue-700 dark:text-blue-300">
           <i class="fas fa-info-circle mr-1" />
-          <strong>提示：</strong
-          >代理设置将用于所有与此账户相关的API请求。请确保代理服务器支持HTTPS流量转发。
+          <strong>Sugerencia：</strong
+          >代理Configuración将para所有与此Cuenta相关APISolicitud。请确保代理服务器支持HTTPS流量转发。
         </p>
       </div>
     </div>
@@ -194,7 +194,7 @@ const emit = defineEmits(['update:modelValue'])
 // 内部代理数据
 const proxy = ref({ ...props.modelValue })
 
-// UI状态
+// UIEstado
 const showAuth = ref(!!(proxy.value.username || proxy.value.password))
 const showPassword = ref(false)
 
@@ -203,11 +203,11 @@ const proxyUrl = ref('')
 const parseError = ref('')
 const parseSuccess = ref(false)
 
-// 监听modelValue变化，只在真正需要更新时才更新
+// 监听modelValue变化，只en真正需要Actualizar时才Actualizar
 watch(
   () => props.modelValue,
   (newVal) => {
-    // 只有当值真正不同时才更新，避免循环
+    // 只有当值真正不同时才Actualizar，避免循环
     if (JSON.stringify(newVal) !== JSON.stringify(proxy.value)) {
       proxy.value = { ...newVal }
       showAuth.value = !!(newVal.username || newVal.password)
@@ -216,7 +216,7 @@ watch(
   { deep: true }
 )
 
-// 监听各个字段单独变化，而不是整个对象
+// 监听各 字段单独变化，而不是整 对象
 watch(
   () => proxy.value.enabled,
   () => {
@@ -268,19 +268,19 @@ watch(showAuth, (newVal) => {
   }
 })
 
-// 防抖的更新函数
+// 防抖Actualizar函数
 let updateTimer = null
 function emitUpdate() {
-  // 清除之前的定时器
+  // 清除之anterior定时器
   if (updateTimer) {
     clearTimeout(updateTimer)
   }
 
-  // 设置新的定时器，延迟发送更新
+  // Configuración新定时器，延迟发送Actualizar
   updateTimer = setTimeout(() => {
     const data = { ...proxy.value }
 
-    // 如果不需要认证，清空用户名密码
+    // 如果不需要认证，清空Nombre de usuarioContraseña
     if (!showAuth.value) {
       data.username = ''
       data.password = ''
@@ -300,7 +300,7 @@ function parseProxyUrl() {
   }
 
   try {
-    // 移除 # 后面的别名部分
+    // 移除 # siguiente面别名部分
     const urlWithoutAlias = proxyUrl.value.split('#')[0].trim()
 
     if (!urlWithoutAlias) {
@@ -313,7 +313,7 @@ function parseProxyUrl() {
     const match = urlWithoutAlias.match(proxyPattern)
 
     if (!match) {
-      // 尝试简单格式：host:port（默认为socks5）
+      // 尝试简单格式：host:port（默认parasocks5）
       const simplePattern = /^([^:]+):(\d+)$/
       const simpleMatch = urlWithoutAlias.match(simplePattern)
 
@@ -327,14 +327,14 @@ function parseProxyUrl() {
         parseSuccess.value = true
         emitUpdate()
 
-        // 3秒后清除成功提示
+        // 3秒siguiente清除ExitosoSugerencia
         setTimeout(() => {
           parseSuccess.value = false
         }, 3000)
         return
       }
 
-      parseError.value = '无效的代理URL格式，请检查输入'
+      parseError.value = 'Inválido代理URL格式，请检查Entrada'
       return
     }
 
@@ -346,7 +346,7 @@ function parseProxyUrl() {
     proxy.value.host = host
     proxy.value.port = port
 
-    // 处理认证信息
+    // 处理认证Información
     if (username && password) {
       proxy.value.username = decodeURIComponent(username)
       proxy.value.password = decodeURIComponent(password)
@@ -360,39 +360,39 @@ function parseProxyUrl() {
     parseSuccess.value = true
     emitUpdate()
 
-    // 3秒后清除成功提示
+    // 3秒siguiente清除ExitosoSugerencia
     setTimeout(() => {
       parseSuccess.value = false
     }, 3000)
   } catch (error) {
-    // 解析代理URL失败
-    parseError.value = '解析失败，请检查URL格式'
+    // 解析代理URLFallido
+    parseError.value = '解析Fallido，请检查URL格式'
   }
 }
 
-// 清空快速配置输入
+// 清空快速配置Entrada
 function clearProxyUrl() {
   proxyUrl.value = ''
   parseError.value = ''
   parseSuccess.value = false
 }
 
-// 处理粘贴事件
+// 处理Pegar事件
 function handlePaste() {
-  // 延迟一下以确保v-model已经更新
+  // 延迟一abajo以确保v-model已经Actualizar
   setTimeout(() => {
     parseProxyUrl()
   }, 0)
 }
 
-// 处理输入事件
+// 处理Entrada事件
 function handleInput() {
-  // 检测是否输入了代理URL格式
+  // 检测是否Entrada代理URL格式
   const value = proxyUrl.value.trim()
 
-  // 如果输入包含://，说明可能是完整的代理URL
+  // 如果Entrada包含://，Instrucciones可能是完整代理URL
   if (value.includes('://')) {
-    // 检查是否看起来像完整的URL（有协议、主机和端口）
+    // 检查是否看起来像完整URL（有协议、主机y端口）
     if (
       /^(socks5|https?):\/\/[^:]+:\d+/i.test(value) ||
       /^(socks5|https?):\/\/[^:@]+:[^@]+@[^:]+:\d+/i.test(value)
@@ -400,7 +400,7 @@ function handleInput() {
       parseProxyUrl()
     }
   }
-  // 如果是简单的 host:port 格式，并且端口号输入完整
+  // 如果是简单 host:port 格式，并且端口号Entrada完整
   else if (/^[^:]+:\d{2,5}$/.test(value)) {
     parseProxyUrl()
   }

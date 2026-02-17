@@ -1,9 +1,9 @@
 <template>
   <div class="tutorial-section">
-    <!-- 第一步：安装 Node.js -->
+    <!-- Paso 1: Instalar Node.js -->
     <NodeInstallTutorial :platform="platform" :step-number="1" tool-name="Codex" />
 
-    <!-- 第二步：配置 Codex -->
+    <!-- Paso 2: Configurar Codex -->
     <div class="mb-4 sm:mb-10 sm:mb-6">
       <h4
         class="mb-3 flex items-center text-lg font-semibold text-gray-800 dark:text-gray-300 sm:mb-4 sm:text-xl"
@@ -12,24 +12,23 @@
           class="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white sm:mr-3 sm:h-8 sm:w-8 sm:text-sm"
           >2</span
         >
-        配置 Codex
+        Configurar Codex
       </h4>
       <p class="mb-3 text-sm text-gray-700 dark:text-gray-300 sm:mb-4 sm:text-base">
-        配置 Codex 以连接到中转服务：
+        Configure Codex para conectarse al servicio de retransmisión:
       </p>
 
       <div class="space-y-4">
-        <!-- config.toml 配置 -->
+        <!-- Configuración de config.toml -->
         <div
           class="rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-500/40 dark:bg-yellow-950/30 sm:p-4"
         >
           <h6 class="mb-2 font-medium text-yellow-800 dark:text-yellow-300">
-            1. 配置文件 config.toml
+            1. Archivo de configuración config.toml
           </h6>
           <p class="mb-3 text-sm text-yellow-700 dark:text-yellow-300">
-            在
-            <code class="rounded bg-yellow-100 px-1 dark:bg-yellow-900">{{ configPath }}</code>
-            文件开头添加以下配置：
+            Agregue la siguiente configuración al principio del archivo
+            <code class="rounded bg-yellow-100 px-1 dark:bg-yellow-900">{{ configPath }}</code>:
           </p>
           <div
             class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
@@ -43,7 +42,7 @@
               {{ line || '&nbsp;' }}
             </div>
           </div>
-          <p class="mt-3 text-sm text-yellow-600 dark:text-yellow-400">一键写入命令：</p>
+          <p class="mt-3 text-sm text-yellow-600 dark:text-yellow-400">Comando para escribir en un paso:</p>
           <div
             class="mt-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
           >
@@ -51,17 +50,16 @@
           </div>
         </div>
 
-        <!-- auth.json 配置 -->
+        <!-- Configuración de auth.json -->
         <div
           class="rounded-lg border border-orange-200 bg-orange-50 p-3 dark:border-orange-500/40 dark:bg-orange-950/30 sm:p-4"
         >
           <h6 class="mb-2 font-medium text-orange-800 dark:text-orange-300">
-            2. 认证文件 auth.json
+            2. Archivo de autenticación auth.json
           </h6>
           <p class="mb-3 text-sm text-orange-700 dark:text-orange-300">
-            在
-            <code class="rounded bg-orange-100 px-1 dark:bg-orange-900">{{ authPath }}</code>
-            文件中配置：
+            Configure en el archivo
+            <code class="rounded bg-orange-100 px-1 dark:bg-orange-900">{{ authPath }}</code>:
           </p>
           <div
             class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
@@ -74,10 +72,10 @@
             class="mt-3 rounded border border-red-200 bg-red-50 p-2 dark:border-red-500/40 dark:bg-red-950/30"
           >
             <p class="text-sm font-semibold text-red-700 dark:text-red-300">
-              ⚠️ 必须将 OPENAI_API_KEY 设置为 null，否则 Codex 会优先使用它而忽略环境变量！
+              ⚠️ Debe establecer OPENAI_API_KEY en null, de lo contrario Codex lo usará primero e ignorará las variables de entorno.
             </p>
           </div>
-          <p class="mt-3 text-sm text-orange-600 dark:text-orange-400">一键写入命令：</p>
+          <p class="mt-3 text-sm text-orange-600 dark:text-orange-400">Comando para escribir en un paso:</p>
           <div
             class="mt-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
           >
@@ -85,15 +83,15 @@
           </div>
         </div>
 
-        <!-- 环境变量配置 -->
+        <!-- Configuración de variables de entorno -->
         <div
           class="rounded-lg border border-purple-200 bg-purple-50 p-3 dark:border-purple-500/40 dark:bg-purple-950/30 sm:p-4"
         >
           <h6 class="mb-2 font-medium text-purple-800 dark:text-purple-300">
-            3. 设置环境变量 CRS_OAI_KEY
+            3. Establecer variable de entorno CRS_OAI_KEY
           </h6>
           <p class="mb-3 text-sm text-purple-700 dark:text-purple-300">
-            设置环境变量 CRS_OAI_KEY 为您的 API 密钥（格式如 cr_xxxxxxxxxx）：
+            Establezca la variable de entorno CRS_OAI_KEY con su clave API (formato: cr_xxxxxxxxxx):
           </p>
 
           <!-- Windows -->
@@ -110,7 +108,7 @@
               </div>
             </div>
             <p class="mb-1 text-sm text-purple-600 line-through opacity-60 dark:text-purple-400">
-              用户级环境变量
+              Usuario级环境变量
               <span class="text-xs text-red-500">（不推荐）</span>
             </p>
             <div
@@ -122,14 +120,14 @@
               </div>
             </div>
             <p class="text-sm text-purple-600 dark:text-purple-400">
-              💡 设置后需要重新打开终端窗口才能生效
+              💡 Configuraciónsiguiente需要重新打开终端窗口才能生效
             </p>
           </template>
 
           <!-- macOS / Linux -->
           <template v-else>
             <p class="mb-1 text-sm text-purple-600 dark:text-purple-400">
-              检查当前 shell：<code class="rounded bg-purple-100 px-1 dark:bg-purple-900"
+              检查当anterior shell：<code class="rounded bg-purple-100 px-1 dark:bg-purple-900"
                 >echo $SHELL</code
               >
             </p>
@@ -145,7 +143,7 @@
               </summary>
               <div class="px-3 pb-3">
                 <p class="mb-2 text-sm text-blue-700 dark:text-blue-300">
-                  如果之前配置过，建议先检查并清理旧配置：
+                  如果之anterior配置过，建议先检查并清理旧配置：
                 </p>
                 <div
                   class="mb-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
@@ -156,7 +154,7 @@
                   <div class="whitespace-nowrap text-gray-300">grep 'CRS_OAI_KEY' ~/.bashrc</div>
                 </div>
                 <p class="text-sm text-blue-600 dark:text-blue-400">
-                  如果有输出，说明已配置过，可以手动编辑文件修改或删除旧配置
+                  如果有Salida，Instrucciones已配置过，可以手动Editar文件修改oEliminar旧配置
                 </p>
               </div>
             </details>
@@ -194,7 +192,7 @@
             </div>
 
             <p class="text-sm text-purple-600 dark:text-purple-400">
-              💡 设置后需要重新打开终端窗口或执行 source 命令才能生效
+              💡 Configuraciónsiguiente需要重新打开终端窗口o执行 source 命令才能生效
             </p>
           </template>
         </div>
@@ -205,7 +203,7 @@
         >
           <h6 class="mb-2 font-medium text-green-800 dark:text-green-300">4. 验证环境变量</h6>
           <p class="mb-2 text-sm text-green-700 dark:text-green-300">
-            重新打开终端后，验证环境变量是否设置成功：
+            重新打开终端siguiente，验证环境变量是否ConfiguraciónExitoso：
           </p>
           <div
             class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
@@ -219,16 +217,16 @@
           </div>
         </div>
 
-        <!-- 删除环境变量 -->
+        <!-- Eliminar环境变量 -->
         <details
           class="rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
         >
           <summary class="cursor-pointer p-3 text-sm font-medium text-gray-800 dark:text-gray-300">
-            如何删除环境变量
+            如何Eliminar环境变量
           </summary>
           <div class="px-3 pb-3">
             <template v-if="platform === 'windows'">
-              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">删除用户级环境变量：</p>
+              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">EliminarUsuario级环境变量：</p>
               <div
                 class="mb-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
               >
@@ -237,7 +235,7 @@
                   [System.EnvironmentVariableTarget]::User)
                 </div>
               </div>
-              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">删除系统级环境变量：</p>
+              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">Eliminar系统级环境变量：</p>
               <div
                 class="mb-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
               >
@@ -248,26 +246,26 @@
               </div>
             </template>
             <template v-else>
-              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">从 zsh 配置中删除：</p>
+              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">de zsh 配置enEliminar：</p>
               <div
                 class="mb-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
               >
-                <div class="text-gray-500"># 删除包含 CRS_OAI_KEY 的行</div>
+                <div class="text-gray-500"># Eliminar包含 CRS_OAI_KEY 行</div>
                 <div class="whitespace-nowrap text-gray-300">
                   sed -i '' '/CRS_OAI_KEY/d' ~/.zshrc && source ~/.zshrc
                 </div>
               </div>
-              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">从 bash 配置中删除：</p>
+              <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">de bash 配置enEliminar：</p>
               <div
                 class="mb-2 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
               >
-                <div class="text-gray-500"># 删除包含 CRS_OAI_KEY 的行</div>
+                <div class="text-gray-500"># Eliminar包含 CRS_OAI_KEY 行</div>
                 <div class="whitespace-nowrap text-gray-300">
                   sed -i '' '/CRS_OAI_KEY/d' ~/.bashrc && source ~/.bashrc
                 </div>
               </div>
             </template>
-            <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">验证是否删除成功：</p>
+            <p class="mb-1 text-sm text-gray-600 dark:text-gray-400">验证是否Eliminado exitosamente：</p>
             <div
               class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
             >
@@ -281,14 +279,14 @@
           </div>
         </details>
 
-        <!-- 提示 -->
+        <!-- Sugerencia -->
         <div
           class="rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-500/40 dark:bg-yellow-950/30 sm:p-4"
         >
           <p class="text-sm text-yellow-700 dark:text-yellow-300">
-            💡 请将示例中的
+            💡 请将示例en
             <code class="rounded bg-yellow-100 px-1 dark:bg-yellow-900">cr_xxxxxxxxxx</code>
-            替换为您的实际 API 密钥
+            替换para您实际 API Clave
           </p>
         </div>
       </div>

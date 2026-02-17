@@ -3,10 +3,10 @@ const logger = require('./logger')
 
 class SessionHelper {
   /**
-   * 生成会话哈希，用于sticky会话保持
+   * GenerarSesión哈希，用于stickySesión保持
    * 基于Anthropic的prompt caching机制，优先使用metadata中的session ID
-   * @param {Object} requestBody - 请求体
-   * @returns {string|null} - 32字符的会话哈希，如果无法生成则返回null
+   * @param {Object} requestBody - Solicitud体
+   * @returns {string|null} - 32字符的Sesión哈希，如果无法Generar则Retornarnull
    */
   generateSessionHash(requestBody) {
     if (!requestBody || typeof requestBody !== 'object') {
@@ -20,7 +20,7 @@ class SessionHelper {
       const sessionMatch = userIdString.match(/session_([a-f0-9-]{36})/)
       if (sessionMatch && sessionMatch[1]) {
         const sessionId = sessionMatch[1]
-        // 直接返回session ID
+        // 直接Retornarsession ID
         logger.debug(`📋 Session ID extracted from metadata.user_id: ${sessionId}`)
         return sessionId
       }
@@ -31,7 +31,7 @@ class SessionHelper {
     const messages = requestBody.messages || []
 
     // 2. 提取带有cache_control: {"type": "ephemeral"}的内容
-    // 检查system中的cacheable内容
+    // Verificarsystem中的cacheable内容
     if (Array.isArray(system)) {
       for (const part of system) {
         if (part && part.cache_control && part.cache_control.type === 'ephemeral') {
@@ -40,7 +40,7 @@ class SessionHelper {
       }
     }
 
-    // 检查messages中的cacheable内容
+    // Verificarmessages中的cacheable内容
     for (const msg of messages) {
       const content = msg.content || ''
       let hasCacheControl = false
@@ -137,14 +137,14 @@ class SessionHelper {
       }
     }
 
-    // 无法生成会话哈希
+    // 无法GenerarSesión哈希
     logger.debug('📋 Unable to generate session hash - no suitable content found')
     return null
   }
 
   /**
-   * 获取会话的Redis键名
-   * @param {string} sessionHash - 会话哈希
+   * ObtenerSesión的Redis键名
+   * @param {string} sessionHash - Sesión哈希
    * @returns {string} - Redis键名
    */
   getSessionRedisKey(sessionHash) {
@@ -152,8 +152,8 @@ class SessionHelper {
   }
 
   /**
-   * 验证会话哈希格式
-   * @param {string} sessionHash - 会话哈希
+   * ValidarSesión哈希Formato
+   * @param {string} sessionHash - Sesión哈希
    * @returns {boolean} - 是否有效
    */
   isValidSessionHash(sessionHash) {

@@ -1,30 +1,30 @@
 /**
- * Gemini API 路由模块（精简版）
+ * Gemini API RutaMódulo（精简版）
  *
- * 该模块只包含 geminiRoutes 独有的路由：
- * - /messages - OpenAI 兼容格式消息处理
- * - /models - 模型列表
- * - /usage - 使用统计
- * - /key-info - API Key 信息
- * - /v1internal:listExperiments - 实验列表
- * - /v1beta/models/:modelName:listExperiments - 带模型参数的实验列表
+ * 该Módulo只Incluir geminiRoutes 独有的Ruta：
+ * - /messages - OpenAI 兼容Formato消息Procesar
+ * - /models - 模型ColumnaTabla
+ * - /usage - 使用Estadística
+ * - /key-info - API Key Información
+ * - /v1internal:listExperiments - 实验ColumnaTabla
+ * - /v1beta/models/:modelName:listExperiments - 带模型Parámetro的实验ColumnaTabla
  *
- * 其他标准 Gemini API 路由由 standardGeminiRoutes.js 处理。
- * 所有处理函数都从 geminiHandlers.js 导入，以避免代码重复。
+ * 其他标准 Gemini API Ruta由 standardGeminiRoutes.js Procesar。
+ * 所有ProcesarFunción都从 geminiHandlers.js 导入，以避免代码重复。
  */
 
 const express = require('express')
 const router = express.Router()
 const { authenticateApiKey } = require('../middleware/auth')
 
-// 从 handlers/geminiHandlers.js 导入所有处理函数
+// 从 handlers/geminiHandlers.js 导入所有ProcesarFunción
 const {
   handleMessages,
   handleModels,
   handleUsage,
   handleKeyInfo,
   handleSimpleEndpoint,
-  // 以下函数需要导出供其他模块使用（如 unified.js）
+  // 以下Función需要导出供其他Módulo使用（如 unified.js）
   handleGenerateContent,
   handleStreamGenerateContent,
   handleLoadCodeAssist,
@@ -37,44 +37,44 @@ const {
 } = require('../handlers/geminiHandlers')
 
 // ============================================================================
-// OpenAI 兼容格式路由
+// OpenAI 兼容FormatoRuta
 // ============================================================================
 
 /**
  * POST /messages
- * OpenAI 兼容格式的消息处理端点
+ * OpenAI 兼容Formato的消息ProcesarEndpoint
  */
 router.post('/messages', authenticateApiKey, handleMessages)
 
 // ============================================================================
-// 模型和信息路由
+// 模型和InformaciónRuta
 // ============================================================================
 
 /**
  * GET /models
- * 获取可用模型列表
+ * Obtener可用模型ColumnaTabla
  */
 router.get('/models', authenticateApiKey, handleModels)
 
 /**
  * GET /usage
- * 获取使用情况统计
+ * Obtener使用情况Estadística
  */
 router.get('/usage', authenticateApiKey, handleUsage)
 
 /**
  * GET /key-info
- * 获取 API Key 信息
+ * Obtener API Key Información
  */
 router.get('/key-info', authenticateApiKey, handleKeyInfo)
 
 // ============================================================================
-// v1internal 独有路由
+// v1internal 独有Ruta
 // ============================================================================
 
 /**
  * POST /v1internal:listExperiments
- * 列出实验（只有 geminiRoutes 定义此路由）
+ * Columna出实验（只有 geminiRoutes 定义此Ruta）
  */
 router.post(
   '/v1internal\\:listExperiments',
@@ -84,13 +84,13 @@ router.post(
 
 /**
  * POST /v1internal:retrieveUserQuota
- * 获取用户配额信息（Gemini CLI 0.22.2+ 需要）
+ * ObtenerUsuarioCuotaInformación（Gemini CLI 0.22.2+ 需要）
  */
 router.post('/v1internal\\:retrieveUserQuota', authenticateApiKey, handleRetrieveUserQuota)
 
 /**
  * POST /v1beta/models/:modelName:listExperiments
- * 带模型参数的实验列表（只有 geminiRoutes 定义此路由）
+ * 带模型Parámetro的实验ColumnaTabla（只有 geminiRoutes 定义此Ruta）
  */
 router.post(
   '/v1beta/models/:modelName\\:listExperiments',
@@ -104,7 +104,7 @@ router.post(
 
 module.exports = router
 
-// 导出处理函数供其他模块使用（如 unified.js、standardGeminiRoutes.js）
+// 导出ProcesarFunción供其他Módulo使用（如 unified.js、standardGeminiRoutes.js）
 module.exports.handleLoadCodeAssist = handleLoadCodeAssist
 module.exports.handleOnboardUser = handleOnboardUser
 module.exports.handleCountTokens = handleCountTokens

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 主要统计 -->
+    <!-- Estadísticas principales -->
     <div
       class="mb-4 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 md:mb-8 md:gap-6 lg:grid-cols-4"
     >
@@ -33,9 +33,9 @@
               <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
                 {{ dashboardData.totalAccounts }}
               </p>
-              <!-- 各平台账户数量展示 -->
+              <!-- Visualización de cuentas por plataforma -->
               <div v-if="dashboardData.accountsByPlatform" class="flex items-center gap-2">
-                <!-- Claude账户 -->
+                <!-- Cuentas Claude -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.claude &&
@@ -49,84 +49,84 @@
                     dashboardData.accountsByPlatform.claude.total
                   }}</span>
                 </div>
-                <!-- Claude Console账户 -->
+                <!-- Cuentas Claude Console -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform['claude-console'] &&
                     dashboardData.accountsByPlatform['claude-console'].total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Console: ${dashboardData.accountsByPlatform['claude-console'].total} 个 (正常: ${dashboardData.accountsByPlatform['claude-console'].normal})`"
+                  :title="`Console: ${dashboardData.accountsByPlatform['claude-console'].total} cuentas (normal: ${dashboardData.accountsByPlatform['claude-console'].normal})`"
                 >
                   <i class="fas fa-terminal text-xs text-purple-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform['claude-console'].total
                   }}</span>
                 </div>
-                <!-- Gemini账户 -->
+                <!-- Cuentas Gemini -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.gemini &&
                     dashboardData.accountsByPlatform.gemini.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Gemini: ${dashboardData.accountsByPlatform.gemini.total} 个 (正常: ${dashboardData.accountsByPlatform.gemini.normal})`"
+                  :title="`Gemini: ${dashboardData.accountsByPlatform.gemini.total} cuentas (normal: ${dashboardData.accountsByPlatform.gemini.normal})`"
                 >
                   <i class="fas fa-robot text-xs text-yellow-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.gemini.total
                   }}</span>
                 </div>
-                <!-- Bedrock账户 -->
+                <!-- Cuentas Bedrock -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.bedrock &&
                     dashboardData.accountsByPlatform.bedrock.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Bedrock: ${dashboardData.accountsByPlatform.bedrock.total} 个 (正常: ${dashboardData.accountsByPlatform.bedrock.normal})`"
+                  :title="`Bedrock: ${dashboardData.accountsByPlatform.bedrock.total} cuentas (normal: ${dashboardData.accountsByPlatform.bedrock.normal})`"
                 >
                   <i class="fab fa-aws text-xs text-orange-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.bedrock.total
                   }}</span>
                 </div>
-                <!-- OpenAI账户 -->
+                <!-- Cuentas OpenAI -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.openai &&
                     dashboardData.accountsByPlatform.openai.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`OpenAI: ${dashboardData.accountsByPlatform.openai.total} 个 (正常: ${dashboardData.accountsByPlatform.openai.normal})`"
+                  :title="`OpenAI: ${dashboardData.accountsByPlatform.openai.total} cuentas (normal: ${dashboardData.accountsByPlatform.openai.normal})`"
                 >
                   <i class="fas fa-openai text-xs text-gray-100" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.openai.total
                   }}</span>
                 </div>
-                <!-- Azure OpenAI账户 -->
+                <!-- Cuentas Azure OpenAI -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform.azure_openai &&
                     dashboardData.accountsByPlatform.azure_openai.total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`Azure OpenAI: ${dashboardData.accountsByPlatform.azure_openai.total} 个 (正常: ${dashboardData.accountsByPlatform.azure_openai.normal})`"
+                  :title="`Azure OpenAI: ${dashboardData.accountsByPlatform.azure_openai.total} cuentas (normal: ${dashboardData.accountsByPlatform.azure_openai.normal})`"
                 >
                   <i class="fab fa-microsoft text-xs text-blue-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                     dashboardData.accountsByPlatform.azure_openai.total
                   }}</span>
                 </div>
-                <!-- OpenAI-Responses账户 -->
+                <!-- Cuentas OpenAI-Responses -->
                 <div
                   v-if="
                     dashboardData.accountsByPlatform['openai-responses'] &&
                     dashboardData.accountsByPlatform['openai-responses'].total > 0
                   "
                   class="inline-flex items-center gap-0.5"
-                  :title="`OpenAI Responses: ${dashboardData.accountsByPlatform['openai-responses'].total} 个 (正常: ${dashboardData.accountsByPlatform['openai-responses'].normal})`"
+                  :title="`OpenAI Responses: ${dashboardData.accountsByPlatform['openai-responses'].total} cuentas (normal: ${dashboardData.accountsByPlatform['openai-responses'].normal})`"
                 >
                   <i class="fas fa-server text-xs text-cyan-600" />
                   <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
@@ -136,18 +136,18 @@
               </div>
             </div>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              正常: {{ dashboardData.normalAccounts || 0 }}
+              Normal: {{ dashboardData.normalAccounts || 0 }}
               <span v-if="dashboardData.abnormalAccounts > 0" class="text-red-600">
-                | 异常: {{ dashboardData.abnormalAccounts }}
+                | Anormal: {{ dashboardData.abnormalAccounts }}
               </span>
               <span
                 v-if="dashboardData.pausedAccounts > 0"
                 class="text-gray-600 dark:text-gray-400"
               >
-                | 停止调度: {{ dashboardData.pausedAccounts }}
+                | Pausado: {{ dashboardData.pausedAccounts }}
               </span>
               <span v-if="dashboardData.rateLimitedAccounts > 0" class="text-yellow-600">
-                | 限流: {{ dashboardData.rateLimitedAccounts }}
+                | Limitado: {{ dashboardData.rateLimitedAccounts }}
               </span>
             </p>
           </div>
@@ -200,19 +200,19 @@
       </div>
     </div>
 
-    <!-- 账户余额/配额汇总 -->
+    <!-- Resumen de saldo/cuota de cuentas -->
     <div class="mb-4 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 md:mb-8 md:gap-6">
       <div class="stat-card">
         <div class="flex items-center justify-between">
           <div>
             <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
-              账户余额/配额
+              Saldo/Cuota de Cuenta
             </p>
             <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
               {{ formatCurrencyUsd(balanceSummary.totalBalance || 0) }}
             </p>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              低余额: {{ balanceSummary.lowBalanceCount || 0 }} | 总成本:
+              Saldo bajo: {{ balanceSummary.lowBalanceCount || 0 }} | totalCost:
               {{ formatCurrencyUsd(balanceSummary.totalCost || 0) }}
             </p>
           </div>
@@ -223,7 +223,7 @@
 
         <div class="mt-3 flex items-center justify-between gap-3">
           <p class="text-xs text-gray-500 dark:text-gray-400">
-            更新时间: {{ formatLastUpdate(balanceSummaryUpdatedAt) }}
+            Actualizado: {{ formatLastUpdate(balanceSummaryUpdatedAt) }}
           </p>
           <button
             class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500"
@@ -231,16 +231,16 @@
             @click="loadBalanceSummary"
           >
             <i :class="['fas', loadingBalanceSummary ? 'fa-spinner fa-spin' : 'fa-sync-alt']" />
-            刷新
+            Actualizar
           </button>
         </div>
       </div>
 
       <div class="card p-4 sm:p-6">
         <div class="mb-3 flex items-center justify-between">
-          <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">低余额账户</h3>
+          <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Cuentas con Saldo Bajo</h3>
           <span class="text-xs text-gray-500 dark:text-gray-400">
-            {{ lowBalanceAccounts.length }} 个
+            {{ lowBalanceAccounts.length }} cuentas
           </span>
         </div>
 
@@ -248,13 +248,13 @@
           v-if="loadingBalanceSummary"
           class="py-6 text-center text-sm text-gray-500 dark:text-gray-400"
         >
-          正在加载...
+          Cargando...
         </div>
         <div
           v-else-if="lowBalanceAccounts.length === 0"
           class="py-6 text-center text-sm text-green-600 dark:text-green-400"
         >
-          全部正常
+          Todo normal
         </div>
         <div v-else class="max-h-64 space-y-2 overflow-y-auto">
           <div
@@ -273,16 +273,16 @@
               </span>
             </div>
             <div class="mt-1 text-xs text-gray-600 dark:text-gray-400">
-              <span v-if="account.balance">余额: {{ account.balance.formattedAmount }}</span>
+              <span v-if="account.balance">Saldo: {{ account.balance.formattedAmount }}</span>
               <span v-else
-                >今日成本: {{ formatCurrencyUsd(account.statistics?.dailyCost || 0) }}</span
+                >Costo hoy: {{ formatCurrencyUsd(account.statistics?.dailyCost || 0) }}</span
               >
             </div>
             <div v-if="account.quota && typeof account.quota.percentage === 'number'" class="mt-2">
               <div
                 class="mb-1 flex items-center justify-between text-xs text-gray-600 dark:text-gray-400"
               >
-                <span>配额使用</span>
+                <span>Uso de cuota</span>
                 <span class="text-red-600 dark:text-red-400">
                   {{ account.quota.percentage.toFixed(1) }}%
                 </span>
@@ -299,7 +299,7 @@
       </div>
     </div>
 
-    <!-- Token统计和性能指标 -->
+    <!-- Estadísticas de tokens e indicadores de rendimiento -->
     <div
       class="mb-4 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 md:mb-8 md:gap-6 lg:grid-cols-4"
     >
@@ -420,7 +420,7 @@
           <div>
             <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
               {{ t('stats.realtime_rpm') }}
-              <span class="text-xs text-gray-400">({{ dashboardData.metricsWindow }}分钟)</span>
+              <span class="text-xs text-gray-400">({{ dashboardData.metricsWindow }}minutos)</span>
             </p>
             <p class="text-2xl font-bold text-orange-600 sm:text-3xl">
               {{ dashboardData.realtimeRPM || 0 }}
@@ -443,7 +443,7 @@
           <div>
             <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
               {{ t('stats.realtime_tpm') }}
-              <span class="text-xs text-gray-400">({{ dashboardData.metricsWindow }}分钟)</span>
+              <span class="text-xs text-gray-400">({{ dashboardData.metricsWindow }}minutos)</span>
             </p>
             <p class="text-2xl font-bold text-rose-600 sm:text-3xl">
               {{ formatNumber(dashboardData.realtimeTPM || 0) }}
@@ -462,14 +462,14 @@
       </div>
     </div>
 
-    <!-- 模型消费统计 -->
+    <!-- Estadísticas de consumo por modelo -->
     <div class="mb-8">
       <div class="mb-4 flex flex-col gap-4 sm:mb-6">
         <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
           {{ t('stats.model_usage_and_token_trend') }}
         </h3>
         <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-end">
-          <!-- 快捷日期选择 -->
+          <!-- Selección rápida de fecha -->
           <div
             class="flex flex-shrink-0 gap-1 overflow-x-auto rounded-lg bg-gray-100 p-1 dark:bg-gray-700"
           >
@@ -488,7 +488,7 @@
             </button>
           </div>
 
-          <!-- 粒度切换按钮 -->
+          <!-- Botones de cambio de granularidad -->
           <div class="flex gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-700">
             <button
               :class="[
@@ -514,7 +514,7 @@
             </button>
           </div>
 
-          <!-- Element Plus 日期范围选择器 -->
+          <!-- Selector de rango de fechas Element Plus -->
           <div class="flex items-center gap-2">
             <el-date-picker
               v-model="dateFilter.customRange"
@@ -536,13 +536,13 @@
             </span>
           </div>
 
-          <!-- 刷新控制 -->
+          <!-- Control de actualización -->
           <div class="flex items-center gap-2">
-            <!-- 自动刷新控制 -->
+            <!-- Control de actualización automática -->
             <div class="flex items-center rounded-lg bg-gray-100 px-3 py-1 dark:bg-gray-700">
               <label class="relative inline-flex cursor-pointer items-center">
                 <input v-model="autoRefreshEnabled" class="peer sr-only" type="checkbox" />
-                <!-- 更小的开关 -->
+                <!-- Switch más pequeño -->
                 <div
                   class="peer relative h-5 w-9 rounded-full bg-gray-300 transition-all duration-200 after:absolute after:left-[2px] after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow-sm after:transition-transform after:duration-200 after:content-[''] peer-checked:bg-blue-500 peer-checked:after:translate-x-4 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:bg-gray-600 dark:after:bg-gray-300 dark:peer-focus:ring-blue-600"
                 />
@@ -562,7 +562,7 @@
               </label>
             </div>
 
-            <!-- 刷新按钮 -->
+            <!-- Botón de actualización -->
             <button
               class="flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1 text-sm font-medium text-blue-600 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700 sm:gap-2"
               :disabled="isRefreshing"
@@ -579,7 +579,7 @@
       </div>
 
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <!-- 饼图 -->
+        <!-- Gráfico de pastel -->
         <div class="card p-4 sm:p-6">
           <h4 class="mb-4 text-base font-semibold text-gray-800 dark:text-gray-200 sm:text-lg">
             {{ t('stats.token_usage_distribution') }}
@@ -589,7 +589,7 @@
           </div>
         </div>
 
-        <!-- 详细数据表格 -->
+        <!-- Tabla de datos detallados -->
         <div class="card p-4 sm:p-6">
           <h4 class="mb-4 text-base font-semibold text-gray-800 dark:text-gray-200 sm:text-lg">
             {{ t('stats.detailed_statistics') }}
@@ -671,14 +671,14 @@
       </div>
     </div>
 
-    <!-- Token使用趋势图 -->
+    <!-- Gráfico de tendencia de uso de tokens -->
     <div class="mb-4 sm:mb-6 md:mb-8">
       <div class="card p-4 sm:p-6">
         <div class="mb-3 flex items-center justify-between">
           <h2 class="text-xs font-semibold text-gray-700 dark:text-gray-300 sm:text-sm">
             {{ t('stats.token_usage_trend') }}
           </h2>
-          <!-- 刷新按钮 -->
+          <!-- Botón de actualización -->
           <button
             class="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 sm:px-3 sm:py-1.5 sm:text-sm"
             :class="{ 'opacity-70': isRefreshing }"
@@ -695,14 +695,14 @@
       </div>
     </div>
 
-    <!-- API Keys 使用趋势图 -->
+    <!-- Gráfico de tendencia de uso de API Keys -->
     <div class="mb-4 sm:mb-6 md:mb-8">
       <div class="card p-4 sm:p-6">
         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">
             {{ t('stats.api_keys_usage_trend') }}
           </h3>
-          <!-- 维度切换按钮 -->
+          <!-- Botones de cambio de dimensión -->
           <div class="flex gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-700">
             <button
               :class="[
@@ -750,7 +750,7 @@
       </div>
     </div>
 
-    <!-- 账号使用趋势图 -->
+    <!-- Gráfico de tendencia de uso de cuentas -->
     <div class="mb-4 sm:mb-6 md:mb-8">
       <div class="card p-4 sm:p-6">
         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -851,10 +851,10 @@ const {
   disabledDate
 } = dashboardStore
 
-// 日期选择器默认时间
+// Hora predeterminada del selector de fecha
 const defaultTime = [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 2, 1, 23, 59, 59)]
 
-// Chart 实例
+// Instancia de gráfico
 const modelUsageChart = ref(null)
 const usageTrendChart = ref(null)
 const apiKeysUsageTrendChart = ref(null)
@@ -873,7 +873,7 @@ const accountGroupOptions = [
 
 const accountTrendUpdating = ref(false)
 
-// 余额/配额汇总
+// Resumen de saldo/cuota
 const balanceSummary = ref({
   totalBalance: 0,
   totalCost: 0,
@@ -937,10 +937,10 @@ const formatCurrencyUsd = (amount) => {
 }
 
 const formatLastUpdate = (isoString) => {
-  if (!isoString) return '未知'
+  if (!isoString) return 'Desconocido'
   const date = new Date(isoString)
-  if (Number.isNaN(date.getTime())) return '未知'
-  return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  if (Number.isNaN(date.getTime())) return 'Desconocido'
+  return date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
 }
 
 const loadBalanceSummary = async () => {
@@ -955,27 +955,27 @@ const loadBalanceSummary = async () => {
     }
     balanceSummaryUpdatedAt.value = new Date().toISOString()
   } else if (response?.message) {
-    console.debug('加载余额汇总失败:', response.message)
-    showToast('加载余额汇总失败', 'error')
+    console.debug('Error al cargar resumen de saldo:', response.message)
+    showToast('Error al cargar resumen de saldo', 'error')
   }
   loadingBalanceSummary.value = false
 }
 
-// 自动刷新相关
+// Relacionado con actualización automática
 const autoRefreshEnabled = ref(false)
-const autoRefreshInterval = ref(30) // 秒
+const autoRefreshInterval = ref(30) // segundos
 const autoRefreshTimer = ref(null)
 const refreshCountdown = ref(0)
 const countdownTimer = ref(null)
 const isRefreshing = ref(false)
 
-// 计算倒计时显示
+// Calcular visualización de cuenta regresiva
 // const refreshCountdownDisplay = computed(() => {
 //   if (!autoRefreshEnabled.value || refreshCountdown.value <= 0) return ''
-//   return `${refreshCountdown.value}秒后刷新`
+//   return `Refrescar en ${refreshCountdown.value} segundos`
 // })
 
-// 图表颜色配置（根据主题动态调整）
+// Configuración de colores del gráfico (ajustada dinámicamente según el tema)
 const chartColors = computed(() => ({
   text: isDarkMode.value ? '#e5e7eb' : '#374151',
   grid: isDarkMode.value ? 'rgba(75, 85, 99, 0.3)' : 'rgba(0, 0, 0, 0.1)',
@@ -995,7 +995,7 @@ function formatCostValue(cost) {
   return `$${cost.toFixed(6)}`
 }
 
-// 计算百分比
+// Calcular porcentaje
 function calculatePercentage(value, stats) {
   if (!stats || stats.length === 0) return 0
   const total = stats.reduce((sum, stat) => sum + stat.allTokens, 0)
@@ -1003,7 +1003,7 @@ function calculatePercentage(value, stats) {
   return ((value / total) * 100).toFixed(1)
 }
 
-// 创建模型使用饼图
+// Crear gráfico de pastel de uso de modelos
 function createModelUsageChart() {
   if (!modelUsageChart.value) return
 
@@ -1072,13 +1072,13 @@ function createModelUsageChart() {
   })
 }
 
-// 创建使用趋势图
+// Crear gráfico de tendencia de uso
 function createUsageTrendChart() {
   if (!usageTrendChart.value) return
 
   const data = trendData.value || []
 
-  // 准备多维度数据
+  // Preparar datos multidimensionales
   const inputData = data.map((d) => d.inputTokens || 0)
   const outputData = data.map((d) => d.outputTokens || 0)
   const cacheCreateData = data.map((d) => d.cacheCreateTokens || 0)
@@ -1086,23 +1086,23 @@ function createUsageTrendChart() {
   const requestsData = data.map((d) => d.requests || 0)
   const costData = data.map((d) => d.cost || 0)
 
-  // 根据数据类型确定标签字段和格式
+  // Determinar campo de etiqueta y formato según el tipo de datos
   const labelField = data[0]?.date ? 'date' : 'hour'
   const labels = data.map((d) => {
-    // 优先使用后端提供的label字段
+    // Priorizar el campo de etiqueta proporcionado por el backend
     if (d.label) {
       return d.label
     }
 
     if (labelField === 'hour') {
-      // 格式化小时显示
+      // Formatear visualización de hora
       const date = new Date(d.hour)
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const day = String(date.getDate()).padStart(2, '0')
       const hour = String(date.getHours()).padStart(2, '0')
       return `${month}/${day} ${hour}:00`
     }
-    // 按天显示时，只显示月/日，不显示年份
+    // Al mostrar por día, solo mostrar mes/día, no año
     const dateStr = d.date
     if (dateStr && dateStr.includes('-')) {
       const parts = dateStr.split('-')
@@ -1117,35 +1117,35 @@ function createUsageTrendChart() {
     labels: labels,
     datasets: [
       {
-        label: '输入Token',
+        label: 'Token de Entrada',
         data: inputData,
         borderColor: themeStore.currentColorScheme.primary,
         backgroundColor: `${themeStore.currentColorScheme.primary}1a`,
         tension: 0.3
       },
       {
-        label: '输出Token',
+        label: 'Token de Salida',
         data: outputData,
         borderColor: themeStore.currentColorScheme.accent,
         backgroundColor: `${themeStore.currentColorScheme.accent}1a`,
         tension: 0.3
       },
       {
-        label: '缓存创建Token',
+        label: 'Token de Creación de Caché',
         data: cacheCreateData,
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.3
       },
       {
-        label: '缓存读取Token',
+        label: 'Token de Lectura de Caché',
         data: cacheReadData,
         borderColor: themeStore.currentColorScheme.secondary,
         backgroundColor: `${themeStore.currentColorScheme.secondary}1a`,
         tension: 0.3
       },
       {
-        label: '费用 (USD)',
+        label: 'Costo (USD)',
         data: costData,
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
@@ -1153,7 +1153,7 @@ function createUsageTrendChart() {
         yAxisID: 'y2'
       },
       {
-        label: '请求数',
+        label: 'Número de Solicitudes',
         data: requestsData,
         borderColor: 'rgb(16, 185, 129)',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -1195,7 +1195,7 @@ function createUsageTrendChart() {
       plugins: {
         title: {
           display: true,
-          text: 'Token使用趋势',
+          text: 'Tendencia de uso de tokens',
           font: {
             size: 16,
             weight: 'bold'
@@ -1212,19 +1212,19 @@ function createUsageTrendChart() {
           mode: 'index',
           intersect: false,
           itemSort: function (a, b) {
-            // 按值倒序排列，费用和请求数特殊处理
+            // Ordenar por valor descendente, manejo especial de costo y solicitudes
             const aLabel = a.dataset.label || ''
             const bLabel = b.dataset.label || ''
 
-            // 费用和请求数使用不同的轴，单独处理
-            if (aLabel === '费用 (USD)' || bLabel === '费用 (USD)') {
-              return aLabel === '费用 (USD)' ? -1 : 1
+            // Costo y solicitudes usan ejes diferentes, manejo por separado
+            if (aLabel === 'Costo (USD)' || bLabel === 'Costo (USD)') {
+              return aLabel === 'Costo (USD)' ? -1 : 1
             }
-            if (aLabel === '请求数' || bLabel === '请求数') {
-              return aLabel === '请求数' ? 1 : -1
+            if (aLabel === 'Número de Solicitudes' || bLabel === 'Número de Solicitudes') {
+              return aLabel === 'Número de Solicitudes' ? 1 : -1
             }
 
-            // 其他按token值倒序
+            // Otros ordenar por valor de token descendente
             return b.parsed.y - a.parsed.y
           },
           callbacks: {
@@ -1232,17 +1232,17 @@ function createUsageTrendChart() {
               const label = context.dataset.label || ''
               let value = context.parsed.y
 
-              if (label === '费用 (USD)') {
-                // 格式化费用显示
+              if (label === 'Costo (USD)') {
+                // Formatear visualización de costo
                 if (value < 0.01) {
                   return label + ': $' + value.toFixed(6)
                 } else {
                   return label + ': $' + value.toFixed(4)
                 }
-              } else if (label === '请求数') {
-                return label + ': ' + value.toLocaleString() + ' 次'
+              } else if (label === 'Número de Solicitudes') {
+                return label + ': ' + value.toLocaleString() + ' veces'
               } else {
-                // 格式化token数显示
+                // Formatear visualización de cantidad de tokens
                 if (value >= 1000000) {
                   return label + ': ' + (value / 1000000).toFixed(2) + 'M tokens'
                 } else if (value >= 1000) {
@@ -1261,7 +1261,7 @@ function createUsageTrendChart() {
           display: true,
           title: {
             display: true,
-            text: trendGranularity === 'hour' ? '时间' : '日期',
+            text: trendGranularity === 'hour' ? 'Hora' : 'Fecha',
             color: chartColors.value.text
           },
           ticks: {
@@ -1278,7 +1278,7 @@ function createUsageTrendChart() {
           min: 0,
           title: {
             display: true,
-            text: 'Token数量',
+            text: 'Cantidad de tokens',
             color: chartColors.value.text
           },
           ticks: {
@@ -1298,7 +1298,7 @@ function createUsageTrendChart() {
           min: 0,
           title: {
             display: true,
-            text: '请求数',
+            text: 'Solicitudes',
             color: chartColors.value.text
           },
           grid: {
@@ -1313,7 +1313,7 @@ function createUsageTrendChart() {
         },
         y2: {
           type: 'linear',
-          display: false, // 隐藏费用轴，在tooltip中显示
+          display: false, // Ocultar eje de costo, mostrar en tooltip
           position: 'right',
           min: 0
         }
@@ -1322,14 +1322,14 @@ function createUsageTrendChart() {
   })
 }
 
-// 创建API Keys使用趋势图
+// Crear gráfico de tendencia de uso de API Keys
 function createApiKeysUsageTrendChart() {
   if (!apiKeysUsageTrendChart.value) return
 
   const data = apiKeysTrendData.value.data || []
   const metric = apiKeysTrendMetric.value
 
-  // 颜色数组
+  // Array de colores
   const colors = [
     '#3B82F6',
     '#10B981',
@@ -1343,7 +1343,7 @@ function createApiKeysUsageTrendChart() {
     '#84CC16'
   ]
 
-  // 准备数据集
+  // Preparar datasets
   const datasets =
     apiKeysTrendData.value.topApiKeys?.map((apiKeyId, index) => {
       const data = apiKeysTrendData.value.data.map((item) => {
@@ -1353,7 +1353,7 @@ function createApiKeysUsageTrendChart() {
           : item.apiKeys[apiKeyId].requests || 0
       })
 
-      // 获取API Key名称
+      // Obtener nombre de API Key
       const apiKeyName =
         apiKeysTrendData.value.data.find((item) => item.apiKeys && item.apiKeys[apiKeyId])?.apiKeys[
           apiKeyId
@@ -1369,25 +1369,25 @@ function createApiKeysUsageTrendChart() {
       }
     }) || []
 
-  // 根据数据类型确定标签字段
+  // Determinar campo de etiqueta según el tipo de datos
   const labelField = data[0]?.date ? 'date' : 'hour'
 
   const chartData = {
     labels: data.map((d) => {
-      // 优先使用后端提供的label字段
+      // Priorizar el campo de etiqueta proporcionado por el backend
       if (d.label) {
         return d.label
       }
 
       if (labelField === 'hour') {
-        // 格式化小时显示
+        // Formatear visualización de hora
         const date = new Date(d.hour)
         const month = String(date.getMonth() + 1).padStart(2, '0')
         const day = String(date.getDate()).padStart(2, '0')
         const hour = String(date.getHours()).padStart(2, '0')
         return `${month}/${day} ${hour}:00`
       }
-      // 按天显示时，只显示月/日，不显示年份
+      // Al mostrar por día, solo mostrar mes/día, no año
       const dateStr = d.date
       if (dateStr && dateStr.includes('-')) {
         const parts = dateStr.split('-')
@@ -1410,7 +1410,7 @@ function createApiKeysUsageTrendChart() {
     opts.scales.x.ticks.color = chartColors.value.text
     opts.scales.x.grid.color = chartColors.value.grid
     opts.scales.y.title.color = chartColors.value.text
-    opts.scales.y.title.text = metric === 'tokens' ? 'Token 数量' : '请求次数'
+    opts.scales.y.title.text = metric === 'tokens' ? 'Cantidad de tokens' : 'Número de solicitudes'
     opts.scales.y.ticks.color = chartColors.value.text
     opts.scales.y.grid.color = chartColors.value.grid
     apiKeysUsageTrendChartInstance.update('none')
@@ -1439,7 +1439,7 @@ function createApiKeysUsageTrendChart() {
           mode: 'index',
           intersect: false,
           itemSort: function (a, b) {
-            // 按值倒序排列
+            // Ordenar por valor descendente
             return b.parsed.y - a.parsed.y
           },
           callbacks: {
@@ -1449,7 +1449,7 @@ function createApiKeysUsageTrendChart() {
               const dataIndex = context.dataIndex
               const dataPoint = apiKeysTrendData.value.data[dataIndex]
 
-              // 获取所有数据集在这个时间点的值，用于排名
+              // Obtener valores de todos los conjuntos de datos en este punto de tiempo para clasificación
               const allValues = context.chart.data.datasets
                 .map((dataset, idx) => ({
                   value: dataset.data[dataIndex] || 0,
@@ -1457,17 +1457,17 @@ function createApiKeysUsageTrendChart() {
                 }))
                 .sort((a, b) => b.value - a.value)
 
-              // 找出当前数据集的排名
+              // Encontrar la clasificación del conjunto de datos actual
               const rank = allValues.findIndex((item) => item.index === context.datasetIndex) + 1
 
-              // 准备排名标识
+              // Preparar identificador de clasificación
               let rankIcon = ''
               if (rank === 1) rankIcon = '🥇 '
               else if (rank === 2) rankIcon = '🥈 '
               else if (rank === 3) rankIcon = '🥉 '
 
               if (apiKeysTrendMetric.value === 'tokens') {
-                // 格式化token显示
+                // Formatear visualización de tokens
                 let formattedValue = ''
                 if (value >= 1000000) {
                   formattedValue = (value / 1000000).toFixed(2) + 'M'
@@ -1477,14 +1477,14 @@ function createApiKeysUsageTrendChart() {
                   formattedValue = value.toLocaleString()
                 }
 
-                // 获取对应API Key的费用信息
+                // Obtener información de costo de API Key correspondiente
                 const apiKeyId = apiKeysTrendData.value.topApiKeys[context.datasetIndex]
                 const apiKeyData = dataPoint?.apiKeys?.[apiKeyId]
                 const cost = apiKeyData?.formattedCost || '$0.00'
 
                 return `${rankIcon}${label}: ${formattedValue} tokens (${cost})`
               } else {
-                return `${rankIcon}${label}: ${value.toLocaleString()} 次`
+                return `${rankIcon}${label}: ${value.toLocaleString()} veces`
               }
             }
           }
@@ -1496,7 +1496,7 @@ function createApiKeysUsageTrendChart() {
           display: true,
           title: {
             display: true,
-            text: trendGranularity === 'hour' ? '时间' : '日期',
+            text: trendGranularity === 'hour' ? 'Hora' : 'Fecha',
             color: chartColors.value.text
           },
           ticks: {
@@ -1511,7 +1511,7 @@ function createApiKeysUsageTrendChart() {
           min: 0,
           title: {
             display: true,
-            text: apiKeysTrendMetric.value === 'tokens' ? 'Token 数量' : '请求次数',
+            text: apiKeysTrendMetric.value === 'tokens' ? 'Cantidad de tokens' : 'Número de solicitudes',
             color: chartColors.value.text
           },
           ticks: {
@@ -1529,7 +1529,7 @@ function createApiKeysUsageTrendChart() {
   })
 }
 
-// 更新API Keys使用趋势图
+// Actualizar gráfico de tendencia de uso de API Keys
 async function updateApiKeysUsageTrendChart() {
   await loadApiKeysTrend(apiKeysTrendMetric.value)
   await nextTick()
@@ -1563,7 +1563,7 @@ function createAccountUsageTrendChart() {
 
     const accountName =
       trend.find((item) => item.accounts && item.accounts[accountId])?.accounts[accountId]?.name ||
-      `账号 ${String(accountId).slice(0, 6)}`
+      `Cuenta ${String(accountId).slice(0, 6)}`
 
     return {
       label: accountName,
@@ -1612,7 +1612,7 @@ function createAccountUsageTrendChart() {
     const opts = accountUsageTrendChartInstance.options
     opts.plugins.legend.labels.color = chartColors.value.legend
     opts.scales.x.title.color = chartColors.value.text
-    opts.scales.x.title.text = trendGranularity.value === 'hour' ? '时间' : '日期'
+    opts.scales.x.title.text = trendGranularity.value === 'hour' ? 'Hora' : 'Fecha'
     opts.scales.x.ticks.color = chartColors.value.text
     opts.scales.x.grid.color = chartColors.value.grid
     opts.scales.y.title.color = chartColors.value.text
@@ -1674,7 +1674,7 @@ function createAccountUsageTrendChart() {
               const formattedCost = accountDetail?.formattedCost || formatCostValue(value)
               const requests = accountDetail?.requests || 0
 
-              return `${rankIcon}${label}: ${formattedCost} / ${requests.toLocaleString()} 次`
+              return `${rankIcon}${label}: ${formattedCost} / ${requests.toLocaleString()} veces`
             }
           }
         }
@@ -1685,7 +1685,7 @@ function createAccountUsageTrendChart() {
           display: true,
           title: {
             display: true,
-            text: trendGranularity.value === 'hour' ? '时间' : '日期',
+            text: trendGranularity.value === 'hour' ? 'Hora' : 'Fecha',
             color: chartColors.value.text
           },
           ticks: {
@@ -1700,7 +1700,7 @@ function createAccountUsageTrendChart() {
           min: 0,
           title: {
             display: true,
-            text: '消耗金额 (USD)',
+            text: 'Monto consumido (USD)',
             color: chartColors.value.text
           },
           ticks: {
@@ -1730,7 +1730,7 @@ async function handleAccountUsageGroupChange(group) {
   }
 }
 
-// 监听数据变化更新图表
+// Escuchar cambios de datos para actualizar gráficos
 watch(dashboardModelStats, () => {
   nextTick(() => createModelUsageChart())
 })
@@ -1747,7 +1747,7 @@ watch(accountUsageTrendData, () => {
   nextTick(() => createAccountUsageTrendChart())
 })
 
-// 刷新所有数据
+// Refrescar todos los datos
 async function refreshAllData() {
   if (isRefreshing.value) return
 
@@ -1759,14 +1759,14 @@ async function refreshAllData() {
   }
 }
 
-// 启动自动刷新
+// Iniciar actualización automática
 function startAutoRefresh() {
   if (!autoRefreshEnabled.value) return
 
-  // 重置倒计时
+  // Restablecer cuenta regresiva
   refreshCountdown.value = autoRefreshInterval.value
 
-  // 清除现有定时器
+  // Limpiar temporizador existente
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value)
   }
@@ -1774,7 +1774,7 @@ function startAutoRefresh() {
     clearTimeout(autoRefreshTimer.value)
   }
 
-  // 启动倒计时
+  // Iniciar cuenta regresiva
   countdownTimer.value = setInterval(() => {
     refreshCountdown.value--
     if (refreshCountdown.value <= 0) {
@@ -1782,17 +1782,17 @@ function startAutoRefresh() {
     }
   }, 1000)
 
-  // 设置刷新定时器
+  // Configurar temporizador de actualización
   autoRefreshTimer.value = setTimeout(async () => {
     await refreshAllData()
-    // 递归调用以继续自动刷新
+    // Llamada recursiva para continuar la actualización automática
     if (autoRefreshEnabled.value) {
       startAutoRefresh()
     }
   }, autoRefreshInterval.value * 1000)
 }
 
-// 停止自动刷新
+// Detener actualización automática
 function stopAutoRefresh() {
   if (countdownTimer.value) {
     clearInterval(countdownTimer.value)
@@ -1805,7 +1805,7 @@ function stopAutoRefresh() {
   refreshCountdown.value = 0
 }
 
-// 切换自动刷新
+// Alternar actualización automática
 // function toggleAutoRefresh() {
 //   autoRefreshEnabled.value = !autoRefreshEnabled.value
 //   if (autoRefreshEnabled.value) {
@@ -1815,7 +1815,7 @@ function stopAutoRefresh() {
 //   }
 // }
 
-// 监听自动刷新状态变化
+// Escuchar cambios de estado de actualización automática
 watch(autoRefreshEnabled, (newVal) => {
   if (newVal) {
     startAutoRefresh()
@@ -1824,7 +1824,7 @@ watch(autoRefreshEnabled, (newVal) => {
   }
 })
 
-// 监听主题变化，重新创建图表
+// Escuchar cambios de tema y recrear gráficos
 watch(isDarkMode, () => {
   nextTick(() => {
     createModelUsageChart()
@@ -1834,7 +1834,7 @@ watch(isDarkMode, () => {
   })
 })
 
-// 监听色系变化，重新创建图表
+// Escuchar cambios de esquema de color y recrear gráficos
 watch(
   () => themeStore.colorScheme,
   () => {
@@ -1847,12 +1847,12 @@ watch(
   }
 )
 
-// 初始化
+// Inicialización
 onMounted(async () => {
-  // 加载所有数据
+  // Cargar todos los datos
   await refreshAllData()
 
-  // 创建图表
+  // Crear gráficos
   await nextTick()
   createModelUsageChart()
   createUsageTrendChart()
@@ -1860,10 +1860,10 @@ onMounted(async () => {
   createAccountUsageTrendChart()
 })
 
-// 清理
+// Limpieza
 onUnmounted(() => {
   stopAutoRefresh()
-  // 销毁图表实例
+  // Destruir instancias de gráficos
   if (modelUsageChartInstance) {
     modelUsageChartInstance.destroy()
   }
@@ -1880,12 +1880,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 日期选择器基本样式调整 - 让Element Plus官方暗黑模式生效 */
+/* Ajustes básicos de estilo del selector de fecha - permitir que el modo oscuro oficial de Element Plus surta efecto */
 .custom-date-picker {
   font-size: 13px;
 }
 
-/* 旋转动画 */
+/* Animación de rotación */
 @keyframes spin {
   from {
     transform: rotate(0deg);

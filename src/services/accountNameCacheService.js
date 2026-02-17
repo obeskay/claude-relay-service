@@ -1,30 +1,30 @@
 /**
- * 账户名称缓存服务
- * 用于加速绑定账号搜索，避免每次搜索都查询所有账户
+ * CuentaNombreCachéServicio
+ * 用于加速绑定账号搜索，避免每次搜索都Consulta所有Cuenta
  */
 const logger = require('../utils/logger')
 
 class AccountNameCacheService {
   constructor() {
-    // 账户名称缓存：accountId -> { name, platform }
+    // CuentaNombreCaché：accountId -> { name, platform }
     this.accountCache = new Map()
-    // 账户组名称缓存：groupId -> { name, platform }
+    // Cuenta组NombreCaché：groupId -> { name, platform }
     this.groupCache = new Map()
-    // 缓存过期时间
+    // Caché过期Tiempo
     this.lastRefresh = 0
     this.refreshInterval = 5 * 60 * 1000 // 5分钟
     this.isRefreshing = false
   }
 
   /**
-   * 刷新缓存（如果过期）
+   * 刷新Caché（如果过期）
    */
   async refreshIfNeeded() {
     if (Date.now() - this.lastRefresh < this.refreshInterval) {
       return
     }
     if (this.isRefreshing) {
-      // 等待正在进行的刷新完成
+      // 等待En progreso进Fila的刷新Completado
       let waitCount = 0
       while (this.isRefreshing && waitCount < 50) {
         await new Promise((resolve) => setTimeout(resolve, 100))
@@ -36,7 +36,7 @@ class AccountNameCacheService {
   }
 
   /**
-   * 强制刷新缓存
+   * 强制刷新Caché
    */
   async refresh() {
     if (this.isRefreshing) {
@@ -48,7 +48,7 @@ class AccountNameCacheService {
       const newAccountCache = new Map()
       const newGroupCache = new Map()
 
-      // 延迟加载服务，避免循环依赖
+      // 延迟加载Servicio，避免Bucle依赖
       const claudeAccountService = require('./account/claudeAccountService')
       const claudeConsoleAccountService = require('./account/claudeConsoleAccountService')
       const geminiAccountService = require('./account/geminiAccountService')
@@ -59,21 +59,21 @@ class AccountNameCacheService {
       const ccrAccountService = require('./account/ccrAccountService')
       const accountGroupService = require('./accountGroupService')
 
-      // 可选服务（可能不存在）
+      // OpcionalServicio（可能不存在）
       let geminiApiAccountService = null
       let openaiResponsesAccountService = null
       try {
         geminiApiAccountService = require('./account/geminiApiAccountService')
       } catch (e) {
-        // 服务不存在，忽略
+        // Servicio不存在，忽略
       }
       try {
         openaiResponsesAccountService = require('./account/openaiResponsesAccountService')
       } catch (e) {
-        // 服务不存在，忽略
+        // Servicio不存在，忽略
       }
 
-      // 并行加载所有账户类型
+      // 并Fila加载所有CuentaTipo
       const results = await Promise.allSettled([
         claudeAccountService.getAllAccounts(),
         claudeConsoleAccountService.getAllAccounts(),
@@ -101,12 +101,12 @@ class AccountNameCacheService {
       const ccrAccounts = results[9].status === 'fulfilled' ? results[9].value : []
       const groups = results[10].status === 'fulfilled' ? results[10].value : []
 
-      // Bedrock 返回格式特殊处理
+      // Bedrock RetornarFormato特殊Procesar
       const bedrockAccounts = Array.isArray(bedrockResult)
         ? bedrockResult
         : bedrockResult.accounts || []
 
-      // 填充账户缓存的辅助函数
+      // 填充CuentaCaché的辅助Función
       const addAccounts = (accounts, platform, prefix = '') => {
         if (!Array.isArray(accounts)) {
           return
@@ -115,7 +115,7 @@ class AccountNameCacheService {
           if (acc && acc.id && acc.name) {
             const key = prefix ? `${prefix}${acc.id}` : acc.id
             newAccountCache.set(key, { name: acc.name, platform })
-            // 同时存储不带前缀的版本，方便查找
+            // 同时存储不带前缀的Versión，方便查找
             if (prefix) {
               newAccountCache.set(acc.id, { name: acc.name, platform })
             }
@@ -134,7 +134,7 @@ class AccountNameCacheService {
       addAccounts(droidAccounts, 'droid')
       addAccounts(ccrAccounts, 'ccr')
 
-      // 填充账户组缓存
+      // 填充Cuenta组Caché
       if (Array.isArray(groups)) {
         for (const group of groups) {
           if (group && group.id && group.name) {
@@ -148,7 +148,7 @@ class AccountNameCacheService {
       this.lastRefresh = Date.now()
 
       logger.debug(
-        `Account name cache refreshed: ${newAccountCache.size} 个账户, ${newGroupCache.size} 个分组`
+        `Account name cache refreshed: ${newAccountCache.size} 个Cuenta, ${newGroupCache.size} 个Agrupar`
       )
     } catch (error) {
       logger.error('Failed to refresh account name cache:', error)
@@ -158,24 +158,24 @@ class AccountNameCacheService {
   }
 
   /**
-   * 获取账户显示名称
-   * @param {string} accountId - 账户ID（可能带前缀）
-   * @param {string} _fieldName - 字段名（如 claudeAccountId），保留用于将来扩展
-   * @returns {string} 显示名称
+   * ObtenerCuenta显示Nombre
+   * @param {string} accountId - CuentaID（可能带前缀）
+   * @param {string} _fieldName - Campo名（如 claudeAccountId），保留用于将来Extensión
+   * @returns {string} 显示Nombre
    */
   getAccountDisplayName(accountId, _fieldName) {
     if (!accountId) {
       return null
     }
 
-    // 处理账户组
+    // ProcesarCuenta组
     if (accountId.startsWith('group:')) {
       const groupId = accountId.substring(6)
       const group = this.groupCache.get(groupId)
       if (group) {
-        return `分组-${group.name}`
+        return `Agrupar-${group.name}`
       }
-      return `分组-${groupId.substring(0, 8)}`
+      return `Agrupar-${groupId.substring(0, 8)}`
     }
 
     // 直接查找（包括带前缀的 api:xxx, responses:xxx）
@@ -199,13 +199,13 @@ class AccountNameCacheService {
       }
     }
 
-    // 未找到，返回 ID 前缀
+    // 未找到，Retornar ID 前缀
     return `${accountId.substring(0, 8)}...`
   }
 
   /**
-   * 获取 API Key 的所有绑定账户显示名称
-   * @param {Object} apiKey - API Key 对象
+   * Obtener API Key 的所有绑定Cuenta显示Nombre
+   * @param {Object} apiKey - API Key Objeto
    * @returns {Array<{field: string, platform: string, name: string, accountId: string}>}
    */
   getBindingDisplayNames(apiKey) {
@@ -235,9 +235,9 @@ class AccountNameCacheService {
 
   /**
    * 搜索绑定账号
-   * @param {Array} apiKeys - API Key 列表
+   * @param {Array} apiKeys - API Key ColumnaTabla
    * @param {string} keyword - 搜索关键词
-   * @returns {Array} 匹配的 API Key 列表
+   * @returns {Array} 匹配的 API Key ColumnaTabla
    */
   searchByBindingAccount(apiKeys, keyword) {
     const lowerKeyword = keyword.toLowerCase().trim()
@@ -253,17 +253,17 @@ class AccountNameCacheService {
         return 'Piscina compartida'.includes(lowerKeyword) || 'shared'.includes(lowerKeyword)
       }
 
-      // 匹配任一绑定账户
+      // 匹配任一绑定Cuenta
       return bindings.some((binding) => {
-        // 匹配账户名称
+        // 匹配CuentaNombre
         if (binding.name && binding.name.toLowerCase().includes(lowerKeyword)) {
           return true
         }
-        // 匹配平台名称
+        // 匹配平台Nombre
         if (binding.platform.toLowerCase().includes(lowerKeyword)) {
           return true
         }
-        // 匹配账户 ID
+        // 匹配Cuenta ID
         if (binding.accountId.toLowerCase().includes(lowerKeyword)) {
           return true
         }
@@ -273,7 +273,7 @@ class AccountNameCacheService {
   }
 
   /**
-   * 清除缓存（用于测试或强制刷新）
+   * 清除Caché（用于Probar或强制刷新）
    */
   clearCache() {
     this.accountCache.clear()

@@ -127,10 +127,10 @@ function mapAntigravityUpstreamModel(model) {
   }
 
   const mapping = {
-    // Opus：上游更常见的是 thinking 变体（CLIProxyAPI 也按此处理）
+    // Opus：上游更常见的是 thinking 变体（CLIProxyAPI 也按此Procesar）
     'claude-opus-4-5': 'claude-opus-4-5-thinking',
     'claude-opus-4-6': 'claude-opus-4-6-thinking',
-    // Gemini thinking 变体回退
+    // Gemini thinking 变体Retirada
     'gemini-2.5-flash-thinking': 'gemini-2.5-flash'
   }
 

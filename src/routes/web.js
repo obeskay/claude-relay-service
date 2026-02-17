@@ -9,10 +9,10 @@ const config = require('../../config/config')
 
 const router = express.Router()
 
-// 🏠 服务静态文件
+// 🏠 Servicio静态Archivo
 router.use('/assets', express.static(path.join(__dirname, '../../web/assets')))
 
-// 🌐 页面路由重定向到新版 admin-spa
+// 🌐 PáginaRuta重定向到新版 admin-spa
 router.get('/', (req, res) => {
   res.redirect(301, '/admin-next/api-stats')
 })
@@ -29,7 +29,7 @@ router.post('/auth/login', async (req, res) => {
       })
     }
 
-    // 从Redis获取管理员信息
+    // 从RedisObtener管理员Información
     let adminData = await redis.getSession('admin_credentials')
 
     // 如果Redis中没有管理员凭据，尝试从init.json重新加载
@@ -50,7 +50,7 @@ router.post('/auth/login', async (req, res) => {
             updatedAt: initData.updatedAt || null
           }
 
-          // 重新存储到Redis，不设置过期时间
+          // 重新存储到Redis，不Establecer过期Tiempo
           await redis.getClient().hset('session:admin_credentials', adminData)
 
           logger.info('✅ Admin credentials reloaded from init.json')
@@ -69,7 +69,7 @@ router.post('/auth/login', async (req, res) => {
       }
     }
 
-    // 验证用户名和密码
+    // ValidarUsuario名和密码
     const isValidUsername = adminData.username === username
     const isValidPassword = await bcrypt.compare(password, adminData.passwordHash)
 
@@ -81,10 +81,10 @@ router.post('/auth/login', async (req, res) => {
       })
     }
 
-    // 生成会话token
+    // GenerarSesióntoken
     const sessionId = crypto.randomBytes(32).toString('hex')
 
-    // 存储会话
+    // 存储Sesión
     const sessionData = {
       username: adminData.username,
       loginTime: new Date().toISOString(),
@@ -93,8 +93,8 @@ router.post('/auth/login', async (req, res) => {
 
     await redis.setSession(sessionId, sessionData, config.security.adminSessionTimeout)
 
-    // 不再更新 Redis 中的最后登录时间，因为 Redis 只是缓存
-    // init.json 是唯一真实数据源
+    // 不再Actualizar Redis 中的最后登录Tiempo，因为 Redis 只是Caché
+    // init.json 是唯一真实Datos源
 
     logger.success(`Admin login successful: ${username}`)
 
@@ -102,7 +102,7 @@ router.post('/auth/login', async (req, res) => {
       success: true,
       token: sessionId,
       expiresIn: config.security.adminSessionTimeout,
-      username: adminData.username // 返回真实用户名
+      username: adminData.username // Retornar真实Usuario名
     })
   } catch (error) {
     logger.error('❌ Login error:', error)
@@ -133,7 +133,7 @@ router.post('/auth/logout', async (req, res) => {
   }
 })
 
-// 🔑 修改账户信息
+// 🔑 修改CuentaInformación
 router.post('/auth/change-password', async (req, res) => {
   try {
     const token = req.headers['authorization']?.replace('Bearer ', '') || req.cookies?.adminToken
@@ -154,7 +154,7 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 验证新密码长度
+    // Validar新密码长度
     if (newPassword.length < 8) {
       return res.status(400).json({
         error: 'Password too short',
@@ -162,10 +162,10 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 获取当前会话
+    // Obtener当前Sesión
     const sessionData = await redis.getSession(token)
 
-    // 🔒 安全修复：检查空对象
+    // 🔒 SeguridadCorrección：Verificar空Objeto
     if (!sessionData || Object.keys(sessionData).length === 0) {
       return res.status(401).json({
         error: 'Invalid token',
@@ -173,7 +173,7 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 🔒 安全修复：验证会话完整性
+    // 🔒 SeguridadCorrección：ValidarSesión完整性
     if (!sessionData.username || !sessionData.loginTime) {
       logger.security(
         `🔒 Invalid session structure in /auth/change-password from ${req.ip || 'unknown'}`
@@ -185,7 +185,7 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 获取当前管理员信息
+    // Obtener当前管理员Información
     const adminData = await redis.getSession('admin_credentials')
     if (!adminData) {
       return res.status(500).json({
@@ -194,7 +194,7 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 验证当前密码
+    // Validar当前密码
     const isValidPassword = await bcrypt.compare(currentPassword, adminData.passwordHash)
     if (!isValidPassword) {
       logger.security(`Invalid current password attempt for user: ${sessionData.username}`)
@@ -204,11 +204,11 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 准备更新的数据
+    // 准备Actualizar的Datos
     const updatedUsername =
       newUsername && newUsername.trim() ? newUsername.trim() : adminData.username
 
-    // 先更新 init.json（唯一真实数据源）
+    // 先Actualizar init.json（唯一真实Datos源）
     const initFilePath = path.join(__dirname, '../../data/init.json')
     if (!fs.existsSync(initFilePath)) {
       return res.status(500).json({
@@ -219,17 +219,17 @@ router.post('/auth/change-password', async (req, res) => {
 
     try {
       const initData = JSON.parse(fs.readFileSync(initFilePath, 'utf8'))
-      // const oldData = { ...initData }; // 备份旧数据
+      // const oldData = { ...initData }; // Respaldo旧Datos
 
-      // 更新 init.json
+      // Actualizar init.json
       initData.adminUsername = updatedUsername
       initData.adminPassword = newPassword // 保存明文密码到init.json
       initData.updatedAt = new Date().toISOString()
 
-      // 先写入文件（如果失败则不会影响 Redis）
+      // 先EscribirArchivo（如果Falló则不会影响 Redis）
       fs.writeFileSync(initFilePath, JSON.stringify(initData, null, 2))
 
-      // 文件写入成功后，更新 Redis 缓存
+      // ArchivoEscribirÉxito后，Actualizar Redis Caché
       const saltRounds = 10
       const newPasswordHash = await bcrypt.hash(newPassword, saltRounds)
 
@@ -250,7 +250,7 @@ router.post('/auth/change-password', async (req, res) => {
       })
     }
 
-    // 清除当前会话（强制用户重新登录）
+    // 清除当前Sesión（强制Usuario重新登录）
     await redis.deleteSession(token)
 
     logger.success(`Admin password changed successfully for user: ${updatedUsername}`)
@@ -269,7 +269,7 @@ router.post('/auth/change-password', async (req, res) => {
   }
 })
 
-// 👤 获取当前用户信息
+// 👤 Obtener当前UsuarioInformación
 router.get('/auth/user', async (req, res) => {
   try {
     const token = req.headers['authorization']?.replace('Bearer ', '') || req.cookies?.adminToken
@@ -281,10 +281,10 @@ router.get('/auth/user', async (req, res) => {
       })
     }
 
-    // 获取当前会话
+    // Obtener当前Sesión
     const sessionData = await redis.getSession(token)
 
-    // 🔒 安全修复：检查空对象
+    // 🔒 SeguridadCorrección：Verificar空Objeto
     if (!sessionData || Object.keys(sessionData).length === 0) {
       return res.status(401).json({
         error: 'Invalid token',
@@ -292,7 +292,7 @@ router.get('/auth/user', async (req, res) => {
       })
     }
 
-    // 🔒 安全修复：验证会话完整性
+    // 🔒 SeguridadCorrección：ValidarSesión完整性
     if (!sessionData.username || !sessionData.loginTime) {
       logger.security(`Invalid session structure in /auth/user from ${req.ip || 'unknown'}`)
       await redis.deleteSession(token)
@@ -302,7 +302,7 @@ router.get('/auth/user', async (req, res) => {
       })
     }
 
-    // 获取管理员信息
+    // Obtener管理员Información
     const adminData = await redis.getSession('admin_credentials')
     if (!adminData) {
       return res.status(500).json({
@@ -342,7 +342,7 @@ router.post('/auth/refresh', async (req, res) => {
 
     const sessionData = await redis.getSession(token)
 
-    // 🔒 安全修复：检查空对象（hgetall 对不存在的 key 返回 {}）
+    // 🔒 SeguridadCorrección：Verificar空Objeto（hgetall 对不存在的 key Retornar {}）
     if (!sessionData || Object.keys(sessionData).length === 0) {
       return res.status(401).json({
         error: 'Invalid token',
@@ -350,17 +350,17 @@ router.post('/auth/refresh', async (req, res) => {
       })
     }
 
-    // 🔒 安全修复：验证会话完整性（必须有 username 和 loginTime）
+    // 🔒 SeguridadCorrección：ValidarSesión完整性（必须有 username 和 loginTime）
     if (!sessionData.username || !sessionData.loginTime) {
       logger.security(`Invalid session structure detected from ${req.ip || 'unknown'}`)
-      await redis.deleteSession(token) // 清理无效/伪造的会话
+      await redis.deleteSession(token) // Limpiar无效/伪造的Sesión
       return res.status(401).json({
         error: 'Invalid session',
         message: 'Session data corrupted or incomplete'
       })
     }
 
-    // 更新最后活动时间
+    // Actualizar最后活动Tiempo
     sessionData.lastActivity = new Date().toISOString()
     await redis.setSession(token, sessionData, config.security.adminSessionTimeout)
 

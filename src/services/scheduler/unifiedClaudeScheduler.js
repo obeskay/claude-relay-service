@@ -40,16 +40,16 @@ class UnifiedClaudeScheduler {
     this.SESSION_MAPPING_PREFIX = 'unified_claude_session_mapping:'
   }
 
-  // 🔍 检查账户是否支持请求的模型
+  // 🔍 VerificarCuenta是否SoportarSolicitud的模型
   _isModelSupportedByAccount(account, accountType, requestedModel, context = '') {
     if (!requestedModel) {
-      return true // 没有指定模型时，默认支持
+      return true // 没有指定模型时，PredeterminadoSoportar
     }
 
-    // Claude OAuth 账户的模型检查
+    // Claude OAuth Cuenta的模型Verificar
     if (accountType === 'claude-official') {
-      // 1. 首先检查是否为 Claude 官方支持的模型
-      // Claude Official API 只支持 Anthropic 自己的模型,不支持第三方模型(如 deepseek-chat)
+      // 1. 首先Verificar是否为 Claude 官方Soportar的模型
+      // Claude Official API 只Soportar Anthropic 自己的模型,不Soportar第三方模型(如 deepseek-chat)
       const isClaudeOfficialModel =
         requestedModel.startsWith('claude-') ||
         requestedModel.includes('claude') ||
@@ -112,11 +112,11 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // Claude Console 账户的模型支持检查
+    // Claude Console Cuenta的模型SoportarVerificar
     if (accountType === 'claude-console' && account.supportedModels) {
-      // 兼容旧格式（数组）和新格式（对象）
+      // 兼容旧Formato（Arreglo）和新Formato（Objeto）
       if (Array.isArray(account.supportedModels)) {
-        // 旧格式：数组
+        // 旧Formato：Arreglo
         if (
           account.supportedModels.length > 0 &&
           !account.supportedModels.includes(requestedModel)
@@ -127,7 +127,7 @@ class UnifiedClaudeScheduler {
           return false
         }
       } else if (typeof account.supportedModels === 'object') {
-        // 新格式：映射表
+        // 新Formato：映射Tabla
         if (
           Object.keys(account.supportedModels).length > 0 &&
           !claudeConsoleAccountService.isModelSupported(account.supportedModels, requestedModel)
@@ -140,11 +140,11 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // CCR 账户的模型支持检查
+    // CCR Cuenta的模型SoportarVerificar
     if (accountType === 'ccr' && account.supportedModels) {
-      // 兼容旧格式（数组）和新格式（对象）
+      // 兼容旧Formato（Arreglo）和新Formato（Objeto）
       if (Array.isArray(account.supportedModels)) {
-        // 旧格式：数组
+        // 旧Formato：Arreglo
         if (
           account.supportedModels.length > 0 &&
           !account.supportedModels.includes(requestedModel)
@@ -155,7 +155,7 @@ class UnifiedClaudeScheduler {
           return false
         }
       } else if (typeof account.supportedModels === 'object') {
-        // 新格式：映射表
+        // 新Formato：映射Tabla
         if (
           Object.keys(account.supportedModels).length > 0 &&
           !ccrAccountService.isModelSupported(account.supportedModels, requestedModel)
@@ -179,17 +179,17 @@ class UnifiedClaudeScheduler {
     forcedAccount = null
   ) {
     try {
-      // 🔒 如果有强制绑定的账户（全局会话绑定），仅 claude-official 类型受影响
+      // 🔒 如果有强制绑定的Cuenta（全局Sesión绑定），仅 claude-official Tipo受影响
       if (forcedAccount && forcedAccount.accountId && forcedAccount.accountType) {
-        // ⚠️ 只有 claude-official 类型账户受全局会话绑定限制
-        // 其他类型（bedrock, ccr, claude-console等）忽略绑定，走正常调度
+        // ⚠️ 只有 claude-official TipoCuenta受全局Sesión绑定Límite
+        // 其他Tipo（bedrock, ccr, claude-console等）忽略绑定，走正常调度
         if (forcedAccount.accountType !== 'claude-official') {
           logger.info(
             `🔗 Session binding ignored for non-official account type: ${forcedAccount.accountType}, proceeding with normal scheduling`
           )
           // 不使用 forcedAccount，继续走下面的正常调度逻辑
         } else {
-          // claude-official 类型需要检查可用性并强制使用
+          // claude-official Tipo需要Verificar可用性并强制使用
           logger.info(
             `🔗 Forced session binding detected: ${forcedAccount.accountId} (${forcedAccount.accountType})`
           )
@@ -209,7 +209,7 @@ class UnifiedClaudeScheduler {
               accountType: forcedAccount.accountType
             }
           } else {
-            // 绑定账户不可用，抛出特定错误（不 fallback）
+            // 绑定Cuenta不可用，抛出特定Error（不 fallback）
             logger.warn(
               `❌ Forced session binding account unavailable: ${forcedAccount.accountId} (${forcedAccount.accountType})`
             )
@@ -222,7 +222,7 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 解析供应商前缀
+      // Analizar供应商前缀
       const { vendor, baseModel } = parseVendorPrefixedModel(requestedModel)
       const effectiveModel = vendor === 'ccr' ? baseModel : requestedModel
 
@@ -234,14 +234,14 @@ class UnifiedClaudeScheduler {
           ? effectiveModel.toLowerCase().includes('opus')
           : false
 
-      // 如果是 CCR 前缀，只在 CCR 账户池中选择
+      // 如果是 CCR 前缀，只在 CCR Cuenta池中选择
       if (vendor === 'ccr') {
         logger.info(`🎯 CCR vendor prefix detected, routing to CCR accounts only`)
         return await this._selectCcrAccount(apiKeyData, sessionHash, effectiveModel)
       }
-      // 如果API Key绑定了专属账户或分组，优先使用
+      // 如果API Key绑定了专属Cuenta或Agrupar，优先使用
       if (apiKeyData.claudeAccountId) {
-        // 检查是否是分组
+        // Verificar是否是Agrupar
         if (apiKeyData.claudeAccountId.startsWith('group:')) {
           const groupId = apiKeyData.claudeAccountId.replace('group:', '')
           logger.info(
@@ -255,10 +255,10 @@ class UnifiedClaudeScheduler {
           )
         }
 
-        // 普通专属账户
+        // 普通专属Cuenta
         const boundAccount = await redis.getClaudeAccount(apiKeyData.claudeAccountId)
         if (boundAccount && boundAccount.isActive === 'true' && boundAccount.status !== 'error') {
-          // 检查是否临时不可用
+          // Verificar是否临时不可用
           const isTempUnavailable = await this.isAccountTemporarilyUnavailable(
             boundAccount.id,
             'claude-official'
@@ -302,7 +302,7 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 2. 检查Claude Console账户绑定
+      // 2. VerificarClaude ConsoleCuenta绑定
       if (apiKeyData.claudeConsoleAccountId) {
         const boundConsoleAccount = await claudeConsoleAccountService.getAccount(
           apiKeyData.claudeConsoleAccountId
@@ -313,7 +313,7 @@ class UnifiedClaudeScheduler {
           boundConsoleAccount.status === 'active' &&
           isSchedulable(boundConsoleAccount.schedulable)
         ) {
-          // 检查是否临时不可用
+          // Verificar是否临时不可用
           const isTempUnavailable = await this.isAccountTemporarilyUnavailable(
             boundConsoleAccount.id,
             'claude-console'
@@ -338,7 +338,7 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 3. 检查Bedrock账户绑定
+      // 3. VerificarBedrockCuenta绑定
       if (apiKeyData.bedrockAccountId) {
         const boundBedrockAccountResult = await bedrockAccountService.getAccount(
           apiKeyData.bedrockAccountId
@@ -348,7 +348,7 @@ class UnifiedClaudeScheduler {
           boundBedrockAccountResult.data.isActive === true &&
           isSchedulable(boundBedrockAccountResult.data.schedulable)
         ) {
-          // 检查是否临时不可用
+          // Verificar是否临时不可用
           const isTempUnavailable = await this.isAccountTemporarilyUnavailable(
             apiKeyData.bedrockAccountId,
             'bedrock'
@@ -373,27 +373,27 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // CCR 账户不支持绑定（仅通过 ccr, 前缀进行 CCR 路由）
+      // CCR Cuenta不Soportar绑定（仅通过 ccr, 前缀进Fila CCR Ruta）
 
-      // 如果有会话哈希，检查是否有已映射的账户
+      // 如果有Sesión哈希，Verificar是否有已映射的Cuenta
       if (sessionHash) {
         const mappedAccount = await this._getSessionMapping(sessionHash)
         if (mappedAccount) {
-          // 当本次请求不是 CCR 前缀时，不允许使用指向 CCR 的粘性会话映射
+          // 当本次Solicitud不是 CCR 前缀时，不允许使用指向 CCR 的粘性Sesión映射
           if (vendor !== 'ccr' && mappedAccount.accountType === 'ccr') {
             logger.info(
               `ℹ️ Skipping CCR sticky session mapping for non-CCR request; removing mapping for session ${sessionHash}`
             )
             await this._deleteSessionMapping(sessionHash)
           } else {
-            // 验证映射的账户是否仍然可用
+            // Validar映射的Cuenta是否仍然可用
             const isAvailable = await this._isAccountAvailable(
               mappedAccount.accountId,
               mappedAccount.accountType,
               effectiveModel
             )
             if (isAvailable) {
-              // 🚀 智能会话续期：剩余时间少于14天时自动续期到15天（续期正确的 unified 映射键）
+              // 🚀 智能Sesión续期：剩余Tiempo少于14天时自动续期到15天（续期正确的 unified 映射键）
               await this._extendSessionMappingTTL(sessionHash)
               logger.info(
                 `🎯 Using sticky session account: ${mappedAccount.accountId} (${mappedAccount.accountType}) for session ${sessionHash}`
@@ -409,15 +409,15 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 获取所有可用账户（传递请求的模型进行过滤）
+      // Obtener所有可用Cuenta（传递Solicitud的模型进FilaFiltrar）
       const availableAccounts = await this._getAllAvailableAccounts(
         apiKeyData,
         effectiveModel,
-        false // 仅前缀才走 CCR：默认池不包含 CCR 账户
+        false // 仅前缀才走 CCR：Predeterminado池不Incluir CCR Cuenta
       )
 
       if (availableAccounts.length === 0) {
-        // 提供更详细的错误信息
+        // 提供更详细的ErrorInformación
         if (effectiveModel) {
           throw new Error(
             `No available Claude accounts support the requested model: ${effectiveModel}`
@@ -427,13 +427,13 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 按优先级和最后使用时间排序
+      // 按优先级和最后使用TiempoOrdenar
       const sortedAccounts = sortAccountsByPriority(availableAccounts)
 
-      // 选择第一个账户
+      // 选择第一个Cuenta
       const selectedAccount = sortedAccounts[0]
 
-      // 如果有会话哈希，建立新的映射
+      // 如果有Sesión哈希，建立新的映射
       if (sessionHash) {
         await this._setSessionMapping(
           sessionHash,
@@ -459,7 +459,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 📋 获取所有可用账户（合并官方和Console）
+  // 📋 Obtener所有可用Cuenta（合并官方和Console）
   async _getAllAvailableAccounts(apiKeyData, requestedModel = null, includeCcr = false) {
     const availableAccounts = []
     const isOpusRequest =
@@ -467,8 +467,8 @@ class UnifiedClaudeScheduler {
         ? requestedModel.toLowerCase().includes('opus')
         : false
 
-    // 如果API Key绑定了专属账户，优先返回
-    // 1. 检查Claude OAuth账户绑定
+    // 如果API Key绑定了专属Cuenta，优先Retornar
+    // 1. VerificarClaude OAuthCuenta绑定
     if (apiKeyData.claudeAccountId) {
       const boundAccount = await redis.getClaudeAccount(apiKeyData.claudeAccountId)
       if (
@@ -513,7 +513,7 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // 2. 检查Claude Console账户绑定
+    // 2. VerificarClaude ConsoleCuenta绑定
     if (apiKeyData.claudeConsoleAccountId) {
       const boundConsoleAccount = await claudeConsoleAccountService.getAccount(
         apiKeyData.claudeConsoleAccountId
@@ -524,7 +524,7 @@ class UnifiedClaudeScheduler {
         boundConsoleAccount.status === 'active' &&
         isSchedulable(boundConsoleAccount.schedulable)
       ) {
-        // 主动触发一次额度检查
+        // 主动触发一次额度Verificar
         try {
           await claudeConsoleAccountService.checkQuotaUsage(boundConsoleAccount.id)
         } catch (e) {
@@ -534,7 +534,7 @@ class UnifiedClaudeScheduler {
           // 继续使用该账号
         }
 
-        // 检查限流状态和额度状态
+        // Verificar限流状态和额度状态
         const isRateLimited = await claudeConsoleAccountService.isAccountRateLimited(
           boundConsoleAccount.id
         )
@@ -563,7 +563,7 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // 3. 检查Bedrock账户绑定
+    // 3. VerificarBedrockCuenta绑定
     if (apiKeyData.bedrockAccountId) {
       const boundBedrockAccountResult = await bedrockAccountService.getAccount(
         apiKeyData.bedrockAccountId
@@ -592,7 +592,7 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // 获取官方Claude账户（共享池）
+    // Obtener官方ClaudeCuenta（共享池）
     const claudeAccounts = await redis.getAllClaudeAccounts()
     for (const account of claudeAccounts) {
       if (
@@ -600,17 +600,17 @@ class UnifiedClaudeScheduler {
         account.status !== 'error' &&
         account.status !== 'blocked' &&
         account.status !== 'temp_error' &&
-        (account.accountType === 'shared' || !account.accountType) && // 兼容旧数据
+        (account.accountType === 'shared' || !account.accountType) && // 兼容旧Datos
         isSchedulable(account.schedulable)
       ) {
-        // 检查是否可调度
+        // Verificar是否可调度
 
-        // 检查模型支持
+        // Verificar模型Soportar
         if (!this._isModelSupportedByAccount(account, 'claude-official', requestedModel)) {
           continue
         }
 
-        // 检查是否临时不可用
+        // Verificar是否临时不可用
         const isTempUnavailable = await this.isAccountTemporarilyUnavailable(
           account.id,
           'claude-official'
@@ -622,7 +622,7 @@ class UnifiedClaudeScheduler {
           continue
         }
 
-        // 检查是否被限流
+        // Verificar是否被限流
         const isRateLimited = await claudeAccountService.isAccountRateLimited(account.id)
         if (isRateLimited) {
           continue
@@ -642,31 +642,31 @@ class UnifiedClaudeScheduler {
           ...account,
           accountId: account.id,
           accountType: 'claude-official',
-          priority: parseInt(account.priority) || 50, // 默认优先级50
+          priority: parseInt(account.priority) || 50, // Predeterminado优先级50
           lastUsedAt: account.lastUsedAt || '0'
         })
       }
     }
 
-    // 获取Claude Console账户
+    // ObtenerClaude ConsoleCuenta
     const consoleAccounts = await claudeConsoleAccountService.getAllAccounts()
     logger.info(`📋 Found ${consoleAccounts.length} total Claude Console accounts`)
 
-    // 🔢 统计Console账户并发排除情况
-    let consoleAccountsEligibleCount = 0 // 符合基本条件的账户数
-    let consoleAccountsExcludedByConcurrency = 0 // 因并发满额被排除的账户数
+    // 🔢 EstadísticaConsoleCuentaConcurrenciaExcluir情况
+    let consoleAccountsEligibleCount = 0 // 符合基本Condición的Cuenta数
+    let consoleAccountsExcludedByConcurrency = 0 // 因Concurrencia满额被Excluir的Cuenta数
 
-    // 🚀 收集需要并发检查的账户ID列表（批量查询优化）
+    // 🚀 收集需要ConcurrenciaVerificar的CuentaIDColumnaTabla（批量ConsultaOptimización）
     const accountsNeedingConcurrencyCheck = []
 
     for (const account of consoleAccounts) {
-      // 主动检查封禁状态并尝试恢复（在过滤之前执行，确保可以恢复被封禁的账户）
+      // 主动Verificar封禁状态并尝试Restauración（在Filtrar之前Ejecutar，确保可以Restauración被封禁的Cuenta）
       const wasBlocked = await claudeConsoleAccountService.isAccountBlocked(account.id)
 
-      // 如果账户之前被封禁但现在已恢复，重新获取最新状态
+      // 如果Cuenta之前被封禁但现在已Restauración，重新Obtener最新状态
       let currentAccount = account
       if (wasBlocked === false && account.status === 'account_blocked') {
-        // 可能刚刚被恢复，重新获取账户状态
+        // 可能刚刚被Restauración，重新ObtenerCuenta状态
         const freshAccount = await claudeConsoleAccountService.getAccount(account.id)
         if (freshAccount) {
           currentAccount = freshAccount
@@ -674,17 +674,17 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 主动检查配额超限状态并尝试恢复（在过滤之前执行，确保可以恢复配额超限的账户）
+      // 主动VerificarCuota超限状态并尝试Restauración（在Filtrar之前Ejecutar，确保可以RestauraciónCuota超限的Cuenta）
       if (currentAccount.status === 'quota_exceeded') {
-        // 触发配额检查，如果已到重置时间会自动恢复账户
+        // 触发CuotaVerificar，如果已到重置Tiempo会自动RestauraciónCuenta
         const isStillExceeded = await claudeConsoleAccountService.isAccountQuotaExceeded(
           currentAccount.id
         )
         if (!isStillExceeded) {
-          // 重新获取账户最新状态
+          // 重新ObtenerCuenta最新状态
           const refreshedAccount = await claudeConsoleAccountService.getAccount(currentAccount.id)
           if (refreshedAccount) {
-            // 更新当前循环中的账户数据
+            // Actualizar当前Bucle中的CuentaDatos
             currentAccount = refreshedAccount
             logger.info(`✅ Account ${currentAccount.name} recovered from quota_exceeded status`)
           }
@@ -695,21 +695,21 @@ class UnifiedClaudeScheduler {
         `🔍 Checking Claude Console account: ${currentAccount.name} - isActive: ${currentAccount.isActive}, status: ${currentAccount.status}, accountType: ${currentAccount.accountType}, schedulable: ${currentAccount.schedulable}`
       )
 
-      // 注意：getAllAccounts返回的isActive是布尔值，getAccount返回的也是布尔值
+      // 注意：getAllAccountsRetornar的isActive是布尔Valor，getAccountRetornar的也是布尔Valor
       if (
         currentAccount.isActive === true &&
         currentAccount.status === 'active' &&
         currentAccount.accountType === 'shared' &&
         isSchedulable(currentAccount.schedulable)
       ) {
-        // 检查是否可调度
+        // Verificar是否可调度
 
-        // 检查模型支持
+        // Verificar模型Soportar
         if (!this._isModelSupportedByAccount(currentAccount, 'claude-console', requestedModel)) {
           continue
         }
 
-        // 检查订阅是否过期
+        // Verificar订阅是否过期
         if (claudeConsoleAccountService.isSubscriptionExpired(currentAccount)) {
           logger.debug(
             `⏰ Claude Console account ${currentAccount.name} (${currentAccount.id}) expired at ${currentAccount.subscriptionExpiresAt}`
@@ -717,17 +717,17 @@ class UnifiedClaudeScheduler {
           continue
         }
 
-        // 主动触发一次额度检查，确保状态即时生效
+        // 主动触发一次额度Verificar，确保状态即时生效
         try {
           await claudeConsoleAccountService.checkQuotaUsage(currentAccount.id)
         } catch (e) {
           logger.warn(
             `Failed to check quota for Claude Console account ${currentAccount.name}: ${e.message}`
           )
-          // 继续处理该账号
+          // 继续Procesar该账号
         }
 
-        // 检查是否临时不可用
+        // Verificar是否临时不可用
         const isTempUnavailable = await this.isAccountTemporarilyUnavailable(
           currentAccount.id,
           'claude-console'
@@ -739,7 +739,7 @@ class UnifiedClaudeScheduler {
           continue
         }
 
-        // 检查是否被限流
+        // Verificar是否被限流
         const isRateLimited = await claudeConsoleAccountService.isAccountRateLimited(
           currentAccount.id
         )
@@ -747,14 +747,14 @@ class UnifiedClaudeScheduler {
           currentAccount.id
         )
 
-        // 🔢 记录符合基本条件的账户（通过了前面所有检查，但可能因并发被排除）
+        // 🔢 Registro符合基本Condición的Cuenta（通过了前面所有Verificar，但可能因Concurrencia被Excluir）
         if (!isRateLimited && !isQuotaExceeded) {
           consoleAccountsEligibleCount++
-          // 🚀 将符合条件且需要并发检查的账户加入批量查询列表
+          // 🚀 将符合Condición且需要ConcurrenciaVerificar的Cuenta加入批量ConsultaColumnaTabla
           if (currentAccount.maxConcurrentTasks > 0) {
             accountsNeedingConcurrencyCheck.push(currentAccount)
           } else {
-            // 未配置并发限制的账户直接加入可用池
+            // 未ConfiguraciónConcurrenciaLímite的Cuenta直接加入可用池
             availableAccounts.push({
               ...currentAccount,
               accountId: currentAccount.id,
@@ -781,7 +781,7 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // 🚀 批量查询所有账户的并发数（Promise.all 并行执行）
+    // 🚀 批量Consulta所有Cuenta的Nivel de concurrencia（Promise.all 并FilaEjecutar）
     if (accountsNeedingConcurrencyCheck.length > 0) {
       logger.debug(
         `🚀 Batch checking concurrency for ${accountsNeedingConcurrencyCheck.length} accounts`
@@ -796,7 +796,7 @@ class UnifiedClaudeScheduler {
 
       const concurrencyResults = await Promise.all(concurrencyCheckPromises)
 
-      // 处理批量查询结果
+      // Procesar批量Consulta结果
       for (const { account, currentConcurrency } of concurrencyResults) {
         const isConcurrencyFull = currentConcurrency >= account.maxConcurrentTasks
 
@@ -812,7 +812,7 @@ class UnifiedClaudeScheduler {
             `✅ Added Claude Console account to available pool: ${account.name} (priority: ${account.priority}, concurrency: ${currentConcurrency}/${account.maxConcurrentTasks})`
           )
         } else {
-          // 🔢 因并发满额被排除，计数器加1
+          // 🔢 因Concurrencia满额被Excluir，计数器加1
           consoleAccountsExcludedByConcurrency++
           logger.warn(
             `⚠️ Claude Console account ${account.name} reached concurrency limit: ${currentConcurrency}/${account.maxConcurrentTasks}`
@@ -821,7 +821,7 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // 获取Bedrock账户（共享池）
+    // ObtenerBedrockCuenta（共享池）
     const bedrockAccountsResult = await bedrockAccountService.getAllAccounts()
     if (bedrockAccountsResult.success) {
       const bedrockAccounts = bedrockAccountsResult.data
@@ -837,7 +837,7 @@ class UnifiedClaudeScheduler {
           account.accountType === 'shared' &&
           isSchedulable(account.schedulable)
         ) {
-          // 检查是否临时不可用
+          // Verificar是否临时不可用
           const isTempUnavailable = await this.isAccountTemporarilyUnavailable(
             account.id,
             'bedrock'
@@ -865,7 +865,7 @@ class UnifiedClaudeScheduler {
       }
     }
 
-    // 获取CCR账户（共享池）- 仅当明确要求包含时
+    // ObtenerCCRCuenta（共享池）- 仅当明确要求Incluir时
     if (includeCcr) {
       const ccrAccounts = await ccrAccountService.getAllAccounts()
       logger.info(`📋 Found ${ccrAccounts.length} total CCR accounts`)
@@ -881,12 +881,12 @@ class UnifiedClaudeScheduler {
           account.accountType === 'shared' &&
           isSchedulable(account.schedulable)
         ) {
-          // 检查模型支持
+          // Verificar模型Soportar
           if (!this._isModelSupportedByAccount(account, 'ccr', requestedModel)) {
             continue
           }
 
-          // 检查订阅是否过期
+          // Verificar订阅是否过期
           if (ccrAccountService.isSubscriptionExpired(account)) {
             logger.debug(
               `⏰ CCR account ${account.name} (${account.id}) expired at ${account.subscriptionExpiresAt}`
@@ -894,14 +894,14 @@ class UnifiedClaudeScheduler {
             continue
           }
 
-          // 检查是否临时不可用
+          // Verificar是否临时不可用
           const isTempUnavailable = await this.isAccountTemporarilyUnavailable(account.id, 'ccr')
           if (isTempUnavailable) {
             logger.debug(`⏭️ Skipping CCR account ${account.name} - temporarily unavailable`)
             continue
           }
 
-          // 检查是否被限流
+          // Verificar是否被限流
           const isRateLimited = await ccrAccountService.isAccountRateLimited(account.id)
           const isQuotaExceeded = await ccrAccountService.isAccountQuotaExceeded(account.id)
 
@@ -936,9 +936,9 @@ class UnifiedClaudeScheduler {
       `📊 Total available accounts: ${availableAccounts.length} (Claude: ${availableAccounts.filter((a) => a.accountType === 'claude-official').length}, Console: ${availableAccounts.filter((a) => a.accountType === 'claude-console').length}, Bedrock: ${availableAccounts.filter((a) => a.accountType === 'bedrock').length}, CCR: ${availableAccounts.filter((a) => a.accountType === 'ccr').length})`
     )
 
-    // 🚨 最终检查：只有在没有任何可用账户时，才根据Console并发排除情况抛出专用错误码
+    // 🚨 最终Verificar：只有在没有任何可用Cuenta时，才根据ConsoleConcurrenciaExcluir情况抛出专用Error码
     if (availableAccounts.length === 0) {
-      // 如果所有Console账户都因并发满额被排除，抛出专用错误码（503）
+      // 如果所有ConsoleCuenta都因Concurrencia满额被Excluir，抛出专用Error码（503）
       if (
         consoleAccountsEligibleCount > 0 &&
         consoleAccountsExcludedByConcurrency === consoleAccountsEligibleCount
@@ -952,13 +952,13 @@ class UnifiedClaudeScheduler {
         error.code = 'CONSOLE_ACCOUNT_CONCURRENCY_FULL'
         throw error
       }
-      // 否则走通用的"无可用账户"错误处理（由上层 selectAccountForApiKey 捕获）
+      // 否则走通用的"无可用Cuenta"ErrorProcesar（由上层 selectAccountForApiKey 捕获）
     }
 
     return availableAccounts
   }
 
-  // 🔍 检查账户是否可用
+  // 🔍 VerificarCuenta是否可用
   async _isAccountAvailable(accountId, accountType, requestedModel = null) {
     try {
       if (accountType === 'claude-official') {
@@ -971,13 +971,13 @@ class UnifiedClaudeScheduler {
         ) {
           return false
         }
-        // 检查是否可调度
+        // Verificar是否可调度
         if (!isSchedulable(account.schedulable)) {
           logger.info(`🚫 Account ${accountId} is not schedulable`)
           return false
         }
 
-        // 检查模型兼容性
+        // Verificar模型兼容性
         if (
           !this._isModelSupportedByAccount(
             account,
@@ -989,7 +989,7 @@ class UnifiedClaudeScheduler {
           return false
         }
 
-        // 检查是否限流或过载
+        // Verificar是否限流或过载
         const isRateLimited = await claudeAccountService.isAccountRateLimited(accountId)
         const isOverloaded = await claudeAccountService.isAccountOverloaded(accountId)
         if (isRateLimited || isOverloaded) {
@@ -1014,7 +1014,7 @@ class UnifiedClaudeScheduler {
         if (!account || !account.isActive) {
           return false
         }
-        // 检查账户状态
+        // VerificarCuenta状态
         if (
           account.status !== 'active' &&
           account.status !== 'unauthorized' &&
@@ -1022,12 +1022,12 @@ class UnifiedClaudeScheduler {
         ) {
           return false
         }
-        // 检查是否可调度
+        // Verificar是否可调度
         if (!isSchedulable(account.schedulable)) {
           logger.info(`🚫 Claude Console account ${accountId} is not schedulable`)
           return false
         }
-        // 检查模型支持
+        // Verificar模型Soportar
         if (
           !this._isModelSupportedByAccount(
             account,
@@ -1038,38 +1038,38 @@ class UnifiedClaudeScheduler {
         ) {
           return false
         }
-        // 检查订阅是否过期
+        // Verificar订阅是否过期
         if (claudeConsoleAccountService.isSubscriptionExpired(account)) {
           logger.debug(
             `⏰ Claude Console account ${account.name} (${accountId}) expired at ${account.subscriptionExpiresAt} (session check)`
           )
           return false
         }
-        // 检查是否超额
+        // Verificar是否超额
         try {
           await claudeConsoleAccountService.checkQuotaUsage(accountId)
         } catch (e) {
           logger.warn(`Failed to check quota for Claude Console account ${accountId}: ${e.message}`)
-          // 继续处理
+          // 继续Procesar
         }
 
-        // 检查是否被限流
+        // Verificar是否被限流
         if (await claudeConsoleAccountService.isAccountRateLimited(accountId)) {
           return false
         }
         if (await claudeConsoleAccountService.isAccountQuotaExceeded(accountId)) {
           return false
         }
-        // 检查是否未授权（401错误）
+        // Verificar是否未授权（401Error）
         if (account.status === 'unauthorized') {
           return false
         }
-        // 检查是否过载（529错误）
+        // Verificar是否过载（529Error）
         if (await claudeConsoleAccountService.isAccountOverloaded(accountId)) {
           return false
         }
 
-        // 检查并发限制（预检查，真正的原子抢占在 relayService 中进行）
+        // VerificarConcurrenciaLímite（预Verificar，真正的原子抢占在 relayService 中进Fila）
         if (account.maxConcurrentTasks > 0) {
           const currentConcurrency = await redis.getConsoleAccountConcurrency(accountId)
           if (currentConcurrency >= account.maxConcurrentTasks) {
@@ -1086,19 +1086,19 @@ class UnifiedClaudeScheduler {
         if (!accountResult.success || !accountResult.data.isActive) {
           return false
         }
-        // 检查是否可调度
+        // Verificar是否可调度
         if (!isSchedulable(accountResult.data.schedulable)) {
           logger.info(`🚫 Bedrock account ${accountId} is not schedulable`)
           return false
         }
-        // Bedrock账户暂不需要限流检查，因为AWS管理限流
+        // BedrockCuenta暂不需要限流Verificar，因为AWS管理限流
         return true
       } else if (accountType === 'ccr') {
         const account = await ccrAccountService.getAccount(accountId)
         if (!account || !account.isActive) {
           return false
         }
-        // 检查账户状态
+        // VerificarCuenta状态
         if (
           account.status !== 'active' &&
           account.status !== 'unauthorized' &&
@@ -1106,42 +1106,42 @@ class UnifiedClaudeScheduler {
         ) {
           return false
         }
-        // 检查是否可调度
+        // Verificar是否可调度
         if (!isSchedulable(account.schedulable)) {
           logger.info(`🚫 CCR account ${accountId} is not schedulable`)
           return false
         }
-        // 检查模型支持
+        // Verificar模型Soportar
         if (!this._isModelSupportedByAccount(account, 'ccr', requestedModel, 'in session check')) {
           return false
         }
-        // 检查订阅是否过期
+        // Verificar订阅是否过期
         if (ccrAccountService.isSubscriptionExpired(account)) {
           logger.debug(
             `⏰ CCR account ${account.name} (${accountId}) expired at ${account.subscriptionExpiresAt} (session check)`
           )
           return false
         }
-        // 检查是否超额
+        // Verificar是否超额
         try {
           await ccrAccountService.checkQuotaUsage(accountId)
         } catch (e) {
           logger.warn(`Failed to check quota for CCR account ${accountId}: ${e.message}`)
-          // 继续处理
+          // 继续Procesar
         }
 
-        // 检查是否被限流
+        // Verificar是否被限流
         if (await ccrAccountService.isAccountRateLimited(accountId)) {
           return false
         }
         if (await ccrAccountService.isAccountQuotaExceeded(accountId)) {
           return false
         }
-        // 检查是否未授权（401错误）
+        // Verificar是否未授权（401Error）
         if (account.status === 'unauthorized') {
           return false
         }
-        // 检查是否过载（529错误）
+        // Verificar是否过载（529Error）
         if (await ccrAccountService.isAccountOverloaded(accountId)) {
           return false
         }
@@ -1154,7 +1154,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🔗 获取会话映射
+  // 🔗 ObtenerSesión映射
   async _getSessionMapping(sessionHash) {
     const client = redis.getClientSafe()
     const mappingData = await client.get(`${this.SESSION_MAPPING_PREFIX}${sessionHash}`)
@@ -1171,29 +1171,29 @@ class UnifiedClaudeScheduler {
     return null
   }
 
-  // 💾 设置会话映射
+  // 💾 EstablecerSesión映射
   async _setSessionMapping(sessionHash, accountId, accountType) {
     const client = redis.getClientSafe()
     const mappingData = JSON.stringify({ accountId, accountType })
-    // 依据配置设置TTL（小时）
+    // 依据ConfiguraciónEstablecerTTL（小时）
     const appConfig = require('../../../config/config')
     const ttlHours = appConfig.session?.stickyTtlHours || 1
     const ttlSeconds = Math.max(1, Math.floor(ttlHours * 60 * 60))
     await client.setex(`${this.SESSION_MAPPING_PREFIX}${sessionHash}`, ttlSeconds, mappingData)
   }
 
-  // 🗑️ 删除会话映射
+  // 🗑️ EliminarSesión映射
   async _deleteSessionMapping(sessionHash) {
     const client = redis.getClientSafe()
     await client.del(`${this.SESSION_MAPPING_PREFIX}${sessionHash}`)
   }
 
   /**
-   * 🧹 公共方法：清理粘性会话映射（用于并发满额时的降级处理）
-   * @param {string} sessionHash - 会话哈希值
+   * 🧹 公共Método：Limpiar粘性Sesión映射（用于Concurrencia满额时的DegradaciónProcesar）
+   * @param {string} sessionHash - Sesión哈希Valor
    */
   async clearSessionMapping(sessionHash) {
-    // 防御空会话哈希
+    // 防御空Sesión哈希
     if (!sessionHash || typeof sessionHash !== 'string') {
       logger.debug('⚠️ Skipping session mapping clear - invalid sessionHash')
       return
@@ -1210,14 +1210,14 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🔁 续期统一调度会话映射TTL（针对 unified_claude_session_mapping:* 键），遵循会话配置
+  // 🔁 续期统一调度Sesión映射TTL（针对 unified_claude_session_mapping:* 键），遵循SesiónConfiguración
   async _extendSessionMappingTTL(sessionHash) {
     try {
       const client = redis.getClientSafe()
       const key = `${this.SESSION_MAPPING_PREFIX}${sessionHash}`
       const remainingTTL = await client.ttl(key)
 
-      // -2: key 不存在；-1: 无过期时间
+      // -2: key 不存在；-1: 无过期Tiempo
       if (remainingTTL === -2) {
         return false
       }
@@ -1229,7 +1229,7 @@ class UnifiedClaudeScheduler {
       const ttlHours = appConfig.session?.stickyTtlHours || 1
       const renewalThresholdMinutes = appConfig.session?.renewalThresholdMinutes || 0
 
-      // 阈值为0则不续期
+      // 阈Valor为0则不续期
       if (!renewalThresholdMinutes) {
         return true
       }
@@ -1254,7 +1254,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // ⏱️ 标记账户为临时不可用状态（用于5xx等临时故障，默认5分钟后自动恢复）
+  // ⏱️ 标记Cuenta为临时不可用状态（用于5xx等临时故障，Predeterminado5分钟后自动Restauración）
   async markAccountTemporarilyUnavailable(
     accountId,
     accountType,
@@ -1273,12 +1273,12 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🔍 检查账户是否临时不可用
+  // 🔍 VerificarCuenta是否临时不可用
   async isAccountTemporarilyUnavailable(accountId, accountType) {
     return upstreamErrorHelper.isTempUnavailable(accountId, accountType)
   }
 
-  // 🚫 标记账户为限流状态
+  // 🚫 标记Cuenta为限流状态
   async markAccountRateLimited(
     accountId,
     accountType,
@@ -1298,7 +1298,7 @@ class UnifiedClaudeScheduler {
         await ccrAccountService.markAccountRateLimited(accountId)
       }
 
-      // 删除会话映射
+      // EliminarSesión映射
       if (sessionHash) {
         await this._deleteSessionMapping(sessionHash)
       }
@@ -1313,7 +1313,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // ✅ 移除账户的限流状态
+  // ✅ EliminaciónCuenta的限流状态
   async removeAccountRateLimit(accountId, accountType) {
     try {
       if (accountType === 'claude-official') {
@@ -1334,7 +1334,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🔍 检查账户是否处于限流状态
+  // 🔍 VerificarCuenta是否处于限流状态
   async isAccountRateLimited(accountId, accountType) {
     try {
       if (accountType === 'claude-official') {
@@ -1351,14 +1351,14 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🚫 标记账户为未授权状态（401错误）
+  // 🚫 标记Cuenta为未授权状态（401Error）
   async markAccountUnauthorized(accountId, accountType, sessionHash = null) {
     try {
-      // 只处理claude-official类型的账户，不处理claude-console和gemini
+      // 只Procesarclaude-officialTipo的Cuenta，不Procesarclaude-console和gemini
       if (accountType === 'claude-official') {
         await claudeAccountService.markAccountUnauthorized(accountId, sessionHash)
 
-        // 删除会话映射
+        // EliminarSesión映射
         if (sessionHash) {
           await this._deleteSessionMapping(sessionHash)
         }
@@ -1380,14 +1380,14 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🚫 标记账户为被封锁状态（403错误）
+  // 🚫 标记Cuenta为被封锁状态（403Error）
   async markAccountBlocked(accountId, accountType, sessionHash = null) {
     try {
-      // 只处理claude-official类型的账户，不处理claude-console和gemini
+      // 只Procesarclaude-officialTipo的Cuenta，不Procesarclaude-console和gemini
       if (accountType === 'claude-official') {
         await claudeAccountService.markAccountBlocked(accountId, sessionHash)
 
-        // 删除会话映射
+        // EliminarSesión映射
         if (sessionHash) {
           await this._deleteSessionMapping(sessionHash)
         }
@@ -1406,7 +1406,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🚫 标记Claude Console账户为封锁状态（模型不支持）
+  // 🚫 标记Claude ConsoleCuenta为封锁状态（模型不Soportar）
   async blockConsoleAccount(accountId, reason) {
     try {
       await claudeConsoleAccountService.blockAccount(accountId, reason)
@@ -1417,7 +1417,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 👥 从分组中选择账户
+  // 👥 从Agrupar中选择Cuenta
   async selectAccountFromGroup(
     groupId,
     sessionHash = null,
@@ -1425,7 +1425,7 @@ class UnifiedClaudeScheduler {
     allowCcr = false
   ) {
     try {
-      // 获取分组信息
+      // ObtenerAgruparInformación
       const group = await accountGroupService.getGroup(groupId)
       if (!group) {
         throw new Error(`Group ${groupId} not found`)
@@ -1433,14 +1433,14 @@ class UnifiedClaudeScheduler {
 
       logger.info(`👥 Selecting account from group: ${group.name} (${group.platform})`)
 
-      // 如果有会话哈希，检查是否有已映射的账户
+      // 如果有Sesión哈希，Verificar是否有已映射的Cuenta
       if (sessionHash) {
         const mappedAccount = await this._getSessionMapping(sessionHash)
         if (mappedAccount) {
-          // 验证映射的账户是否属于这个分组
+          // Validar映射的Cuenta是否属于这个Agrupar
           const memberIds = await accountGroupService.getGroupMembers(groupId)
           if (memberIds.includes(mappedAccount.accountId)) {
-            // 非 CCR 请求时不允许 CCR 粘性映射
+            // 非 CCR Solicitud时不允许 CCR 粘性映射
             if (!allowCcr && mappedAccount.accountType === 'ccr') {
               await this._deleteSessionMapping(sessionHash)
             } else {
@@ -1450,7 +1450,7 @@ class UnifiedClaudeScheduler {
                 requestedModel
               )
               if (isAvailable) {
-                // 🚀 智能会话续期：续期 unified 映射键
+                // 🚀 智能Sesión续期：续期 unified 映射键
                 await this._extendSessionMappingTTL(sessionHash)
                 logger.info(
                   `🎯 Using sticky session account from group: ${mappedAccount.accountId} (${mappedAccount.accountType}) for session ${sessionHash}`
@@ -1459,12 +1459,12 @@ class UnifiedClaudeScheduler {
               }
             }
           }
-          // 如果映射的账户不可用或不在分组中，删除映射
+          // 如果映射的Cuenta不可用或不在Agrupar中，Eliminar映射
           await this._deleteSessionMapping(sessionHash)
         }
       }
 
-      // 获取分组内的所有账户
+      // ObtenerAgrupar内的所有Cuenta
       const memberIds = await accountGroupService.getGroupMembers(groupId)
       if (memberIds.length === 0) {
         throw new Error(`Group ${group.name} has no members`)
@@ -1476,24 +1476,24 @@ class UnifiedClaudeScheduler {
           ? requestedModel.toLowerCase().includes('opus')
           : false
 
-      // 获取所有成员账户的详细信息
+      // Obtener所有成员Cuenta的详细Información
       for (const memberId of memberIds) {
         let account = null
         let accountType = null
 
-        // 根据平台类型获取账户
+        // 根据平台TipoObtenerCuenta
         if (group.platform === 'claude') {
-          // 先尝试官方账户
+          // 先尝试官方Cuenta
           account = await redis.getClaudeAccount(memberId)
           if (account?.id) {
             accountType = 'claude-official'
           } else {
-            // 尝试Console账户
+            // 尝试ConsoleCuenta
             account = await claudeConsoleAccountService.getAccount(memberId)
             if (account) {
               accountType = 'claude-console'
             } else {
-              // 尝试CCR账户（仅允许在 allowCcr 为 true 时）
+              // 尝试CCRCuenta（仅允许在 allowCcr 为 true 时）
               if (allowCcr) {
                 account = await ccrAccountService.getAccount(memberId)
                 if (account) {
@@ -1503,7 +1503,7 @@ class UnifiedClaudeScheduler {
             }
           }
         } else if (group.platform === 'gemini') {
-          // Gemini暂时不支持，预留接口
+          // Gemini暂时不Soportar，预留Interfaz
           logger.warn('⚠️ Gemini group scheduling not yet implemented')
           continue
         }
@@ -1513,7 +1513,7 @@ class UnifiedClaudeScheduler {
           continue
         }
 
-        // 检查账户是否可用
+        // VerificarCuenta是否可用
         const isActive =
           accountType === 'claude-official'
             ? account.isActive === 'true'
@@ -1527,12 +1527,12 @@ class UnifiedClaudeScheduler {
               : account.status === 'active'
 
         if (isActive && status && isSchedulable(account.schedulable)) {
-          // 检查模型支持
+          // Verificar模型Soportar
           if (!this._isModelSupportedByAccount(account, accountType, requestedModel, 'in group')) {
             continue
           }
 
-          // 检查是否被限流
+          // Verificar是否被限流
           const isRateLimited = await this.isAccountRateLimited(account.id, accountType)
           if (isRateLimited) {
             continue
@@ -1550,7 +1550,7 @@ class UnifiedClaudeScheduler {
             }
           }
 
-          // 🔒 检查 Claude Console 账户的并发限制
+          // 🔒 Verificar Claude Console Cuenta的ConcurrenciaLímite
           if (accountType === 'claude-console' && account.maxConcurrentTasks > 0) {
             const currentConcurrency = await redis.getConsoleAccountConcurrency(account.id)
             if (currentConcurrency >= account.maxConcurrentTasks) {
@@ -1575,13 +1575,13 @@ class UnifiedClaudeScheduler {
         throw new Error(`No available accounts in group ${group.name}`)
       }
 
-      // 使用现有的优先级排序逻辑
+      // 使用现有的优先级Ordenar逻辑
       const sortedAccounts = sortAccountsByPriority(availableAccounts)
 
-      // 选择第一个账户
+      // 选择第一个Cuenta
       const selectedAccount = sortedAccounts[0]
 
-      // 如果有会话哈希，建立新的映射
+      // 如果有Sesión哈希，建立新的映射
       if (sessionHash) {
         await this._setSessionMapping(
           sessionHash,
@@ -1607,21 +1607,21 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 🎯 专门选择CCR账户（仅限CCR前缀路由使用）
+  // 🎯 专门选择CCRCuenta（仅限CCR前缀Ruta使用）
   async _selectCcrAccount(apiKeyData, sessionHash = null, effectiveModel = null) {
     try {
-      // 1. 检查会话粘性
+      // 1. VerificarSesión粘性
       if (sessionHash) {
         const mappedAccount = await this._getSessionMapping(sessionHash)
         if (mappedAccount && mappedAccount.accountType === 'ccr') {
-          // 验证映射的CCR账户是否仍然可用
+          // Validar映射的CCRCuenta是否仍然可用
           const isAvailable = await this._isAccountAvailable(
             mappedAccount.accountId,
             mappedAccount.accountType,
             effectiveModel
           )
           if (isAvailable) {
-            // 🚀 智能会话续期：续期 unified 映射键
+            // 🚀 智能Sesión续期：续期 unified 映射键
             await this._extendSessionMappingTTL(sessionHash)
             logger.info(
               `🎯 Using sticky CCR session account: ${mappedAccount.accountId} for session ${sessionHash}`
@@ -1636,7 +1636,7 @@ class UnifiedClaudeScheduler {
         }
       }
 
-      // 2. 获取所有可用的CCR账户
+      // 2. Obtener所有可用的CCRCuenta
       const availableCcrAccounts = await this._getAvailableCcrAccounts(effectiveModel)
 
       if (availableCcrAccounts.length === 0) {
@@ -1645,11 +1645,11 @@ class UnifiedClaudeScheduler {
         )
       }
 
-      // 3. 按优先级和最后使用时间排序
+      // 3. 按优先级和最后使用TiempoOrdenar
       const sortedAccounts = sortAccountsByPriority(availableCcrAccounts)
       const selectedAccount = sortedAccounts[0]
 
-      // 4. 建立会话映射
+      // 4. 建立Sesión映射
       if (sessionHash) {
         await this._setSessionMapping(
           sessionHash,
@@ -1675,7 +1675,7 @@ class UnifiedClaudeScheduler {
     }
   }
 
-  // 📋 获取所有可用的CCR账户
+  // 📋 Obtener所有可用的CCRCuenta
   async _getAvailableCcrAccounts(requestedModel = null) {
     const availableAccounts = []
 
@@ -1694,13 +1694,13 @@ class UnifiedClaudeScheduler {
           account.accountType === 'shared' &&
           isSchedulable(account.schedulable)
         ) {
-          // 检查模型支持
+          // Verificar模型Soportar
           if (!this._isModelSupportedByAccount(account, 'ccr', requestedModel)) {
             logger.debug(`CCR account ${account.name} does not support model ${requestedModel}`)
             continue
           }
 
-          // 检查订阅是否过期
+          // Verificar订阅是否过期
           if (ccrAccountService.isSubscriptionExpired(account)) {
             logger.debug(
               `⏰ CCR account ${account.name} (${account.id}) expired at ${account.subscriptionExpiresAt}`
@@ -1708,7 +1708,7 @@ class UnifiedClaudeScheduler {
             continue
           }
 
-          // 检查是否被限流或超额
+          // Verificar是否被限流或超额
           const isRateLimited = await ccrAccountService.isAccountRateLimited(account.id)
           const isQuotaExceeded = await ccrAccountService.isAccountQuotaExceeded(account.id)
           const isOverloaded = await ccrAccountService.isAccountOverloaded(account.id)
@@ -1743,21 +1743,21 @@ class UnifiedClaudeScheduler {
   }
 
   /**
-   * 🔒 检查 claude-official 账户是否可用于会话绑定
-   * 注意：此方法仅用于 claude-official 类型账户，其他类型不受会话绑定限制
-   * @param {string} accountId - 账户ID
-   * @param {string} accountType - 账户类型（应为 'claude-official'）
-   * @param {string} _requestedModel - 请求的模型（保留参数，当前未使用）
+   * 🔒 Verificar claude-official Cuenta是否可用于Sesión绑定
+   * 注意：此Método仅用于 claude-official TipoCuenta，其他Tipo不受Sesión绑定Límite
+   * @param {string} accountId - CuentaID
+   * @param {string} accountType - CuentaTipo（应为 'claude-official'）
+   * @param {string} _requestedModel - Solicitud的模型（保留Parámetro，当前未使用）
    * @returns {Promise<boolean>}
    */
   async _isAccountAvailableForSessionBinding(accountId, accountType, _requestedModel = null) {
     try {
-      // 此方法仅处理 claude-official 类型
+      // 此Método仅Procesar claude-official Tipo
       if (accountType !== 'claude-official') {
         logger.warn(
           `Session binding: _isAccountAvailableForSessionBinding called for non-official type: ${accountType}`
         )
-        return true // 非 claude-official 类型不受限制
+        return true // 非 claude-official Tipo不受Límite
       }
 
       const account = await redis.getClaudeAccount(accountId)
@@ -1781,13 +1781,13 @@ class UnifiedClaudeScheduler {
         return false
       }
 
-      // 检查是否被限流
+      // Verificar是否被限流
       if (await claudeAccountService.isAccountRateLimited(accountId)) {
         logger.warn(`Session binding: Claude OAuth account ${accountId} is rate limited`)
         return false
       }
 
-      // 检查临时不可用
+      // Verificar临时不可用
       if (await this.isAccountTemporarilyUnavailable(accountId, accountType)) {
         logger.warn(`Session binding: Claude OAuth account ${accountId} is temporarily unavailable`)
         return false

@@ -17,7 +17,7 @@
               <i class="fas fa-chart-line text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              使用统计详情 - {{ apiKey.name }}
+              使用EstadísticasDetalles - {{ apiKey.name }}
             </h3>
           </div>
           <button class="p-1 text-gray-400 transition-colors hover:text-gray-600" @click="close">
@@ -27,25 +27,25 @@
 
         <!-- 内容区 -->
         <div class="modal-scroll-content custom-scrollbar flex-1 overflow-y-auto">
-          <!-- 总体统计卡片 -->
+          <!-- 总体Estadísticas卡片 -->
           <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <!-- 请求统计卡片 -->
+            <!-- SolicitudEstadísticas卡片 -->
             <div
               class="rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-4 dark:border-blue-700 dark:from-blue-900/20 dark:to-blue-800/20"
             >
               <div class="mb-3 flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">总请求数</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">totalRequests</span>
                 <i class="fas fa-paper-plane text-blue-500" />
               </div>
               <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ formatNumber(totalRequests) }}
               </div>
               <div class="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                今日: {{ formatNumber(dailyRequests) }} 次
+                Hoy: {{ formatNumber(dailyRequests) }} veces
               </div>
             </div>
 
-            <!-- Token统计卡片 -->
+            <!-- TokenEstadísticas卡片 -->
             <div
               class="rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-green-100 p-4 dark:border-green-700 dark:from-green-900/20 dark:to-green-800/20"
             >
@@ -57,32 +57,32 @@
                 {{ formatTokenCount(totalTokens) }}
               </div>
               <div class="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                今日: {{ formatTokenCount(dailyTokens) }}
+                Hoy: {{ formatTokenCount(dailyTokens) }}
               </div>
             </div>
 
-            <!-- 费用统计卡片 -->
+            <!-- Estadísticas de costos卡片 -->
             <div
               class="rounded-lg border border-yellow-200 bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 dark:border-yellow-700 dark:from-yellow-900/20 dark:to-yellow-800/20"
             >
               <div class="mb-3 flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">总费用</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">totalCost</span>
                 <i class="fas fa-dollar-sign text-yellow-600" />
               </div>
               <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 ${{ totalCost.toFixed(4) }}
               </div>
               <div class="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                今日: ${{ dailyCost.toFixed(4) }}
+                Hoy: ${{ dailyCost.toFixed(4) }}
               </div>
             </div>
 
-            <!-- 平均统计卡片 -->
+            <!-- PromedioEstadísticas卡片 -->
             <div
               class="rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100 p-4 dark:border-purple-700 dark:from-purple-900/20 dark:to-purple-800/20"
             >
               <div class="mb-3 flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">平均速率</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Promedio速率</span>
                 <i class="fas fa-tachometer-alt text-purple-500" />
               </div>
               <div class="space-y-1 text-sm">
@@ -110,7 +110,7 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
                   <i class="fas fa-arrow-down mr-2 text-green-500" />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">输入 Token</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Entrada Token</span>
                 </div>
                 <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                   {{ formatTokenCount(inputTokens) }}
@@ -119,7 +119,7 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
                   <i class="fas fa-arrow-up mr-2 text-blue-500" />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">输出 Token</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Salida Token</span>
                 </div>
                 <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                   {{ formatTokenCount(outputTokens) }}
@@ -128,7 +128,7 @@
               <div v-if="cacheCreateTokens > 0" class="flex items-center justify-between">
                 <div class="flex items-center">
                   <i class="fas fa-save mr-2 text-purple-500" />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">缓存创建 Token</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Caché creación Token</span>
                 </div>
                 <span class="text-sm font-semibold text-purple-600">
                   {{ formatTokenCount(cacheCreateTokens) }}
@@ -137,7 +137,7 @@
               <div v-if="cacheReadTokens > 0" class="flex items-center justify-between">
                 <div class="flex items-center">
                   <i class="fas fa-download mr-2 text-purple-500" />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">缓存读取 Token</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Caché lectura Token</span>
                 </div>
                 <span class="text-sm font-semibold text-purple-600">
                   {{ formatTokenCount(cacheReadTokens) }}
@@ -146,19 +146,19 @@
             </div>
           </div>
 
-          <!-- 限制信息 -->
+          <!-- LímiteInformación -->
           <div v-if="hasLimits" class="mb-6">
             <h4
               class="mb-3 flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
             >
               <i class="fas fa-shield-alt mr-2 text-red-500" />
-              限制设置
+              LímiteConfiguración
             </h4>
             <div class="space-y-3 rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
               <div v-if="Number(apiKey.dailyCostLimit) > 0" class="space-y-1.5">
                 <LimitProgressBar
                   :current="Number(dailyCost) || 0"
-                  label="每日费用限制"
+                  label="Límite de costo diario"
                   :limit="Number(apiKey.dailyCostLimit) || 0"
                   :show-shine="true"
                   type="daily"
@@ -171,7 +171,7 @@
               <div v-if="Number(apiKey.weeklyOpusCostLimit) > 0" class="space-y-1.5">
                 <LimitProgressBar
                   :current="Number(weeklyOpusCost) || 0"
-                  label="Claude 周费用限制"
+                  label="Claude 周CostoLímite"
                   :limit="Number(apiKey.weeklyOpusCostLimit) || 0"
                   :show-shine="true"
                   type="opus"
@@ -184,7 +184,7 @@
               <div v-if="Number(apiKey.totalCostLimit) > 0" class="space-y-1.5">
                 <LimitProgressBar
                   :current="Number(totalCost) || 0"
-                  label="总费用限制"
+                  label="Límite de costo total"
                   :limit="Number(apiKey.totalCostLimit) || 0"
                   :show-shine="true"
                   type="total"
@@ -198,7 +198,7 @@
                 v-if="Number(apiKey.concurrencyLimit) > 0"
                 class="flex items-center justify-between rounded-lg border border-purple-200/70 bg-white/60 px-3 py-2 text-sm shadow-sm dark:border-purple-500/40 dark:bg-purple-950/20"
               >
-                <span class="text-gray-600 dark:text-gray-300">并发限制</span>
+                <span class="text-gray-600 dark:text-gray-300">Límite de concurrencia</span>
                 <span class="font-semibold text-purple-600 dark:text-purple-300">
                   {{ apiKey.currentConcurrency || 0 }} / {{ apiKey.concurrencyLimit }}
                 </span>
@@ -215,20 +215,20 @@
               >
                 <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">
                   <i class="fas fa-clock mr-1 text-blue-500" />
-                  时间窗口限制
+                  Límite de ventana de tiempo
                 </h5>
                 <div
                   v-if="apiKey.rateLimitWindow <= 0"
                   class="rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs text-yellow-800 dark:border-yellow-700/50 dark:bg-yellow-900/20 dark:text-yellow-200"
                 >
-                  未设置窗口时长（rateLimitWindow=0），窗口限制不会生效。
+                  未Configuración窗口时长（rateLimitWindow=0），窗口Límite不会生效。
                 </div>
                 <WindowCountdown
                   :cost-limit="apiKey.rateLimitCost"
                   :current-cost="apiKey.currentWindowCost"
                   :current-requests="apiKey.currentWindowRequests"
                   :current-tokens="apiKey.currentWindowTokens"
-                  label="窗口状态"
+                  label="窗口Estado"
                   :rate-limit-window="apiKey.rateLimitWindow"
                   :request-limit="apiKey.rateLimitRequests"
                   :show-progress="true"
@@ -240,7 +240,7 @@
                 />
               </div>
 
-              <!-- 访问控制限制（模型/客户端/服务权限） -->
+              <!-- 访问控制Límite（Modelo/客户端/服务权限） -->
               <div v-if="hasAccessRestrictions" class="space-y-2">
                 <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">
                   <i class="fas fa-lock mr-1 text-gray-500" />
@@ -263,7 +263,7 @@
                   class="rounded-lg border border-gray-200 bg-white/60 px-3 py-2 text-sm shadow-sm dark:border-gray-600/50 dark:bg-gray-800/40"
                 >
                   <div class="mb-1 flex items-center justify-between">
-                    <span class="text-gray-600 dark:text-gray-300">模型限制（禁用列表）</span>
+                    <span class="text-gray-600 dark:text-gray-300">Límite de modelos（Deshabilitar列表）</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">
                       {{ restrictedModels.length }}
                     </span>
@@ -277,7 +277,7 @@
                       {{ model }}
                     </span>
                   </div>
-                  <div v-else class="text-xs text-gray-500 dark:text-gray-400">未配置具体模型</div>
+                  <div v-else class="text-xs text-gray-500 dark:text-gray-400">未配置具体Modelo</div>
                 </div>
 
                 <div
@@ -285,7 +285,7 @@
                   class="rounded-lg border border-gray-200 bg-white/60 px-3 py-2 text-sm shadow-sm dark:border-gray-600/50 dark:bg-gray-800/40"
                 >
                   <div class="mb-1 flex items-center justify-between">
-                    <span class="text-gray-600 dark:text-gray-300">客户端限制（允许列表）</span>
+                    <span class="text-gray-600 dark:text-gray-300">Límite de clientes（允许列表）</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">
                       {{ allowedClients.length }}
                     </span>
@@ -309,10 +309,10 @@
         <!-- 底部按钮 -->
         <div class="mt-4 flex justify-end gap-2 sm:mt-6 sm:gap-3">
           <button class="btn btn-primary px-4 py-2 text-sm" type="button" @click="openTimeline">
-            查看请求时间线
+            VerSolicitud时间线
           </button>
           <button class="btn btn-secondary px-4 py-2 text-sm" type="button" @click="close">
-            关闭
+            Cerrar
           </button>
         </div>
       </div>

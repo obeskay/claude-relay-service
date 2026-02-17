@@ -2,9 +2,9 @@
   <div class="space-y-6">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-2xl font-semibold text-gray-900">My API Keys</h1>
+        <h1 class="text-2xl font-semibold text-gray-900">Mis Claves API</h1>
         <p class="mt-2 text-sm text-gray-700">
-          Manage your API keys to access Claude Relay services
+          Gestiona tus claves API para acceder a los servicios de Claude Relay
         </p>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -21,12 +21,12 @@
               stroke-width="2"
             />
           </svg>
-          Create API Key
+          Crear Clave API
         </button>
       </div>
     </div>
 
-    <!-- API Keys 数量限制提示 -->
+    <!-- API Keys 数量LímiteSugerencia -->
     <div
       v-if="activeApiKeysCount >= maxApiKeys"
       class="rounded-md border border-yellow-200 bg-yellow-50 p-4"
@@ -43,8 +43,8 @@
         </div>
         <div class="ml-3">
           <p class="text-sm text-yellow-700">
-            You have reached the maximum number of API keys ({{ maxApiKeys }}). Please delete an
-            existing key to create a new one.
+            Has alcanzado el número máximo de claves API ({{ maxApiKeys }}). Por favor, elimina una
+            clave existente para crear una nueva.
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@
               stroke-width="2"
             />
           </svg>
-          Create API Key
+          Crear Clave API
         </button>
       </div>
     </div>

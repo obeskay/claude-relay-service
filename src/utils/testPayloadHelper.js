@@ -1,24 +1,24 @@
 const crypto = require('crypto')
 const { mapToErrorCode } = require('./errorSanitizer')
 
-// 将原始错误信息映射为安全的标准错误码消息
+// 将原始ErrorInformación映射为Seguridad的标准Error码消息
 const sanitizeErrorMsg = (msg) => {
   const mapped = mapToErrorCode({ message: msg }, { logOriginal: false })
   return `[${mapped.code}] ${mapped.message}`
 }
 
 /**
- * 生成随机十六进制字符串
+ * Generar随机十六进制Cadena
  * @param {number} bytes - 字节数
- * @returns {string} 十六进制字符串
+ * @returns {string} 十六进制Cadena
  */
 function randomHex(bytes = 32) {
   return crypto.randomBytes(bytes).toString('hex')
 }
 
 /**
- * 生成 Claude Code 风格的会话字符串
- * @returns {string} 会话字符串，格式: user_{64位hex}_account__session_{uuid}
+ * Generar Claude Code 风格的SesiónCadena
+ * @returns {string} SesiónCadena，Formato: user_{64位hex}_account__session_{uuid}
  */
 function generateSessionString() {
   const hex64 = randomHex(32) // 32 bytes => 64 hex characters
@@ -27,13 +27,13 @@ function generateSessionString() {
 }
 
 /**
- * 生成 Claude 测试请求体
- * @param {string} model - 模型名称
- * @param {object} options - 可选配置
- * @param {boolean} options.stream - 是否流式（默认false）
- * @param {string} options.prompt - 自定义提示词（默认 'hi'）
- * @param {number} options.maxTokens - 最大输出 token（默认 1000）
- * @returns {object} 测试请求体
+ * Generar Claude ProbarSolicitud体
+ * @param {string} model - 模型Nombre
+ * @param {object} options - OpcionalConfiguración
+ * @param {boolean} options.stream - 是否流式（Predeterminadofalse）
+ * @param {string} options.prompt - 自定义提示词（Predeterminado 'hi'）
+ * @param {number} options.maxTokens - 最大输出 token（Predeterminado 1000）
+ * @returns {object} ProbarSolicitud体
  */
 function createClaudeTestPayload(model = 'claude-sonnet-4-5-20250929', options = {}) {
   const { stream, prompt = 'hi', maxTokens = 1000 } = options
@@ -77,15 +77,15 @@ function createClaudeTestPayload(model = 'claude-sonnet-4-5-20250929', options =
 }
 
 /**
- * 发送流式测试请求并处理SSE响应
- * @param {object} options - 配置选项
+ * 发送流式ProbarSolicitud并ProcesarSSERespuesta
+ * @param {object} options - Configuración选项
  * @param {string} options.apiUrl - API URL
- * @param {string} options.authorization - Authorization header值
- * @param {object} options.responseStream - Express响应流
- * @param {object} [options.payload] - 请求体（默认使用createClaudeTestPayload）
- * @param {object} [options.proxyAgent] - 代理agent
- * @param {number} [options.timeout] - 超时时间（默认30000）
- * @param {object} [options.extraHeaders] - 额外的请求头
+ * @param {string} options.authorization - Authorization headerValor
+ * @param {object} options.responseStream - ExpressRespuesta流
+ * @param {object} [options.payload] - Solicitud体（Predeterminado使用createClaudeTestPayload）
+ * @param {object} [options.proxyAgent] - Proxyagent
+ * @param {number} [options.timeout] - Tiempo de espera agotadoTiempo（Predeterminado30000）
+ * @param {object} [options.extraHeaders] - 额外的Solicitud头
  * @returns {Promise<void>}
  */
 async function sendStreamTestRequest(options) {
@@ -126,7 +126,7 @@ async function sendStreamTestRequest(options) {
     }
   }
 
-  // 设置响应头
+  // EstablecerRespuesta头
   if (!responseStream.headersSent) {
     responseStream.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -164,7 +164,7 @@ async function sendStreamTestRequest(options) {
     const response = await axios(requestConfig)
     logger.debug(`🌊 Test response status: ${response.status}`)
 
-    // 处理非200响应
+    // Procesar非200Respuesta
     if (response.status !== 200) {
       return new Promise((resolve) => {
         const chunks = []
@@ -190,7 +190,7 @@ async function sendStreamTestRequest(options) {
       })
     }
 
-    // 处理成功的流式响应
+    // ProcesarÉxito的流式Respuesta
     return new Promise((resolve) => {
       let buffer = ''
 
@@ -246,12 +246,12 @@ async function sendStreamTestRequest(options) {
 }
 
 /**
- * 生成 Gemini 测试请求体
- * @param {string} model - 模型名称
- * @param {object} options - 可选配置
- * @param {string} options.prompt - 自定义提示词（默认 'hi'）
- * @param {number} options.maxTokens - 最大输出 token（默认 100）
- * @returns {object} 测试请求体
+ * Generar Gemini ProbarSolicitud体
+ * @param {string} model - 模型Nombre
+ * @param {object} options - OpcionalConfiguración
+ * @param {string} options.prompt - 自定义提示词（Predeterminado 'hi'）
+ * @param {number} options.maxTokens - 最大输出 token（Predeterminado 100）
+ * @returns {object} ProbarSolicitud体
  */
 function createGeminiTestPayload(_model = 'gemini-2.5-pro', options = {}) {
   const { prompt = 'hi', maxTokens = 100 } = options
@@ -270,12 +270,12 @@ function createGeminiTestPayload(_model = 'gemini-2.5-pro', options = {}) {
 }
 
 /**
- * 生成 OpenAI Responses 测试请求体
- * @param {string} model - 模型名称
- * @param {object} options - 可选配置
- * @param {string} options.prompt - 自定义提示词（默认 'hi'）
- * @param {number} options.maxTokens - 最大输出 token（默认 100）
- * @returns {object} 测试请求体
+ * Generar OpenAI Responses ProbarSolicitud体
+ * @param {string} model - 模型Nombre
+ * @param {object} options - OpcionalConfiguración
+ * @param {string} options.prompt - 自定义提示词（Predeterminado 'hi'）
+ * @param {number} options.maxTokens - 最大输出 token（Predeterminado 100）
+ * @returns {object} ProbarSolicitud体
  */
 function createOpenAITestPayload(model = 'gpt-5', options = {}) {
   const { prompt = 'hi', maxTokens = 100, stream = true } = options
@@ -293,12 +293,12 @@ function createOpenAITestPayload(model = 'gpt-5', options = {}) {
 }
 
 /**
- * 生成 Chat Completions 测试请求体（用于 Azure OpenAI 等 Chat Completions 端点）
- * @param {string} model - 模型名称
- * @param {object} options - 可选配置
- * @param {string} options.prompt - 自定义提示词（默认 'hi'）
- * @param {number} options.maxTokens - 最大输出 token（默认 100）
- * @returns {object} 测试请求体
+ * Generar Chat Completions ProbarSolicitud体（用于 Azure OpenAI 等 Chat Completions Endpoint）
+ * @param {string} model - 模型Nombre
+ * @param {object} options - OpcionalConfiguración
+ * @param {string} options.prompt - 自定义提示词（Predeterminado 'hi'）
+ * @param {number} options.maxTokens - 最大输出 token（Predeterminado 100）
+ * @returns {object} ProbarSolicitud体
  */
 function createChatCompletionsTestPayload(model = 'gpt-4o-mini', options = {}) {
   const { prompt = 'hi', maxTokens = 100 } = options
@@ -315,11 +315,11 @@ function createChatCompletionsTestPayload(model = 'gpt-4o-mini', options = {}) {
 }
 
 /**
- * 从各种格式的错误响应中提取可读错误信息
- * 支持格式: {message}, {error:{message}}, {msg:{error:{message}}}, {error:"string"} 等
- * @param {object} json - 解析后的 JSON 错误响应
- * @param {string} fallback - 提取失败时的回退信息
- * @returns {string} 错误信息
+ * 从各种Formato的ErrorRespuesta中提取可读ErrorInformación
+ * SoportarFormato: {message}, {error:{message}}, {msg:{error:{message}}}, {error:"string"} 等
+ * @param {object} json - Analizar后的 JSON ErrorRespuesta
+ * @param {string} fallback - 提取Falló时的RetiradaInformación
+ * @returns {string} ErrorInformación
  */
 function extractErrorMessage(json, fallback) {
   if (!json || typeof json !== 'object') {
@@ -333,7 +333,7 @@ function extractErrorMessage(json, fallback) {
   if (json.error?.message) {
     return json.error.message
   }
-  // {msg: {error: {message: "..."}}} (relay 包装格式)
+  // {msg: {error: {message: "..."}}} (relay 包装Formato)
   if (json.msg?.error?.message) {
     return json.msg.error.message
   }

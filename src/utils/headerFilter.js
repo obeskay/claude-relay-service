@@ -1,11 +1,11 @@
 /**
- * 统一的 CDN Headers 过滤列表
+ * 统一的 CDN Headers FiltrarColumnaTabla
  *
- * 用于各服务在原有过滤逻辑基础上，额外移除 Cloudflare CDN 和代理相关的 headers
- * 避免触发上游 API（如 88code）的安全检查
+ * 用于各Servicio在原有Filtrar逻辑基础上，额外Eliminación Cloudflare CDN 和Proxy相关的 headers
+ * 避免触发上游 API（如 88code）的SeguridadVerificar
  */
 
-// Cloudflare CDN headers（橙色云代理模式会添加这些）
+// Cloudflare CDN headers（橙色云Proxy模式会添加这些）
 const cdnHeaders = [
   'x-real-ip',
   'x-forwarded-for',
@@ -23,7 +23,7 @@ const cdnHeaders = [
 ]
 
 /**
- * 为 OpenAI/Responses API 过滤 headers
+ * 为 OpenAI/Responses API Filtrar headers
  * 在原有 skipHeaders 基础上添加 CDN headers
  */
 function filterForOpenAI(headers) {
@@ -51,7 +51,7 @@ function filterForOpenAI(headers) {
 }
 
 /**
- * 为 Claude/Anthropic API 过滤 headers
+ * 为 Claude/Anthropic API Filtrar headers
  * 使用白名单模式，只允许指定的 headers 通过
  */
 function filterForClaude(headers) {
@@ -91,8 +91,8 @@ function filterForClaude(headers) {
 }
 
 /**
- * 为 Gemini API 过滤 headers（如果需要转发客户端 headers 时使用）
- * 目前 Gemini 服务不转发客户端 headers，仅提供此方法备用
+ * 为 Gemini API Filtrar headers（如果需要转发Cliente headers 时使用）
+ * 目前 Gemini Servicio不转发Cliente headers，仅提供此Método备用
  */
 function filterForGemini(headers) {
   const skipHeaders = [

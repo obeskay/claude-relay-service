@@ -12,7 +12,7 @@
               <i class="fas fa-layer-group text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              账户分组管理
+  Administración de Grupos de Cuentas
             </h3>
           </div>
           <button
@@ -23,7 +23,7 @@
           </button>
         </div>
 
-        <!-- Tab 切换栏 -->
+        <!-- Barra de cambio de pestaña -->
         <div class="mb-4 flex flex-wrap gap-2">
           <button
             v-for="tab in platformTabs"
@@ -51,7 +51,7 @@
         <div class="mb-6">
           <button class="btn btn-primary px-4 py-2" @click="openCreateForm">
             <i class="fas fa-plus mr-2" />
-            创建新分组
+            Crear新分组
           </button>
         </div>
 
@@ -59,7 +59,7 @@
         <div class="space-y-4">
           <div v-if="loading" class="py-8 text-center">
             <div class="loading-spinner-lg mx-auto mb-4" />
-            <p class="text-gray-500">加载中...</p>
+            <p class="text-gray-500">Cargando...</p>
           </div>
 
           <div
@@ -67,7 +67,7 @@
             class="rounded-lg bg-gray-50 py-8 text-center dark:bg-gray-800"
           >
             <i class="fas fa-layer-group mb-4 text-4xl text-gray-300 dark:text-gray-600" />
-            <p class="text-gray-500 dark:text-gray-400">暂无分组</p>
+            <p class="text-gray-500 dark:text-gray-400">No hay grupos</p>
           </div>
 
           <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -82,7 +82,7 @@
                     {{ group.name }}
                   </h4>
                   <p class="mt-1 text-sm text-gray-500">
-                    {{ group.description || '暂无描述' }}
+                    {{ group.description || 'SinDescripción' }}
                   </p>
                 </div>
                 <div class="ml-4 flex items-center gap-2">
@@ -115,7 +115,7 @@
                 <div class="flex items-center gap-4">
                   <span>
                     <i class="fas fa-users mr-1" />
-                    {{ group.memberCount || 0 }} 个成员
+                    {{ group.memberCount || 0 }}  成员
                   </span>
                   <span>
                     <i class="fas fa-clock mr-1" />
@@ -125,7 +125,7 @@
                 <div class="flex items-center gap-2">
                   <button
                     class="text-blue-600 transition-colors hover:text-blue-800"
-                    title="编辑"
+                    title="Editar"
                     @click="editGroup(group)"
                   >
                     <i class="fas fa-edit" />
@@ -133,7 +133,7 @@
                   <button
                     class="text-red-600 transition-colors hover:text-red-800"
                     :disabled="group.memberCount > 0"
-                    title="删除"
+                    title="Eliminar"
                     @click="deleteGroup(group)"
                   >
                     <i class="fas fa-trash" />
@@ -146,14 +146,14 @@
       </div>
     </div>
 
-    <!-- 编辑分组模态框 -->
+    <!-- Editar分组模态框 -->
     <div
       v-if="showEditForm"
       class="modal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
     >
       <div class="modal-content w-full max-w-lg p-4 sm:p-6">
         <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">编辑分组</h3>
+          <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Editar分组</h3>
           <button class="text-gray-400 transition-colors hover:text-gray-600" @click="cancelEdit">
             <i class="fas fa-times" />
           </button>
@@ -161,17 +161,17 @@
 
         <div class="space-y-4">
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">分组名称 *</label>
+            <label class="mb-2 block text-sm font-semibold text-gray-700">分组Nombre *</label>
             <input
               v-model="editForm.name"
               class="form-input w-full"
-              placeholder="输入分组名称"
+              placeholder="Entrada分组Nombre"
               type="text"
             />
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">平台类型</label>
+            <label class="mb-2 block text-sm font-semibold text-gray-700">PlataformaTipo</label>
             <div class="rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-600">
               {{
                 editForm.platform === 'claude'
@@ -185,11 +185,11 @@
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-semibold text-gray-700">描述 (可选)</label>
+            <label class="mb-2 block text-sm font-semibold text-gray-700">Descripción (可选)</label>
             <textarea
               v-model="editForm.description"
               class="form-input w-full resize-none"
-              placeholder="分组描述..."
+              placeholder="分组Descripción..."
               rows="2"
             />
           </div>
@@ -201,22 +201,22 @@
               @click="updateGroup"
             >
               <div v-if="updating" class="loading-spinner mr-2" />
-              {{ updating ? '更新中...' : '更新' }}
+              {{ updating ? 'Actualizaren...' : 'Actualizar' }}
             </button>
-            <button class="btn btn-secondary flex-1 px-4 py-2" @click="cancelEdit">取消</button>
+            <button class="btn btn-secondary flex-1 px-4 py-2" @click="cancelEdit">Cancelar</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 创建分组模态框 -->
+    <!-- Crear分组模态框 -->
     <div
       v-if="showCreateForm"
       class="modal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
     >
       <div class="modal-content w-full max-w-lg p-4 sm:p-6">
         <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">创建新分组</h3>
+          <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Crear新分组</h3>
           <button
             class="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
             @click="cancelCreate"
@@ -228,19 +228,19 @@
         <div class="space-y-4">
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >分组名称 *</label
+              >分组Nombre *</label
             >
             <input
               v-model="createForm.name"
               class="form-input w-full"
-              placeholder="输入分组名称"
+              placeholder="Entrada分组Nombre"
               type="text"
             />
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >平台类型 *</label
+              >PlataformaTipo *</label
             >
             <div class="flex flex-wrap gap-4">
               <label class="flex cursor-pointer items-center">
@@ -264,12 +264,12 @@
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >描述 (可选)</label
+              >Descripción (可选)</label
             >
             <textarea
               v-model="createForm.description"
               class="form-input w-full resize-none"
-              placeholder="分组描述..."
+              placeholder="分组Descripción..."
               rows="2"
             />
           </div>
@@ -281,21 +281,21 @@
               @click="createGroup"
             >
               <div v-if="creating" class="loading-spinner mr-2" />
-              {{ creating ? '创建中...' : '创建' }}
+              {{ creating ? 'Crearen...' : 'Crear' }}
             </button>
-            <button class="btn btn-secondary flex-1 px-4 py-2" @click="cancelCreate">取消</button>
+            <button class="btn btn-secondary flex-1 px-4 py-2" @click="cancelCreate">Cancelar</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 删除确认对话框 -->
+    <!-- EliminarConfirmar对话框 -->
     <ConfirmModal
-      cancel-text="取消"
-      confirm-text="确认删除"
-      :message="`确定要删除分组 &quot;${deletingGroup?.name}&quot; 吗？此操作不可撤销。`"
+      cancel-text="Cancelar"
+      confirm-text="Confirmar eliminación"
+      :message="`Confirmar要Eliminar分组 &quot;${deletingGroup?.name}&quot; 吗？此Operación不可撤销。`"
       :show="showDeleteConfirm"
-      title="确认删除"
+      title="Confirmar eliminación"
       type="danger"
       @cancel="cancelDelete"
       @confirm="confirmDelete"
@@ -326,7 +326,7 @@ const platformTabs = [
   { key: 'droid', label: 'Droid', color: 'cyan' }
 ]
 
-// 各平台分组数量
+// 各Plataforma分组数量
 const platformCounts = computed(() => {
   const counts = { all: groups.value.length }
   platformTabs.slice(1).forEach((tab) => {
@@ -335,17 +335,17 @@ const platformCounts = computed(() => {
   return counts
 })
 
-// 过滤后的分组列表
+// 过滤siguiente分组列表
 const filteredGroups = computed(() => {
   if (activeTab.value === 'all') return groups.value
   return groups.value.filter((g) => g.platform === activeTab.value)
 })
 
-// 删除确认
+// EliminarConfirmar
 const showDeleteConfirm = ref(false)
 const deletingGroup = ref(null)
 
-// 创建表单
+// Crear表单
 const showCreateForm = ref(false)
 const creating = ref(false)
 const createForm = ref({
@@ -354,7 +354,7 @@ const createForm = ref({
   description: ''
 })
 
-// 编辑表单
+// Editar表单
 const showEditForm = ref(false)
 const updating = ref(false)
 const editingGroup = ref(null)
@@ -373,13 +373,13 @@ const loadGroups = async () => {
     const response = await httpApis.getAccountGroupsApi()
     groups.value = response.data || []
   } catch (error) {
-    showToast('加载分组列表失败', 'error')
+    showToast('加载分组列表Fallido', 'error')
   } finally {
     loading.value = false
   }
 }
 
-// 创建分组
+// Crear分组
 const createGroup = async () => {
   if (!createForm.value.name || !createForm.value.platform) {
     showToast('请填写必填项', 'error')
@@ -394,24 +394,24 @@ const createGroup = async () => {
       description: createForm.value.description
     })
 
-    showToast('分组创建成功', 'success')
+    showToast('分组Creado exitosamente', 'success')
     cancelCreate()
     await loadGroups()
     emit('refresh')
   } catch (error) {
-    showToast(error.response?.data?.error || '创建分组失败', 'error')
+    showToast(error.response?.data?.error || 'Crear分组Fallido', 'error')
   } finally {
     creating.value = false
   }
 }
 
-// 打开创建表单（根据当前 Tab 预选平台）
+// 打开Crear表单（根据当anterior Tab 预选Plataforma）
 const openCreateForm = () => {
   createForm.value.platform = activeTab.value !== 'all' ? activeTab.value : 'claude'
   showCreateForm.value = true
 }
 
-// 取消创建
+// CancelarCrear
 const cancelCreate = () => {
   showCreateForm.value = false
   createForm.value = {
@@ -421,7 +421,7 @@ const cancelCreate = () => {
   }
 }
 
-// 编辑分组
+// Editar分组
 const editGroup = (group) => {
   editingGroup.value = group
   editForm.value = {
@@ -432,10 +432,10 @@ const editGroup = (group) => {
   showEditForm.value = true
 }
 
-// 更新分组
+// Actualizar分组
 const updateGroup = async () => {
   if (!editForm.value.name) {
-    showToast('请填写分组名称', 'error')
+    showToast('请填写分组Nombre', 'error')
     return
   }
 
@@ -446,18 +446,18 @@ const updateGroup = async () => {
       description: editForm.value.description
     })
 
-    showToast('分组更新成功', 'success')
+    showToast('分组Actualizado exitosamente', 'success')
     cancelEdit()
     await loadGroups()
     emit('refresh')
   } catch (error) {
-    showToast(error.response?.data?.error || '更新分组失败', 'error')
+    showToast(error.response?.data?.error || 'Actualizar分组Fallido', 'error')
   } finally {
     updating.value = false
   }
 }
 
-// 取消编辑
+// CancelarEditar
 const cancelEdit = () => {
   showEditForm.value = false
   editingGroup.value = null
@@ -468,31 +468,31 @@ const cancelEdit = () => {
   }
 }
 
-// 删除分组 - 打开确认对话框
+// Eliminar分组 - 打开Confirmar对话框
 const deleteGroup = (group) => {
   if (group.memberCount > 0) {
-    showToast('分组内还有成员，无法删除', 'error')
+    showToast('分组内还有成员，无法Eliminar', 'error')
     return
   }
   deletingGroup.value = group
   showDeleteConfirm.value = true
 }
 
-// 确认删除
+// Confirmar eliminación
 const confirmDelete = async () => {
   if (!deletingGroup.value) return
   try {
     await httpApis.deleteAccountGroupApi(deletingGroup.value.id)
-    showToast('分组删除成功', 'success')
+    showToast('分组Eliminado exitosamente', 'success')
     cancelDelete()
     await loadGroups()
     emit('refresh')
   } catch (error) {
-    showToast(error.response?.data?.error || '删除分组失败', 'error')
+    showToast(error.response?.data?.error || 'Eliminar分组Fallido', 'error')
   }
 }
 
-// 取消删除
+// CancelarEliminar
 const cancelDelete = () => {
   showDeleteConfirm.value = false
   deletingGroup.value = null

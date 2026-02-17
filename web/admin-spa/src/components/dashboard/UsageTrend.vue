@@ -83,7 +83,7 @@ const createChart = () => {
       labels,
       datasets: [
         {
-          label: '请求次数',
+          label: 'Número de solicitudes',
           data: dashboardStore.trendData.map((item) => item.requests),
           borderColor: themeStore.currentColorScheme.primary,
           backgroundColor: getGradient(ctx, themeStore.currentColorScheme.primary, 0.1),
@@ -129,7 +129,7 @@ const createChart = () => {
           position: 'left',
           title: {
             display: true,
-            text: '请求次数'
+            text: 'Número de solicitudes'
           }
         },
         y1: {
@@ -155,7 +155,7 @@ const handlePeriodChange = async () => {
 }
 
 const handleGranularityChange = async () => {
-  // 根据粒度调整时间范围
+  // 根据粒度调整Rango de tiempo
   if (granularity.value === 'hour' && trendPeriod.value > 7) {
     trendPeriod.value = 1
   }
@@ -171,7 +171,7 @@ watch(
   { deep: true }
 )
 
-// 监听色系变化，重新创建图表
+// 监听色系变化，重新Crear图表
 watch(
   () => themeStore.colorScheme,
   () => {

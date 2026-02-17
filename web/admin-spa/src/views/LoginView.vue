@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen items-center justify-center p-4 sm:p-6">
-    <!-- 主题切换按钮 - 固定在右上角 -->
+    <!-- Botón de cambio de tema - fijado en la esquina superior derecha -->
     <div class="fixed right-4 top-4 z-50">
       <ThemeToggle mode="dropdown" />
     </div>
@@ -9,7 +9,7 @@
       class="glass-strong w-full max-w-md rounded-xl p-6 shadow-2xl sm:rounded-2xl sm:p-8 md:rounded-3xl md:p-10"
     >
       <div class="mb-6 text-center sm:mb-8">
-        <!-- 使用自定义布局来保持登录页面的居中大logo样式 -->
+        <!-- Usar diseño personalizado para mantener el estilo de logo grande centrado de la página de inicio de sesión -->
         <div
           class="mx-auto mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-gray-300/30 bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm sm:mb-6 sm:h-20 sm:w-20 sm:rounded-2xl"
         >
@@ -116,9 +116,9 @@ const loginForm = ref({
 })
 
 onMounted(() => {
-  // 初始化主题
+  // Inicializar tema
   themeStore.initTheme()
-  // 加载OEM设置
+  // Cargar configuración OEM
   authStore.loadOemSettings()
 })
 

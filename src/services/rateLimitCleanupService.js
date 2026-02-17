@@ -86,10 +86,10 @@ class RateLimitCleanupService {
       // Cleanup Claude Console accounts
       await this.cleanupClaudeConsoleAccounts(results.claudeConsole)
 
-      // 清理 Claude Console 配额超限状态
+      // Limpiar Claude Console Cuota超限状态
       await this.cleanupClaudeConsoleQuotaExceeded(results.quotaExceeded)
 
-      // 主动刷新等待重置的 Claude 账户 Token（防止 5小时/7天 等待期间 Token 过期）
+      // 主动刷新等待重置的 Claude Cuenta Token（防止 5小时/7天 等待期间 Token 过期）
       await this.proactiveRefreshClaudeTokens(results.tokenRefresh)
 
       const totalChecked =
@@ -181,7 +181,7 @@ class RateLimitCleanupService {
                 `🧹 Auto-cleared expired rate limit for OpenAI account: ${account.name} (${account.id})`
               )
 
-              // 记录已清理的账户信息
+              // Registro已Limpiar的CuentaInformación
               this.clearedAccounts.push({
                 platform: 'OpenAI',
                 accountId: account.id,
@@ -226,12 +226,12 @@ class RateLimitCleanupService {
         const needsAutoStopRecovery =
           autoStopped && (account.rateLimitEndAt || account.schedulable === 'false')
 
-        // 检查所有可能处于限流状态的账号，包括自动停止的账号
+        // Verificar所有可能处于限流状态的账号，包括自动停止的账号
         if (isRateLimited || account.rateLimitedAt || needsAutoStopRecovery) {
           result.checked++
 
           try {
-            // 使用 claudeAccountService 的检查方法，它会自动清除过期的限流
+            // 使用 claudeAccountService 的VerificarMétodo，它会自动清除过期的限流
             const isStillLimited = await claudeAccountService.isAccountRateLimited(account.id)
 
             if (!isStillLimited) {
@@ -243,7 +243,7 @@ class RateLimitCleanupService {
                 `🧹 Auto-cleared expired rate limit for Claude account: ${account.name} (${account.id})`
               )
 
-              // 记录已清理的账户信息
+              // Registro已Limpiar的CuentaInformación
               this.clearedAccounts.push({
                 platform: 'Claude',
                 accountId: account.id,
@@ -262,12 +262,12 @@ class RateLimitCleanupService {
         }
       }
 
-      // 检查并恢复因5小时限制被自动停止的账号
+      // Verificar并Restauración因5小时Límite被自动停止的账号
       try {
         const fiveHourResult = await claudeAccountService.checkAndRecoverFiveHourStoppedAccounts()
 
         if (fiveHourResult.recovered > 0) {
-          // 将5小时限制恢复的账号也加入到已清理账户列表中，用于发送通知
+          // 将5小时LímiteRestauración的账号也加入到已LimpiarCuentaColumnaTabla中，用于发送通知
           for (const account of fiveHourResult.accounts) {
             this.clearedAccounts.push({
               platform: 'Claude',
@@ -279,7 +279,7 @@ class RateLimitCleanupService {
             })
           }
 
-          // 更新统计数据
+          // ActualizarEstadísticaDatos
           result.checked += fiveHourResult.checked
           result.cleared += fiveHourResult.recovered
 
@@ -301,15 +301,15 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 清理 Claude Console 账号的过期限流
+   * Limpiar Claude Console 账号的过期限流
    */
   async cleanupClaudeConsoleAccounts(result) {
     try {
-      // 使用服务层获取账户数据
+      // 使用Servicio层ObtenerCuentaDatos
       const accounts = await claudeConsoleAccountService.getAllAccounts()
 
       for (const account of accounts) {
-        // 检查是否处于限流状态（兼容对象和字符串格式）
+        // Verificar是否处于限流状态（兼容Objeto和CadenaFormato）
         const isRateLimited =
           account.rateLimitStatus === 'limited' ||
           (account.rateLimitStatus &&
@@ -319,14 +319,14 @@ class RateLimitCleanupService {
         const autoStopped = account.rateLimitAutoStopped === 'true'
         const needsAutoStopRecovery = autoStopped && account.schedulable === 'false'
 
-        // 检查两种状态字段：rateLimitStatus 和 status
+        // Verificar两种状态Campo：rateLimitStatus 和 status
         const hasStatusRateLimited = account.status === 'rate_limited'
 
         if (isRateLimited || hasStatusRateLimited || needsAutoStopRecovery) {
           result.checked++
 
           try {
-            // 使用 claudeConsoleAccountService 的检查方法，它会自动清除过期的限流
+            // 使用 claudeConsoleAccountService 的VerificarMétodo，它会自动清除过期的限流
             const isStillLimited = await claudeConsoleAccountService.isAccountRateLimited(
               account.id
             )
@@ -337,7 +337,7 @@ class RateLimitCleanupService {
               }
               result.cleared++
 
-              // 如果 status 字段是 rate_limited，需要额外清理
+              // 如果 status Campo是 rate_limited，需要额外Limpiar
               if (hasStatusRateLimited && !isRateLimited) {
                 await claudeConsoleAccountService.updateAccount(account.id, {
                   status: 'active'
@@ -348,7 +348,7 @@ class RateLimitCleanupService {
                 `🧹 Auto-cleared expired rate limit for Claude Console account: ${account.name} (${account.id})`
               )
 
-              // 记录已清理的账户信息
+              // Registro已Limpiar的CuentaInformación
               this.clearedAccounts.push({
                 platform: 'Claude Console',
                 accountId: account.id,
@@ -373,19 +373,19 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 检查并恢复 Claude Console 账号的配额超限状态
+   * Verificar并Restauración Claude Console 账号的Cuota超限状态
    */
   async cleanupClaudeConsoleQuotaExceeded(result) {
     try {
       const accounts = await claudeConsoleAccountService.getAllAccounts()
 
       for (const account of accounts) {
-        // 检查是否处于配额超限状态
+        // Verificar是否处于Cuota超限状态
         if (account.status === 'quota_exceeded' || account.quotaStoppedAt) {
           result.checked++
 
           try {
-            // 使用 isAccountQuotaExceeded 方法，它会自动触发恢复
+            // 使用 isAccountQuotaExceeded Método，它会自动触发Restauración
             const isStillExceeded = await claudeConsoleAccountService.isAccountQuotaExceeded(
               account.id
             )
@@ -396,7 +396,7 @@ class RateLimitCleanupService {
                 `🧹 Auto-recovered quota exceeded for Claude Console account: ${account.name} (${account.id})`
               )
 
-              // 记录已恢复的账户信息
+              // Registro已Restauración的CuentaInformación
               this.clearedAccounts.push({
                 platform: 'Claude Console',
                 accountId: account.id,
@@ -421,11 +421,11 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 主动刷新 Claude 账户 Token（防止等待重置期间 Token 过期）
-   * 仅对因限流/配额限制而等待重置的账户执行刷新：
-   * - 429 限流账户（rateLimitAutoStopped=true）
-   * - 5小时限制自动停止账户（fiveHourAutoStopped=true）
-   * 不处理错误状态账户（error/temp_error）
+   * 主动刷新 Claude Cuenta Token（防止等待重置期间 Token 过期）
+   * 仅对因限流/CuotaLímite而等待重置的CuentaEjecutar刷新：
+   * - 429 限流Cuenta（rateLimitAutoStopped=true）
+   * - 5小时Límite自动停止Cuenta（fiveHourAutoStopped=true）
+   * 不ProcesarError状态Cuenta（error/temp_error）
    */
   async proactiveRefreshClaudeTokens(result) {
     try {
@@ -446,29 +446,29 @@ class RateLimitCleanupService {
           continue
         }
 
-        // 3. 【优化】仅处理因限流/配额限制而等待重置的账户
-        // 正常调度的账户会在请求时自动刷新，无需主动刷新
-        // 错误状态账户的 Token 可能已失效，刷新也会失败
+        // 3. 【Optimización】仅Procesar因限流/CuotaLímite而等待重置的Cuenta
+        // 正常调度的Cuenta会在Solicitud时自动刷新，无需主动刷新
+        // Error状态Cuenta的 Token 可能已失效，刷新也会Falló
         const isWaitingForReset =
           account.rateLimitAutoStopped === 'true' || // 429 限流
-          account.fiveHourAutoStopped === 'true' // 5小时限制自动停止
+          account.fiveHourAutoStopped === 'true' // 5小时Límite自动停止
         if (!isWaitingForReset) {
           continue
         }
 
-        // 4. 【优化】如果最近 5 分钟内已刷新，跳过（避免重复刷新）
+        // 4. 【Optimización】如果最近 5 分钟内已刷新，跳过（避免重复刷新）
         const lastRefreshAt = account.lastRefreshAt ? new Date(account.lastRefreshAt).getTime() : 0
         if (now - lastRefreshAt < recentRefreshMs) {
           continue
         }
 
-        // 5. 检查 Token 是否即将过期（30分钟内）
+        // 5. Verificar Token 是否即将过期（30分钟内）
         const expiresAt = parseInt(account.expiresAt)
         if (expiresAt && now < expiresAt - refreshAheadMs) {
           continue
         }
 
-        // 符合条件，执行刷新
+        // 符合Condición，Ejecutar刷新
         result.checked++
         try {
           await claudeAccountService.refreshAccountToken(account.id)
@@ -490,7 +490,7 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 手动触发一次清理（供 API 或 CLI 调用）
+   * 手动触发一次Limpiar（供 API 或 CLI 调用）
    */
   async manualCleanup() {
     logger.info('🧹 Manual rate limit cleanup triggered')
@@ -502,7 +502,7 @@ class RateLimitCleanupService {
    */
   async sendRecoveryNotifications() {
     try {
-      // 按平台分组账户
+      // 按平台AgruparCuenta
       const groupedAccounts = {}
       for (const account of this.clearedAccounts) {
         if (!groupedAccounts[account.platform]) {
@@ -511,7 +511,7 @@ class RateLimitCleanupService {
         groupedAccounts[account.platform].push(account)
       }
 
-      // 构建通知消息
+      // Construir通知消息
       const platforms = Object.keys(groupedAccounts)
       const totalAccounts = this.clearedAccounts.length
 
@@ -543,7 +543,7 @@ class RateLimitCleanupService {
   }
 
   /**
-   * 获取服务状态
+   * ObtenerServicio状态
    */
   getStatus() {
     return {
@@ -554,7 +554,7 @@ class RateLimitCleanupService {
   }
 }
 
-// 创建单例实例
+// Crear单例Instancia
 const rateLimitCleanupService = new RateLimitCleanupService()
 
 module.exports = rateLimitCleanupService

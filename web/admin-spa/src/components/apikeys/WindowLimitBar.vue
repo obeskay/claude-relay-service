@@ -1,21 +1,21 @@
 <template>
   <div class="w-full space-y-1">
-    <!-- 时间窗口进度条 -->
+    <!-- Barra de progreso de ventana de tiempo -->
     <div
       class="relative h-7 w-full overflow-hidden rounded-md border border-opacity-20 bg-gradient-to-r from-blue-50 to-cyan-100 dark:from-blue-950/30 dark:to-cyan-900/30"
     >
-      <!-- 时间进度条背景 -->
+      <!-- Fondo de barra de progreso de tiempo -->
       <div
         class="absolute inset-0 h-full bg-gradient-to-r from-blue-500 to-cyan-500 opacity-20 transition-all duration-1000"
         :style="{ width: timeProgress + '%' }"
       ></div>
 
-      <!-- 文字层 -->
+      <!-- Capa de texto -->
       <div class="relative z-10 flex h-full items-center justify-between px-2">
         <div class="flex items-center gap-1.5">
           <i class="fas fa-clock text-xs text-blue-600 dark:text-blue-400" />
           <span class="text-xs font-medium text-gray-700 dark:text-gray-200">
-            {{ rateLimitWindow }}分钟窗口
+            Ventana de {{ rateLimitWindow }} minutos
           </span>
         </div>
         <span
@@ -26,51 +26,51 @@
               : 'text-gray-400 dark:text-gray-500'
           "
         >
-          {{ remainingSeconds > 0 ? formatTime(remainingSeconds) : '未激活' }}
+          {{ remainingSeconds > 0 ? formatTime(remainingSeconds) : 'No activado' }}
         </span>
       </div>
     </div>
 
-    <!-- 费用和请求限制（如果有的话） -->
+    <!-- Límites de costo y solicitudes (si los hay) -->
     <div v-if="costLimit > 0 || requestLimit > 0" class="flex gap-1">
-      <!-- 费用限制进度条 -->
+      <!-- Barra de progreso de límite de costo -->
       <div
         v-if="costLimit > 0"
         class="relative h-6 overflow-hidden rounded-md border border-opacity-20 bg-gradient-to-r from-green-50 to-emerald-100 dark:from-green-950/30 dark:to-emerald-900/30"
         :class="requestLimit > 0 ? 'w-1/2' : 'w-full'"
       >
-        <!-- 进度条 -->
+        <!-- Barra de progreso -->
         <div
           class="absolute inset-0 h-full transition-all duration-500 ease-out"
           :class="getCostProgressBarClass()"
           :style="{ width: costProgress + '%' }"
         ></div>
 
-        <!-- 文字 -->
+        <!-- Texto -->
         <div class="relative z-10 flex h-full items-center justify-between px-2">
-          <span class="text-[10px] font-medium" :class="getCostTextClass()">费用</span>
+          <span class="text-[10px] font-medium" :class="getCostTextClass()">Costo</span>
           <span class="text-[10px] font-bold" :class="getCostValueTextClass()">
             ${{ currentCost.toFixed(1) }}/${{ costLimit.toFixed(0) }}
           </span>
         </div>
       </div>
 
-      <!-- 请求限制进度条 -->
+      <!-- Barra de progreso de límite de solicitudes -->
       <div
         v-if="requestLimit > 0"
         class="relative h-6 overflow-hidden rounded-md border border-opacity-20 bg-gradient-to-r from-purple-50 to-indigo-100 dark:from-purple-950/30 dark:to-indigo-900/30"
         :class="costLimit > 0 ? 'w-1/2' : 'w-full'"
       >
-        <!-- 进度条 -->
+        <!-- Barra de progreso -->
         <div
           class="absolute inset-0 h-full transition-all duration-500 ease-out"
           :class="getRequestProgressBarClass()"
           :style="{ width: requestProgress + '%' }"
         ></div>
 
-        <!-- 文字 -->
+        <!-- Texto -->
         <div class="relative z-10 flex h-full items-center justify-between px-2">
-          <span class="text-[10px] font-medium" :class="getRequestTextClass()">请求</span>
+          <span class="text-[10px] font-medium" :class="getRequestTextClass()">Solicitudes</span>
           <span class="text-[10px] font-bold" :class="getRequestValueTextClass()">
             {{ currentRequests }}/{{ requestLimit }}
           </span>
@@ -118,21 +118,21 @@ const props = defineProps({
   }
 })
 
-// 费用进度
+// Progreso de costo
 const costProgress = computed(() => {
   if (!props.costLimit || props.costLimit === 0) return 0
   const percentage = (props.currentCost / props.costLimit) * 100
   return Math.min(percentage, 100)
 })
 
-// 请求进度
+// Progreso de solicitudes
 const requestProgress = computed(() => {
   if (!props.requestLimit || props.requestLimit === 0) return 0
   const percentage = (props.currentRequests / props.requestLimit) * 100
   return Math.min(percentage, 100)
 })
 
-// 时间进度（倒计时）
+// Progreso de tiempo (cuenta regresiva)
 const timeProgress = computed(() => {
   if (!props.rateLimitWindow || props.rateLimitWindow === 0) return 0
   const totalSeconds = props.rateLimitWindow * 60
@@ -140,7 +140,7 @@ const timeProgress = computed(() => {
   return Math.max(0, (elapsed / totalSeconds) * 100)
 })
 
-// 费用进度条颜色
+// Color de barra de progreso de costo
 const getCostProgressBarClass = () => {
   const p = costProgress.value
   if (p >= 90) {
@@ -152,7 +152,7 @@ const getCostProgressBarClass = () => {
   }
 }
 
-// 请求进度条颜色
+// Color de barra de progreso de solicitudes
 const getRequestProgressBarClass = () => {
   const p = requestProgress.value
   if (p >= 90) {
@@ -164,7 +164,7 @@ const getRequestProgressBarClass = () => {
   }
 }
 
-// 费用文字颜色
+// Color de texto de costo
 const getCostTextClass = () => {
   const p = costProgress.value
   if (p > 50) {
@@ -183,7 +183,7 @@ const getCostValueTextClass = () => {
   }
 }
 
-// 请求文字颜色
+// Color de texto de solicitudes
 const getRequestTextClass = () => {
   const p = requestProgress.value
   if (p > 50) {
@@ -202,7 +202,7 @@ const getRequestValueTextClass = () => {
   }
 }
 
-// 格式化时间
+// Formatear tiempo
 const formatTime = (seconds) => {
   if (seconds === null || seconds === undefined) return '--:--'
 
@@ -219,7 +219,7 @@ const formatTime = (seconds) => {
   }
 }
 
-// 格式化Token数 - 暂时未使用
+// Formatear número de Tokens - No se usa por ahora
 // const formatTokens = (count) => {
 //   if (count >= 1000000) {
 //     return (count / 1000000).toFixed(1) + 'M'

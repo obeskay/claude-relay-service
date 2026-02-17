@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <!-- 触发器 -->
+    <!-- Disparador -->
     <div
       ref="triggerRef"
       class="relative flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm transition-all duration-200 hover:shadow-md dark:border-gray-600 dark:bg-gray-800"
@@ -21,7 +21,7 @@
       ></i>
     </div>
 
-    <!-- 下拉选项 - 使用 Teleport 将其移动到 body -->
+    <!-- Opciones desplegables - Usar Teleport para moverlo al body -->
     <Teleport to="body">
       <transition
         enter-active-class="transition duration-200 ease-out"
@@ -83,7 +83,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '请选择'
+    default: 'Por favor selecciona'
   },
   icon: {
     type: String,
@@ -116,7 +116,7 @@ const isSelected = (value) => {
 const selectedLabel = computed(() => {
   if (props.multiple) {
     const count = Array.isArray(props.modelValue) ? props.modelValue.length : 0
-    return count > 0 ? `已选 ${count} 个` : ''
+    return count > 0 ? `${count} seleccionado(s)` : ''
   }
   const selected = props.options.find((opt) => opt.value === props.modelValue)
   return selected ? selected.label : ''
@@ -156,31 +156,31 @@ const updateDropdownPosition = () => {
   if (!triggerRef.value || !isOpen.value) return
 
   const trigger = triggerRef.value.getBoundingClientRect()
-  const dropdownHeight = 250 // 预估高度
+  const dropdownHeight = 250 // Altura estimada
   const spaceBelow = window.innerHeight - trigger.bottom
   const spaceAbove = trigger.top
 
   let top, left
 
-  // 计算垂直位置
+  // Calcular posición vertical
   if (spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove) {
-    // 显示在下方
+    // Mostrar abajo
     top = trigger.bottom + 8
   } else {
-    // 显示在上方
+    // Mostrar arriba
     top = trigger.top - dropdownHeight - 8
   }
 
-  // 计算水平位置
+  // Calcular posición horizontal
   left = trigger.left
 
-  // 确保不超出右边界
-  const dropdownWidth = 200 // 预估宽度
+  // Asegurar que no exceda el límite derecho
+  const dropdownWidth = 200 // Ancho estimado
   if (left + dropdownWidth > window.innerWidth) {
     left = window.innerWidth - dropdownWidth - 10
   }
 
-  // 确保不超出左边界
+  // Asegurar que no exceda el límite izquierdo
   if (left < 10) {
     left = 10
   }
@@ -192,7 +192,7 @@ const updateDropdownPosition = () => {
   }
 }
 
-// 监听窗口大小变化和滚动
+// Escuchar cambios de tamaño de ventana y desplazamiento
 const handleScroll = () => {
   if (isOpen.value) {
     updateDropdownPosition()
@@ -205,11 +205,11 @@ const handleResize = () => {
   }
 }
 
-// 处理点击外部关闭
+// Manejar clic fuera para cerrar
 const handleClickOutside = (event) => {
   if (!triggerRef.value || !isOpen.value) return
 
-  // 如果点击不在触发器内，且下拉框存在时也不在下拉框内，则关闭
+  // Si el clic no está dentro del disparador, y cuando existe el menú desplegable tampoco está dentro, entonces cerrar
   if (!triggerRef.value.contains(event.target)) {
     if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
       closeDropdown()
@@ -233,7 +233,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* 自定义滚动条 */
+/* Barra de desplazamiento personalizada */
 .max-h-60::-webkit-scrollbar {
   width: 6px;
 }

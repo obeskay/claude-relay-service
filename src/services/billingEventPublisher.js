@@ -2,24 +2,24 @@ const redis = require('../models/redis')
 const logger = require('../utils/logger')
 
 /**
- * 计费事件发布器 - 使用 Redis Stream 解耦计费系统
+ * 计费Evento发布器 - 使用 Redis Stream 解耦计费系统
  *
  * 设计原则:
- * 1. 异步非阻塞: 发布失败不影响主流程
- * 2. 结构化数据: 使用标准化的事件格式
- * 3. 可追溯性: 每个事件包含完整上下文
+ * 1. Asíncrono非Bloqueante: 发布Falló不影响主流程
+ * 2. 结构化Datos: 使用标准化的EventoFormato
+ * 3. 可追溯性: 每个EventoIncluir完整上下文
  */
 class BillingEventPublisher {
   constructor() {
     this.streamKey = 'billing:events'
-    this.maxLength = 100000 // 保留最近 10 万条事件
-    this.enabled = process.env.BILLING_EVENTS_ENABLED !== 'false' // 默认开启
+    this.maxLength = 100000 // 保留最近 10 万条Evento
+    this.enabled = process.env.BILLING_EVENTS_ENABLED !== 'false' // Predeterminado开启
   }
 
   /**
-   * 发布计费事件
-   * @param {Object} eventData - 事件数据
-   * @returns {Promise<string|null>} - 事件ID 或 null
+   * 发布计费Evento
+   * @param {Object} eventData - EventoDatos
+   * @returns {Promise<string|null>} - EventoID 或 null
    */
   async publishBillingEvent(eventData) {
     if (!this.enabled) {
@@ -30,15 +30,15 @@ class BillingEventPublisher {
     try {
       const client = redis.getClientSafe()
 
-      // 构建标准化事件
+      // Construir标准化Evento
       const event = {
-        // 事件元数据
+        // Evento元Datos
         eventId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         eventType: 'usage.recorded',
         timestamp: new Date().toISOString(),
         version: '1.0',
 
-        // 核心计费数据
+        // 核心计费Datos
         apiKey: {
           id: eventData.keyId,
           name: eventData.keyName || null,
@@ -71,27 +71,27 @@ class BillingEventPublisher {
           }
         },
 
-        // 账户信息
+        // CuentaInformación
         account: {
           id: eventData.accountId || null,
           type: eventData.accountType || null
         },
 
-        // 请求上下文
+        // Solicitud上下文
         context: {
           isLongContext: eventData.isLongContext || false,
           requestTimestamp: eventData.requestTimestamp || new Date().toISOString()
         }
       }
 
-      // 使用 XADD 发布事件到 Stream
-      // MAXLEN ~ 10000: 近似截断，保持性能
+      // 使用 XADD 发布Evento到 Stream
+      // MAXLEN ~ 10000: 近似截断，保持Rendimiento
       const messageId = await client.xadd(
         this.streamKey,
         'MAXLEN',
         '~',
         this.maxLength,
-        '*', // 自动生成消息ID
+        '*', // 自动Generar消息ID
         'data',
         JSON.stringify(event)
       )
@@ -109,9 +109,9 @@ class BillingEventPublisher {
   }
 
   /**
-   * 批量发布计费事件（优化性能）
-   * @param {Array<Object>} events - 事件数组
-   * @returns {Promise<number>} - 成功发布的事件数
+   * 批量发布计费Evento（OptimizaciónRendimiento）
+   * @param {Array<Object>} events - EventoArreglo
+   * @returns {Promise<number>} - Éxito发布的Evento数
    */
   async publishBatchBillingEvents(events) {
     if (!this.enabled || !events || events.length === 0) {
@@ -167,7 +167,7 @@ class BillingEventPublisher {
   }
 
   /**
-   * 获取 Stream 信息（用于监控）
+   * Obtener Stream Información（用于Monitorear）
    * @returns {Promise<Object>}
    */
   async getStreamInfo() {
@@ -175,7 +175,7 @@ class BillingEventPublisher {
       const client = redis.getClientSafe()
       const info = await client.xinfo('STREAM', this.streamKey)
 
-      // 解析 Redis XINFO 返回的数组格式
+      // Analizar Redis XINFO Retornar的ArregloFormato
       const result = {}
       for (let i = 0; i < info.length; i += 2) {
         result[info[i]] = info[i + 1]
@@ -197,15 +197,15 @@ class BillingEventPublisher {
   }
 
   /**
-   * 创建消费者组（供外部计费系统使用）
-   * @param {string} groupName - 消费者组名称
+   * Crear消费者组（供外部计费系统使用）
+   * @param {string} groupName - 消费者组Nombre
    * @returns {Promise<boolean>}
    */
   async createConsumerGroup(groupName = 'billing-system') {
     try {
       const client = redis.getClientSafe()
 
-      // MKSTREAM: 如果 stream 不存在则创建
+      // MKSTREAM: 如果 stream 不存在则Crear
       await client.xgroup('CREATE', this.streamKey, groupName, '0', 'MKSTREAM')
 
       logger.success(`Created consumer group: ${groupName}`)

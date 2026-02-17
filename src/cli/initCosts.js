@@ -6,19 +6,19 @@ const redis = require('../models/redis')
 
 async function main() {
   try {
-    // 连接Redis
+    // Conectando a Redis
     await redis.connect()
 
     console.log('💰 Starting cost data initialization...\n')
 
-    // 执行初始化
+    // EjecutarInicializar
     const result = await costInitService.initializeAllCosts()
 
     console.log('\n✅ Cost initialization completed!')
     console.log(`   Processed: ${result.processed} API Keys`)
     console.log(`   Errors: ${result.errors}`)
 
-    // 断开连接
+    // 断开Conexión
     await redis.disconnect()
     throw new Error('INIT_COSTS_SUCCESS')
   } catch (error) {
@@ -31,5 +31,5 @@ async function main() {
   }
 }
 
-// 运行主函数
+// 运Fila主Función
 main()

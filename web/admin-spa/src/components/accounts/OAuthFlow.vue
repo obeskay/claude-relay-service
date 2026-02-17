@@ -60,7 +60,7 @@
                   {{ $t('accounts.auth.cookieAuthNote') }}
                 </p>
 
-                <!-- sessionKey输入 -->
+                <!-- sessionKeyEntrada -->
                 <div class="mb-4">
                   <label
                     class="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300"
@@ -96,7 +96,7 @@
                   </p>
                 </div>
 
-                <!-- 帮助说明 -->
+                <!-- AyudaInstrucciones -->
                 <div
                   v-if="showSessionKeyHelp"
                   class="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-900/30"
@@ -128,7 +128,7 @@
                   </p>
                 </div>
 
-                <!-- 错误信息 -->
+                <!-- ErrorInformación -->
                 <div
                   v-if="cookieAuthError"
                   class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-700 dark:bg-red-900/30"
@@ -245,15 +245,15 @@
                       >
                         <p class="text-xs text-yellow-800 dark:text-yellow-300">
                           <i class="fas fa-exclamation-triangle mr-1" />
-                          <strong>注意：</strong
-                          >如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
+                          <strong>Nota：</strong
+                          >如果您Configuración代理，请确保浏览器也使用相同代理访问授权页面。
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- 步骤3: 输入授权码 -->
+                <!-- 步骤3: Entrada授权码 -->
                 <div
                   class="rounded-lg border border-blue-300 bg-white/80 p-4 dark:border-blue-600 dark:bg-gray-800/80"
                 >
@@ -369,7 +369,7 @@
                 </div>
               </div>
 
-              <!-- 步骤2: 操作说明 -->
+              <!-- 步骤2: OperaciónInstrucciones -->
               <div
                 class="rounded-lg border border-green-300 bg-white/80 p-4 dark:border-green-600 dark:bg-gray-800/80"
               >
@@ -391,15 +391,15 @@
                     >
                       <p class="text-xs text-yellow-800 dark:text-yellow-300">
                         <i class="fas fa-exclamation-triangle mr-1" />
-                        <strong>注意：</strong
-                        >如果您设置了代理，请确保浏览器也使用相同的代理访问授权页面。
+                        <strong>Nota：</strong
+                        >如果您Configuración代理，请确保浏览器也使用相同代理访问授权页面。
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- 步骤3: 输入授权码 -->
+              <!-- 步骤3: Entrada授权码 -->
               <div
                 class="rounded-lg border border-green-300 bg-white/80 p-4 dark:border-green-600 dark:bg-gray-800/80"
               >
@@ -539,14 +539,14 @@
                     >
                       <p class="text-xs text-amber-800 dark:text-amber-300">
                         <i class="fas fa-clock mr-1" />
-                        <strong>重要提示：</strong>授权后页面可能会加载较长时间，请耐心等待。
+                        <strong>重要Sugerencia：</strong>授权siguiente页面可能会加载较长时间，请耐心等待。
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- 步骤3: 输入授权码 -->
+              <!-- 步骤3: Entrada授权码 -->
               <div
                 class="rounded-lg border border-orange-300 bg-white/80 p-4 dark:border-blue-600 dark:bg-gray-800/80"
               >
@@ -732,7 +732,7 @@
                 </div>
               </div>
 
-              <!-- 步骤3: 输入授权结果 -->
+              <!-- 步骤3: Entrada授权结果 -->
               <div
                 class="rounded-lg border border-cyan-300 bg-white/80 p-4 dark:border-blue-600 dark:bg-gray-800/80"
               >
@@ -766,7 +766,7 @@
       >
         {{ $t('common.action.back') }}
       </button>
-      <!-- Cookie自动授权模式不显示此按钮（Claude平台） -->
+      <!-- Cookie自动授权模式不显示此按钮（ClaudePlataforma） -->
       <button
         v-if="!(platform === 'claude' && authMethod === 'cookie')"
         class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -804,20 +804,20 @@ const emit = defineEmits(['success', 'back'])
 
 const accountsStore = useAccountsStore()
 
-// 状态
+// Estado
 const loading = ref(false)
 const exchanging = ref(false)
 const authUrl = ref('')
 const authCode = ref('')
 const copied = ref(false)
-const sessionId = ref('') // 保存sessionId用于后续交换
+const sessionId = ref('') // GuardarsessionIdparasiguiente续交换
 const userCode = ref('')
 const verificationUri = ref('')
 const verificationUriComplete = ref('')
 const remainingSeconds = ref(0)
 let countdownTimer = null
 
-// Cookie自动授权相关状态
+// Cookie自动授权相关Estado
 const authMethod = ref('manual') // 'manual' | 'cookie'
 const sessionKey = ref('')
 const cookieAuthLoading = ref(false)
@@ -825,7 +825,7 @@ const cookieAuthError = ref('')
 const showSessionKeyHelp = ref(false)
 const batchProgress = ref({ current: 0, total: 0 }) // 批量进度
 
-// 解析后的 sessionKey 数量
+// 解析siguiente sessionKey 数量
 const parsedSessionKeyCount = computed(() => {
   return sessionKey.value
     .split('\n')
@@ -875,22 +875,22 @@ const stopCountdown = () => {
   }
 }
 
-// 监听授权码输入，自动提取URL中的code参数
+// 监听授权码Entrada，自动提取URLencode参数
 watch(authCode, (newValue) => {
   if (props.platform === 'droid') return
   if (!newValue || typeof newValue !== 'string') return
 
   const trimmedValue = newValue.trim()
 
-  // 如果内容为空，不处理
+  // 如果内容para空，不处理
   if (!trimmedValue) return
 
-  // 检查是否是 URL 格式（包含 http:// 或 https://）
+  // 检查是否是 URL 格式（包含 http:// o https://）
   const isUrl = trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')
 
   // 如果是 URL 格式
   if (isUrl) {
-    // 检查是否是正确的 localhost 回调 URL
+    // 检查是否是正确 localhost 回调 URL
     if (
       trimmedValue.startsWith('http://localhost:45462') ||
       trimmedValue.startsWith('http://localhost:1455')
@@ -900,15 +900,15 @@ watch(authCode, (newValue) => {
         const code = url.searchParams.get('code')
 
         if (code) {
-          // 成功提取授权码
+          // Exitoso提取授权码
           authCode.value = code
           showToast(t('accounts.auth.extractedSuccess'), 'success')
         } else {
-          // URL 中没有 code 参数
+          // URL en没有 code 参数
           showToast(t('accounts.auth.extractedError'), 'error')
         }
       } catch (error) {
-        // URL 解析失败
+        // URL 解析Fallido
         showToast(t('accounts.auth.invalidUrl'), 'error')
       }
     } else if (props.platform === 'gemini' || props.platform === 'openai') {
@@ -921,7 +921,7 @@ watch(authCode, (newValue) => {
           showToast(t('accounts.auth.extractedSuccess'), 'success')
         }
       } catch (error) {
-        // 不是有效的URL，保持原值
+        // 不是VálidoURL，保持原值
       }
     } else {
       showToast(t('accounts.auth.urlPrefixError'), 'error')
@@ -995,7 +995,7 @@ const regenerateAuthUrl = () => {
   generateAuthUrl()
 }
 
-// 复制授权URL
+// Copiar授权URL
 const copyAuthUrl = async () => {
   if (!authUrl.value) {
     showToast(t('accounts.auth.noAuthUrl'), 'warning')
@@ -1186,7 +1186,7 @@ const handleCookieAuth = async () => {
   }
 }
 
-// 重置Cookie授权状态
+// RestablecerCookie授权Estado
 const resetCookieAuth = () => {
   sessionKey.value = ''
   cookieAuthError.value = ''
@@ -1194,7 +1194,7 @@ const resetCookieAuth = () => {
   batchProgress.value = { current: 0, total: 0 }
 }
 
-// 切换授权方式时重置状态
+// 切换授权方式时RestablecerEstado
 const onAuthMethodChange = () => {
   resetCookieAuth()
   authUrl.value = ''

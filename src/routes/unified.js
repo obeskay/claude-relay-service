@@ -2,7 +2,7 @@ const express = require('express')
 const { authenticateApiKey } = require('../middleware/auth')
 const logger = require('../utils/logger')
 const { handleChatCompletion } = require('./openaiClaudeRoutes')
-// 从 handlers/geminiHandlers.js 导入处理函数
+// 从 handlers/geminiHandlers.js 导入ProcesarFunción
 const {
   handleGenerateContent: geminiHandleGenerateContent,
   handleStreamGenerateContent: geminiHandleStreamGenerateContent
@@ -12,10 +12,10 @@ const apiKeyService = require('../services/apiKeyService')
 
 const router = express.Router()
 
-// 🔍 根据模型名称检测后端类型
+// 🔍 根据模型Nombre检测后端Tipo
 function detectBackendFromModel(modelName) {
   if (!modelName) {
-    return 'claude' // 默认 Claude
+    return 'claude' // Predeterminado Claude
   }
 
   const model = modelName.toLowerCase()
@@ -35,17 +35,17 @@ function detectBackendFromModel(modelName) {
     return 'openai'
   }
 
-  // 默认使用 Claude
+  // Predeterminado使用 Claude
   return 'claude'
 }
 
-// 🚀 智能后端路由处理器
+// 🚀 智能后端RutaProcesar器
 async function routeToBackend(req, res, requestedModel) {
   const backend = detectBackendFromModel(requestedModel)
 
   logger.info(`🔀 Routing request - Model: ${requestedModel}, Backend: ${backend}`)
 
-  // 检查权限
+  // VerificarPermiso
   const { permissions } = req.apiKey
 
   if (backend === 'claude') {
@@ -84,7 +84,7 @@ async function routeToBackend(req, res, requestedModel) {
       })
     }
 
-    // 转换为 Gemini 格式
+    // Convertir为 Gemini Formato
     const geminiRequest = {
       model: requestedModel,
       messages: req.body.messages,
@@ -111,10 +111,10 @@ async function routeToBackend(req, res, requestedModel) {
   }
 }
 
-// 🔄 OpenAI 兼容的 chat/completions 端点（智能后端路由）
+// 🔄 OpenAI 兼容的 chat/completions Endpoint（智能后端Ruta）
 router.post('/v1/chat/completions', authenticateApiKey, async (req, res) => {
   try {
-    // 验证必需参数
+    // ValidarRequeridoParámetro
     if (!req.body.messages || !Array.isArray(req.body.messages) || req.body.messages.length === 0) {
       return res.status(400).json({
         error: {
@@ -126,9 +126,9 @@ router.post('/v1/chat/completions', authenticateApiKey, async (req, res) => {
     }
 
     const requestedModel = req.body.model || 'claude-3-5-sonnet-20241022'
-    req.body.model = requestedModel // 确保模型已设置
+    req.body.model = requestedModel // 确保模型已Establecer
 
-    // 使用统一的后端路由处理器
+    // 使用统一的后端RutaProcesar器
     await routeToBackend(req, res, requestedModel)
   } catch (error) {
     logger.error('❌ OpenAI chat/completions error:', error)
@@ -144,10 +144,10 @@ router.post('/v1/chat/completions', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 🔄 OpenAI 兼容的 completions 端点（传统格式，智能后端路由）
+// 🔄 OpenAI 兼容的 completions Endpoint（传统Formato，智能后端Ruta）
 router.post('/v1/completions', authenticateApiKey, async (req, res) => {
   try {
-    // 验证必需参数
+    // ValidarRequeridoParámetro
     if (!req.body.prompt) {
       return res.status(400).json({
         error: {
@@ -158,7 +158,7 @@ router.post('/v1/completions', authenticateApiKey, async (req, res) => {
       })
     }
 
-    // 将传统 completions 格式转换为 chat 格式
+    // 将传统 completions FormatoConvertir为 chat Formato
     const originalBody = req.body
     const requestedModel = originalBody.model || 'claude-3-5-sonnet-20241022'
 
@@ -182,7 +182,7 @@ router.post('/v1/completions', authenticateApiKey, async (req, res) => {
       user: originalBody.user
     }
 
-    // 使用统一的后端路由处理器
+    // 使用统一的后端RutaProcesar器
     await routeToBackend(req, res, requestedModel)
   } catch (error) {
     logger.error('❌ OpenAI completions error:', error)

@@ -5,15 +5,15 @@
     >
       <span class="flex items-center">
         <i class="fas fa-chart-pie mr-2 text-sm text-orange-500 md:mr-3 md:text-base" />
-        使用占比
+        Uso por clave
       </span>
       <span class="text-xs font-normal text-gray-600 dark:text-gray-400 sm:ml-2 md:text-sm"
-        >({{ statsPeriod === 'daily' ? '今日' : '本月' }})</span
+        >({{ statsPeriod === 'daily' ? 'Hoy' : 'Este mes' }})</span
       >
     </h3>
 
     <div v-if="aggregatedStats && individualStats.length > 0" class="space-y-2 md:space-y-3">
-      <!-- 各Key使用占比列表 -->
+      <!-- 各KeyUso por clave列表 -->
       <div v-for="(stat, index) in topKeys" :key="stat.apiId" class="relative">
         <div class="mb-1 flex items-center justify-between text-sm">
           <span class="truncate font-medium text-gray-700 dark:text-gray-300">
@@ -33,28 +33,28 @@
         <div
           class="mt-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
         >
-          <span>{{ formatNumber(getStatUsage(stat)?.requests || 0) }}次</span>
+          <span>{{ formatNumber(getStatUsage(stat)?.requests || 0) }} solicitudes</span>
           <span>{{ getStatUsage(stat)?.formattedCost || '$0.00' }}</span>
         </div>
       </div>
 
-      <!-- 其他Keys汇总 -->
+      <!-- OtroKeys汇总 -->
       <div v-if="otherKeysCount > 0" class="border-t border-gray-200 pt-2 dark:border-gray-700">
         <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-          <span>其他 {{ otherKeysCount }} 个Keys</span>
+          <span>Otras {{ otherKeysCount }} claves</span>
           <span>{{ otherPercentage }}%</span>
         </div>
       </div>
     </div>
 
-    <!-- 单个Key模式提示 -->
+    <!-- 单 Key模式Sugerencia -->
     <div
       v-else-if="!multiKeyMode"
       class="flex h-32 items-center justify-center text-sm text-gray-500 dark:text-gray-400"
     >
       <div class="text-center">
         <i class="fas fa-chart-pie mb-2 text-2xl" />
-        <p>使用占比仅在多Key查询时显示</p>
+        <p>El uso por clave solo se muestra en consultas de múltiples claves</p>
       </div>
     </div>
 
@@ -63,7 +63,7 @@
       class="flex h-32 items-center justify-center text-sm text-gray-500 dark:text-gray-400"
     >
       <i class="fas fa-chart-pie mr-2" />
-      暂无数据
+      Sin datos por ahora
     </div>
   </div>
 </template>
@@ -77,7 +77,7 @@ import { useApiStatsStore } from '@/stores/apistats'
 const apiStatsStore = useApiStatsStore()
 const { aggregatedStats, individualStats, statsPeriod, multiKeyMode } = storeToRefs(apiStatsStore)
 
-// 获取当前时间段的使用数据
+// 获取当anterior时间段使用数据
 const getStatUsage = (stat) => {
   if (!stat) return null
 
@@ -88,7 +88,7 @@ const getStatUsage = (stat) => {
   }
 }
 
-// 获取TOP Keys（最多显示5个）
+// 获取TOP Keys（最多显示5 ）
 const topKeys = computed(() => {
   if (!individualStats.value || individualStats.value.length === 0) return []
 
@@ -101,13 +101,13 @@ const topKeys = computed(() => {
     .slice(0, 5)
 })
 
-// 计算其他Keys数量
+// 计算OtroKeys数量
 const otherKeysCount = computed(() => {
   if (!individualStats.value) return 0
   return Math.max(0, individualStats.value.length - 5)
 })
 
-// 计算其他Keys的占比
+// 计算OtroKeys占比
 const otherPercentage = computed(() => {
   if (!individualStats.value || !aggregatedStats.value) return 0
 
@@ -125,7 +125,7 @@ const otherPercentage = computed(() => {
   return Math.max(0, Math.round((otherCost / totalCost) * 100))
 })
 
-// 计算单个Key的百分比
+// 计算单 Key百分比
 const calculatePercentage = (stat) => {
   if (!aggregatedStats.value) return 0
 
@@ -140,7 +140,7 @@ const calculatePercentage = (stat) => {
   return Math.round(percentage)
 }
 
-// 获取进度条颜色
+// 获取进度registros颜色
 const getProgressColor = (index) => {
   const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-yellow-500', 'bg-pink-500']
   return colors[index] || 'bg-gray-400'

@@ -1,17 +1,17 @@
 <template>
   <div class="w-full">
-    <!-- 检查是否为无限制状态 -->
+    <!-- Verificar si es estado sin límite -->
     <div
       v-if="!limitValue || limitValue <= 0"
       class="flex items-center justify-center rounded-lg px-3 py-2 text-xs"
     >
       <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
         <i class="fas fa-infinity text-sm text-gray-500 dark:text-gray-400" />
-        <span class="font-medium">无限制</span>
+        <span class="font-medium">Sin límite</span>
       </div>
     </div>
     <div v-else-if="isCompact" class="space-y-1.5">
-      <!-- 使用额度和限额显示在进度条上方右对齐 -->
+      <!-- Mostrar uso y límite arriba derecha de la barra de progreso -->
       <div class="flex items-center justify-between text-[11px] font-medium">
         <div class="flex items-center gap-1.5" :class="compactLabelClass">
           <i :class="['text-[11px]', iconClass]" />
@@ -34,10 +34,10 @@
       class="group relative h-9 w-full overflow-hidden rounded-xl border transition-all duration-300 ease-out"
       :class="containerClass"
     >
-      <!-- 背景层 -->
+      <!-- Capa de fondo -->
       <div class="absolute inset-0" :class="backgroundClass"></div>
 
-      <!-- 进度条层 -->
+      <!-- 进度registros层 -->
       <div
         class="absolute inset-0 h-full transition-all duration-500 ease-out"
         :class="progressBarClass"
@@ -118,7 +118,7 @@ const limitValue = computed(() => {
   return Number.isFinite(n) ? n : 0
 })
 const progress = computed(() => {
-  // 无限制时不显示进度条
+  // 无Límite时不显示进度registros
   if (!limitValue.value || limitValue.value <= 0) return 0
   const percentage = (currentValue.value / limitValue.value) * 100
   return Math.min(percentage, 100)
@@ -127,7 +127,7 @@ const progress = computed(() => {
 // 移除百分比显示
 // const compactPercentage = computed(() => `${Math.min(progress.value, 100).toFixed(0)}%`)
 
-// 容器样式 - 使用柔和的渐变边框与阴影
+// 容器样式 - 使用柔y渐变边框与阴影
 const containerClass = computed(() => {
   switch (props.type) {
     case 'daily':
@@ -143,7 +143,7 @@ const containerClass = computed(() => {
   }
 })
 
-// 背景样式 - 使用柔和渐变增强层次
+// 背景样式 - 使用柔y渐变增强层veces
 const backgroundClass = computed(() => {
   switch (props.type) {
     case 'daily':
@@ -159,7 +159,7 @@ const backgroundClass = computed(() => {
   }
 })
 
-// 进度条样式 - 使用更柔和的颜色配置
+// 进度registros样式 - 使用更柔y颜色配置
 const progressBarClass = computed(() => {
   const p = progress.value
 
@@ -301,16 +301,16 @@ const iconClass = computed(() => {
   return `${iconName} ${colorClass}`
 })
 
-// 标签文字颜色 - 始终保持高对比度
+// Etiqueta文字颜色 - 始终保持高对比度
 const labelTextClass = computed(() => {
   const p = progress.value
 
-  // 根据进度条背景色智能选择文字颜色
+  // 根据进度registros背景色智能选择文字颜色
   if (p > 40) {
-    // 当进度条覆盖超过40%时，使用白色文字
+    // 当进度registros覆盖超过40%时，使用白色文字
     return 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'
   } else {
-    // 在浅色背景上使用深色文字
+    // en浅色背景arriba使用深色文字
     switch (props.type) {
       case 'daily':
         return 'text-gray-900 dark:text-gray-100'
@@ -326,16 +326,16 @@ const labelTextClass = computed(() => {
   }
 })
 
-// 当前值文字颜色 - 最重要的数字，需要最高对比度
+// 当anterior值文字颜色 - 最重要数字，需要最高对比度
 const currentValueClass = computed(() => {
   const p = progress.value
 
-  // 判断数值是否在进度条上
+  // 判断数值是否en进度registrosarriba
   if (p > 70) {
-    // 在彩色进度条上，使用白色+强阴影
+    // en彩色进度registrosarriba，使用白色+强阴影
     return 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]'
   } else {
-    // 在浅色背景上，根据进度状态选择颜色
+    // en浅色背景arriba，根据进度Estado选择颜色
     if (p >= 90) {
       return 'text-red-700 dark:text-red-300'
     } else if (p >= 70) {

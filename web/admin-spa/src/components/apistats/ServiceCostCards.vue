@@ -5,10 +5,10 @@
     >
       <span class="flex items-center">
         <i class="fas fa-coins mr-2 text-sm text-amber-500 md:mr-3 md:text-base" />
-        服务费用统计
+        Estadísticas de costos de servicio
       </span>
       <span class="text-xs font-normal text-gray-500 dark:text-gray-400">
-        计费 = 官方费用 × 全局倍率 × Key倍率
+        Facturación = Costo oficial × Tasa global × Tasa de Key
       </span>
     </h3>
 
@@ -18,7 +18,7 @@
         :key="service.name"
         class="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
       >
-        <!-- 服务名和倍率 -->
+        <!-- 服务名y倍率 -->
         <div class="mb-2 flex items-center justify-between">
           <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
             {{ service.label }}
@@ -26,9 +26,9 @@
           <div class="flex items-center gap-1">
             <span
               class="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-              title="全局倍率"
+              title="Global倍率"
             >
-              全局 {{ service.globalRate }}x
+              Global {{ service.globalRate }}x
             </span>
             <span
               v-if="!multiKeyMode"
@@ -40,69 +40,69 @@
           </div>
         </div>
 
-        <!-- Token 详情 -->
+        <!-- Detalles de Token -->
         <div class="mb-2 space-y-0.5 text-xs text-gray-600 dark:text-gray-400">
           <div class="flex justify-between">
-            <span>输入</span>
+            <span>Entrada</span>
             <span class="text-gray-900 dark:text-gray-200">{{
               formatNumber(service.inputTokens)
             }}</span>
           </div>
           <div class="flex justify-between">
-            <span>输出</span>
+            <span>Salida</span>
             <span class="text-gray-900 dark:text-gray-200">{{
               formatNumber(service.outputTokens)
             }}</span>
           </div>
           <div v-if="service.cacheCreateTokens" class="flex justify-between">
-            <span>缓存创建</span>
+            <span>Caché creación</span>
             <span class="text-gray-900 dark:text-gray-200">{{
               formatNumber(service.cacheCreateTokens)
             }}</span>
           </div>
           <div v-if="service.cacheReadTokens" class="flex justify-between">
-            <span>缓存读取</span>
+            <span>Caché lectura</span>
             <span class="text-gray-900 dark:text-gray-200">{{
               formatNumber(service.cacheReadTokens)
             }}</span>
           </div>
         </div>
 
-        <!-- 费用 -->
+        <!-- Costo -->
         <div class="mb-2 space-y-0.5 border-t border-gray-200 pt-2 text-xs dark:border-gray-700">
           <div class="flex justify-between">
-            <span class="text-gray-600 dark:text-gray-400">官方API</span>
+            <span class="text-gray-600 dark:text-gray-400">API oficial</span>
             <span class="font-semibold text-green-600 dark:text-green-400">
               {{ service.officialCost }}
             </span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-600 dark:text-gray-400">计费费用</span>
+            <span class="text-gray-600 dark:text-gray-400">Costo facturado</span>
             <span class="font-semibold text-amber-600 dark:text-amber-400">
               {{ service.ccCost }}
             </span>
           </div>
         </div>
 
-        <!-- 价格参考 -->
+        <!-- Referencia de precios -->
         <div
           v-if="service.pricing"
           class="space-y-0.5 border-t border-gray-200 pt-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-500"
         >
           <div class="flex justify-between">
-            <span>输入</span>
+            <span>Entrada</span>
             <span>{{ service.pricing.input }}/M</span>
           </div>
           <div class="flex justify-between">
-            <span>输出</span>
+            <span>Salida</span>
             <span>{{ service.pricing.output }}/M</span>
           </div>
           <div v-if="service.pricing.cacheCreate" class="flex justify-between">
-            <span>缓存创建</span>
+            <span>Caché creación</span>
             <span>{{ service.pricing.cacheCreate }}/M</span>
           </div>
           <div v-if="service.pricing.cacheRead" class="flex justify-between">
-            <span>缓存读取</span>
+            <span>Caché lectura</span>
             <span>{{ service.pricing.cacheRead }}/M</span>
           </div>
         </div>
@@ -120,7 +120,7 @@ import { useApiStatsStore } from '@/stores/apistats'
 const apiStatsStore = useApiStatsStore()
 const { modelStats, serviceRates, keyServiceRates, multiKeyMode } = storeToRefs(apiStatsStore)
 
-// 服务标签映射
+// 服务Etiqueta映射
 const serviceLabels = {
   claude: 'Claude',
   codex: 'Codex',
@@ -131,7 +131,7 @@ const serviceLabels = {
   ccr: 'CCR'
 }
 
-// 根据模型名称判断服务类型
+// 根据Nombre del modelo判断服务Tipo
 const getServiceFromModel = (model) => {
   if (!model) return 'claude'
   const m = model.toLowerCase()
@@ -145,7 +145,7 @@ const getServiceFromModel = (model) => {
   return 'claude'
 }
 
-// 按服务聚合统计
+// 按服务Estadísticas agregadas
 const serviceStats = computed(() => {
   if (!serviceRates.value?.rates || !modelStats.value?.length) return []
 
@@ -164,7 +164,7 @@ const serviceStats = computed(() => {
     }
   })
 
-  // 聚合模型数据 - 按模型逐个计算计费费用
+  // 聚合Modelo数据 - 按Modelo逐 计算Costo facturado
   modelStats.value.forEach((model) => {
     const service = getServiceFromModel(model.model)
     if (stats[service]) {
@@ -172,10 +172,10 @@ const serviceStats = computed(() => {
       stats[service].outputTokens += model.outputTokens || 0
       stats[service].cacheCreateTokens += model.cacheCreateTokens || 0
       stats[service].cacheReadTokens += model.cacheReadTokens || 0
-      // 累加官方费用
+      // 累加官方Costo
       const modelRealCost = model.costs?.real ?? model.costs?.total ?? 0
       stats[service].realCost += modelRealCost
-      // 按模型判断：有存储费用用存储的，否则用当前倍率计算
+      // 按Modelo判断：有存储Costo用存储，否则用当anterior倍率计算
       const globalRate = serviceRates.value.rates[service] || 1.0
       const keyRate = multiKeyMode.value ? 1.0 : (keyServiceRates.value?.[service] ?? 1.0)
       const modelRatedCost =
@@ -189,7 +189,7 @@ const serviceStats = computed(() => {
     }
   })
 
-  // 转换为数组
+  // 转换para数组
   return Object.entries(stats)
     .filter(
       ([, data]) =>
@@ -226,7 +226,7 @@ const serviceStats = computed(() => {
     .sort((a, b) => b.inputTokens + b.outputTokens - (a.inputTokens + a.outputTokens))
 })
 
-// 格式化费用
+// 格式化Costo
 const formatCost = (cost) => {
   if (!cost || cost === 0) return '$0.00'
   if (cost >= 1) return '$' + cost.toFixed(2)

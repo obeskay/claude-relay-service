@@ -1,47 +1,47 @@
 <template>
   <div class="api-input-wide-card mb-8 rounded-3xl p-6 shadow-xl">
-    <!-- 标题区域 -->
+    <!-- Área del título -->
     <div class="wide-card-title mb-6">
       <h2 class="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-200">
         <i class="fas fa-chart-line mr-3" />
-        使用统计查询
+        Consulta de Estadísticas de Uso
       </h2>
-      <p class="text-base text-gray-600 dark:text-gray-400">查询您的 API Key 使用情况和统计数据</p>
+      <p class="text-base text-gray-600 dark:text-gray-400">Consulte el uso y las estadísticas de su API Key</p>
     </div>
 
-    <!-- 输入区域 -->
+    <!-- Área de entrada -->
     <div class="mx-auto max-w-4xl">
-      <!-- 控制栏 -->
+      <!-- Barra de control -->
       <div class="control-bar mb-4 flex flex-wrap items-center justify-between gap-3">
-        <!-- API Key 标签 -->
+        <!-- Etiqueta de API Key -->
         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
           <i class="fas fa-key mr-2" />
-          {{ multiKeyMode ? '输入您的 API Keys（每行一个或用逗号分隔）' : '输入您的 API Key' }}
+          {{ multiKeyMode ? 'Ingrese sus API Keys (una por línea o separadas por comas)' : 'Ingrese su API Key' }}
         </label>
 
-        <!-- 模式切换和查询按钮组 -->
+        <!-- Grupo de botones de cambio de modo y consulta -->
         <div class="button-group flex items-center gap-2">
-          <!-- 模式切换 -->
+          <!-- Cambio de modo -->
           <div
             class="mode-switch-group flex items-center rounded-lg bg-gray-100 p-1 dark:bg-gray-800"
           >
             <button
               class="mode-switch-btn"
               :class="{ active: !multiKeyMode }"
-              title="单一模式"
+              title="Modo Individual"
               @click="multiKeyMode = false"
             >
               <i class="fas fa-key" />
-              <span class="ml-2 hidden sm:inline">单一</span>
+              <span class="ml-2 hidden sm:inline">Individual</span>
             </button>
             <button
               class="mode-switch-btn"
               :class="{ active: multiKeyMode }"
-              title="聚合模式"
+              title="Modo Agregado"
               @click="multiKeyMode = true"
             >
               <i class="fas fa-layer-group" />
-              <span class="ml-2 hidden sm:inline">聚合</span>
+              <span class="ml-2 hidden sm:inline">Agregado</span>
               <span
                 v-if="multiKeyMode && parsedApiKeys.length > 0"
                 class="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-semibold"
@@ -54,15 +54,15 @@
       </div>
 
       <div class="api-input-grid grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <!-- API Key 输入 -->
+        <!-- Entrada de API Key -->
         <div class="lg:col-span-3">
-          <!-- 单 Key 模式输入框 -->
+          <!-- Campo de entrada en modo de clave única -->
           <div v-if="!multiKeyMode" class="relative">
             <input
               v-model="apiKey"
               class="wide-card-input w-full pr-10"
               :disabled="loading"
-              placeholder="请输入您的 API Key (cr_...)"
+              placeholder="Ingrese su API Key (cr_...)"
               :type="showPassword ? 'text' : 'password'"
               @keyup.enter="queryStats"
             />
@@ -75,20 +75,20 @@
             </button>
           </div>
 
-          <!-- 多 Key 模式输入框 -->
+          <!-- Campo de entrada en modo de múltiples claves -->
           <div v-else class="relative">
             <textarea
               v-model="apiKey"
               class="wide-card-input w-full resize-y"
               :disabled="loading"
-              placeholder="请输入您的 API Keys，支持以下格式：&#10;cr_xxx&#10;cr_yyy&#10;或&#10;cr_xxx, cr_yyy"
+              placeholder="Ingrese sus API Keys, formatos compatibles:&#10;cr_xxx&#10;cr_yyy&#10;o&#10;cr_xxx, cr_yyy"
               rows="4"
               @keyup.ctrl.enter="queryStats"
             />
             <button
               v-if="apiKey && !loading"
               class="absolute right-2 top-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-              title="清空输入"
+              title="Limpiar entrada"
               @click="clearInput"
             >
               <i class="fas fa-times-circle" />
@@ -96,7 +96,7 @@
           </div>
         </div>
 
-        <!-- 查询按钮 -->
+        <!-- Botón de consulta -->
         <div class="lg:col-span-1">
           <button
             class="btn btn-primary btn-query flex h-full w-full items-center justify-center gap-2"
@@ -105,28 +105,28 @@
           >
             <i v-if="loading" class="fas fa-spinner loading-spinner" />
             <i v-else class="fas fa-search" />
-            {{ loading ? '查询中...' : '查询统计' }}
+            {{ loading ? 'Consultando...' : 'Consultar Estadísticas' }}
           </button>
         </div>
       </div>
 
-      <!-- 安全提示 -->
+      <!-- Nota de seguridad -->
       <div class="security-notice mt-4">
         <i class="fas fa-shield-alt mr-2" />
         {{
           multiKeyMode
-            ? '您的 API Keys 仅用于查询统计数据，不会被存储。聚合模式下部分个体化信息将不显示。'
-            : '您的 API Key 仅用于查询自己的统计数据，不会被存储或用于其他用途'
+            ? 'Sus API Keys solo se usan para consultar datos estadísticos, no se almacenan. En modo agregado, cierta información individual no se mostrará.'
+            : 'Su API Key solo se usa para consultar sus propias estadísticas, no se almacena ni se usa para otros fines'
         }}
       </div>
 
-      <!-- 多 Key 模式额外提示 -->
+      <!-- Sugerencia adicional para modo de múltiples claves -->
       <div
         v-if="multiKeyMode"
         class="mt-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
       >
         <i class="fas fa-lightbulb mr-2" />
-        <span>提示：最多支持同时查询 30 个 API Keys。使用 Ctrl+Enter 快速查询。</span>
+        <span>Sugerencia: Se admite consultar hasta 30 API Keys simultáneamente. Use Ctrl+Enter para consultar rápidamente.</span>
       </div>
     </div>
   </div>
@@ -143,22 +143,22 @@ const { queryStats, clearInput } = apiStatsStore
 
 const showPassword = ref(false)
 
-// 解析输入的 API Keys
+// Analizar las API Keys ingresadas
 const parsedApiKeys = computed(() => {
   if (!multiKeyMode.value || !apiKey.value) return []
 
-  // 支持逗号和换行符分隔
+  // Soportar separación por comas y saltos de línea
   const keys = apiKey.value
     .split(/[,\n]+/)
     .map((key) => key.trim())
     .filter((key) => key.length > 0)
 
-  // 去重并限制最多30个
+  // Eliminar duplicados y limitar a un máximo de 30
   const uniqueKeys = [...new Set(keys)]
   return uniqueKeys.slice(0, 30)
 })
 
-// 判断是否有有效输入
+// Determinar si hay entrada válida
 const hasValidInput = computed(() => {
   if (multiKeyMode.value) {
     return parsedApiKeys.value.length > 0
@@ -168,7 +168,7 @@ const hasValidInput = computed(() => {
 </script>
 
 <style scoped>
-/* 宽卡片样式 - 使用CSS变量 */
+/* Estilos de tarjeta ancha - usar variables CSS */
 .api-input-wide-card {
   background: var(--surface-color);
   backdrop-filter: blur(25px);
@@ -180,7 +180,7 @@ const hasValidInput = computed(() => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 暗夜模式宽卡片样式 */
+/* Estilos de tarjeta ancha en modo oscuro */
 :global(.dark) .api-input-wide-card {
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.6),
@@ -203,7 +203,7 @@ const hasValidInput = computed(() => {
     inset 0 1px 0 rgba(107, 114, 128, 0.3) !important;
 }
 
-/* 标题样式 */
+/* Estilos de título */
 .wide-card-title h2 {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-weight: 700;
@@ -229,13 +229,13 @@ const hasValidInput = computed(() => {
   text-shadow: 0 1px 2px rgba(59, 130, 246, 0.2);
 }
 
-/* 网格布局 */
+/* Diseño de cuadrícula */
 .api-input-grid {
   align-items: end;
   gap: 1rem;
 }
 
-/* 输入框样式 - 使用CSS变量 */
+/* Estilos de campo de entrada - usar variables CSS */
 .wide-card-input {
   background: var(--input-bg);
   border: 2px solid var(--input-border);
@@ -280,7 +280,7 @@ const hasValidInput = computed(() => {
   color: #f3f4f6;
 }
 
-/* 按钮样式 */
+/* Estilos de botón */
 .btn {
   font-weight: 500;
   border-radius: 12px;
@@ -292,7 +292,7 @@ const hasValidInput = computed(() => {
   letter-spacing: 0.025em;
 }
 
-/* 查询按钮特定样式 */
+/* Estilos específicos del botón de consulta */
 .btn-query {
   padding: 14px 24px;
   font-size: 16px;
@@ -319,7 +319,7 @@ const hasValidInput = computed(() => {
   transform: none;
 }
 
-/* 安全提示样式 */
+/* Estilos de nota de seguridad */
 .security-notice {
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -354,7 +354,7 @@ const hasValidInput = computed(() => {
   text-shadow: 0 1px 2px rgba(16, 185, 129, 0.2);
 }
 
-/* 控制栏 */
+/* Barra de control */
 .control-bar {
   padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(229, 231, 235, 0.3);
@@ -364,14 +364,14 @@ const hasValidInput = computed(() => {
   border-bottom-color: rgba(75, 85, 99, 0.3);
 }
 
-/* 按钮组 */
+/* Grupo de botones */
 .button-group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* 模式切换组 */
+/* Grupo de cambio de modo */
 .mode-switch-group {
   display: inline-flex;
   padding: 4px;
@@ -385,7 +385,7 @@ const hasValidInput = computed(() => {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* 模式切换按钮 */
+/* Botones de cambio de modo */
 .mode-switch-btn {
   display: inline-flex;
   align-items: center;
@@ -429,7 +429,7 @@ const hasValidInput = computed(() => {
   font-size: 0.875rem;
 }
 
-/* 淡入淡出动画 */
+/* Animación de desvanecimiento */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.3s ease;
@@ -441,7 +441,7 @@ const hasValidInput = computed(() => {
   transform: translateX(-10px);
 }
 
-/* 加载动画 */
+/* Animación de carga */
 .loading-spinner {
   animation: spin 1s linear infinite;
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
@@ -456,7 +456,7 @@ const hasValidInput = computed(() => {
   }
 }
 
-/* 响应式优化 */
+/* Optimizaciones responsivas */
 @media (max-width: 768px) {
   .control-bar {
     flex-direction: column;

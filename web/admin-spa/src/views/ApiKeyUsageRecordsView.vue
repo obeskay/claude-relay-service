@@ -6,11 +6,11 @@
           class="rounded-full border border-gray-200 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
           @click="goBack"
         >
-          ← 返回
+          ← Volver
         </button>
         <div>
           <p class="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
-            API Key 请求详情时间线
+            Timeline de solicitudes de API Key
           </p>
           <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
             {{ apiKeyDisplayName }}
@@ -21,7 +21,7 @@
       <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
         <i class="fas fa-clock text-blue-500" />
         <span v-if="dateRangeHint">{{ dateRangeHint }}</span>
-        <span v-else>显示近 5000 条记录</span>
+        <span v-else>Mostrando últimas 5000 registros</span>
       </div>
     </div>
 
@@ -29,7 +29,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">总请求</p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">totalRequests</p>
         <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
           {{ formatNumber(summary.totalRequests) }}
         </p>
@@ -37,7 +37,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">总 Token</p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">Tokens totales</p>
         <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
           {{ formatNumber(summary.totalTokens) }}
         </p>
@@ -45,7 +45,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">总费用</p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">totalCost</p>
         <p class="mt-1 text-2xl font-bold text-yellow-600 dark:text-yellow-400">
           {{ formatCost(summary.totalCost) }}
         </p>
@@ -53,7 +53,7 @@
       <div
         class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
       >
-        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">平均费用/次</p>
+        <p class="text-xs uppercase text-gray-500 dark:text-gray-400">Costo promedio/solicitud</p>
         <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
           {{ formatCost(summary.avgCost) }}
         </p>
@@ -68,9 +68,9 @@
           v-model="filters.dateRange"
           class="max-w-[320px]"
           clearable
-          end-placeholder="结束时间"
+          end-placeholder="Fecha final"
           format="YYYY-MM-DD HH:mm:ss"
-          start-placeholder="开始时间"
+          start-placeholder="Fecha inicial"
           type="datetimerange"
           unlink-panels
           value-format="YYYY-MM-DDTHH:mm:ss[Z]"
@@ -81,7 +81,7 @@
           class="w-[180px]"
           clearable
           filterable
-          placeholder="所有模型"
+          placeholder="Todos los modelos"
         >
           <el-option
             v-for="modelOption in availableModels"
@@ -96,24 +96,24 @@
           class="w-[220px]"
           clearable
           filterable
-          placeholder="所有账户"
+          placeholder="Todas las cuentas"
         >
           <el-option
             v-for="account in availableAccounts"
             :key="account.id"
-            :label="`${account.name}（${account.accountTypeName}）`"
+            :label="`${account.name} (${account.accountTypeName})`"
             :value="account.id"
           />
         </el-select>
 
-        <el-select v-model="filters.sortOrder" class="w-[140px]" placeholder="排序">
-          <el-option label="时间降序" value="desc" />
-          <el-option label="时间升序" value="asc" />
+        <el-select v-model="filters.sortOrder" class="w-[140px]" placeholder="Ordenar">
+          <el-option label="Más reciente primero" value="desc" />
+          <el-option label="Más antiguo primero" value="asc" />
         </el-select>
 
-        <el-button @click="resetFilters"> <i class="fas fa-undo mr-2" /> 重置 </el-button>
+        <el-button @click="resetFilters"> <i class="fas fa-undo mr-2" /> Restablecer </el-button>
         <el-button :loading="exporting" type="primary" @click="exportCsv">
-          <i class="fas fa-file-export mr-2" /> 导出 CSV
+          <i class="fas fa-file-export mr-2" /> Exportar CSV
         </el-button>
       </div>
     </div>
@@ -125,7 +125,7 @@
         v-if="loading"
         class="flex items-center justify-center p-10 text-gray-500 dark:text-gray-400"
       >
-        <i class="fas fa-spinner fa-spin mr-2" /> 加载中...
+        <i class="fas fa-spinner fa-spin mr-2" /> Cargando...
       </div>
       <div v-else>
         <div
@@ -133,7 +133,7 @@
           class="flex flex-col items-center gap-2 p-10 text-gray-500 dark:text-gray-400"
         >
           <i class="fas fa-inbox text-2xl" />
-          <p>暂无记录</p>
+          <p>No hay registros</p>
         </div>
         <div v-else class="space-y-4">
           <div class="hidden overflow-x-auto md:block">
@@ -143,47 +143,47 @@
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    时间
+                    Fecha
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    账户
+                    Cuenta
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    模型
+                    Modelo
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    输入
+                    Entrada
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    输出
+                    Salida
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    缓存(创/读)
+                    Caché (creación/lectura)
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    总 Token
+                    Tokens totales
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    费用
+                    Costo
                   </th>
                   <th
                     class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
                   >
-                    操作
+                    Acción
                   </th>
                 </tr>
               </thead>
@@ -196,9 +196,9 @@
                   </td>
                   <td class="px-4 py-3 text-sm text-gray-800 dark:text-gray-100">
                     <div class="flex flex-col">
-                      <span class="font-semibold">{{ record.accountName || '未知账户' }}</span>
+                      <span class="font-semibold">{{ record.accountName || 'Cuenta desconocida' }}</span>
                       <span class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ record.accountTypeName || '未知渠道' }}
+                        {{ record.accountTypeName || 'Plataforma desconocida' }}
                       </span>
                     </div>
                   </td>
@@ -228,7 +228,7 @@
                     {{ record.costFormatted || formatCost(record.cost) }}
                   </td>
                   <td class="whitespace-nowrap px-4 py-3 text-right text-sm">
-                    <el-button size="small" @click="openDetail(record)">详情</el-button>
+                    <el-button size="small" @click="openDetail(record)">Detalles</el-button>
                   </td>
                 </tr>
               </tbody>
@@ -244,25 +244,25 @@
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {{ record.accountName || '未知账户' }}
+                    {{ record.accountName || 'Cuenta desconocida' }}
                   </p>
                   <p class="text-xs text-gray-500 dark:text-gray-400">
                     {{ formatDate(record.timestamp) }}
                   </p>
                 </div>
-                <el-button size="small" @click="openDetail(record)">详情</el-button>
+                <el-button size="small" @click="openDetail(record)">Detalles</el-button>
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2 text-sm text-gray-700 dark:text-gray-300">
-                <div>模型：{{ record.model }}</div>
-                <div>总 Token：{{ formatNumber(record.totalTokens) }}</div>
-                <div>输入：{{ formatNumber(record.inputTokens) }}</div>
-                <div>输出：{{ formatNumber(record.outputTokens) }}</div>
+                <div>Modelo：{{ record.model }}</div>
+                <div>Tokens totales：{{ formatNumber(record.totalTokens) }}</div>
+                <div>Entrada：{{ formatNumber(record.inputTokens) }}</div>
+                <div>Salida：{{ formatNumber(record.outputTokens) }}</div>
                 <div>
-                  缓存创/读：{{ formatNumber(record.cacheCreateTokens) }} /
+                  Caché creac/lect：{{ formatNumber(record.cacheCreateTokens) }} /
                   {{ formatNumber(record.cacheReadTokens) }}
                 </div>
                 <div class="text-yellow-600 dark:text-yellow-400">
-                  费用：{{ record.costFormatted || formatCost(record.cost) }}
+                  Costo：{{ record.costFormatted || formatCost(record.cost) }}
                 </div>
               </div>
             </div>
@@ -270,7 +270,7 @@
 
           <div class="flex items-center justify-between px-4 pb-4">
             <div class="text-sm text-gray-500 dark:text-gray-400">
-              共 {{ pagination.totalRecords }} 条记录
+              {{ pagination.totalRecords }} registros en total
             </div>
             <el-pagination
               background
@@ -407,7 +407,7 @@ const fetchRecords = async (page = pagination.currentPage) => {
     const response = await getApiKeyUsageRecordsApi(keyId.value, buildParams(page))
     syncResponseState(response.data || {})
   } catch (error) {
-    showToast(`加载请求记录失败：${error.message || '未知错误'}`, 'error')
+    showToast(`Error al cargar registros：${error.message || 'Error desconocido'}`, 'error')
   } finally {
     loading.value = false
   }
@@ -454,7 +454,7 @@ const exportCsv = async () => {
     const aggregated = []
     let page = 1
     let totalPages = 1
-    const maxPages = 50 // 50 * 200 = 10000，超过后端 5000 上限已足够
+    const maxPages = 50 // 50 * 200 = 10000, suficiente para el límite de 5000 del backend
 
     while (page <= totalPages && page <= maxPages) {
       const response = await getApiKeyUsageRecordsApi(keyId.value, {
@@ -468,21 +468,21 @@ const exportCsv = async () => {
     }
 
     if (aggregated.length === 0) {
-      showToast('没有可导出的记录', 'info')
+      showToast('No hay registros para exportar', 'info')
       return
     }
 
     const headers = [
-      '时间',
-      '账户',
-      '渠道',
-      '模型',
-      '输入Token',
-      '输出Token',
-      '缓存创建Token',
-      '缓存读取Token',
-      '总Token',
-      '费用'
+      'Fecha',
+      'Cuenta',
+      'Plataforma',
+      'Modelo',
+      'Token de entrada',
+      'Token de salida',
+      'Token de caché (creación)',
+      'Token de caché (lectura)',
+      'Tokens totales',
+      'Costo'
     ]
 
     const csvRows = [headers.join(',')]
@@ -511,9 +511,9 @@ const exportCsv = async () => {
     link.download = `api-key-${keyId.value}-usage-records.csv`
     link.click()
     URL.revokeObjectURL(url)
-    showToast('导出 CSV 成功', 'success')
+    showToast('Exportación CSV exitosa', 'success')
   } catch (error) {
-    showToast(`导出失败：${error.message || '未知错误'}`, 'error')
+    showToast(`Error en exportación: ${error.message || 'Error desconocido'}`, 'error')
   } finally {
     exporting.value = false
   }

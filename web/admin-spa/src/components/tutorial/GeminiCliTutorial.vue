@@ -15,7 +15,7 @@
         配置 Gemini CLI 环境变量
       </h4>
       <p class="mb-3 text-sm text-gray-700 dark:text-gray-300 sm:mb-4 sm:text-base">
-        设置以下环境变量以连接到中转服务：
+        Configuración以abajo环境变量以连接到en转服务：
       </p>
 
       <div class="space-y-4">
@@ -25,10 +25,10 @@
             class="rounded-lg border border-green-200 bg-white p-3 dark:border-green-700 dark:bg-gray-800 sm:p-4"
           >
             <h6 class="mb-2 text-sm font-medium text-gray-800 dark:text-gray-300 sm:text-base">
-              PowerShell 设置方法
+              PowerShell Configuración方法
             </h6>
             <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">
-              在 PowerShell 中运行以下命令：
+              en PowerShell en运行以abajo命令：
             </p>
             <div
               class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
@@ -36,13 +36,13 @@
               <div class="whitespace-nowrap text-gray-300">
                 $env:GOOGLE_GEMINI_BASE_URL = "{{ geminiBaseUrl }}"
               </div>
-              <div class="whitespace-nowrap text-gray-300">$env:GEMINI_API_KEY = "你的API密钥"</div>
+              <div class="whitespace-nowrap text-gray-300">$env:GEMINI_API_KEY = "你APIClave"</div>
               <div class="whitespace-nowrap text-gray-300">
                 $env:GEMINI_MODEL = "gemini-2.5-pro"
               </div>
             </div>
             <p class="mt-2 text-xs text-yellow-700 dark:text-yellow-400">
-              💡 使用与 Claude Code 相同的 API 密钥即可。
+              💡 使用与 Claude Code 相同 API Clave即可。
             </p>
           </div>
 
@@ -50,22 +50,22 @@
             class="rounded-lg border border-green-200 bg-white p-3 dark:border-green-700 dark:bg-gray-800 sm:p-4"
           >
             <h6 class="mb-2 text-sm font-medium text-gray-800 dark:text-gray-300 sm:text-base">
-              PowerShell 永久设置（用户级）
+              PowerShell 永久Configuración（Usuario级）
             </h6>
             <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">
-              在 PowerShell 中运行以下命令：
+              en PowerShell en运行以abajo命令：
             </p>
             <div
               class="mb-3 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
             >
-              <div class="mb-2"># 设置用户级环境变量（永久生效）</div>
+              <div class="mb-2"># ConfiguraciónUsuario级环境变量（永久生效）</div>
               <div class="whitespace-nowrap text-gray-300">
                 [System.Environment]::SetEnvironmentVariable("GOOGLE_GEMINI_BASE_URL", "{{
                   geminiBaseUrl
                 }}", [System.EnvironmentVariableTarget]::User)
               </div>
               <div class="whitespace-nowrap text-gray-300">
-                [System.Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "你的API密钥",
+                [System.Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "你APIClave",
                 [System.EnvironmentVariableTarget]::User)
               </div>
               <div class="whitespace-nowrap text-gray-300">
@@ -74,7 +74,7 @@
               </div>
             </div>
             <p class="mt-2 text-xs text-blue-700 dark:text-blue-300">
-              💡 设置后需要重新打开 PowerShell 窗口才能生效。
+              💡 Configuraciónsiguiente需要重新打开 PowerShell 窗口才能生效。
             </p>
           </div>
         </template>
@@ -85,22 +85,22 @@
             class="rounded-lg border border-green-200 bg-white p-3 dark:border-green-700 dark:bg-gray-800 sm:p-4"
           >
             <h6 class="mb-2 text-sm font-medium text-gray-800 dark:text-gray-300 sm:text-base">
-              临时设置（当前会话）
+              临时Configuración（当anterior会话）
             </h6>
-            <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">在终端中运行以下命令：</p>
+            <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">en终端en运行以abajo命令：</p>
             <div
               class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
             >
               <div class="whitespace-nowrap text-gray-300">
                 export GOOGLE_GEMINI_BASE_URL="{{ geminiBaseUrl }}"
               </div>
-              <div class="whitespace-nowrap text-gray-300">export GEMINI_API_KEY="你的API密钥"</div>
+              <div class="whitespace-nowrap text-gray-300">export GEMINI_API_KEY="你APIClave"</div>
               <div class="whitespace-nowrap text-gray-300">
                 export GEMINI_MODEL="gemini-2.5-pro"
               </div>
             </div>
             <p class="mt-2 text-xs text-yellow-700 dark:text-yellow-400">
-              💡 使用与 Claude Code 相同的 API 密钥即可。
+              💡 使用与 Claude Code 相同 API Clave即可。
             </p>
           </div>
 
@@ -108,10 +108,10 @@
             class="rounded-lg border border-green-200 bg-white p-3 dark:border-green-700 dark:bg-gray-800 sm:p-4"
           >
             <h6 class="mb-2 text-sm font-medium text-gray-800 dark:text-gray-300 sm:text-base">
-              永久设置（Shell 配置文件）
+              永久Configuración（Shell 配置文件）
             </h6>
             <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">
-              将以下内容添加到你的 shell 配置文件中（{{
+              将以abajo内容添加到你 shell 配置文件en（{{
                 platform === 'macos' ? '~/.zshrc' : '~/.bashrc'
               }}）：
             </p>
@@ -121,12 +121,12 @@
               <div class="whitespace-nowrap text-gray-300">
                 export GOOGLE_GEMINI_BASE_URL="{{ geminiBaseUrl }}"
               </div>
-              <div class="whitespace-nowrap text-gray-300">export GEMINI_API_KEY="你的API密钥"</div>
+              <div class="whitespace-nowrap text-gray-300">export GEMINI_API_KEY="你APIClave"</div>
               <div class="whitespace-nowrap text-gray-300">
                 export GEMINI_MODEL="gemini-2.5-pro"
               </div>
             </div>
-            <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">然后执行：</p>
+            <p class="mb-3 text-sm text-gray-600 dark:text-gray-400">然siguiente执行：</p>
             <div
               class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
             >
@@ -145,7 +145,7 @@
             验证 Gemini CLI 环境变量
           </h6>
           <p class="mb-3 text-sm text-green-700 dark:text-green-300">
-            {{ platform === 'windows' ? '在 PowerShell 中验证：' : '在终端中验证：' }}
+            {{ platform === 'windows' ? 'en PowerShell en验证：' : 'en终端en验证：' }}
           </p>
           <div
             class="space-y-1 overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"

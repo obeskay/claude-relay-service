@@ -4,19 +4,19 @@ const { getISOStringWithTimezone } = require('./dateHelper')
 
 class WebhookNotifier {
   constructor() {
-    // 保留此类用于兼容性，实际功能委托给webhookService
+    // 保留此Clase用于兼容性，实际功能委托给webhookService
   }
 
   /**
    * 发送账号异常通知
    * @param {Object} notification - 通知内容
    * @param {string} notification.accountId - 账号ID
-   * @param {string} notification.accountName - 账号名称
-   * @param {string} notification.platform - 平台类型 (claude-oauth, claude-console, gemini)
+   * @param {string} notification.accountName - 账号Nombre
+   * @param {string} notification.platform - 平台Tipo (claude-oauth, claude-console, gemini)
    * @param {string} notification.status - 异常状态 (unauthorized, blocked, error)
    * @param {string} notification.errorCode - 异常代码
    * @param {string} notification.reason - 异常原因
-   * @param {string} notification.timestamp - 时间戳
+   * @param {string} notification.timestamp - Tiempo戳
    */
   async sendAccountAnomalyNotification(notification) {
     try {
@@ -37,13 +37,13 @@ class WebhookNotifier {
   }
 
   /**
-   * 测试Webhook连通性（兼容旧接口）
+   * ProbarWebhook连通性（兼容旧Interfaz）
    * @param {string} url - Webhook URL
-   * @param {string} type - 平台类型（可选）
+   * @param {string} type - 平台Tipo（Opcional）
    */
   async testWebhook(url, type = 'custom') {
     try {
-      // 创建临时平台配置
+      // Crear临时平台Configuración
       const platform = {
         type,
         url,
@@ -59,9 +59,9 @@ class WebhookNotifier {
   }
 
   /**
-   * 发送账号事件通知
-   * @param {string} eventType - 事件类型 (account.created, account.updated, account.deleted, account.status_changed)
-   * @param {Object} data - 事件数据
+   * 发送账号Evento通知
+   * @param {string} eventType - EventoTipo (account.created, account.updated, account.deleted, account.status_changed)
+   * @param {Object} data - EventoDatos
    */
   async sendAccountEvent(eventType, data) {
     try {
@@ -77,8 +77,8 @@ class WebhookNotifier {
   }
 
   /**
-   * 获取错误代码映射
-   * @param {string} platform - 平台类型
+   * ObtenerError代码映射
+   * @param {string} platform - 平台Tipo
    * @param {string} status - 状态
    * @param {string} _reason - 原因 (未使用)
    */

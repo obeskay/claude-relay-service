@@ -1,6 +1,6 @@
 /**
- * Admin Routes - OpenAI 账户管理
- * 处理 OpenAI 账户的 CRUD 操作和 OAuth 授权流程
+ * Admin Routes - OpenAI Cuenta管理
+ * Procesar OpenAI Cuenta的 CRUD Operación和 OAuth 授权流程
  */
 
 const express = require('express')
@@ -18,7 +18,7 @@ const { formatAccountExpiry, mapExpiryField } = require('./utils')
 
 const router = express.Router()
 
-// OpenAI OAuth 配置
+// OpenAI OAuth Configuración
 const OPENAI_CONFIG = {
   BASE_URL: 'https://auth.openai.com',
   CLIENT_ID: 'app_EMoamEEZ73f0CkXaXp7hrann',
@@ -27,8 +27,8 @@ const OPENAI_CONFIG = {
 }
 
 /**
- * 生成 PKCE 参数
- * @returns {Object} 包含 codeVerifier 和 codeChallenge 的对象
+ * Generar PKCE Parámetro
+ * @returns {Object} Incluir codeVerifier 和 codeChallenge 的Objeto
  */
 function generateOpenAIPKCE() {
   const codeVerifier = crypto.randomBytes(64).toString('hex')
@@ -40,21 +40,21 @@ function generateOpenAIPKCE() {
   }
 }
 
-// 生成 OpenAI OAuth 授权 URL
+// Generar OpenAI OAuth 授权 URL
 router.post('/generate-auth-url', authenticateAdmin, async (req, res) => {
   try {
     const { proxy } = req.body
 
-    // 生成 PKCE 参数
+    // Generar PKCE Parámetro
     const pkce = generateOpenAIPKCE()
 
-    // 生成随机 state
+    // Generar随机 state
     const state = crypto.randomBytes(32).toString('hex')
 
-    // 创建会话 ID
+    // CrearSesión ID
     const sessionId = crypto.randomUUID()
 
-    // 将 PKCE 参数和代理配置存储到 Redis
+    // 将 PKCE Parámetro和ProxyConfiguración存储到 Redis
     await redis.setOAuthSession(sessionId, {
       codeVerifier: pkce.codeVerifier,
       codeChallenge: pkce.codeChallenge,
@@ -65,7 +65,7 @@ router.post('/generate-auth-url', authenticateAdmin, async (req, res) => {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString()
     })
 
-    // 构建授权 URL 参数
+    // Construir授权 URL Parámetro
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: OPENAI_CONFIG.CLIENT_ID,
@@ -88,16 +88,16 @@ router.post('/generate-auth-url', authenticateAdmin, async (req, res) => {
         authUrl,
         sessionId,
         instructions: [
-          '1. 复制上面的链接到浏览器中打开',
-          '2. 登录您的 OpenAI 账户',
-          '3. 同意应用权限',
-          '4. 复制浏览器地址栏中的完整 URL（包含 code 参数）',
-          '5. 在添加账户表单中粘贴完整的回调 URL'
+          '1. 复制上面的链接到Navegador中打开',
+          '2. 登录您的 OpenAI Cuenta',
+          '3. 同意应用Permiso',
+          '4. 复制Navegador地址栏中的完整 URL（Incluir code Parámetro）',
+          '5. 在添加CuentaTabla单中粘贴完整的回调 URL'
         ]
       }
     })
   } catch (error) {
-    logger.error('生成 OpenAI OAuth URL 失败:', error)
+    logger.error('Generar OpenAI OAuth URL Falló:', error)
     return res.status(500).json({
       success: false,
       message: 'Error al generar el enlace de autorización',
@@ -118,7 +118,7 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 从 Redis 获取会话数据
+    // 从 Redis ObtenerSesiónDatos
     const sessionData = await redis.getOAuthSession(sessionId)
     if (!sessionData) {
       return res.status(400).json({
@@ -127,7 +127,7 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 准备 token 交换请求
+    // 准备 token 交换Solicitud
     const tokenData = {
       grant_type: 'authorization_code',
       code: code.trim(),
@@ -142,14 +142,14 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
       hasCodeVerifier: !!sessionData.codeVerifier
     })
 
-    // 配置代理（如果有）
+    // ConfiguraciónProxy（如果有）
     const axiosConfig = {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     }
 
-    // 配置代理（如果有）
+    // ConfiguraciónProxy（如果有）
     const proxyAgent = ProxyHelper.createProxyAgent(sessionData.proxy)
     if (proxyAgent) {
       axiosConfig.httpAgent = proxyAgent
@@ -157,7 +157,7 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
       axiosConfig.proxy = false
     }
 
-    // 交换 authorization code 获取 tokens
+    // 交换 authorization code Obtener tokens
     const tokenResponse = await axios.post(
       `${OPENAI_CONFIG.BASE_URL}/oauth/token`,
       new URLSearchParams(tokenData).toString(),
@@ -166,29 +166,29 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
 
     const { id_token, access_token, refresh_token, expires_in } = tokenResponse.data
 
-    // 解析 ID token 获取用户信息
+    // Analizar ID token ObtenerUsuarioInformación
     const idTokenParts = id_token.split('.')
     if (idTokenParts.length !== 3) {
       throw new Error('Invalid ID token format')
     }
 
-    // 解码 JWT payload
+    // Decodificación JWT payload
     const payload = JSON.parse(Buffer.from(idTokenParts[1], 'base64url').toString())
 
-    // 获取 OpenAI 特定的声明
+    // Obtener OpenAI 特定的声明
     const authClaims = payload['https://api.openai.com/auth'] || {}
     const accountId = authClaims.chatgpt_account_id || ''
     const chatgptUserId = authClaims.chatgpt_user_id || authClaims.user_id || ''
     const planType = authClaims.chatgpt_plan_type || ''
 
-    // 获取组织信息
+    // Obtener组织Información
     const organizations = authClaims.organizations || []
     const defaultOrg = organizations.find((org) => org.is_default) || organizations[0] || {}
     const organizationId = defaultOrg.id || ''
     const organizationRole = defaultOrg.role || ''
     const organizationTitle = defaultOrg.title || ''
 
-    // 清理 Redis 会话
+    // Limpiar Redis Sesión
     await redis.deleteOAuthSession(sessionId)
 
     logger.success('OpenAI OAuth token exchange successful')
@@ -220,19 +220,19 @@ router.post('/exchange-code', authenticateAdmin, async (req, res) => {
     logger.error('OpenAI OAuth token exchange failed:', error)
     return res.status(500).json({
       success: false,
-      message: '交换授权码失败',
+      message: '交换授权码Falló',
       error: error.message
     })
   }
 })
 
-// 获取所有 OpenAI 账户
+// Obtener所有 OpenAI Cuenta
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const { platform, groupId } = req.query
     let accounts = await openaiAccountService.getAllAccounts()
 
-    // 缓存账户所属分组，避免重复查询
+    // CachéCuenta所属Agrupar，避免重复Consulta
     const accountGroupCache = new Map()
     const fetchAccountGroups = async (accountId) => {
       if (!accountGroupCache.has(accountId)) {
@@ -242,16 +242,16 @@ router.get('/', authenticateAdmin, async (req, res) => {
       return accountGroupCache.get(accountId)
     }
 
-    // 根据查询参数进行筛选
+    // 根据ConsultaParámetro进Fila筛选
     if (platform && platform !== 'all' && platform !== 'openai') {
-      // 如果指定了其他平台，返回空数组
+      // 如果指定了其他平台，Retornar空Arreglo
       accounts = []
     }
 
-    // 如果指定了分组筛选
+    // 如果指定了Agrupar筛选
     if (groupId && groupId !== 'all') {
       if (groupId === 'ungrouped') {
-        // 筛选未分组账户
+        // 筛选未AgruparCuenta
         const filteredAccounts = []
         for (const account of accounts) {
           const groups = await fetchAccountGroups(account.id)
@@ -261,13 +261,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
         }
         accounts = filteredAccounts
       } else {
-        // 筛选特定分组的账户
+        // 筛选特定Agrupar的Cuenta
         const groupMembers = await accountGroupService.getGroupMembers(groupId)
         accounts = accounts.filter((account) => groupMembers.includes(account.id))
       }
     }
 
-    // 为每个账户添加使用统计信息
+    // 为每个Cuenta添加使用EstadísticaInformación
     const accountsWithStats = await Promise.all(
       accounts.map(async (account) => {
         try {
@@ -300,23 +300,23 @@ router.get('/', authenticateAdmin, async (req, res) => {
       })
     )
 
-    logger.info(`获取 OpenAI 账户列表: ${accountsWithStats.length} 个账户`)
+    logger.info(`Obtener OpenAI CuentaColumnaTabla: ${accountsWithStats.length} 个Cuenta`)
 
     return res.json({
       success: true,
       data: accountsWithStats
     })
   } catch (error) {
-    logger.error('获取 OpenAI 账户列表失败:', error)
+    logger.error('Obtener OpenAI CuentaColumnaTablaFalló:', error)
     return res.status(500).json({
       success: false,
-      message: '获取账户列表失败',
+      message: 'ObtenerCuentaColumnaTablaFalló',
       error: error.message
     })
   }
 })
 
-// 创建 OpenAI 账户
+// Crear OpenAI Cuenta
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
     const {
@@ -327,11 +327,11 @@ router.post('/', authenticateAdmin, async (req, res) => {
       proxy,
       accountType,
       groupId,
-      groupIds, // 支持多分组
+      groupIds, // Soportar多Agrupar
       rateLimitDuration,
       priority,
       needsImmediateRefresh, // 是否需要立即刷新
-      requireRefreshSuccess // 是否必须刷新成功才能创建
+      requireRefreshSuccess // 是否必须刷新Éxito才能Crear
     } = req.body
 
     if (!name) {
@@ -341,7 +341,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 准备账户数据
+    // 准备CuentaDatos
     const accountData = {
       name,
       description: description || '',
@@ -356,28 +356,28 @@ router.post('/', authenticateAdmin, async (req, res) => {
       schedulable: true
     }
 
-    // 如果需要立即刷新且必须成功（OpenAI 手动模式）
+    // 如果需要立即刷新且必须Éxito（OpenAI 手动模式）
     if (needsImmediateRefresh && requireRefreshSuccess) {
-      // 先创建临时账户以测试刷新
+      // 先Crear临时Cuenta以Probar刷新
       const tempAccount = await openaiAccountService.createAccount(accountData)
 
       try {
-        logger.info(`🔄 测试刷新 OpenAI 账户以获取完整 token 信息`)
+        logger.info(`🔄 Probar刷新 OpenAI Cuenta以Obtener完整 token Información`)
 
-        // 尝试刷新 token（会自动使用账户配置的代理）
+        // 尝试刷新 token（会自动使用CuentaConfiguración的Proxy）
         await openaiAccountService.refreshAccountToken(tempAccount.id)
 
-        // 刷新成功，获取更新后的账户信息
+        // 刷新Éxito，ObtenerActualizar后的CuentaInformación
         const refreshedAccount = await openaiAccountService.getAccount(tempAccount.id)
 
-        // 检查是否获取到了 ID Token
+        // Verificar是否Obtener到了 ID Token
         if (!refreshedAccount.idToken || refreshedAccount.idToken === '') {
-          // 没有获取到 ID Token，删除账户
+          // 没有Obtener到 ID Token，EliminarCuenta
           await openaiAccountService.deleteAccount(tempAccount.id)
-          throw new Error('无法获取 ID Token，请检查 Refresh Token 是否有效')
+          throw new Error('无法Obtener ID Token，请Verificar Refresh Token 是否有效')
         }
 
-        // 如果是分组类型，添加到分组（支持多分组）
+        // 如果是AgruparTipo，添加到Agrupar（Soportar多Agrupar）
         if (accountType === 'group') {
           if (groupIds && groupIds.length > 0) {
             await accountGroupService.setAccountGroups(tempAccount.id, groupIds, 'openai')
@@ -386,12 +386,12 @@ router.post('/', authenticateAdmin, async (req, res) => {
           }
         }
 
-        // 清除敏感信息后返回
+        // 清除敏感Información后Retornar
         delete refreshedAccount.idToken
         delete refreshedAccount.accessToken
         delete refreshedAccount.refreshToken
 
-        logger.success(`创建并验证 OpenAI 账户成功: ${name} (ID: ${tempAccount.id})`)
+        logger.success(`Crear并Validar OpenAI CuentaÉxito: ${name} (ID: ${tempAccount.id})`)
 
         return res.json({
           success: true,
@@ -399,18 +399,18 @@ router.post('/', authenticateAdmin, async (req, res) => {
           message: 'Cuenta creada con éxito y se ha obtenido la información completa del token'
         })
       } catch (refreshError) {
-        // 刷新失败，删除临时创建的账户
-        logger.warn(`❌ 刷新失败，删除临时账户: ${refreshError.message}`)
+        // 刷新Falló，Eliminar临时Crear的Cuenta
+        logger.warn(`❌ 刷新Falló，Eliminar临时Cuenta: ${refreshError.message}`)
         await openaiAccountService.deleteAccount(tempAccount.id)
 
-        // 构建详细的错误信息
+        // Construir详细的ErrorInformación
         const errorResponse = {
           success: false,
           message: 'Error al crear la cuenta',
           error: refreshError.message
         }
 
-        // 添加更详细的错误信息
+        // 添加更详细的ErrorInformación
         if (refreshError.status) {
           errorResponse.errorCode = refreshError.status
         }
@@ -421,15 +421,15 @@ router.post('/', authenticateAdmin, async (req, res) => {
           errorResponse.networkError = refreshError.code
         }
 
-        // 提供更友好的错误提示
+        // 提供更友好的Error提示
         if (refreshError.message.includes('Refresh Token 无效')) {
-          errorResponse.suggestion = '请检查 Refresh Token 是否正确，或重新通过 OAuth 授权获取'
-        } else if (refreshError.message.includes('代理')) {
-          errorResponse.suggestion = '请检查代理配置是否正确，包括地址、端口和认证信息'
+          errorResponse.suggestion = '请Verificar Refresh Token 是否正确，或重新通过 OAuth 授权Obtener'
+        } else if (refreshError.message.includes('Proxy')) {
+          errorResponse.suggestion = '请VerificarProxyConfiguración是否正确，包括地址、端口和认证Información'
         } else if (refreshError.message.includes('过于频繁')) {
-          errorResponse.suggestion = '请稍后再试，或更换代理 IP'
-        } else if (refreshError.message.includes('连接')) {
-          errorResponse.suggestion = '请检查网络连接和代理设置'
+          errorResponse.suggestion = '请稍后再试，或更换Proxy IP'
+        } else if (refreshError.message.includes('Conexión')) {
+          errorResponse.suggestion = '请Verificar网络Conexión和ProxyEstablecer'
         }
 
         return res.status(400).json(errorResponse)
@@ -439,7 +439,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
     // 不需要强制刷新的情况（OAuth 模式或其他平台）
     const createdAccount = await openaiAccountService.createAccount(accountData)
 
-    // 如果是分组类型，添加到分组（支持多分组）
+    // 如果是AgruparTipo，添加到Agrupar（Soportar多Agrupar）
     if (accountType === 'group') {
       if (groupIds && groupIds.length > 0) {
         await accountGroupService.setAccountGroups(createdAccount.id, groupIds, 'openai')
@@ -448,45 +448,45 @@ router.post('/', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 如果需要刷新但不强制成功（OAuth 模式可能已有完整信息）
+    // 如果需要刷新但不强制Éxito（OAuth 模式可能已有完整Información）
     if (needsImmediateRefresh && !requireRefreshSuccess) {
       try {
-        logger.info(`🔄 尝试刷新 OpenAI 账户 ${createdAccount.id}`)
+        logger.info(`🔄 尝试刷新 OpenAI Cuenta ${createdAccount.id}`)
         await openaiAccountService.refreshAccountToken(createdAccount.id)
-        logger.info(`✅ 刷新成功`)
+        logger.info(`✅ 刷新Éxito`)
       } catch (refreshError) {
-        logger.warn(`⚠️ 刷新失败，但账户已创建: ${refreshError.message}`)
+        logger.warn(`⚠️ 刷新Falló，但Cuenta已Crear: ${refreshError.message}`)
       }
     }
 
-    logger.success(`创建 OpenAI 账户成功: ${name} (ID: ${createdAccount.id})`)
+    logger.success(`Crear OpenAI CuentaÉxito: ${name} (ID: ${createdAccount.id})`)
 
     return res.json({
       success: true,
       data: createdAccount
     })
   } catch (error) {
-    logger.error('创建 OpenAI 账户失败:', error)
+    logger.error('Crear OpenAI CuentaFalló:', error)
     return res.status(500).json({
       success: false,
-      message: '创建账户失败',
+      message: 'CrearCuentaFalló',
       error: error.message
     })
   }
 })
 
-// 更新 OpenAI 账户
+// Actualizar OpenAI Cuenta
 router.put('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
     const updates = req.body
 
-    // ✅ 【新增】映射字段名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
+    // ✅ 【Nueva característica】映射Campo名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
     const mappedUpdates = mapExpiryField(updates, 'OpenAI', id)
 
     const { needsImmediateRefresh, requireRefreshSuccess } = mappedUpdates
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (
       mappedUpdates.accountType &&
       !['shared', 'dedicated', 'group'].includes(mappedUpdates.accountType)
@@ -496,7 +496,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         .json({ error: 'Invalid account type. Must be "shared", "dedicated" or "group"' })
     }
 
-    // 如果更新为分组类型，验证groupId或groupIds
+    // 如果Actualizar为AgruparTipo，ValidargroupId或groupIds
     if (
       mappedUpdates.accountType === 'group' &&
       !mappedUpdates.groupId &&
@@ -507,15 +507,15 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         .json({ error: 'Group ID or Group IDs are required for group type accounts' })
     }
 
-    // 获取账户当前信息以处理分组变更
+    // ObtenerCuenta当前Información以ProcesarAgrupar变更
     const currentAccount = await openaiAccountService.getAccount(id)
     if (!currentAccount) {
       return res.status(404).json({ error: 'Account not found' })
     }
 
-    // 如果更新了 Refresh Token，需要验证其有效性
+    // 如果Actualizar了 Refresh Token，需要Validar其有效性
     if (mappedUpdates.openaiOauth?.refreshToken && needsImmediateRefresh && requireRefreshSuccess) {
-      // 先更新 token 信息
+      // 先Actualizar token Información
       const tempUpdateData = {}
       if (mappedUpdates.openaiOauth.refreshToken) {
         tempUpdateData.refreshToken = mappedUpdates.openaiOauth.refreshToken
@@ -523,26 +523,26 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       if (mappedUpdates.openaiOauth.accessToken) {
         tempUpdateData.accessToken = mappedUpdates.openaiOauth.accessToken
       }
-      // 更新代理配置（如果有）
+      // ActualizarProxyConfiguración（如果有）
       if (mappedUpdates.proxy !== undefined) {
         tempUpdateData.proxy = mappedUpdates.proxy
       }
 
-      // 临时更新账户以测试新的 token
+      // 临时ActualizarCuenta以Probar新的 token
       await openaiAccountService.updateAccount(id, tempUpdateData)
 
       try {
-        logger.info(`🔄 验证更新的 OpenAI token (账户: ${id})`)
+        logger.info(`🔄 ValidarActualizar的 OpenAI token (Cuenta: ${id})`)
 
-        // 尝试刷新 token（会使用账户配置的代理）
+        // 尝试刷新 token（会使用CuentaConfiguración的Proxy）
         await openaiAccountService.refreshAccountToken(id)
 
-        // 获取刷新后的账户信息
+        // Obtener刷新后的CuentaInformación
         const refreshedAccount = await openaiAccountService.getAccount(id)
 
-        // 检查是否获取到了 ID Token
+        // Verificar是否Obtener到了 ID Token
         if (!refreshedAccount.idToken || refreshedAccount.idToken === '') {
-          // 恢复原始 token
+          // Restauración原始 token
           await openaiAccountService.updateAccount(id, {
             refreshToken: currentAccount.refreshToken,
             accessToken: currentAccount.accessToken,
@@ -551,15 +551,15 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
 
           return res.status(400).json({
             success: false,
-            message: '无法获取 ID Token，请检查 Refresh Token 是否有效',
+            message: '无法Obtener ID Token，请Verificar Refresh Token 是否有效',
             error: 'Invalid refresh token'
           })
         }
 
-        logger.success(`Token 验证成功，继续更新账户信息`)
+        logger.success(`Token ValidarÉxito，继续ActualizarCuentaInformación`)
       } catch (refreshError) {
-        // 刷新失败，恢复原始 token
-        logger.warn(`❌ Token 验证失败，恢复原始配置: ${refreshError.message}`)
+        // 刷新Falló，Restauración原始 token
+        logger.warn(`❌ Token ValidarFalló，Restauración原始Configuración: ${refreshError.message}`)
         await openaiAccountService.updateAccount(id, {
           refreshToken: currentAccount.refreshToken,
           accessToken: currentAccount.accessToken,
@@ -567,14 +567,14 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
           proxy: currentAccount.proxy
         })
 
-        // 构建详细的错误信息
+        // Construir详细的ErrorInformación
         const errorResponse = {
           success: false,
-          message: '更新失败',
+          message: 'ActualizarFalló',
           error: refreshError.message
         }
 
-        // 添加更详细的错误信息
+        // 添加更详细的ErrorInformación
         if (refreshError.status) {
           errorResponse.errorCode = refreshError.status
         }
@@ -585,52 +585,52 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
           errorResponse.networkError = refreshError.code
         }
 
-        // 提供更友好的错误提示
+        // 提供更友好的Error提示
         if (refreshError.message.includes('Refresh Token 无效')) {
-          errorResponse.suggestion = '请检查 Refresh Token 是否正确，或重新通过 OAuth 授权获取'
-        } else if (refreshError.message.includes('代理')) {
-          errorResponse.suggestion = '请检查代理配置是否正确，包括地址、端口和认证信息'
+          errorResponse.suggestion = '请Verificar Refresh Token 是否正确，或重新通过 OAuth 授权Obtener'
+        } else if (refreshError.message.includes('Proxy')) {
+          errorResponse.suggestion = '请VerificarProxyConfiguración是否正确，包括地址、端口和认证Información'
         } else if (refreshError.message.includes('过于频繁')) {
-          errorResponse.suggestion = '请稍后再试，或更换代理 IP'
-        } else if (refreshError.message.includes('连接')) {
-          errorResponse.suggestion = '请检查网络连接和代理设置'
+          errorResponse.suggestion = '请稍后再试，或更换Proxy IP'
+        } else if (refreshError.message.includes('Conexión')) {
+          errorResponse.suggestion = '请Verificar网络Conexión和ProxyEstablecer'
         }
 
         return res.status(400).json(errorResponse)
       }
     }
 
-    // 处理分组的变更
+    // ProcesarAgrupar的变更
     if (mappedUpdates.accountType !== undefined) {
-      // 如果之前是分组类型，移除所有原分组关联
+      // 如果之前是AgruparTipo，Eliminación所有原Agrupar关联
       if (currentAccount.accountType === 'group') {
         await accountGroupService.removeAccountFromAllGroups(id)
       }
-      // 如果新类型是分组，处理多分组支持
+      // 如果新Tipo是Agrupar，Procesar多AgruparSoportar
       if (mappedUpdates.accountType === 'group') {
         if (Object.prototype.hasOwnProperty.call(mappedUpdates, 'groupIds')) {
-          // 如果明确提供了 groupIds 参数（包括空数组）
+          // 如果明确提供了 groupIds Parámetro（包括空Arreglo）
           if (mappedUpdates.groupIds && mappedUpdates.groupIds.length > 0) {
-            // 设置新的多分组
+            // Establecer新的多Agrupar
             await accountGroupService.setAccountGroups(id, mappedUpdates.groupIds, 'openai')
           } else {
-            // groupIds 为空数组，从所有分组中移除
+            // groupIds 为空Arreglo，从所有Agrupar中Eliminación
             await accountGroupService.removeAccountFromAllGroups(id)
           }
         } else if (mappedUpdates.groupId) {
-          // 向后兼容：仅当没有 groupIds 但有 groupId 时使用单分组逻辑
+          // 向后兼容：仅当没有 groupIds 但有 groupId 时使用单Agrupar逻辑
           await accountGroupService.addAccountToGroup(id, mappedUpdates.groupId, 'openai')
         }
       }
     }
 
-    // 准备更新数据
+    // 准备ActualizarDatos
     const updateData = { ...mappedUpdates }
 
-    // 处理敏感数据加密
+    // Procesar敏感DatosCifrado
     if (mappedUpdates.openaiOauth) {
       updateData.openaiOauth = mappedUpdates.openaiOauth
-      // 编辑时不允许直接输入 ID Token，只能通过刷新获取
+      // 编辑时不允许直接输入 ID Token，只能通过刷新Obtener
       if (mappedUpdates.openaiOauth.accessToken) {
         updateData.accessToken = mappedUpdates.openaiOauth.accessToken
       }
@@ -644,7 +644,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 更新账户信息
+    // ActualizarCuentaInformación
     if (mappedUpdates.accountInfo) {
       updateData.accountId = mappedUpdates.accountInfo.accountId || currentAccount.accountId
       updateData.chatgptUserId =
@@ -665,14 +665,14 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
 
     const updatedAccount = await openaiAccountService.updateAccount(id, updateData)
 
-    // 如果需要刷新但不强制成功（非关键更新）
+    // 如果需要刷新但不强制Éxito（非关键Actualizar）
     if (needsImmediateRefresh && !requireRefreshSuccess) {
       try {
-        logger.info(`🔄 尝试刷新 OpenAI 账户 ${id}`)
+        logger.info(`🔄 尝试刷新 OpenAI Cuenta ${id}`)
         await openaiAccountService.refreshAccountToken(id)
-        logger.info(`✅ 刷新成功`)
+        logger.info(`✅ 刷新Éxito`)
       } catch (refreshError) {
-        logger.warn(`⚠️ 刷新失败，但账户信息已更新: ${refreshError.message}`)
+        logger.warn(`⚠️ 刷新Falló，但CuentaInformación已Actualizar: ${refreshError.message}`)
       }
     }
 
@@ -684,7 +684,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除 OpenAI 账户
+// Eliminar OpenAI Cuenta
 router.delete('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -700,7 +700,7 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
     // 自动解绑所有绑定的 API Keys
     const unboundCount = await apiKeyService.unbindAccountFromAllKeys(id, 'openai')
 
-    // 如果账户在分组中，从分组中移除
+    // 如果Cuenta在Agrupar中，从Agrupar中Eliminación
     if (account.accountType === 'group') {
       const group = await accountGroupService.getAccountGroup(id)
       if (group) {
@@ -710,13 +710,13 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
 
     await openaiAccountService.deleteAccount(id)
 
-    let message = 'OpenAI账号已成功删除'
+    let message = 'OpenAI账号已ÉxitoEliminar'
     if (unboundCount > 0) {
       message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
 
     logger.success(
-      `✅ 删除 OpenAI 账户成功: ${account.name} (ID: ${id}), unbound ${unboundCount} keys`
+      `✅ Eliminar OpenAI CuentaÉxito: ${account.name} (ID: ${id}), unbound ${unboundCount} keys`
     )
 
     return res.json({
@@ -725,16 +725,16 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
       unboundKeys: unboundCount
     })
   } catch (error) {
-    logger.error('删除 OpenAI 账户失败:', error)
+    logger.error('Eliminar OpenAI CuentaFalló:', error)
     return res.status(500).json({
       success: false,
-      message: '删除账户失败',
+      message: 'EliminarCuentaFalló',
       error: error.message
     })
   }
 })
 
-// 切换 OpenAI 账户状态
+// 切换 OpenAI Cuenta状态
 router.put('/:id/toggle', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -747,15 +747,15 @@ router.put('/:id/toggle', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 切换启用状态
+    // 切换Habilitar状态
     account.enabled = !account.enabled
     account.updatedAt = new Date().toISOString()
 
-    // TODO: 更新方法
+    // TODO: ActualizarMétodo
     // await redis.updateOpenAiAccount(id, account)
 
     logger.success(
-      `✅ ${account.enabled ? '启用' : '禁用'} OpenAI 账户: ${account.name} (ID: ${id})`
+      `✅ ${account.enabled ? 'Habilitar' : 'Deshabilitar'} OpenAI Cuenta: ${account.name} (ID: ${id})`
     )
 
     return res.json({
@@ -763,16 +763,16 @@ router.put('/:id/toggle', authenticateAdmin, async (req, res) => {
       data: account
     })
   } catch (error) {
-    logger.error('切换 OpenAI 账户状态失败:', error)
+    logger.error('切换 OpenAI Cuenta状态Falló:', error)
     return res.status(500).json({
       success: false,
-      message: '切换账户状态失败',
+      message: '切换Cuenta状态Falló',
       error: error.message
     })
   }
 })
 
-// 重置 OpenAI 账户状态（清除所有异常状态）
+// 重置 OpenAI Cuenta状态（清除所有异常状态）
 router.post('/:accountId/reset-status', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -787,16 +787,16 @@ router.post('/:accountId/reset-status', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 切换 OpenAI 账户调度状态
+// 切换 OpenAI Cuenta调度状态
 router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
 
     const result = await openaiAccountService.toggleSchedulable(accountId)
 
-    // 如果账号被禁用，发送webhook通知
+    // 如果账号被Deshabilitar，发送webhook通知
     if (!result.schedulable) {
-      // 获取账号信息
+      // Obtener账号Información
       const account = await redis.getOpenAiAccount(accountId)
       if (account) {
         await webhookNotifier.sendAccountAnomalyNotification({
@@ -805,7 +805,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
           platform: 'openai',
           status: 'disabled',
           errorCode: 'OPENAI_MANUALLY_DISABLED',
-          reason: '账号已被管理员手动禁用调度',
+          reason: '账号已被管理员手动Deshabilitar调度',
           timestamp: new Date().toISOString()
         })
       }
@@ -817,7 +817,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
       message: result.schedulable ? 'Programación habilitada' : 'Programación deshabilitada'
     })
   } catch (error) {
-    logger.error('切换 OpenAI 账户调度状态失败:', error)
+    logger.error('切换 OpenAI Cuenta调度状态Falló:', error)
     return res.status(500).json({
       success: false,
       message: 'Error al cambiar el estado de programación',

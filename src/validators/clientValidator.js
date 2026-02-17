@@ -1,6 +1,6 @@
 /**
- * 客户端验证器
- * 用于验证请求是否来自特定的客户端
+ * ClienteValidar器
+ * 用于ValidarSolicitud是否来自特定的Cliente
  */
 
 const logger = require('../utils/logger')
@@ -15,7 +15,7 @@ const GeminiCliValidator = require('./clients/geminiCliValidator')
 const CodexCliValidator = require('./clients/codexCliValidator')
 const DroidCliValidator = require('./clients/droidCliValidator')
 
-// 客户端ID到验证器的映射表
+// ClienteID到Validar器的映射Tabla
 const VALIDATOR_MAP = {
   [CLIENT_IDS.CLAUDE_CODE]: ClaudeCodeValidator,
   [CLIENT_IDS.GEMINI_CLI]: GeminiCliValidator,
@@ -24,13 +24,13 @@ const VALIDATOR_MAP = {
 }
 
 /**
- * 客户端验证器类
+ * ClienteValidar器Clase
  */
 class ClientValidator {
   /**
-   * 获取客户端验证器
-   * @param {string} clientId - 客户端ID
-   * @returns {Object|null} 验证器实例
+   * ObtenerClienteValidar器
+   * @param {string} clientId - ClienteID
+   * @returns {Object|null} Validar器Instancia
    */
   static getValidator(clientId) {
     const validator = VALIDATOR_MAP[clientId]
@@ -42,18 +42,18 @@ class ClientValidator {
   }
 
   /**
-   * 获取所有支持的客户端ID列表
-   * @returns {Array<string>} 客户端ID列表
+   * Obtener所有Soportar的ClienteIDColumnaTabla
+   * @returns {Array<string>} ClienteIDColumnaTabla
    */
   static getSupportedClients() {
     return Object.keys(VALIDATOR_MAP)
   }
 
   /**
-   * 验证单个客户端
-   * @param {string} clientId - 客户端ID
-   * @param {Object} req - Express请求对象
-   * @returns {boolean} 验证结果
+   * Validar单个Cliente
+   * @param {string} clientId - ClienteID
+   * @param {Object} req - ExpressSolicitudObjeto
+   * @returns {boolean} Validar结果
    */
   static validateClient(clientId, req) {
     const validator = this.getValidator(clientId)
@@ -72,24 +72,24 @@ class ClientValidator {
   }
 
   /**
-   * 验证请求是否来自允许的客户端列表中的任一客户端
-   * 包含路径白名单检查，防止通过其他兼容端点绕过客户端限制
-   * @param {Array<string>} allowedClients - 允许的客户端ID列表
-   * @param {Object} req - Express请求对象
-   * @returns {Object} 验证结果对象
+   * ValidarSolicitud是否来自允许的ClienteColumnaTabla中的任一Cliente
+   * IncluirRuta白名单Verificar，防止通过其他兼容Endpoint绕过ClienteLímite
+   * @param {Array<string>} allowedClients - 允许的ClienteIDColumnaTabla
+   * @param {Object} req - ExpressSolicitudObjeto
+   * @returns {Object} Validar结果Objeto
    */
   static validateRequest(allowedClients, req) {
     const userAgent = req.headers['user-agent'] || ''
     const clientIP = req.ip || req.connection?.remoteAddress || 'unknown'
     const requestPath = req.originalUrl || req.path || ''
 
-    // 记录验证开始
+    // RegistroValidarIniciando
     logger.api(`🔍 Starting client validation for User-Agent: "${userAgent}"`)
     logger.api(`   Allowed clients: ${allowedClients.join(', ')}`)
     logger.api(`   Request path: ${requestPath}`)
     logger.api(`   Request from IP: ${clientIP}`)
 
-    // 遍历所有允许的客户端进行验证
+    // 遍历所有允许的Cliente进FilaValidar
     for (const clientId of allowedClients) {
       const validator = this.getValidator(clientId)
 
@@ -98,7 +98,7 @@ class ClientValidator {
         continue
       }
 
-      // 路径白名单检查：先检查路径是否允许该客户端访问
+      // Ruta白名单Verificar：先VerificarRuta是否允许该Cliente访问
       if (!isPathAllowedForClient(clientId, requestPath)) {
         logger.debug(`Path "${requestPath}" not allowed for ${validator.getName()}, skipping`)
         continue
@@ -108,7 +108,7 @@ class ClientValidator {
 
       try {
         if (validator.validate(req)) {
-          // 验证成功
+          // ValidarÉxito
           logger.api(`✅ Client validated: ${validator.getName()} (${clientId})`)
           logger.api(`   Matched User-Agent: "${userAgent}"`)
           logger.api(`   Allowed path: "${requestPath}"`)
@@ -126,7 +126,7 @@ class ClientValidator {
       }
     }
 
-    // 没有匹配的客户端
+    // 没有匹配的Cliente
     logger.api(
       `❌ No matching client found for User-Agent: "${userAgent}" and path: "${requestPath}"`
     )
@@ -140,9 +140,9 @@ class ClientValidator {
   }
 
   /**
-   * 获取客户端信息
-   * @param {string} clientId - 客户端ID
-   * @returns {Object} 客户端信息
+   * ObtenerClienteInformación
+   * @param {string} clientId - ClienteID
+   * @returns {Object} ClienteInformación
    */
   static getClientInfo(clientId) {
     const validator = this.getValidator(clientId)
@@ -154,11 +154,11 @@ class ClientValidator {
   }
 
   /**
-   * 获取所有可用的客户端信息
-   * @returns {Array<Object>} 客户端信息数组
+   * Obtener所有可用的ClienteInformación
+   * @returns {Array<Object>} ClienteInformaciónArreglo
    */
   static getAvailableClients() {
-    // 直接从 CLIENT_DEFINITIONS 返回所有客户端信息
+    // 直接从 CLIENT_DEFINITIONS Retornar所有ClienteInformación
     return getAllClientDefinitions()
   }
 }

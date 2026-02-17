@@ -6,7 +6,7 @@ class ClaudeConsoleBalanceProvider extends BaseBalanceProvider {
   }
 
   async queryBalance(account) {
-    this.logger.debug(`查询 Claude Console 余额（字段）: ${account?.id}`)
+    this.logger.debug(`Consulta Claude Console 余额（Campo）: ${account?.id}`)
     return this.readQuotaFromFields(account)
   }
 }

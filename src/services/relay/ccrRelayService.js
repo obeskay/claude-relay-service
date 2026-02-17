@@ -12,7 +12,7 @@ class CcrRelayService {
     this.defaultUserAgent = 'claude-relay-service/1.0.0'
   }
 
-  // 🚀 转发请求到CCR API
+  // 🚀 转发Solicitud到CCR API
   async relayRequest(
     requestBody,
     apiKeyData,
@@ -28,16 +28,16 @@ class CcrRelayService {
     let queueRequestId = null
 
     try {
-      // 📬 用户消息队列处理
+      // 📬 Usuario消息ColaProcesar
       if (userMessageQueueService.isUserMessageRequest(requestBody)) {
-        // 校验 accountId 非空，避免空值污染队列锁键
+        // 校验 accountId 非空，避免空Valor污染Cola锁键
         if (!accountId || accountId === '') {
           logger.error('❌ accountId missing for queue lock in CCR relayRequest')
           throw new Error('accountId missing for queue lock')
         }
         const queueResult = await userMessageQueueService.acquireQueueLock(accountId)
         if (!queueResult.acquired && !queueResult.skipped) {
-          // 区分 Redis 后端错误和队列超时
+          // 区分 Redis 后端Error和ColaTiempo de espera agotado
           const isBackendError = queueResult.error === 'queue_backend_error'
           const errorCode = isBackendError ? 'QUEUE_BACKEND_ERROR' : 'QUEUE_TIMEOUT'
           const errorType = isBackendError ? 'queue_backend_error' : 'queue_timeout'
@@ -46,7 +46,7 @@ class CcrRelayService {
             : 'User message queue wait timeout, please retry later'
           const statusCode = isBackendError ? 500 : 503
 
-          // 结构化性能日志，用于后续统计
+          // 结构化RendimientoRegistro，用于后续Estadística
           logger.performance('user_message_queue_error', {
             errorType,
             errorCode,
@@ -84,7 +84,7 @@ class CcrRelayService {
         }
       }
 
-      // 获取账户信息
+      // ObtenerCuentaInformación
       account = await ccrAccountService.getAccount(accountId)
       if (!account) {
         throw new Error('CCR account not found')
@@ -98,7 +98,7 @@ class CcrRelayService {
       logger.debug(`🔑 Account has apiKey: ${!!account.apiKey}`)
       logger.debug(`📝 Request model: ${requestBody.model}`)
 
-      // 处理模型前缀解析和映射
+      // Procesar模型前缀Analizar和映射
       const { baseModel } = parseVendorPrefixedModel(requestBody.model)
       logger.debug(`🔄 Parsed base model: ${baseModel} from original: ${requestBody.model}`)
 
@@ -115,19 +115,19 @@ class CcrRelayService {
         }
       }
 
-      // 创建修改后的请求体，使用去前缀后的模型名
+      // Crear修改后的Solicitud体，使用去前缀后的模型名
       const modifiedRequestBody = {
         ...requestBody,
         model: mappedModel
       }
 
-      // 创建代理agent
+      // CrearProxyagent
       const proxyAgent = ccrAccountService._createProxyAgent(account.proxy)
 
-      // 创建AbortController用于取消请求
+      // CrearAbortController用于取消Solicitud
       abortController = new AbortController()
 
-      // 设置客户端断开监听器
+      // EstablecerCliente断开Escucha
       const handleClientDisconnect = () => {
         logger.info('🔌 Client disconnected, aborting CCR request')
         if (abortController && !abortController.signal.aborted) {
@@ -135,7 +135,7 @@ class CcrRelayService {
         }
       }
 
-      // 监听客户端断开事件
+      // 监听Cliente断开Evento
       if (clientRequest) {
         clientRequest.once('close', handleClientDisconnect)
       }
@@ -143,21 +143,21 @@ class CcrRelayService {
         clientResponse.once('close', handleClientDisconnect)
       }
 
-      // 构建完整的API URL
-      // 构建完整的API URL
-      const cleanUrl = account.apiUrl.replace(/\/$/, '') // 移除末尾斜杠
+      // Construir完整的API URL
+      // Construir完整的API URL
+      const cleanUrl = account.apiUrl.replace(/\/$/, '') // Eliminación末尾斜杠
       let apiEndpoint
 
       if (options.customPath) {
-        // 如果指定了自定义路径（如 /v1/messages/count_tokens）
+        // 如果指定了自定义Ruta（如 /v1/messages/count_tokens）
         // 尝试从 cleanUrl 中提取 base URL
         let baseUrl = cleanUrl
 
-        // 1. 如果配置的是完整路径 .../v1/messages，去掉 /v1/messages
+        // 1. 如果Configuración的是完整Ruta .../v1/messages，去掉 /v1/messages
         if (baseUrl.endsWith('/v1/messages')) {
           baseUrl = baseUrl.substring(0, baseUrl.length - '/v1/messages'.length)
         }
-        // 2. 如果配置的是 .../v1，去掉 /v1
+        // 2. 如果Configuración的是 .../v1，去掉 /v1
         else if (baseUrl.endsWith('/v1')) {
           baseUrl = baseUrl.substring(0, baseUrl.length - '/v1'.length)
         }
@@ -168,7 +168,7 @@ class CcrRelayService {
           : `/${options.customPath}`
         apiEndpoint = `${baseUrl}${path}`
       } else {
-        // 默认使用 messages 端点
+        // Predeterminado使用 messages Endpoint
         if (cleanUrl.endsWith('/v1/messages')) {
           apiEndpoint = cleanUrl
         } else if (cleanUrl.endsWith('/v1')) {
@@ -182,18 +182,18 @@ class CcrRelayService {
       logger.debug(`[DEBUG] Options passed to relayRequest: ${JSON.stringify(options)}`)
       logger.debug(`[DEBUG] Client headers received: ${JSON.stringify(clientHeaders)}`)
 
-      // 过滤客户端请求头
+      // FiltrarClienteSolicitud头
       const filteredHeaders = this._filterClientHeaders(clientHeaders)
       logger.debug(`[DEBUG] Filtered client headers: ${JSON.stringify(filteredHeaders)}`)
 
-      // 决定使用的 User-Agent：优先使用账户自定义的，否则透传客户端的，最后才使用默认值
+      // 决定使用的 User-Agent：优先使用Cuenta自定义的，否则透传Cliente的，最后才使用PredeterminadoValor
       const userAgent =
         account.userAgent ||
         clientHeaders?.['user-agent'] ||
         clientHeaders?.['User-Agent'] ||
         this.defaultUserAgent
 
-      // 准备请求配置
+      // 准备SolicitudConfiguración
       const requestConfig = {
         method: 'POST',
         url: apiEndpoint,
@@ -215,7 +215,7 @@ class CcrRelayService {
         requestConfig.proxy = false
       }
 
-      // 根据 API Key 格式选择认证方式
+      // 根据 API Key Formato选择认证方式
       if (account.apiKey && account.apiKey.startsWith('sk-ant-')) {
         // Anthropic 官方 API Key 使用 x-api-key
         requestConfig.headers['x-api-key'] = account.apiKey
@@ -238,15 +238,15 @@ class CcrRelayService {
         logger.debug('[DEBUG] No beta header to add')
       }
 
-      // 发送请求
+      // 发送Solicitud
       logger.debug(
         '📤 Sending request to CCR API with headers:',
         JSON.stringify(requestConfig.headers, null, 2)
       )
       const response = await axios(requestConfig)
 
-      // 📬 请求已发送成功，立即释放队列锁（无需等待响应处理完成）
-      // 因为 Claude API 限流基于请求发送时刻计算（RPM），不是请求完成时刻
+      // 📬 Solicitud已发送Éxito，立即释放Cola锁（无需等待RespuestaProcesarCompletado）
+      // 因为 Claude API 限流基于Solicitud发送时刻Calcular（RPM），不是SolicitudCompletado时刻
       if (queueLockAcquired && queueRequestId && accountId) {
         try {
           await userMessageQueueService.releaseQueueLock(accountId, queueRequestId)
@@ -262,7 +262,7 @@ class CcrRelayService {
         }
       }
 
-      // 移除监听器（请求成功完成）
+      // EliminaciónEscucha（SolicitudÉxitoCompletado）
       if (clientRequest) {
         clientRequest.removeListener('close', handleClientDisconnect)
       }
@@ -280,7 +280,7 @@ class CcrRelayService {
         `[DEBUG] Response data preview: ${typeof response.data === 'string' ? response.data.substring(0, 200) : JSON.stringify(response.data).substring(0, 200)}`
       )
 
-      // 检查错误状态并相应处理
+      // VerificarError状态并相应Procesar
       if (response.status === 401) {
         logger.warn(`🚫 Unauthorized error detected for CCR account ${accountId}`)
         const autoProtectionDisabled =
@@ -290,7 +290,7 @@ class CcrRelayService {
         }
       } else if (response.status === 429) {
         logger.warn(`🚫 Rate limit detected for CCR account ${accountId}`)
-        // 收到429先检查是否因为超过了手动配置的每日额度
+        // 收到429先Verificar是否因为超过了手动Configuración的每日额度
         await ccrAccountService.checkQuotaUsage(accountId).catch((err) => {
           logger.error('❌ Failed to check quota after 429 error:', err)
         })
@@ -326,7 +326,7 @@ class CcrRelayService {
             .catch(() => {})
         }
       } else if (response.status === 200 || response.status === 201) {
-        // 如果请求成功，检查并移除错误状态
+        // 如果SolicitudÉxito，Verificar并EliminaciónError状态
         const isRateLimited = await ccrAccountService.isAccountRateLimited(accountId)
         if (isRateLimited) {
           await ccrAccountService.removeAccountRateLimit(accountId)
@@ -337,7 +337,7 @@ class CcrRelayService {
         }
       }
 
-      // 更新最后使用时间
+      // Actualizar最后使用Tiempo
       await this._updateLastUsedTime(accountId)
 
       const responseBody =
@@ -351,7 +351,7 @@ class CcrRelayService {
         accountId
       }
     } catch (error) {
-      // 处理特定错误
+      // Procesar特定Error
       if (error.name === 'AbortError' || error.code === 'ECONNABORTED') {
         logger.info('Request aborted due to client disconnect')
         throw new Error('Client disconnected')
@@ -362,7 +362,7 @@ class CcrRelayService {
         error.message
       )
 
-      // 网络错误标记临时不可用
+      // 网络Error标记临时不可用
       if (accountId && !error.response) {
         const autoProtectionDisabled =
           account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
@@ -373,7 +373,7 @@ class CcrRelayService {
 
       throw error
     } finally {
-      // 📬 释放用户消息队列锁（兜底，正常情况下已在请求发送后提前释放）
+      // 📬 释放Usuario消息Cola锁（兜底，正常情况下已在Solicitud发送后提前释放）
       if (queueLockAcquired && queueRequestId && accountId) {
         try {
           await userMessageQueueService.releaseQueueLock(accountId, queueRequestId)
@@ -390,7 +390,7 @@ class CcrRelayService {
     }
   }
 
-  // 🌊 处理流式响应
+  // 🌊 Procesar流式Respuesta
   async relayStreamRequestWithUsageCapture(
     requestBody,
     apiKeyData,
@@ -406,9 +406,9 @@ class CcrRelayService {
     let queueRequestId = null
 
     try {
-      // 📬 用户消息队列处理
+      // 📬 Usuario消息ColaProcesar
       if (userMessageQueueService.isUserMessageRequest(requestBody)) {
-        // 校验 accountId 非空，避免空值污染队列锁键
+        // 校验 accountId 非空，避免空Valor污染Cola锁键
         if (!accountId || accountId === '') {
           logger.error(
             '❌ accountId missing for queue lock in CCR relayStreamRequestWithUsageCapture'
@@ -417,7 +417,7 @@ class CcrRelayService {
         }
         const queueResult = await userMessageQueueService.acquireQueueLock(accountId)
         if (!queueResult.acquired && !queueResult.skipped) {
-          // 区分 Redis 后端错误和队列超时
+          // 区分 Redis 后端Error和ColaTiempo de espera agotado
           const isBackendError = queueResult.error === 'queue_backend_error'
           const errorCode = isBackendError ? 'QUEUE_BACKEND_ERROR' : 'QUEUE_TIMEOUT'
           const errorType = isBackendError ? 'queue_backend_error' : 'queue_timeout'
@@ -426,7 +426,7 @@ class CcrRelayService {
             : 'User message queue wait timeout, please retry later'
           const statusCode = isBackendError ? 500 : 503
 
-          // 结构化性能日志，用于后续��计
+          // 结构化RendimientoRegistro，用于后续��计
           logger.performance('user_message_queue_error', {
             errorType,
             errorCode,
@@ -472,7 +472,7 @@ class CcrRelayService {
         }
       }
 
-      // 获取账户信息
+      // ObtenerCuentaInformación
       account = await ccrAccountService.getAccount(accountId)
       if (!account) {
         throw new Error('CCR account not found')
@@ -483,7 +483,7 @@ class CcrRelayService {
       )
       logger.debug(`🌐 Account API URL: ${account.apiUrl}`)
 
-      // 处理模型前缀解析和映射
+      // Procesar模型前缀Analizar和映射
       const { baseModel } = parseVendorPrefixedModel(requestBody.model)
       logger.debug(`🔄 Parsed base model: ${baseModel} from original: ${requestBody.model}`)
 
@@ -500,16 +500,16 @@ class CcrRelayService {
         }
       }
 
-      // 创建修改后的请求体，使用去前缀后的模型名
+      // Crear修改后的Solicitud体，使用去前缀后的模型名
       const modifiedRequestBody = {
         ...requestBody,
         model: mappedModel
       }
 
-      // 创建代理agent
+      // CrearProxyagent
       const proxyAgent = ccrAccountService._createProxyAgent(account.proxy)
 
-      // 发送流式请求
+      // 发送流式Solicitud
       await this._makeCcrStreamRequest(
         modifiedRequestBody,
         account,
@@ -520,7 +520,7 @@ class CcrRelayService {
         usageCallback,
         streamTransformer,
         options,
-        // 📬 回调：在收到响应头时释放队列锁
+        // 📬 回调：在收到Respuesta头时释放Cola锁
         async () => {
           if (queueLockAcquired && queueRequestId && accountId) {
             try {
@@ -539,17 +539,17 @@ class CcrRelayService {
         }
       )
 
-      // 更新最后使用时间
+      // Actualizar最后使用Tiempo
       await this._updateLastUsedTime(accountId)
     } catch (error) {
-      // 客户端主动断开连接是正常情况，使用 INFO 级别
+      // Cliente主动断开Conexión是正常情况，使用 INFO 级别
       if (error.message === 'Client disconnected') {
         logger.info(
           `🔌 CCR stream relay ended: Client disconnected (Account: ${account?.name || accountId})`
         )
       } else {
         logger.error(`❌ CCR stream relay failed (Account: ${account?.name || accountId}):`, error)
-        // 网络错误标记临时不可用
+        // 网络Error标记临时不可用
         if (accountId && !error.response) {
           const autoProtectionDisabled =
             account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
@@ -560,7 +560,7 @@ class CcrRelayService {
       }
       throw error
     } finally {
-      // 📬 释放用户消息队列锁（兜底，正常情况下已在收到响应头后提前释放）
+      // 📬 释放Usuario消息Cola锁（兜底，正常情况下已在收到Respuesta头后提前释放）
       if (queueLockAcquired && queueRequestId && accountId) {
         try {
           await userMessageQueueService.releaseQueueLock(accountId, queueRequestId)
@@ -577,7 +577,7 @@ class CcrRelayService {
     }
   }
 
-  // 🌊 发送流式请求到CCR API
+  // 🌊 发送流式Solicitud到CCR API
   async _makeCcrStreamRequest(
     body,
     account,
@@ -593,24 +593,24 @@ class CcrRelayService {
     return new Promise((resolve, reject) => {
       let aborted = false
 
-      // 构建完整的API URL
-      const cleanUrl = account.apiUrl.replace(/\/$/, '') // 移除末尾斜杠
+      // Construir完整的API URL
+      const cleanUrl = account.apiUrl.replace(/\/$/, '') // Eliminación末尾斜杠
       const apiEndpoint = cleanUrl.endsWith('/v1/messages') ? cleanUrl : `${cleanUrl}/v1/messages`
 
       logger.debug(`🎯 Final API endpoint for stream: ${apiEndpoint}`)
 
-      // 过滤客户端请求头
+      // FiltrarClienteSolicitud头
       const filteredHeaders = this._filterClientHeaders(clientHeaders)
       logger.debug(`[DEBUG] Filtered client headers: ${JSON.stringify(filteredHeaders)}`)
 
-      // 决定使用的 User-Agent：优先使用账户自定义的，否则透传客户端的，最后才使用默认值
+      // 决定使用的 User-Agent：优先使用Cuenta自定义的，否则透传Cliente的，最后才使用PredeterminadoValor
       const userAgent =
         account.userAgent ||
         clientHeaders?.['user-agent'] ||
         clientHeaders?.['User-Agent'] ||
         this.defaultUserAgent
 
-      // 准备请求配置
+      // 准备SolicitudConfiguración
       const requestConfig = {
         method: 'POST',
         url: apiEndpoint,
@@ -632,7 +632,7 @@ class CcrRelayService {
         requestConfig.proxy = false
       }
 
-      // 根据 API Key 格式选择认证方式
+      // 根据 API Key Formato选择认证方式
       if (account.apiKey && account.apiKey.startsWith('sk-ant-')) {
         // Anthropic 官方 API Key 使用 x-api-key
         requestConfig.headers['x-api-key'] = account.apiKey
@@ -648,17 +648,17 @@ class CcrRelayService {
         requestConfig.headers['anthropic-beta'] = requestOptions.betaHeader
       }
 
-      // 发送请求
+      // 发送Solicitud
       const request = axios(requestConfig)
 
-      // 注意：使用 .then(async ...) 模式处理响应
+      // 注意：使用 .then(async ...) 模式ProcesarRespuesta
       // - 内部的 releaseQueueLock 有独立的 try-catch，不会导致未捕获异常
-      // - queueLockAcquired = false 的赋值会在 finally 执行前完成（JS 单线程保证）
+      // - queueLockAcquired = false 的赋Valor会在 finally Ejecutar前Completado（JS 单Hilo保证）
       request
         .then(async (response) => {
           logger.debug(`🌊 CCR stream response status: ${response.status}`)
 
-          // 错误响应处理
+          // ErrorRespuestaProcesar
           if (response.status !== 200) {
             logger.error(
               `❌ CCR API returned error status: ${response.status} | Account: ${account?.name || accountId}`
@@ -683,7 +683,7 @@ class CcrRelayService {
                   )
                   .catch(() => {})
               }
-              // 检查是否因为超过每日额度
+              // Verificar是否因为超过每日额度
               ccrAccountService.checkQuotaUsage(accountId).catch((err) => {
                 logger.error('❌ Failed to check quota after 429 error:', err)
               })
@@ -700,7 +700,7 @@ class CcrRelayService {
               }
             }
 
-            // 设置错误响应的状态码和响应头
+            // EstablecerErrorRespuesta的状态码和Respuesta头
             if (!responseStream.headersSent) {
               const existingConnection = responseStream.getHeader
                 ? responseStream.getHeader('Connection')
@@ -710,13 +710,13 @@ class CcrRelayService {
                 'Cache-Control': 'no-cache',
                 Connection: existingConnection || 'keep-alive'
               }
-              // 避免 Transfer-Encoding 冲突，让 Express 自动处理
+              // 避免 Transfer-Encoding 冲突，让 Express 自动Procesar
               delete errorHeaders['Transfer-Encoding']
               delete errorHeaders['Content-Length']
               responseStream.writeHead(response.status, errorHeaders)
             }
 
-            // 直接透传错误数据，不进行包装
+            // 直接透传ErrorDatos，不进Fila包装
             response.data.on('data', (chunk) => {
               if (isStreamWritable(responseStream)) {
                 responseStream.write(chunk)
@@ -727,13 +727,13 @@ class CcrRelayService {
               if (isStreamWritable(responseStream)) {
                 responseStream.end()
               }
-              resolve() // 不抛出异常，正常完成流处理
+              resolve() // 不抛出异常，正常Completado流Procesar
             })
             return
           }
 
-          // 📬 收到成功响应头（HTTP 200），调用回调释放队列锁
-          // 此时请求已被 Claude API 接受并计入 RPM 配额，无需等待响应完成
+          // 📬 收到ÉxitoRespuesta头（HTTP 200），调用回调释放Cola锁
+          // 此时Solicitud已被 Claude API 接受并计入 RPM Cuota，无需等待RespuestaCompletado
           if (onResponseHeaderReceived && typeof onResponseHeaderReceived === 'function') {
             try {
               await onResponseHeaderReceived()
@@ -745,7 +745,7 @@ class CcrRelayService {
             }
           }
 
-          // 成功响应，检查并移除错误状态
+          // ÉxitoRespuesta，Verificar并EliminaciónError状态
           ccrAccountService.isAccountRateLimited(accountId).then((isRateLimited) => {
             if (isRateLimited) {
               ccrAccountService.removeAccountRateLimit(accountId)
@@ -757,8 +757,8 @@ class CcrRelayService {
             }
           })
 
-          // 设置响应头
-          // ⚠️ 关键修复：尊重 auth.js 提前设置的 Connection: close
+          // EstablecerRespuesta头
+          // ⚠️ 关键Corrección：尊重 auth.js 提前Establecer的 Connection: close
           if (!responseStream.headersSent) {
             const existingConnection = responseStream.getHeader
               ? responseStream.getHeader('Connection')
@@ -778,7 +778,7 @@ class CcrRelayService {
             responseStream.writeHead(200, headers)
           }
 
-          // 处理流数据和使用统计收集
+          // Procesar流Datos和使用Estadística收集
           let rawBuffer = ''
           const collectedUsage = {}
 
@@ -791,35 +791,35 @@ class CcrRelayService {
               const chunkStr = chunk.toString('utf8')
               rawBuffer += chunkStr
 
-              // 按行分割处理 SSE 数据
+              // 按Fila分割Procesar SSE Datos
               const lines = rawBuffer.split('\n')
-              rawBuffer = lines.pop() // 保留最后一个可能不完整的行
+              rawBuffer = lines.pop() // 保留最后一个可能不完整的Fila
 
               for (const line of lines) {
                 if (line.trim()) {
-                  // 解析 SSE 数据并收集使用统计
+                  // Analizar SSE Datos并收集使用Estadística
                   const usageData = this._parseSSELineForUsage(line)
                   if (usageData) {
                     Object.assign(collectedUsage, usageData)
                   }
 
-                  // 应用流转换器（如果提供）
+                  // 应用流Convertir器（如果提供）
                   let outputLine = line
                   if (streamTransformer && typeof streamTransformer === 'function') {
                     outputLine = streamTransformer(line)
                   }
 
-                  // 写入到响应流
+                  // Escribir到Respuesta流
                   if (outputLine && isStreamWritable(responseStream)) {
                     responseStream.write(`${outputLine}\n`)
                   } else if (outputLine) {
-                    // 客户端连接已断开，记录警告
+                    // ClienteConexión已断开，RegistroAdvertencia
                     logger.warn(
                       `⚠️ [CCR] Client disconnected during stream, skipping data for account: ${accountId}`
                     )
                   }
                 } else {
-                  // 空行也需要传递
+                  // 空Fila也需要传递
                   if (isStreamWritable(responseStream)) {
                     responseStream.write('\n')
                   }
@@ -831,11 +831,11 @@ class CcrRelayService {
           })
 
           response.data.on('end', () => {
-            // 如果收集到使用统计数据，调用回调
+            // 如果收集到使用EstadísticaDatos，调用回调
             if (usageCallback && Object.keys(collectedUsage).length > 0) {
               try {
                 logger.debug(`📊 Collected usage data: ${JSON.stringify(collectedUsage)}`)
-                // 在 usage 回调中包含模型信息
+                // 在 usage 回调中Incluir模型Información
                 usageCallback({ ...collectedUsage, accountId, model: body.model })
               } catch (err) {
                 logger.error('❌ Error in usage callback:', err)
@@ -843,7 +843,7 @@ class CcrRelayService {
             }
 
             if (isStreamWritable(responseStream)) {
-              // 等待数据完全 flush 到客户端后再 resolve
+              // 等待Datos完全 flush 到Cliente后再 resolve
               responseStream.end(() => {
                 logger.debug(
                   `🌊 CCR stream response completed and flushed | bytesWritten: ${responseStream.bytesWritten || 'unknown'}`
@@ -851,7 +851,7 @@ class CcrRelayService {
                 resolve()
               })
             } else {
-              // 连接已断开，记录警告
+              // Conexión已断开，RegistroAdvertencia
               logger.warn(
                 `⚠️ [CCR] Client disconnected before stream end, data may not have been received | account: ${accountId}`
               )
@@ -867,7 +867,7 @@ class CcrRelayService {
             reject(err)
           })
 
-          // 客户端断开处理
+          // Cliente断开Procesar
           responseStream.on('close', () => {
             logger.info('🔌 Client disconnected from CCR stream')
             aborted = true
@@ -903,7 +903,7 @@ class CcrRelayService {
     })
   }
 
-  // 📊 解析SSE行以提取使用统计信息
+  // 📊 AnalizarSSEFila以提取使用EstadísticaInformación
   _parseSSELineForUsage(line) {
     try {
       if (line.startsWith('data: ')) {
@@ -914,14 +914,14 @@ class CcrRelayService {
 
         const jsonData = JSON.parse(data)
 
-        // 检查是否包含使用统计信息
+        // Verificar是否Incluir使用EstadísticaInformación
         if (jsonData.usage) {
           return {
             input_tokens: jsonData.usage.input_tokens || 0,
             output_tokens: jsonData.usage.output_tokens || 0,
             cache_creation_input_tokens: jsonData.usage.cache_creation_input_tokens || 0,
             cache_read_input_tokens: jsonData.usage.cache_read_input_tokens || 0,
-            // 支持 ephemeral cache 字段
+            // Soportar ephemeral cache Campo
             cache_creation_input_tokens_ephemeral_5m:
               jsonData.usage.cache_creation_input_tokens_ephemeral_5m || 0,
             cache_creation_input_tokens_ephemeral_1h:
@@ -929,7 +929,7 @@ class CcrRelayService {
           }
         }
 
-        // 检查 message_delta 事件中的使用统计
+        // Verificar message_delta Evento中的使用Estadística
         if (jsonData.type === 'message_delta' && jsonData.delta && jsonData.delta.usage) {
           return {
             input_tokens: jsonData.delta.usage.input_tokens || 0,
@@ -944,13 +944,13 @@ class CcrRelayService {
         }
       }
     } catch (err) {
-      // 忽略解析错误，不是所有行都包含 JSON
+      // 忽略AnalizarError，不是所有Fila都Incluir JSON
     }
 
     return null
   }
 
-  // 🔍 过滤客户端请求头
+  // 🔍 FiltrarClienteSolicitud头
   _filterClientHeaders(clientHeaders) {
     if (!clientHeaders) {
       return {}
@@ -963,7 +963,7 @@ class CcrRelayService {
       'anthropic-dangerous-direct-browser-access'
     ]
 
-    // 只保留允许的头部信息
+    // 只保留允许的头部Información
     for (const [key, value] of Object.entries(clientHeaders)) {
       const lowerKey = key.toLowerCase()
       if (allowedHeaders.includes(lowerKey)) {
@@ -974,7 +974,7 @@ class CcrRelayService {
     return filteredHeaders
   }
 
-  // ⏰ 更新账户最后使用时间
+  // ⏰ ActualizarCuenta最后使用Tiempo
   async _updateLastUsedTime(accountId) {
     try {
       const redis = require('../../models/redis')

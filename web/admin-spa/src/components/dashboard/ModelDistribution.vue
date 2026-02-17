@@ -3,12 +3,12 @@
     <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
       <h2 class="flex items-center text-xl font-bold text-gray-800">
         <i class="fas fa-robot mr-2 text-purple-500" />
-        模型使用分布
+        Distribución de Modelos
       </h2>
 
       <el-radio-group v-model="modelPeriod" size="small" @change="handlePeriodChange">
-        <el-radio-button label="daily"> 今日 </el-radio-button>
-        <el-radio-button label="total"> 累计 </el-radio-button>
+        <el-radio-button label="daily"> Hoy </el-radio-button>
+        <el-radio-button label="total"> Total </el-radio-button>
       </el-radio-group>
     </div>
 
@@ -17,16 +17,16 @@
       class="py-12 text-center text-gray-500"
     >
       <i class="fas fa-chart-pie mb-3 text-4xl opacity-30" />
-      <p>暂无模型使用数据</p>
+      <p>No hay datos de uso de modelos disponibles</p>
     </div>
 
     <div v-else class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <!-- 饼图 -->
+      <!-- Gráfico de pastel -->
       <div class="relative" style="height: 300px">
         <canvas ref="chartCanvas" />
       </div>
 
-      <!-- 数据列表 -->
+      <!-- Lista de datos -->
       <div class="space-y-3">
         <div
           v-for="(stat, index) in sortedStats"
@@ -38,7 +38,7 @@
             <span class="font-medium text-gray-700">{{ stat.model }}</span>
           </div>
           <div class="text-right">
-            <p class="font-semibold text-gray-800">{{ formatNumber(stat.requests) }} 请求</p>
+            <p class="font-semibold text-gray-800">{{ formatNumber(stat.requests) }} solicitudes</p>
             <p class="text-sm text-gray-500">{{ formatNumber(stat.totalTokens) }} tokens</p>
           </div>
         </div>
@@ -110,7 +110,7 @@ const createChart = () => {
               ).toFixed(1)
               return [
                 `${stat.model}: ${percentage}%`,
-                `请求: ${formatNumber(stat.requests)}`,
+                `Solicitud: ${formatNumber(stat.requests)}`,
                 `Tokens: ${formatNumber(stat.totalTokens)}`
               ]
             }

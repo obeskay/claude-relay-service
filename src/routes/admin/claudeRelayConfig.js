@@ -1,6 +1,6 @@
 /**
- * Claude 转发配置 API 路由
- * 管理全局 Claude Code 限制和会话绑定配置
+ * Claude 转发Configuración API Ruta
+ * 管理全局 Claude Code Límite和Sesión绑定Configuración
  */
 
 const express = require('express')
@@ -12,7 +12,7 @@ const router = express.Router()
 
 /**
  * GET /admin/claude-relay-config
- * 获取 Claude 转发配置
+ * Obtener Claude 转发Configuración
  */
 router.get('/claude-relay-config', authenticateAdmin, async (req, res) => {
   try {
@@ -32,7 +32,7 @@ router.get('/claude-relay-config', authenticateAdmin, async (req, res) => {
 
 /**
  * PUT /admin/claude-relay-config
- * 更新 Claude 转发配置
+ * Actualizar Claude 转发Configuración
  */
 router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
   try {
@@ -50,7 +50,7 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
       concurrentRequestQueueTimeoutMs
     } = req.body
 
-    // 验证输入
+    // Validar输入
     if (claudeCodeOnlyEnabled !== undefined && typeof claudeCodeOnlyEnabled !== 'boolean') {
       return res.status(400).json({ error: 'claudeCodeOnlyEnabled must be a boolean' })
     }
@@ -85,7 +85,7 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 验证用户消息队列配置
+    // ValidarUsuario消息ColaConfiguración
     if (userMessageQueueEnabled !== undefined && typeof userMessageQueueEnabled !== 'boolean') {
       return res.status(400).json({ error: 'userMessageQueueEnabled must be a boolean' })
     }
@@ -114,7 +114,7 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 验证并发请求排队配置
+    // ValidarConcurrenciaSolicitud排队Configuración
     if (
       concurrentRequestQueueEnabled !== undefined &&
       typeof concurrentRequestQueueEnabled !== 'boolean'
@@ -136,7 +136,7 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
     }
 
     if (concurrentRequestQueueMaxSizeMultiplier !== undefined) {
-      // 使用 Number.isFinite() 同时排除 NaN、Infinity、-Infinity 和非数字类型
+      // 使用 Number.isFinite() 同时Excluir NaN、Infinity、-Infinity 和非NúmeroTipo
       if (
         !Number.isFinite(concurrentRequestQueueMaxSizeMultiplier) ||
         concurrentRequestQueueMaxSizeMultiplier < 0 ||
@@ -218,7 +218,7 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
 
 /**
  * GET /admin/claude-relay-config/session-bindings
- * 获取会话绑定统计
+ * ObtenerSesión绑定Estadística
  */
 router.get('/claude-relay-config/session-bindings', authenticateAdmin, async (req, res) => {
   try {

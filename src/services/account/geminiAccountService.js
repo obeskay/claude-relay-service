@@ -18,18 +18,18 @@ const tokenRefreshService = require('../tokenRefreshService')
 const { createEncryptor } = require('../../utils/commonHelper')
 const antigravityClient = require('../antigravityClient')
 
-// Gemini 账户键前缀
+// Gemini Cuenta键前缀
 const GEMINI_ACCOUNT_KEY_PREFIX = 'gemini_account:'
 const SHARED_GEMINI_ACCOUNTS_KEY = 'shared_gemini_accounts'
 const ACCOUNT_SESSION_MAPPING_PREFIX = 'gemini_session_account_mapping:'
 
-// Gemini OAuth 配置 - 支持 Gemini CLI 与 Antigravity 两种 OAuth 应用
+// Gemini OAuth Configuración - Soportar Gemini CLI 与 Antigravity 两种 OAuth 应用
 const OAUTH_PROVIDER_GEMINI_CLI = 'gemini-cli'
 const OAUTH_PROVIDER_ANTIGRAVITY = 'antigravity'
 
 const OAUTH_PROVIDERS = {
   [OAUTH_PROVIDER_GEMINI_CLI]: {
-    // Gemini CLI OAuth 配置（公开）
+    // Gemini CLI OAuth Configuración（公开）
     clientId:
       process.env.GEMINI_OAUTH_CLIENT_ID ||
       '681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com',
@@ -37,7 +37,7 @@ const OAUTH_PROVIDERS = {
     scopes: ['https://www.googleapis.com/auth/cloud-platform']
   },
   [OAUTH_PROVIDER_ANTIGRAVITY]: {
-    // Antigravity OAuth 配置（参考 gcli2api）
+    // Antigravity OAuth Configuración（参考 gcli2api）
     clientId:
       process.env.ANTIGRAVITY_OAUTH_CLIENT_ID ||
       '1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com',
@@ -55,12 +55,12 @@ const OAUTH_PROVIDERS = {
 
 if (!process.env.GEMINI_OAUTH_CLIENT_SECRET) {
   logger.warn(
-    '⚠️ GEMINI_OAUTH_CLIENT_SECRET 未设置，使用内置默认值（建议在生产环境通过环境变量覆盖）'
+    '⚠️ GEMINI_OAUTH_CLIENT_SECRET 未Establecer，使用内置PredeterminadoValor（建议在生产环境通过Variable de entorno覆盖）'
   )
 }
 if (!process.env.ANTIGRAVITY_OAUTH_CLIENT_SECRET) {
   logger.warn(
-    '⚠️ ANTIGRAVITY_OAUTH_CLIENT_SECRET 未设置，使用内置默认值（建议在生产环境通过环境变量覆盖）'
+    '⚠️ ANTIGRAVITY_OAUTH_CLIENT_SECRET 未Establecer，使用内置PredeterminadoValor（建议在生产环境通过Variable de entorno覆盖）'
   )
 }
 
@@ -78,19 +78,19 @@ function getOauthProviderConfig(oauthProvider) {
   return OAUTH_PROVIDERS[normalized] || OAUTH_PROVIDERS[OAUTH_PROVIDER_GEMINI_CLI]
 }
 
-// 🌐 TCP Keep-Alive Agent 配置
-// 解决长时间流式请求中 NAT/防火墙空闲超时导致的连接中断问题
+// 🌐 TCP Keep-Alive Agent Configuración
+// 解决长Tiempo流式Solicitud中 NAT/防火墙空闲Tiempo de espera agotado导致的Conexión中断问题
 const keepAliveAgent = new https.Agent({
   keepAlive: true,
   keepAliveMsecs: 30000, // 每30秒发送一次 keep-alive 探测
-  timeout: 120000, // 120秒连接超时
-  maxSockets: 100, // 最大并发连接数
-  maxFreeSockets: 10 // 保持的空闲连接数
+  timeout: 120000, // 120秒ConexiónTiempo de espera agotado
+  maxSockets: 100, // 最大ConcurrenciaConexión数
+  maxFreeSockets: 10 // 保持的空闲Conexión数
 })
 
 logger.info('🌐 Gemini HTTPS Agent initialized with TCP Keep-Alive support')
 
-// 使用 commonHelper 的加密器
+// 使用 commonHelper 的Cifrado器
 const encryptor = createEncryptor('gemini-account-salt')
 const { encrypt, decrypt } = encryptor
 
@@ -205,7 +205,7 @@ async function countTokensAntigravity(client, contents, model, proxyConfig = nul
   return response
 }
 
-// 🧹 定期清理缓存（每10分钟）
+// 🧹 定期LimpiarCaché（每10分钟）
 setInterval(
   () => {
     encryptor.clearCache()
@@ -214,24 +214,24 @@ setInterval(
   10 * 60 * 1000
 )
 
-// 创建 OAuth2 客户端（支持代理配置）
+// Crear OAuth2 Cliente（SoportarProxyConfiguración）
 function createOAuth2Client(redirectUri = null, proxyConfig = null, oauthProvider = null) {
-  // 如果没有提供 redirectUri，使用默认值
+  // 如果没有提供 redirectUri，使用PredeterminadoValor
   const uri = redirectUri || 'http://localhost:45462'
   const oauthConfig = getOauthProviderConfig(oauthProvider)
 
-  // 准备客户端选项
+  // 准备Cliente选项
   const clientOptions = {
     clientId: oauthConfig.clientId,
     clientSecret: oauthConfig.clientSecret,
     redirectUri: uri
   }
 
-  // 如果有代理配置，设置 transporterOptions
+  // 如果有ProxyConfiguración，Establecer transporterOptions
   if (proxyConfig) {
     const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
     if (proxyAgent) {
-      // 通过 transporterOptions 传递代理配置给底层的 Gaxios
+      // 通过 transporterOptions 传递ProxyConfiguración给底层的 Gaxios
       clientOptions.transporterOptions = {
         agent: proxyAgent,
         httpsAgent: proxyAgent
@@ -243,7 +243,7 @@ function createOAuth2Client(redirectUri = null, proxyConfig = null, oauthProvide
   return new OAuth2Client(clientOptions)
 }
 
-// 生成授权 URL (支持 PKCE 和代理)
+// Generar授权 URL (Soportar PKCE 和Proxy)
 async function generateAuthUrl(
   state = null,
   redirectUri = null,
@@ -264,7 +264,7 @@ async function generateAuthUrl(
     logger.debug('🌐 No proxy configured for Gemini auth URL generation')
   }
 
-  // 生成 PKCE code verifier
+  // Generar PKCE code verifier
   const codeVerifier = await oAuth2Client.generateCodeVerifierAsync()
   const stateValue = state || crypto.randomBytes(32).toString('hex')
 
@@ -287,7 +287,7 @@ async function generateAuthUrl(
   }
 }
 
-// 轮询检查 OAuth 授权状态
+// 轮询Verificar OAuth 授权状态
 async function pollAuthorizationStatus(sessionId, maxAttempts = 60, interval = 2000) {
   let attempts = 0
   const client = redisClient.getClientSafe()
@@ -301,10 +301,10 @@ async function pollAuthorizationStatus(sessionId, maxAttempts = 60, interval = 2
 
       const session = JSON.parse(sessionData)
       if (session.code) {
-        // 授权码已获取，交换 tokens
+        // 授权码已Obtener，交换 tokens
         const tokens = await exchangeCodeForTokens(session.code)
 
-        // 清理 session
+        // Limpiar session
         await client.del(`oauth_session:${sessionId}`)
 
         return {
@@ -314,7 +314,7 @@ async function pollAuthorizationStatus(sessionId, maxAttempts = 60, interval = 2
       }
 
       if (session.error) {
-        // 授权失败
+        // 授权Falló
         await client.del(`oauth_session:${sessionId}`)
         return {
           success: false,
@@ -331,7 +331,7 @@ async function pollAuthorizationStatus(sessionId, maxAttempts = 60, interval = 2
     }
   }
 
-  // 超时
+  // Tiempo de espera agotado
   await client.del(`oauth_session:${sessionId}`)
   return {
     success: false,
@@ -339,7 +339,7 @@ async function pollAuthorizationStatus(sessionId, maxAttempts = 60, interval = 2
   }
 }
 
-// 交换授权码获取 tokens (支持 PKCE 和代理)
+// 交换授权码Obtener tokens (Soportar PKCE 和Proxy)
 async function exchangeCodeForTokens(
   code,
   redirectUri = null,
@@ -350,7 +350,7 @@ async function exchangeCodeForTokens(
   try {
     const normalizedProvider = normalizeOauthProvider(oauthProvider)
     const oauthConfig = getOauthProviderConfig(normalizedProvider)
-    // 创建带代理配置的 OAuth2Client
+    // Crear带ProxyConfiguración的 OAuth2Client
     const oAuth2Client = createOAuth2Client(redirectUri, proxyConfig, normalizedProvider)
 
     if (proxyConfig) {
@@ -366,14 +366,14 @@ async function exchangeCodeForTokens(
       redirect_uri: redirectUri
     }
 
-    // 如果提供了 codeVerifier，添加到参数中
+    // 如果提供了 codeVerifier，添加到Parámetro中
     if (codeVerifier) {
       tokenParams.codeVerifier = codeVerifier
     }
 
     const { tokens } = await oAuth2Client.getToken(tokenParams)
 
-    // 转换为兼容格式
+    // Convertir为兼容Formato
     return {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
@@ -387,15 +387,15 @@ async function exchangeCodeForTokens(
   }
 }
 
-// 刷新访问令牌
+// 刷新访问Token
 async function refreshAccessToken(refreshToken, proxyConfig = null, oauthProvider = null) {
   const normalizedProvider = normalizeOauthProvider(oauthProvider)
   const oauthConfig = getOauthProviderConfig(normalizedProvider)
-  // 创建带代理配置的 OAuth2Client
+  // Crear带ProxyConfiguración的 OAuth2Client
   const oAuth2Client = createOAuth2Client(null, proxyConfig, normalizedProvider)
 
   try {
-    // 设置 refresh_token
+    // Establecer refresh_token
     oAuth2Client.setCredentials({
       refresh_token: refreshToken
     })
@@ -408,11 +408,11 @@ async function refreshAccessToken(refreshToken, proxyConfig = null, oauthProvide
       logger.debug('🔄 No proxy configured for Gemini token refresh')
     }
 
-    // 调用 refreshAccessToken 获取新的 tokens
+    // 调用 refreshAccessToken Obtener新的 tokens
     const response = await oAuth2Client.refreshAccessToken()
     const { credentials } = response
 
-    // 检查是否成功获取了新的 access_token
+    // Verificar是否ÉxitoObtener了新的 access_token
     if (!credentials || !credentials.access_token) {
       throw new Error('No access token returned from refresh')
     }
@@ -423,10 +423,10 @@ async function refreshAccessToken(refreshToken, proxyConfig = null, oauthProvide
 
     return {
       access_token: credentials.access_token,
-      refresh_token: credentials.refresh_token || refreshToken, // 保留原 refresh_token 如果没有返回新的
+      refresh_token: credentials.refresh_token || refreshToken, // 保留原 refresh_token 如果没有Retornar新的
       scope: credentials.scope || oauthConfig.scopes.join(' '),
       token_type: credentials.token_type || 'Bearer',
-      expiry_date: credentials.expiry_date || Date.now() + 3600000 // 默认1小时过期
+      expiry_date: credentials.expiry_date || Date.now() + 3600000 // Predeterminado1小时过期
     }
   } catch (error) {
     logger.error('Error refreshing access token:', {
@@ -440,21 +440,21 @@ async function refreshAccessToken(refreshToken, proxyConfig = null, oauthProvide
   }
 }
 
-// 创建 Gemini 账户
+// Crear Gemini Cuenta
 async function createAccount(accountData) {
   const id = uuidv4()
   const now = new Date().toISOString()
   const oauthProvider = normalizeOauthProvider(accountData.oauthProvider)
   const oauthConfig = getOauthProviderConfig(oauthProvider)
 
-  // 处理凭证数据
+  // Procesar凭证Datos
   let geminiOauth = null
   let accessToken = ''
   let refreshToken = ''
   let expiresAt = ''
 
   if (accountData.geminiOauth || accountData.accessToken) {
-    // 如果提供了完整的 OAuth 数据
+    // 如果提供了完整的 OAuth Datos
     if (accountData.geminiOauth) {
       geminiOauth =
         typeof accountData.geminiOauth === 'string'
@@ -474,13 +474,13 @@ async function createAccount(accountData) {
       ;({ accessToken } = accountData)
       refreshToken = accountData.refreshToken || ''
 
-      // 构造完整的 OAuth 数据
+      // 构造完整的 OAuth Datos
       geminiOauth = JSON.stringify({
         access_token: accessToken,
         refresh_token: refreshToken,
         scope: accountData.scope || oauthConfig.scopes.join(' '),
         token_type: accountData.tokenType || 'Bearer',
-        expiry_date: accountData.expiryDate || Date.now() + 3600000 // 默认1小时
+        expiry_date: accountData.expiryDate || Date.now() + 3600000 // Predeterminado1小时
       })
 
       expiresAt = new Date(accountData.expiryDate || Date.now() + 3600000).toISOString()
@@ -489,7 +489,7 @@ async function createAccount(accountData) {
 
   const account = {
     id,
-    platform: 'gemini', // 标识为 Gemini 账户
+    platform: 'gemini', // 标识为 Gemini Cuenta
     name: accountData.name || 'Gemini Account',
     description: accountData.description || '',
     accountType: accountData.accountType || 'shared',
@@ -498,31 +498,31 @@ async function createAccount(accountData) {
 
     // 调度相关
     schedulable: accountData.schedulable !== undefined ? String(accountData.schedulable) : 'true',
-    priority: accountData.priority || 50, // 调度优先级 (1-100，数字越小优先级越高)
+    priority: accountData.priority || 50, // 调度优先级 (1-100，Número越小优先级越高)
 
-    // OAuth 相关字段（加密存储）
+    // OAuth 相关Campo（Cifrado存储）
     geminiOauth: geminiOauth ? encrypt(geminiOauth) : '',
     accessToken: accessToken ? encrypt(accessToken) : '',
     refreshToken: refreshToken ? encrypt(refreshToken) : '',
-    expiresAt, // OAuth Token 过期时间（技术字段，自动刷新）
+    expiresAt, // OAuth Token 过期Tiempo（技术Campo，自动刷新）
     // 只有OAuth方式才有scopes，手动添加的没有
     scopes: accountData.geminiOauth ? accountData.scopes || oauthConfig.scopes.join(' ') : '',
     oauthProvider,
 
-    // ✅ 新增：账户订阅到期时间（业务字段，手动管理）
+    // ✅ Nueva característica：Cuenta订阅到期Tiempo（业务Campo，手动管理）
     subscriptionExpiresAt: accountData.subscriptionExpiresAt || null,
 
-    // 代理设置
+    // ProxyEstablecer
     proxy: accountData.proxy ? JSON.stringify(accountData.proxy) : '',
 
     // 项目 ID（Google Cloud/Workspace 账号需要）
     projectId: accountData.projectId || '',
 
-    // 临时项目 ID（从 loadCodeAssist 接口自动获取）
+    // 临时项目 ID（从 loadCodeAssist Interfaz自动Obtener）
     tempProjectId: accountData.tempProjectId || '',
 
-    // 支持的模型列表（可选）
-    supportedModels: accountData.supportedModels || [], // 空数组表示支持所有模型
+    // Soportar的模型ColumnaTabla（Opcional）
+    supportedModels: accountData.supportedModels || [], // 空ArregloTabla示Soportar所有模型
 
     // 自动防护开关
     disableAutoProtection:
@@ -530,7 +530,7 @@ async function createAccount(accountData) {
         ? 'true'
         : 'false',
 
-    // 时间戳
+    // Tiempo戳
     createdAt: now,
     updatedAt: now,
     lastUsedAt: '',
@@ -542,14 +542,14 @@ async function createAccount(accountData) {
   await client.hset(`${GEMINI_ACCOUNT_KEY_PREFIX}${id}`, account)
   await redisClient.addToIndex('gemini_account:index', id)
 
-  // 如果是共享账户，添加到共享账户集合
+  // 如果是共享Cuenta，添加到共享Cuenta集合
   if (account.accountType === 'shared') {
     await client.sadd(SHARED_GEMINI_ACCOUNTS_KEY, id)
   }
 
   logger.info(`Created Gemini account: ${id}`)
 
-  // 返回时解析代理配置
+  // Retornar时AnalizarProxyConfiguración
   const returnAccount = { ...account }
   if (returnAccount.proxy) {
     try {
@@ -562,7 +562,7 @@ async function createAccount(accountData) {
   return returnAccount
 }
 
-// 获取账户
+// ObtenerCuenta
 async function getAccount(accountId) {
   const client = redisClient.getClientSafe()
   const accountData = await client.hgetall(`${GEMINI_ACCOUNT_KEY_PREFIX}${accountId}`)
@@ -571,7 +571,7 @@ async function getAccount(accountId) {
     return null
   }
 
-  // 解密敏感字段
+  // Descifrado敏感Campo
   if (accountData.geminiOauth) {
     accountData.geminiOauth = decrypt(accountData.geminiOauth)
   }
@@ -582,23 +582,23 @@ async function getAccount(accountId) {
     accountData.refreshToken = decrypt(accountData.refreshToken)
   }
 
-  // 解析代理配置
+  // AnalizarProxyConfiguración
   if (accountData.proxy) {
     try {
       accountData.proxy = JSON.parse(accountData.proxy)
     } catch (e) {
-      // 如果解析失败，保持原样或设置为null
+      // 如果AnalizarFalló，保持原样或Establecer为null
       accountData.proxy = null
     }
   }
 
-  // 转换 schedulable 字符串为布尔值（与 claudeConsoleAccountService 保持一致）
-  accountData.schedulable = accountData.schedulable !== 'false' // 默认为true，只有明确设置为'false'才为false
+  // Convertir schedulable Cadena为布尔Valor（与 claudeConsoleAccountService 保持一致）
+  accountData.schedulable = accountData.schedulable !== 'false' // Predeterminado为true，只有明确Establecer为'false'才为false
 
   return accountData
 }
 
-// 更新账户
+// ActualizarCuenta
 async function updateAccount(accountId, updates) {
   const existingAccount = await getAccount(accountId)
   if (!existingAccount) {
@@ -608,17 +608,17 @@ async function updateAccount(accountId, updates) {
   const now = new Date().toISOString()
   updates.updatedAt = now
 
-  // 检查是否新增了 refresh token
-  // existingAccount.refreshToken 已经是解密后的值了（从 getAccount 返回）
+  // Verificar是否Nueva característica了 refresh token
+  // existingAccount.refreshToken 已经是Descifrado后的Valor了（从 getAccount Retornar）
   const oldRefreshToken = existingAccount.refreshToken || ''
   let needUpdateExpiry = false
 
-  // 处理代理设置
+  // ProcesarProxyEstablecer
   if (updates.proxy !== undefined) {
     updates.proxy = updates.proxy ? JSON.stringify(updates.proxy) : ''
   }
 
-  // 处理 schedulable 字段，确保正确转换为字符串存储
+  // Procesar schedulable Campo，确保正确Convertir为Cadena存储
   if (updates.schedulable !== undefined) {
     updates.schedulable = updates.schedulable.toString()
   }
@@ -627,7 +627,7 @@ async function updateAccount(accountId, updates) {
     updates.oauthProvider = normalizeOauthProvider(updates.oauthProvider)
   }
 
-  // 加密敏感字段
+  // Cifrado敏感Campo
   if (updates.geminiOauth) {
     updates.geminiOauth = encrypt(
       typeof updates.geminiOauth === 'string'
@@ -640,13 +640,13 @@ async function updateAccount(accountId, updates) {
   }
   if (updates.refreshToken) {
     updates.refreshToken = encrypt(updates.refreshToken)
-    // 如果之前没有 refresh token，现在有了，标记需要更新过期时间
+    // 如果之前没有 refresh token，现在有了，标记需要Actualizar过期Tiempo
     if (!oldRefreshToken && updates.refreshToken) {
       needUpdateExpiry = true
     }
   }
 
-  // 更新账户类型时处理共享账户集合
+  // ActualizarCuentaTipo时Procesar共享Cuenta集合
   const client = redisClient.getClientSafe()
   if (updates.accountType && updates.accountType !== existingAccount.accountType) {
     if (updates.accountType === 'shared') {
@@ -656,19 +656,19 @@ async function updateAccount(accountId, updates) {
     }
   }
 
-  // ✅ 关键：如果新增了 refresh token，只更新 token 过期时间
+  // ✅ 关键：如果Nueva característica了 refresh token，只Actualizar token 过期Tiempo
   // 不要覆盖 subscriptionExpiresAt
   if (needUpdateExpiry) {
     const newExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
-    updates.expiresAt = newExpiry // 只更新 OAuth Token 过期时间
+    updates.expiresAt = newExpiry // 只Actualizar OAuth Token 过期Tiempo
     // ⚠️ 重要：不要修改 subscriptionExpiresAt
     logger.info(
       `🔄 New refresh token added for Gemini account ${accountId}, setting token expiry to 10 minutes`
     )
   }
 
-  // ✅ 如果通过路由映射更新了 subscriptionExpiresAt，直接保存
-  // subscriptionExpiresAt 是业务字段，与 token 刷新独立
+  // ✅ 如果通过Ruta映射Actualizar了 subscriptionExpiresAt，直接保存
+  // subscriptionExpiresAt 是业务Campo，与 token 刷新独立
   if (updates.subscriptionExpiresAt !== undefined) {
     // 直接保存，不做任何调整
   }
@@ -681,7 +681,7 @@ async function updateAccount(accountId, updates) {
         : 'false'
   }
 
-  // 如果通过 geminiOauth 更新，也要检查是否新增了 refresh token
+  // 如果通过 geminiOauth Actualizar，也要Verificar是否Nueva característica了 refresh token
   if (updates.geminiOauth && !oldRefreshToken) {
     const oauthData =
       typeof updates.geminiOauth === 'string'
@@ -689,7 +689,7 @@ async function updateAccount(accountId, updates) {
         : updates.geminiOauth
 
     if (oauthData.refresh_token) {
-      // 如果 expiry_date 设置的时间过长（超过1小时），调整为10分钟
+      // 如果 expiry_date Establecer的Tiempo过长（超过1小时），调整为10分钟
       const providedExpiry = oauthData.expiry_date || 0
       const currentTime = Date.now()
       const oneHour = 60 * 60 * 1000
@@ -704,7 +704,7 @@ async function updateAccount(accountId, updates) {
     }
   }
 
-  // 检查是否手动禁用了账号，如果是则发送webhook通知
+  // Verificar是否手动Deshabilitar了账号，如果是则发送webhook通知
   if (updates.isActive === 'false' && existingAccount.isActive !== 'false') {
     try {
       const webhookNotifier = require('../../utils/webhookNotifier')
@@ -725,10 +725,10 @@ async function updateAccount(accountId, updates) {
 
   logger.info(`Updated Gemini account: ${accountId}`)
 
-  // 合并更新后的账户数据
+  // Combina actualización后的CuentaDatos
   const updatedAccount = { ...existingAccount, ...updates }
 
-  // 返回时解析代理配置
+  // Retornar时AnalizarProxyConfiguración
   if (updatedAccount.proxy && typeof updatedAccount.proxy === 'string') {
     try {
       updatedAccount.proxy = JSON.parse(updatedAccount.proxy)
@@ -740,24 +740,24 @@ async function updateAccount(accountId, updates) {
   return updatedAccount
 }
 
-// 删除账户
+// EliminarCuenta
 async function deleteAccount(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
     throw new Error('Account not found')
   }
 
-  // 从 Redis 删除
+  // 从 Redis Eliminar
   const client = redisClient.getClientSafe()
   await client.del(`${GEMINI_ACCOUNT_KEY_PREFIX}${accountId}`)
   await redisClient.removeFromIndex('gemini_account:index', accountId)
 
-  // 从共享账户集合中移除
+  // 从共享Cuenta集合中Eliminación
   if (account.accountType === 'shared') {
     await client.srem(SHARED_GEMINI_ACCOUNTS_KEY, accountId)
   }
 
-  // 清理会话映射（使用反向索引）
+  // LimpiarSesión映射（使用反向Índice）
   const sessionHashes = await client.smembers(`gemini_account_sessions:${accountId}`)
   if (sessionHashes.length > 0) {
     const pipeline = client.pipeline()
@@ -770,7 +770,7 @@ async function deleteAccount(accountId) {
   return true
 }
 
-// 获取所有账户
+// Obtener所有Cuenta
 async function getAllAccounts() {
   const _client = redisClient.getClientSafe()
   const accountIds = await redisClient.getAllIdsByIndex(
@@ -785,21 +785,21 @@ async function getAllAccounts() {
   for (let i = 0; i < keys.length; i++) {
     const accountData = dataList[i]
     if (accountData && Object.keys(accountData).length > 0) {
-      // 获取限流状态信息
+      // Obtener限流状态Información
       const rateLimitInfo = await getAccountRateLimitInfo(accountData.id)
 
-      // 解析代理配置
+      // AnalizarProxyConfiguración
       if (accountData.proxy) {
         try {
           accountData.proxy = JSON.parse(accountData.proxy)
         } catch (e) {
-          // 如果解析失败，设置为null
+          // 如果AnalizarFalló，Establecer为null
           accountData.proxy = null
         }
       }
 
-      // 转换 schedulable 字符串为布尔值（与 getAccount 保持一致）
-      accountData.schedulable = accountData.schedulable !== 'false' // 默认为true，只有明确设置为'false'才为false
+      // Convertir schedulable Cadena为布尔Valor（与 getAccount 保持一致）
+      accountData.schedulable = accountData.schedulable !== 'false' // Predeterminado为true，只有明确Establecer为'false'才为false
 
       const tokenExpiresAt = accountData.expiresAt || null
       const subscriptionExpiresAt =
@@ -807,26 +807,26 @@ async function getAllAccounts() {
           ? accountData.subscriptionExpiresAt
           : null
 
-      // 不解密敏感字段，只返回基本信息
+      // 不Descifrado敏感Campo，只Retornar基本Información
       accounts.push({
         ...accountData,
         geminiOauth: accountData.geminiOauth ? '[ENCRYPTED]' : '',
         accessToken: accountData.accessToken ? '[ENCRYPTED]' : '',
         refreshToken: accountData.refreshToken ? '[ENCRYPTED]' : '',
 
-        // ✅ 前端显示订阅过期时间（业务字段）
+        // ✅ 前端显示订阅过期Tiempo（业务Campo）
         // 注意：前端看到的 expiresAt 实际上是 subscriptionExpiresAt
         tokenExpiresAt,
         subscriptionExpiresAt,
         expiresAt: subscriptionExpiresAt,
 
-        // 添加 scopes 字段用于判断认证方式
-        // 处理空字符串和默认值的情况
+        // 添加 scopes Campo用于判断认证方式
+        // Procesar空Cadena和PredeterminadoValor的情况
         scopes:
           accountData.scopes && accountData.scopes.trim() ? accountData.scopes.split(' ') : [],
         // 添加 hasRefreshToken 标记
         hasRefreshToken: !!accountData.refreshToken,
-        // 添加限流状态信息（统一格式）
+        // 添加限流状态Información（统一Formato）
         rateLimitStatus: rateLimitInfo
           ? {
               isRateLimited: rateLimitInfo.isRateLimited,
@@ -845,9 +845,9 @@ async function getAllAccounts() {
   return accounts
 }
 
-// 选择可用账户（支持专属和共享账户）
+// 选择可用Cuenta（Soportar专属和共享Cuenta）
 async function selectAvailableAccount(apiKeyId, sessionHash = null) {
-  // 首先检查是否有粘性会话
+  // 首先Verificar是否有粘性Sesión
   const client = redisClient.getClientSafe()
   if (sessionHash) {
     const mappedAccountId = await client.get(`${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionHash}`)
@@ -861,17 +861,17 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     }
   }
 
-  // 获取 API Key 信息
+  // Obtener API Key Información
   const apiKeyData = await client.hgetall(`api_key:${apiKeyId}`)
 
-  // 检查是否绑定了 Gemini 账户
+  // Verificar是否绑定了 Gemini Cuenta
   if (apiKeyData.geminiAccountId) {
     const account = await getAccount(apiKeyData.geminiAccountId)
     if (account && account.isActive === 'true') {
-      // 检查 token 是否过期
+      // Verificar token 是否过期
       const isExpired = isTokenExpired(account)
 
-      // 记录token使用情况
+      // Registrotoken使用情况
       logTokenUsage(account.id, account.name, 'gemini', account.expiresAt, isExpired)
 
       if (isExpired) {
@@ -879,7 +879,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
         return await getAccount(account.id)
       }
 
-      // 创建粘性会话映射
+      // Crear粘性Sesión映射
       if (sessionHash) {
         await client.setex(
           `${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionHash}`,
@@ -894,7 +894,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     }
   }
 
-  // 从共享账户池选择
+  // 从共享Cuenta池选择
   const sharedAccountIds = await client.smembers(SHARED_GEMINI_ACCOUNTS_KEY)
   const availableAccounts = []
 
@@ -918,7 +918,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     throw new Error('No available Gemini accounts')
   }
 
-  // 选择最少使用的账户
+  // 选择最少使用的Cuenta
   availableAccounts.sort((a, b) => {
     const aLastUsed = a.lastUsedAt ? new Date(a.lastUsedAt).getTime() : 0
     const bLastUsed = b.lastUsedAt ? new Date(b.lastUsedAt).getTime() : 0
@@ -927,10 +927,10 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
 
   const selectedAccount = availableAccounts[0]
 
-  // 检查并刷新 token
+  // Verificar并刷新 token
   const isExpired = isTokenExpired(selectedAccount)
 
-  // 记录token使用情况
+  // Registrotoken使用情况
   logTokenUsage(
     selectedAccount.id,
     selectedAccount.name,
@@ -944,7 +944,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     return await getAccount(selectedAccount.id)
   }
 
-  // 创建粘性会话映射
+  // Crear粘性Sesión映射
   if (sessionHash) {
     await client.setex(`${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionHash}`, 3600, selectedAccount.id)
     await client.sadd(`gemini_account_sessions:${selectedAccount.id}`, sessionHash)
@@ -954,7 +954,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
   return selectedAccount
 }
 
-// 检查 token 是否过期
+// Verificar token 是否过期
 function isTokenExpired(account) {
   if (!account.expiresAt) {
     return true
@@ -968,19 +968,19 @@ function isTokenExpired(account) {
 }
 
 /**
- * 检查账户订阅是否过期
- * @param {Object} account - 账户对象
+ * VerificarCuenta订阅是否过期
+ * @param {Object} account - CuentaObjeto
  * @returns {boolean} - true: 已过期, false: 未过期
  */
 function isSubscriptionExpired(account) {
   if (!account.subscriptionExpiresAt) {
-    return false // 未设置视为永不过期
+    return false // 未Establecer视为永不过期
   }
   const expiryDate = new Date(account.subscriptionExpiresAt)
   return expiryDate <= new Date()
 }
 
-// 检查账户是否被限流
+// VerificarCuenta是否被限流
 function isRateLimited(account) {
   if (account.rateLimitStatus === 'limited' && account.rateLimitedAt) {
     const limitedAt = new Date(account.rateLimitedAt).getTime()
@@ -992,7 +992,7 @@ function isRateLimited(account) {
   return false
 }
 
-// 刷新账户 token
+// 刷新Cuenta token
 async function refreshAccountToken(accountId) {
   let lockAcquired = false
   let account = null
@@ -1007,20 +1007,20 @@ async function refreshAccountToken(accountId) {
       throw new Error('No refresh token available')
     }
 
-    // 尝试获取分布式锁
+    // 尝试Obtener分布式锁
     lockAcquired = await tokenRefreshService.acquireRefreshLock(accountId, 'gemini')
 
     if (!lockAcquired) {
-      // 如果无法获取锁，说明另一个进程正在刷新
+      // 如果无法Obtener锁，说明另一个ProcesoEn progreso刷新
       logger.info(
         `🔒 Token refresh already in progress for Gemini account: ${account.name} (${accountId})`
       )
       logRefreshSkipped(accountId, account.name, 'gemini', 'already_locked')
 
-      // 等待一段时间后返回，期望其他进程已完成刷新
+      // 等待一段Tiempo后Retornar，期望其他Proceso已Completado刷新
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // 重新获取账户数据（可能已被其他进程刷新）
+      // 重新ObtenerCuentaDatos（可能已被其他Proceso刷新）
       const updatedAccount = await getAccount(accountId)
       if (updatedAccount && updatedAccount.accessToken) {
         const oauthConfig = getOauthProviderConfig(updatedAccount.oauthProvider)
@@ -1037,32 +1037,32 @@ async function refreshAccountToken(accountId) {
       throw new Error('Token refresh in progress by another process')
     }
 
-    // 记录开始刷新
+    // RegistroIniciando刷新
     logRefreshStart(accountId, account.name, 'gemini', 'manual_refresh')
     logger.info(`🔄 Starting token refresh for Gemini account: ${account.name} (${accountId})`)
 
-    // account.refreshToken 已经是解密后的值（从 getAccount 返回）
-    // 传入账户的代理配置
+    // account.refreshToken 已经是Descifrado后的Valor（从 getAccount Retornar）
+    // 传入Cuenta的ProxyConfiguración
     const newTokens = await refreshAccessToken(
       account.refreshToken,
       account.proxy,
       account.oauthProvider
     )
 
-    // 更新账户信息
+    // ActualizarCuentaInformación
     const updates = {
       accessToken: newTokens.access_token,
       refreshToken: newTokens.refresh_token || account.refreshToken,
       expiresAt: new Date(newTokens.expiry_date).toISOString(),
       lastRefreshAt: new Date().toISOString(),
       geminiOauth: JSON.stringify(newTokens),
-      status: 'active', // 刷新成功后，将状态更新为 active
-      errorMessage: '' // 清空错误信息
+      status: 'active', // 刷新Éxito后，将状态Actualizar为 active
+      errorMessage: '' // 清空ErrorInformación
     }
 
     await updateAccount(accountId, updates)
 
-    // 记录刷新成功
+    // Registro刷新Éxito
     logRefreshSuccess(accountId, account.name, 'gemini', {
       accessToken: newTokens.access_token,
       refreshToken: newTokens.refresh_token,
@@ -1076,12 +1076,12 @@ async function refreshAccountToken(accountId) {
 
     return newTokens
   } catch (error) {
-    // 记录刷新失败
+    // Registro刷新Falló
     logRefreshError(accountId, account ? account.name : 'Unknown', 'gemini', error)
 
     logger.error(`Failed to refresh token for account ${accountId}:`, error)
 
-    // 标记账户为错误状态（只有在账户存在时）
+    // 标记Cuenta为Error状态（只有在Cuenta存在时）
     if (account) {
       try {
         await updateAccount(accountId, {
@@ -1117,14 +1117,14 @@ async function refreshAccountToken(accountId) {
   }
 }
 
-// 标记账户被使用
+// 标记Cuenta被使用
 async function markAccountUsed(accountId) {
   await updateAccount(accountId, {
     lastUsedAt: new Date().toISOString()
   })
 }
 
-// 设置账户限流状态
+// EstablecerCuenta限流状态
 async function setAccountRateLimited(accountId, isLimited = true) {
   const updates = isLimited
     ? {
@@ -1139,7 +1139,7 @@ async function setAccountRateLimited(accountId, isLimited = true) {
   await updateAccount(accountId, updates)
 }
 
-// 获取账户的限流信息（参考 claudeAccountService 的实现）
+// ObtenerCuenta的限流Información（参考 claudeAccountService 的实现）
 async function getAccountRateLimitInfo(accountId) {
   try {
     const account = await getAccount(accountId)
@@ -1152,7 +1152,7 @@ async function getAccountRateLimitInfo(accountId) {
       const now = new Date()
       const minutesSinceRateLimit = Math.floor((now - rateLimitedAt) / (1000 * 60))
 
-      // Gemini 限流持续时间为 1 小时
+      // Gemini 限流持续Tiempo为 1 小时
       const minutesRemaining = Math.max(0, 60 - minutesSinceRateLimit)
       const rateLimitEndAt = new Date(rateLimitedAt.getTime() + 60 * 60 * 1000).toISOString()
 
@@ -1178,7 +1178,7 @@ async function getAccountRateLimitInfo(accountId) {
   }
 }
 
-// 获取配置的OAuth客户端 - 参考GeminiCliSimulator的getOauthClient方法（支持代理）
+// ObtenerConfiguración的OAuthCliente - 参考GeminiCliSimulator的getOauthClientMétodo（SoportarProxy）
 async function getOauthClient(accessToken, refreshToken, proxyConfig = null, oauthProvider = null) {
   const normalizedProvider = normalizeOauthProvider(oauthProvider)
   const oauthConfig = getOauthProviderConfig(normalizedProvider)
@@ -1200,25 +1200,25 @@ async function getOauthClient(accessToken, refreshToken, proxyConfig = null, oau
     logger.debug('🌐 No proxy configured for Gemini OAuth client')
   }
 
-  // 设置凭据
+  // Establecer凭据
   client.setCredentials(creds)
 
-  // 验证凭据本地有效性
+  // Validar凭据本地有效性
   const { token } = await client.getAccessToken()
 
   if (!token) {
     return false
   }
 
-  // 验证服务器端token状态（检查是否被撤销）
+  // ValidarServicio器端token状态（Verificar是否被撤销）
   await client.getTokenInfo(token)
 
-  logger.info('✅ OAuth客户端已创建')
+  logger.info('✅ OAuthCliente已Crear')
   return client
 }
 
-// 通用的 Code Assist API 转发函数（用于简单的请求/响应端点）
-// 适用于：loadCodeAssist, onboardUser, countTokens, listExperiments 等不需要特殊处理的端点
+// 通用的 Code Assist API 转发Función（用于简单的Solicitud/RespuestaEndpoint）
+// 适用于：loadCodeAssist, onboardUser, countTokens, listExperiments 等不需要特殊Procesar的Endpoint
 async function forwardToCodeAssist(client, apiMethod, requestBody, proxyConfig = null) {
   const axios = require('axios')
   const CODE_ASSIST_ENDPOINT = 'https://cloudcode-pa.googleapis.com'
@@ -1227,7 +1227,7 @@ async function forwardToCodeAssist(client, apiMethod, requestBody, proxyConfig =
   const { token } = await client.getAccessToken()
   const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
 
-  logger.info(`📡 ${apiMethod} API调用开始`)
+  logger.info(`📡 ${apiMethod} API调用Iniciando`)
 
   const axiosConfig = {
     url: `${CODE_ASSIST_ENDPOINT}/${CODE_ASSIST_API_VERSION}:${apiMethod}`,
@@ -1240,9 +1240,9 @@ async function forwardToCodeAssist(client, apiMethod, requestBody, proxyConfig =
     timeout: 30000
   }
 
-  // 添加代理配置
+  // 添加ProxyConfiguración
   if (proxyAgent) {
-    // 只设置 httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
+    // 只Establecer httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
     axiosConfig.httpsAgent = proxyAgent
     axiosConfig.proxy = false
     logger.info(`🌐 Using proxy for ${apiMethod}: ${ProxyHelper.getProxyDescription(proxyConfig)}`)
@@ -1252,11 +1252,11 @@ async function forwardToCodeAssist(client, apiMethod, requestBody, proxyConfig =
 
   const response = await axios(axiosConfig)
 
-  logger.info(`✅ ${apiMethod} API调用成功`)
+  logger.info(`✅ ${apiMethod} API调用Éxito`)
   return response.data
 }
 
-// 调用 Google Code Assist API 的 loadCodeAssist 方法（支持代理）
+// 调用 Google Code Assist API 的 loadCodeAssist Método（SoportarProxy）
 async function loadCodeAssist(client, projectId = null, proxyConfig = null) {
   const axios = require('axios')
   const CODE_ASSIST_ENDPOINT = 'https://cloudcode-pa.googleapis.com'
@@ -1264,8 +1264,8 @@ async function loadCodeAssist(client, projectId = null, proxyConfig = null) {
 
   const { token } = await client.getAccessToken()
   const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
-  // 🔍 只有个人账户（无 projectId）才需要调用 tokeninfo/userinfo
-  // 这些调用有助于 Google 获取临时 projectId
+  // 🔍 只有个人Cuenta（无 projectId）才需要调用 tokeninfo/userinfo
+  // 这些调用有助于 Google Obtener临时 projectId
   if (!projectId) {
     const tokenInfoConfig = {
       url: 'https://oauth2.googleapis.com/tokeninfo',
@@ -1286,9 +1286,9 @@ async function loadCodeAssist(client, projectId = null, proxyConfig = null) {
 
     try {
       await axios(tokenInfoConfig)
-      logger.info('📋 tokeninfo 接口验证成功')
+      logger.info('📋 tokeninfo InterfazValidarÉxito')
     } catch (error) {
-      logger.warn('⚠️ tokeninfo 接口调用失败:', error.message)
+      logger.warn('⚠️ tokeninfo Interfaz调用Falló:', error.message)
     }
 
     const userInfoConfig = {
@@ -1309,13 +1309,13 @@ async function loadCodeAssist(client, projectId = null, proxyConfig = null) {
 
     try {
       await axios(userInfoConfig)
-      logger.info('📋 userinfo 接口获取成功')
+      logger.info('📋 userinfo InterfazObtenerÉxito')
     } catch (error) {
-      logger.warn('⚠️ userinfo 接口调用失败:', error.message)
+      logger.warn('⚠️ userinfo Interfaz调用Falló:', error.message)
     }
   }
 
-  // 创建ClientMetadata
+  // CrearClientMetadata
   const clientMetadata = {
     ideType: 'IDE_UNSPECIFIED',
     platform: 'PLATFORM_UNSPECIFIED',
@@ -1347,9 +1347,9 @@ async function loadCodeAssist(client, projectId = null, proxyConfig = null) {
     timeout: 30000
   }
 
-  // 添加代理配置
+  // 添加ProxyConfiguración
   if (proxyAgent) {
-    // 只设置 httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
+    // 只Establecer httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
     axiosConfig.httpsAgent = proxyAgent
     axiosConfig.proxy = false
     logger.info(
@@ -1361,13 +1361,13 @@ async function loadCodeAssist(client, projectId = null, proxyConfig = null) {
 
   const response = await axios(axiosConfig)
 
-  logger.info('📋 loadCodeAssist API调用成功')
+  logger.info('📋 loadCodeAssist API调用Éxito')
   return response.data
 }
 
-// 获取onboard层级 - 参考GeminiCliSimulator的getOnboardTier方法
+// Obteneronboard层级 - 参考GeminiCliSimulator的getOnboardTierMétodo
 function getOnboardTier(loadRes) {
-  // 用户层级枚举
+  // Usuario层级枚举
   const UserTierId = {
     LEGACY: 'LEGACY',
     FREE: 'FREE',
@@ -1392,7 +1392,7 @@ function getOnboardTier(loadRes) {
   }
 }
 
-// 调用 Google Code Assist API 的 onboardUser 方法（包含轮询逻辑，支持代理）
+// 调用 Google Code Assist API 的 onboardUser Método（Incluir轮询逻辑，SoportarProxy）
 async function onboardUser(client, tierId, projectId, clientMetadata, proxyConfig = null) {
   const axios = require('axios')
   const CODE_ASSIST_ENDPOINT = 'https://cloudcode-pa.googleapis.com'
@@ -1410,7 +1410,7 @@ async function onboardUser(client, tierId, projectId, clientMetadata, proxyConfi
     onboardReq.cloudaicompanionProject = projectId
   }
 
-  // 创建基础axios配置
+  // Crear基础axiosConfiguración
   const baseAxiosConfig = {
     url: `${CODE_ASSIST_ENDPOINT}/${CODE_ASSIST_API_VERSION}:onboardUser`,
     method: 'POST',
@@ -1422,7 +1422,7 @@ async function onboardUser(client, tierId, projectId, clientMetadata, proxyConfi
     timeout: 30000
   }
 
-  // 添加代理配置
+  // 添加ProxyConfiguración
   const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
   if (proxyAgent) {
     baseAxiosConfig.httpAgent = proxyAgent
@@ -1435,21 +1435,21 @@ async function onboardUser(client, tierId, projectId, clientMetadata, proxyConfi
     logger.debug('🌐 No proxy configured for Gemini onboardUser')
   }
 
-  logger.info('📋 开始onboardUser API调用', {
+  logger.info('📋 IniciandoonboardUser API调用', {
     tierId,
     projectId,
     hasProjectId: !!projectId,
     isFreeTier: tierId === 'free-tier' || tierId === 'FREE'
   })
 
-  // 轮询onboardUser直到长运行操作完成
+  // 轮询onboardUser直到长运FilaOperaciónCompletado
   let lroRes = await axios(baseAxiosConfig)
 
   let attempts = 0
   const maxAttempts = 12 // 最多等待1分钟（5秒 * 12次）
 
   while (!lroRes.data.done && attempts < maxAttempts) {
-    logger.info(`⏳ 等待onboardUser完成... (${attempts + 1}/${maxAttempts})`)
+    logger.info(`⏳ 等待onboardUserCompletado... (${attempts + 1}/${maxAttempts})`)
     await new Promise((resolve) => setTimeout(resolve, 5000))
 
     lroRes = await axios(baseAxiosConfig)
@@ -1457,26 +1457,26 @@ async function onboardUser(client, tierId, projectId, clientMetadata, proxyConfi
   }
 
   if (!lroRes.data.done) {
-    throw new Error('onboardUser操作超时')
+    throw new Error('onboardUserOperaciónTiempo de espera agotado')
   }
 
-  logger.info('✅ onboardUser API调用完成')
+  logger.info('✅ onboardUser API调用Completado')
   return lroRes.data
 }
 
-// 完整的用户设置流程 - 参考setup.ts的逻辑（支持代理）
+// 完整的UsuarioEstablecer流程 - 参考setup.ts的逻辑（SoportarProxy）
 async function setupUser(
   client,
   initialProjectId = null,
   clientMetadata = null,
   proxyConfig = null
 ) {
-  logger.info('🚀 setupUser 开始', { initialProjectId, hasClientMetadata: !!clientMetadata })
+  logger.info('🚀 setupUser Iniciando', { initialProjectId, hasClientMetadata: !!clientMetadata })
 
   let projectId = initialProjectId || process.env.GOOGLE_CLOUD_PROJECT || null
   logger.info('📋 初始项目ID', { projectId, fromEnv: !!process.env.GOOGLE_CLOUD_PROJECT })
 
-  // 默认的ClientMetadata
+  // Predeterminado的ClientMetadata
   if (!clientMetadata) {
     clientMetadata = {
       ideType: 'IDE_UNSPECIFIED',
@@ -1484,36 +1484,36 @@ async function setupUser(
       pluginType: 'GEMINI',
       duetProject: projectId
     }
-    logger.info('🔧 使用默认 ClientMetadata')
+    logger.info('🔧 使用Predeterminado ClientMetadata')
   }
 
   // 调用loadCodeAssist
   logger.info('📞 调用 loadCodeAssist...')
   const loadRes = await loadCodeAssist(client, projectId, proxyConfig)
-  logger.info('✅ loadCodeAssist 完成', {
+  logger.info('✅ loadCodeAssist Completado', {
     hasCloudaicompanionProject: !!loadRes.cloudaicompanionProject
   })
 
-  // 如果没有projectId，尝试从loadRes获取
+  // 如果没有projectId，尝试从loadResObtener
   if (!projectId && loadRes.cloudaicompanionProject) {
     projectId = loadRes.cloudaicompanionProject
-    logger.info('📋 从 loadCodeAssist 获取项目ID', { projectId })
+    logger.info('📋 从 loadCodeAssist Obtener项目ID', { projectId })
   }
 
   const tier = getOnboardTier(loadRes)
-  logger.info('🎯 获取用户层级', {
+  logger.info('🎯 ObtenerUsuario层级', {
     tierId: tier.id,
     userDefinedProject: tier.userDefinedCloudaicompanionProject
   })
 
   if (tier.userDefinedCloudaiCompanionProject && !projectId) {
-    throw new Error('此账号需要设置GOOGLE_CLOUD_PROJECT环境变量或提供projectId')
+    throw new Error('此账号需要EstablecerGOOGLE_CLOUD_PROJECTVariable de entorno或提供projectId')
   }
 
   // 调用onboardUser
   logger.info('📞 调用 onboardUser...', { tierId: tier.id, projectId })
   const lroRes = await onboardUser(client, tier.id, projectId, clientMetadata, proxyConfig)
-  logger.info('✅ onboardUser 完成', { hasDone: !!lroRes.done, hasResponse: !!lroRes.response })
+  logger.info('✅ onboardUser Completado', { hasDone: !!lroRes.done, hasResponse: !!lroRes.response })
 
   const result = {
     projectId: lroRes.response?.cloudaicompanionProject?.id || projectId || '',
@@ -1522,11 +1522,11 @@ async function setupUser(
     onboardRes: lroRes.response || {}
   }
 
-  logger.info('🎯 setupUser 完成', { resultProjectId: result.projectId, userTier: result.userTier })
+  logger.info('🎯 setupUser Completado', { resultProjectId: result.projectId, userTier: result.userTier })
   return result
 }
 
-// 调用 Code Assist API 计算 token 数量（支持代理）
+// 调用 Code Assist API Calcular token 数量（SoportarProxy）
 async function countTokens(client, contents, model = 'gemini-2.0-flash-exp', proxyConfig = null) {
   const axios = require('axios')
   const CODE_ASSIST_ENDPOINT = 'https://cloudcode-pa.googleapis.com'
@@ -1534,7 +1534,7 @@ async function countTokens(client, contents, model = 'gemini-2.0-flash-exp', pro
 
   const { token } = await client.getAccessToken()
 
-  // 按照 gemini-cli 的转换格式构造请求
+  // 按照 gemini-cli 的ConvertirFormato构造Solicitud
   const request = {
     request: {
       model: `models/${model}`,
@@ -1542,7 +1542,7 @@ async function countTokens(client, contents, model = 'gemini-2.0-flash-exp', pro
     }
   }
 
-  logger.info('📊 countTokens API调用开始', { model, contentsLength: contents.length })
+  logger.info('📊 countTokens API调用Iniciando', { model, contentsLength: contents.length })
 
   const axiosConfig = {
     url: `${CODE_ASSIST_ENDPOINT}/${CODE_ASSIST_API_VERSION}:countTokens`,
@@ -1555,10 +1555,10 @@ async function countTokens(client, contents, model = 'gemini-2.0-flash-exp', pro
     timeout: 30000
   }
 
-  // 添加代理配置
+  // 添加ProxyConfiguración
   const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
   if (proxyAgent) {
-    // 只设置 httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
+    // 只Establecer httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
     axiosConfig.httpsAgent = proxyAgent
     axiosConfig.proxy = false
     logger.info(
@@ -1570,11 +1570,11 @@ async function countTokens(client, contents, model = 'gemini-2.0-flash-exp', pro
 
   const response = await axios(axiosConfig)
 
-  logger.info('✅ countTokens API调用成功', { totalTokens: response.data.totalTokens })
+  logger.info('✅ countTokens API调用Éxito', { totalTokens: response.data.totalTokens })
   return response.data
 }
 
-// 调用 Code Assist API 生成内容（非流式）
+// 调用 Code Assist API Generar内容（非流式）
 async function generateContent(
   client,
   requestData,
@@ -1589,7 +1589,7 @@ async function generateContent(
 
   const { token } = await client.getAccessToken()
 
-  // 按照 gemini-cli 的转换格式构造请求
+  // 按照 gemini-cli 的ConvertirFormato构造Solicitud
   const request = {
     model: requestData.model,
     request: {
@@ -1603,20 +1603,20 @@ async function generateContent(
     request.user_prompt_id = userPromptId
   }
 
-  // 只有当projectId存在时才添加project字段
+  // 只有当projectId存在时才添加projectCampo
   if (projectId) {
     request.project = projectId
   }
 
-  logger.info('🤖 generateContent API调用开始', {
+  logger.info('🤖 generateContent API调用Iniciando', {
     model: requestData.model,
     userPromptId,
     projectId,
     sessionId
   })
 
-  // 添加详细的请求日志
-  logger.info('📦 generateContent 请求详情', {
+  // 添加详细的SolicitudRegistro
+  logger.info('📦 generateContent Solicitud详情', {
     url: `${CODE_ASSIST_ENDPOINT}/${CODE_ASSIST_API_VERSION}:generateContent`,
     requestBody: JSON.stringify(request, null, 2)
   })
@@ -1629,31 +1629,31 @@ async function generateContent(
       'Content-Type': 'application/json'
     },
     data: request,
-    timeout: 600000 // 生成内容可能需要更长时间
+    timeout: 600000 // Generar内容可能需要更长Tiempo
   }
 
-  // 添加代理配置
+  // 添加ProxyConfiguración
   const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
   if (proxyAgent) {
-    // 只设置 httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
+    // 只Establecer httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
     axiosConfig.httpsAgent = proxyAgent
     axiosConfig.proxy = false
     logger.info(
       `🌐 Using proxy for Gemini generateContent: ${ProxyHelper.getProxyDescription(proxyConfig)}`
     )
   } else {
-    // 没有代理时，使用 keepAlive agent 防止长时间请求被中断
+    // 没有Proxy时，使用 keepAlive agent 防止长TiempoSolicitud被中断
     axiosConfig.httpsAgent = keepAliveAgent
     logger.debug('🌐 Using keepAlive agent for Gemini generateContent')
   }
 
   const response = await axios(axiosConfig)
 
-  logger.info('✅ generateContent API调用成功')
+  logger.info('✅ generateContent API调用Éxito')
   return response.data
 }
 
-// 调用 Antigravity 上游生成内容（非流式）
+// 调用 Antigravity 上游Generar内容（非流式）
 async function generateContentAntigravity(
   client,
   requestData,
@@ -1670,7 +1670,7 @@ async function generateContentAntigravity(
     userPromptId
   })
 
-  logger.info('🪐 Antigravity generateContent API调用开始', {
+  logger.info('🪐 Antigravity generateContent API调用Iniciando', {
     model,
     userPromptId,
     projectId,
@@ -1686,11 +1686,11 @@ async function generateContentAntigravity(
     userPromptId,
     stream: false
   })
-  logger.info('✅ Antigravity generateContent API调用成功')
+  logger.info('✅ Antigravity generateContent API调用Éxito')
   return response.data
 }
 
-// 调用 Code Assist API 生成内容（流式）
+// 调用 Code Assist API Generar内容（流式）
 async function generateContentStream(
   client,
   requestData,
@@ -1706,7 +1706,7 @@ async function generateContentStream(
 
   const { token } = await client.getAccessToken()
 
-  // 按照 gemini-cli 的转换格式构造请求
+  // 按照 gemini-cli 的ConvertirFormato构造Solicitud
   const request = {
     model: requestData.model,
     request: {
@@ -1720,12 +1720,12 @@ async function generateContentStream(
     request.user_prompt_id = userPromptId
   }
 
-  // 只有当projectId存在时才添加project字段
+  // 只有当projectId存在时才添加projectCampo
   if (projectId) {
     request.project = projectId
   }
 
-  logger.info('🌊 streamGenerateContent API调用开始', {
+  logger.info('🌊 streamGenerateContent API调用Iniciando', {
     model: requestData.model,
     userPromptId,
     projectId,
@@ -1744,37 +1744,37 @@ async function generateContentStream(
     },
     data: request,
     responseType: 'stream',
-    timeout: 0 // 流式请求不设置超时限制，由 keepAlive 和 AbortSignal 控制
+    timeout: 0 // 流式Solicitud不EstablecerTiempo de espera agotadoLímite，由 keepAlive 和 AbortSignal 控制
   }
 
-  // 添加代理配置
+  // 添加ProxyConfiguración
   const proxyAgent = ProxyHelper.createProxyAgent(proxyConfig)
   if (proxyAgent) {
-    // 只设置 httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
-    // 同时设置 httpAgent 和 httpsAgent 可能导致 axios/follow-redirects 选择错误的协议
+    // 只Establecer httpsAgent，因为目标 URL 是 HTTPS (cloudcode-pa.googleapis.com)
+    // 同时Establecer httpAgent 和 httpsAgent 可能导致 axios/follow-redirects 选择Error的Protocolo
     axiosConfig.httpsAgent = proxyAgent
     axiosConfig.proxy = false
     logger.info(
       `🌐 Using proxy for Gemini streamGenerateContent: ${ProxyHelper.getProxyDescription(proxyConfig)}`
     )
   } else {
-    // 没有代理时，使用 keepAlive agent 防止长时间流式请求被中断
+    // 没有Proxy时，使用 keepAlive agent 防止长Tiempo流式Solicitud被中断
     axiosConfig.httpsAgent = keepAliveAgent
     logger.debug('🌐 Using keepAlive agent for Gemini streamGenerateContent')
   }
 
-  // 如果提供了中止信号，添加到配置中
+  // 如果提供了中止信号，添加到Configuración中
   if (signal) {
     axiosConfig.signal = signal
   }
 
   const response = await axios(axiosConfig)
 
-  logger.info('✅ streamGenerateContent API调用成功，开始流式传输')
-  return response.data // 返回流对象
+  logger.info('✅ streamGenerateContent API调用Éxito，Iniciando流式传输')
+  return response.data // Retornar流Objeto
 }
 
-// 调用 Antigravity 上游生成内容（流式）
+// 调用 Antigravity 上游Generar内容（流式）
 async function generateContentStreamAntigravity(
   client,
   requestData,
@@ -1792,7 +1792,7 @@ async function generateContentStreamAntigravity(
     userPromptId
   })
 
-  logger.info('🌊 Antigravity streamGenerateContent API调用开始', {
+  logger.info('🌊 Antigravity streamGenerateContent API调用Iniciando', {
     model,
     userPromptId,
     projectId,
@@ -1810,11 +1810,11 @@ async function generateContentStreamAntigravity(
     signal,
     params: { alt: 'sse' }
   })
-  logger.info('✅ Antigravity streamGenerateContent API调用成功，开始流式传输')
+  logger.info('✅ Antigravity streamGenerateContent API调用Éxito，Iniciando流式传输')
   return response.data
 }
 
-// 更新账户的临时项目 ID
+// ActualizarCuenta的临时项目 ID
 async function updateTempProjectId(accountId, tempProjectId) {
   if (!tempProjectId) {
     return
@@ -1827,7 +1827,7 @@ async function updateTempProjectId(accountId, tempProjectId) {
       return
     }
 
-    // 只有在没有固定项目 ID 的情况下才更新临时项目 ID
+    // 只有在没有固定项目 ID 的情况下才Actualizar临时项目 ID
     if (!account.projectId && tempProjectId !== account.tempProjectId) {
       await updateAccount(accountId, { tempProjectId })
       logger.info(`Updated tempProjectId for account ${accountId}: ${tempProjectId}`)
@@ -1837,7 +1837,7 @@ async function updateTempProjectId(accountId, tempProjectId) {
   }
 }
 
-// 重置账户状态（清除所有异常状态）
+// 重置Cuenta状态（清除所有异常状态）
 async function resetAccountStatus(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
@@ -1845,11 +1845,11 @@ async function resetAccountStatus(accountId) {
   }
 
   const updates = {
-    // 根据是否有有效的 refreshToken 来设置 status
+    // 根据是否有有效的 refreshToken 来Establecer status
     status: account.refreshToken ? 'active' : 'created',
-    // 恢复可调度状态
+    // Restauración可调度状态
     schedulable: 'true',
-    // 清除错误相关字段
+    // 清除Error相关Campo
     errorMessage: '',
     rateLimitedAt: '',
     rateLimitStatus: ''
@@ -1901,14 +1901,14 @@ module.exports = {
   getAccountRateLimitInfo,
   isTokenExpired,
   getOauthClient,
-  forwardToCodeAssist, // 通用转发函数
+  forwardToCodeAssist, // 通用转发Función
   loadCodeAssist,
   getOnboardTier,
   onboardUser,
   setupUser,
   encrypt,
   decrypt,
-  encryptor, // 暴露加密器以便测试和监控
+  encryptor, // 暴露Cifrado器以便Probar和Monitorear
   countTokens,
   countTokensAntigravity,
   generateContent,

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <!-- 导航栏 -->
+    <!-- Barra de navegación -->
     <nav class="bg-white shadow dark:bg-gray-800">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between">
@@ -75,7 +75,7 @@
               Welcome, <span class="font-medium">{{ userStore.userName }}</span>
             </div>
 
-            <!-- 主题切换按钮 -->
+            <!-- Botón de cambio de tema -->
             <ThemeToggle mode="icon" />
 
             <button
@@ -89,7 +89,7 @@
       </div>
     </nav>
 
-    <!-- 主内容 -->
+    <!-- Contenido principal -->
     <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <!-- Overview Tab -->
       <div v-if="activeTab === 'overview'" class="space-y-6">
@@ -404,7 +404,7 @@ const loadApiKeysStats = async () => {
 }
 
 onMounted(() => {
-  // 初始化主题
+  // Inicializar tema
   themeStore.initTheme()
   loadUserProfile()
   loadApiKeysStats()

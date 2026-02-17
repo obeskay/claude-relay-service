@@ -3,16 +3,16 @@ const axios = require('axios')
 const { isBalanceScriptEnabled } = require('../utils/featureFlags')
 
 /**
- * SSRF防护：检查URL是否访问内网或敏感地址
- * @param {string} url - 要检查的URL
- * @returns {boolean} - true表示URL安全
+ * SSRF防护：VerificarURL是否访问内网或敏感地址
+ * @param {string} url - 要Verificar的URL
+ * @returns {boolean} - trueTabla示URLSeguridad
  */
 function isUrlSafe(url) {
   try {
     const parsed = new URL(url)
     const hostname = parsed.hostname.toLowerCase()
 
-    // 禁止的协议
+    // 禁止的Protocolo
     if (!['http:', 'https:'].includes(parsed.protocol)) {
       return false
     }
@@ -47,13 +47,13 @@ function isUrlSafe(url) {
 }
 
 /**
- * 可配置脚本余额查询执行器
- * - 脚本格式：({ request: {...}, extractor: function(response){...} })
- * - 模板变量：{{baseUrl}}, {{apiKey}}, {{token}}, {{accountId}}, {{platform}}, {{extra}}
+ * 可Configuración脚本余额ConsultaEjecutar器
+ * - 脚本Formato：({ request: {...}, extractor: function(response){...} })
+ * - Plantilla变量：{{baseUrl}}, {{apiKey}}, {{token}}, {{accountId}}, {{platform}}, {{extra}}
  */
 class BalanceScriptService {
   /**
-   * 执行脚本：返回标准余额结构 + 原始响应
+   * Ejecutar脚本：Retornar标准余额结构 + 原始Respuesta
    * @param {object} options
    *  - scriptBody: string
    *  - variables: Record<string,string>
@@ -61,7 +61,9 @@ class BalanceScriptService {
    */
   async execute(options = {}) {
     if (!isBalanceScriptEnabled()) {
-      const error = new Error('余额脚本功能已禁用（可通过 BALANCE_SCRIPT_ENABLED=true 启用）')
+      const error = new Error(
+        '余额脚本功能已Deshabilitar（可通过 BALANCE_SCRIPT_ENABLED=true Habilitar）'
+      )
       error.code = 'BALANCE_SCRIPT_DISABLED'
       throw error
     }
@@ -84,11 +86,11 @@ class BalanceScriptService {
       const script = new vm.Script(wrapped)
       scriptResult = script.runInNewContext(sandbox, { timeout: timeoutMs })
     } catch (error) {
-      throw new Error(`脚本解析失败: ${error.message}`)
+      throw new Error(`脚本AnalizarFalló: ${error.message}`)
     }
 
     if (!scriptResult || typeof scriptResult !== 'object') {
-      throw new Error('脚本返回格式无效（需返回 { request, extractor }）')
+      throw new Error('脚本RetornarFormato无效（需Retornar { request, extractor }）')
     }
 
     const variables = options.variables || {}
@@ -99,13 +101,15 @@ class BalanceScriptService {
       throw new Error('脚本 request.url 不能为空')
     }
 
-    // SSRF防护：验证URL安全性
+    // SSRF防护：ValidarURLSeguridad性
     if (!isUrlSafe(request.url)) {
-      throw new Error('脚本 request.url 不安全：禁止访问内网地址、localhost或使用非HTTP(S)协议')
+      throw new Error(
+        '脚本 request.url 不Seguridad：禁止访问内网地址、localhost或使用非HTTP(S)Protocolo'
+      )
     }
 
     if (typeof extractor !== 'function') {
-      throw new Error('脚本 extractor 必须是函数')
+      throw new Error('脚本 extractor 必须是Función')
     }
 
     const axiosConfig = {
@@ -129,7 +133,7 @@ class BalanceScriptService {
       const { response } = error || {}
       const { status, data } = response || {}
       throw new Error(
-        `请求失败: ${status || ''} ${error.message}${data ? ` | ${JSON.stringify(data)}` : ''}`
+        `SolicitudFalló: ${status || ''} ${error.message}${data ? ` | ${JSON.stringify(data)}` : ''}`
       )
     }
 
@@ -139,7 +143,7 @@ class BalanceScriptService {
     try {
       extracted = extractor(responseData) || {}
     } catch (error) {
-      throw new Error(`extractor 执行失败: ${error.message}`)
+      throw new Error(`extractor EjecutarFalló: ${error.message}`)
     }
 
     const mapped = this.mapExtractorResult(extracted, responseData)

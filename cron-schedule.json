@@ -1,0 +1,245 @@
+{
+  "scheduleVersion": "1.0.0",
+  "timezone": "UTC",
+  "blocks": [
+    {
+      "name": "block-00-02",
+      "window": "00:00-02:00",
+      "jobs": [
+        {
+          "id": "health-check-deep",
+          "schedule": "0 0 * * *",
+          "async": true,
+          "timeout": "10m",
+          "task": "monitoring.deepHealthCheck",
+          "projects": ["all"],
+          "onFailure": "alert"
+        },
+        {
+          "id": "log-cleanup",
+          "schedule": "30 0 * * *",
+          "async": true,
+          "timeout": "5m",
+          "task": "maintenance.rotateLogs",
+          "projects": ["all"]
+        }
+      ]
+    },
+    {
+      "name": "block-02-04",
+      "window": "02:00-04:00",
+      "jobs": [
+        {
+          "id": "database-backup",
+          "schedule": "0 2 * * *",
+          "async": true,
+          "timeout": "30m",
+          "task": "backup.database",
+          "projects": ["claude-relay-service", "qrapidito", "chatea-la"],
+          "onFailure": "alert-critical"
+        },
+        {
+          "id": "redis-cleanup",
+          "schedule": "0 3 * * *",
+          "async": true,
+          "timeout": "5m",
+          "task": "maintenance.redisCleanup",
+          "projects": ["claude-relay-service"]
+        }
+      ]
+    },
+    {
+      "name": "block-04-06",
+      "window": "04:00-06:00",
+      "jobs": [
+        {
+          "id": "cache-warmup",
+          "schedule": "0 4 * * *",
+          "async": true,
+          "timeout": "15m",
+          "task": "performance.cacheWarmup",
+          "projects": ["all"]
+        },
+        {
+          "id": "dependency-check",
+          "schedule": "0 5 * * *",
+          "async": true,
+          "timeout": "10m",
+          "task": "security.checkDependencies",
+          "projects": ["all"],
+          "report": "digest"
+        }
+      ]
+    },
+    {
+      "name": "block-06-08",
+      "window": "06:00-08:00",
+      "jobs": [
+        {
+          "id": "morning-health-report",
+          "schedule": "0 6 * * *",
+          "async": true,
+          "timeout": "5m",
+          "task": "monitoring.generateReport",
+          "projects": ["all"],
+          "notify": true
+        }
+      ]
+    },
+    {
+      "name": "block-08-10",
+      "window": "08:00-10:00",
+      "jobs": [
+        {
+          "id": "peak-hours-monitoring",
+          "schedule": "*/30 8-10 * * *",
+          "async": true,
+          "timeout": "3m",
+          "task": "monitoring.quickHealthCheck",
+          "projects": ["claude-relay-service"],
+          "onFailure": "alert"
+        }
+      ]
+    },
+    {
+      "name": "block-10-12",
+      "window": "10:00-12:00",
+      "jobs": [
+        {
+          "id": "performance-snapshot",
+          "schedule": "0 10 * * *",
+          "async": true,
+          "timeout": "5m",
+          "task": "monitoring.captureMetrics",
+          "projects": ["all"],
+          "store": true
+        }
+      ]
+    },
+    {
+      "name": "block-12-14",
+      "window": "12:00-14:00",
+      "jobs": [
+        {
+          "id": "midday-optimization",
+          "schedule": "0 12 * * *",
+          "async": true,
+          "timeout": "10m",
+          "task": "performance.optimizeIndexes",
+          "projects": ["claude-relay-service", "qrapidito"]
+        }
+      ]
+    },
+    {
+      "name": "block-14-16",
+      "window": "14:00-16:00",
+      "jobs": [
+        {
+          "id": "security-scan",
+          "schedule": "0 14 * * *",
+          "async": true,
+          "timeout": "15m",
+          "task": "security.vulnerabilityScan",
+          "projects": ["all"],
+          "severity": "high,critical",
+          "onFailure": "alert"
+        }
+      ]
+    },
+    {
+      "name": "block-16-18",
+      "window": "16:00-18:00",
+      "jobs": [
+        {
+          "id": "usage-analytics",
+          "schedule": "0 16 * * *",
+          "async": true,
+          "timeout": "10m",
+          "task": "analytics.generateUsageReport",
+          "projects": ["claude-relay-service"],
+          "notify": true
+        }
+      ]
+    },
+    {
+      "name": "block-18-20",
+      "window": "18:00-20:00",
+      "jobs": [
+        {
+          "id": "evening-health-check",
+          "schedule": "0 18 * * *",
+          "async": true,
+          "timeout": "5m",
+          "task": "monitoring.quickHealthCheck",
+          "projects": ["all"]
+        }
+      ]
+    },
+    {
+      "name": "block-20-22",
+      "window": "20:00-22:00",
+      "jobs": [
+        {
+          "id": "cost-optimization",
+          "schedule": "0 20 * * *",
+          "async": true,
+          "timeout": "10m",
+          "task": "optimization.checkResourceUsage",
+          "projects": ["all"],
+          "report": "daily"
+        }
+      ]
+    },
+    {
+      "name": "block-22-00",
+      "window": "22:00-00:00",
+      "jobs": [
+        {
+          "id": "nightly-maintenance",
+          "schedule": "0 22 * * *",
+          "async": true,
+          "timeout": "20m",
+          "task": "maintenance.nightlyTasks",
+          "projects": ["all"],
+          "subtasks": [
+            "cleanup-temp-files",
+            "compress-old-logs",
+            "check-disk-space",
+            "verify-backups"
+          ]
+        }
+      ]
+    }
+  ],
+
+  "asyncJobConfig": {
+    "maxConcurrent": 5,
+    "queueSize": 100,
+    "retryAttempts": 3,
+    "retryDelay": "5m",
+    "timeoutMultiplier": 1.5,
+    "deadLetterQueue": true
+  },
+
+  "jobPriorities": {
+    "critical": ["database-backup", "security-scan", "health-check-deep"],
+    "high": ["redis-cleanup", "performance-snapshot", "usage-analytics"],
+    "normal": ["log-cleanup", "cache-warmup", "dependency-check"],
+    "low": ["morning-health-report", "evening-health-check", "cost-optimization"]
+  },
+
+  "notificationRules": {
+    "onSuccess": "silent",
+    "onFailure": "immediate",
+    "onRetry": "batch-after-3",
+    "dailyDigest": "06:00",
+    "includeMetrics": true,
+    "truncateLongOutput": true
+  },
+
+  "maintenanceWindows": {
+    "lowTraffic": ["00:00-06:00", "22:00-00:00"],
+    "highTraffic": ["08:00-10:00", "14:00-16:00"],
+    "avoidDeployments": ["highTraffic"]
+  }
+}

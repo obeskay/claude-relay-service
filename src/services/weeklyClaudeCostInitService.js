@@ -8,8 +8,8 @@ function pad2(n) {
   return String(n).padStart(2, '0')
 }
 
-// 生成配置时区下的 YYYY-MM-DD 字符串。
-// 注意：入参 date 必须是 redis.getDateInTimezone() 生成的“时区偏移后”的 Date。
+// GenerarConfiguraciónZona horaria下的 YYYY-MM-DD Cadena。
+// 注意：入参 date 必须是 redis.getDateInTimezone() Generar的“Zona horaria偏移后”的 Date。
 function formatTzDateYmd(tzDate) {
   return `${tzDate.getUTCFullYear()}-${pad2(tzDate.getUTCMonth() + 1)}-${pad2(tzDate.getUTCDate())}`
 }
@@ -37,13 +37,13 @@ class WeeklyClaudeCostInitService {
   }
 
   /**
-   * 启动回填：把"本周（周一到今天）Claude 全模型"周费用从按日/按模型统计里反算出来，
-   * 写入 `usage:opus:weekly:*`，保证周限额在重启后不归零。
+   * 启动回填：把"本周（周一到今天）Claude 全模型"周费用从按日/按模型Estadística里反算出来，
+   * Escribir `usage:opus:weekly:*`，保证周限额在重启后不归零。
    *
    * 说明：
-   * - 只回填本周，不做历史回填（符合"只要本周数据"诉求）
-   * - 会加分布式锁，避免多实例重复跑
-   * - 会写 done 标记：同一周内重启默认不重复回填（需要时可手动删掉 done key）
+   * - 只回填本周，不做历史回填（符合"只要本周Datos"诉求）
+   * - 会加分布式锁，避免多Instancia重复跑
+   * - 会写 done 标记：同一周内重启Predeterminado不重复回填（需要时可手动删掉 done key）
    */
   async backfillCurrentWeekClaudeCosts() {
     const client = redis.getClientSafe()
@@ -53,7 +53,7 @@ class WeeklyClaudeCostInitService {
     }
 
     if (!pricingService || !pricingService.pricingData) {
-      logger.warn('⚠️ 本周 Claude 周费用回填跳过：pricing service 未初始化')
+      logger.warn('⚠️ 本周 Claude 周费用回填跳过：pricing service 未Inicializar')
       return { success: false, reason: 'pricing_uninitialized' }
     }
 
@@ -63,11 +63,11 @@ class WeeklyClaudeCostInitService {
     try {
       const alreadyDone = await client.get(doneKey)
       if (alreadyDone) {
-        logger.info(`ℹ️ 本周 Claude 周费用回填已完成（${weekString}），跳过`)
+        logger.info(`ℹ️ 本周 Claude 周费用回填已Completado（${weekString}），跳过`)
         return { success: true, skipped: true }
       }
     } catch (e) {
-      // 尽力而为：读取失败不阻断启动回填流程。
+      // 尽力而为：LeerFalló不阻断启动回填流程。
     }
 
     const lockKey = `lock:init:weekly_opus_cost:${weekString}`
@@ -76,18 +76,18 @@ class WeeklyClaudeCostInitService {
 
     const lockAcquired = await redis.setAccountLock(lockKey, lockValue, lockTtlMs)
     if (!lockAcquired) {
-      logger.info(`ℹ️ 本周 Claude 周费用回填已在运行（${weekString}），跳过`)
+      logger.info(`ℹ️ 本周 Claude 周费用回填已在运Fila（${weekString}），跳过`)
       return { success: true, skipped: true, reason: 'locked' }
     }
 
     const startedAt = Date.now()
     try {
-      logger.info(`💰 开始回填本周 Claude 周费用：${weekString}（仅本周）...`)
+      logger.info(`💰 Iniciando回填本周 Claude 周费用：${weekString}（仅本周）...`)
 
       const keyIds = await redis.scanApiKeyIds()
       const dates = this._getCurrentWeekDatesInTimezone()
 
-      // 预加载所有 API Key 数据和全局倍率（避免循环内重复查询）
+      // 预加载所有 API Key Datos和全局倍率（避免Bucle内重复Consulta）
       const keyDataCache = new Map()
       const globalRateCache = new Map()
       const batchSize = 500
@@ -105,9 +105,9 @@ class WeeklyClaudeCostInitService {
           }
         }
       }
-      logger.info(`💰 预加载 ${keyDataCache.size} 个 API Key 数据`)
+      logger.info(`💰 预加载 ${keyDataCache.size} 个 API Key Datos`)
 
-      // 推断账户类型的辅助函数（与运行时 recordOpusCost 一致，只统计 claude-official/claude-console/ccr）
+      // 推断CuentaTipo的辅助Función（与运Fila时 recordOpusCost 一致，只Estadística claude-official/claude-console/ccr）
       const OPUS_ACCOUNT_TYPES = ['claude-official', 'claude-console', 'ccr']
       const inferAccountType = (keyData) => {
         if (keyData?.ccrAccountId) {
@@ -132,7 +132,7 @@ class WeeklyClaudeCostInitService {
         return Number.isFinite(n) ? n : 0
       }
 
-      // 扫描“按日 + 按模型”的使用统计 key，并反算 Claude 系列模型的费用。
+      // 扫描“按日 + 按模型”的使用Estadística key，并反算 Claude 系Columna模型的费用。
       for (const dateStr of dates) {
         let cursor = '0'
         const pattern = `usage:*:model:daily:*:${dateStr}`
@@ -207,25 +207,25 @@ class WeeklyClaudeCostInitService {
               continue
             }
 
-            // 应用倍率：全局倍率 × Key 倍率（使用缓存数据）
+            // 应用倍率：全局倍率 × Key 倍率（使用CachéDatos）
             const keyData = keyDataCache.get(entry.keyId)
             const accountType = inferAccountType(keyData)
 
-            // 与运行时 recordOpusCost 一致：只统计 claude-official/claude-console/ccr 账户
+            // 与运Fila时 recordOpusCost 一致：只Estadística claude-official/claude-console/ccr Cuenta
             if (!accountType || !OPUS_ACCOUNT_TYPES.includes(accountType)) {
               continue
             }
 
             const service = serviceRatesService.getService(accountType, entry.model)
 
-            // 获取全局倍率（带缓存）
+            // Obtener全局倍率（带Caché）
             let globalRate = globalRateCache.get(service)
             if (globalRate === undefined) {
               globalRate = await serviceRatesService.getServiceRate(service)
               globalRateCache.set(service, globalRate)
             }
 
-            // 获取 Key 倍率
+            // Obtener Key 倍率
             let keyRates = {}
             try {
               keyRates = JSON.parse(keyData?.serviceRates || '{}')
@@ -240,7 +240,7 @@ class WeeklyClaudeCostInitService {
         } while (cursor !== '0')
       }
 
-      // 为所有 API Key 写入本周 opus:weekly key
+      // 为所有 API Key Escribir本周 opus:weekly key
       const ttlSeconds = 14 * 24 * 3600
       for (let i = 0; i < keyIds.length; i += batchSize) {
         const batch = keyIds.slice(i, i + batchSize)
@@ -254,12 +254,12 @@ class WeeklyClaudeCostInitService {
         await pipeline.exec()
       }
 
-      // 写入 done 标记（保留略长于 1 周，避免同一周内重启重复回填）。
+      // Escribir done 标记（保留略长于 1 周，避免同一周内重启重复回填）。
       await client.set(doneKey, new Date().toISOString(), 'EX', 10 * 24 * 3600)
 
       const durationMs = Date.now() - startedAt
       logger.info(
-        `✅ 本周 Claude 周费用回填完成（${weekString}）：keys=${keyIds.length}, scanned=${scannedKeys}, matchedClaude=${matchedClaudeKeys}, filled=${costByKeyId.size}（${durationMs}ms）`
+        `✅ 本周 Claude 周费用回填Completado（${weekString}）：keys=${keyIds.length}, scanned=${scannedKeys}, matchedClaude=${matchedClaudeKeys}, filled=${costByKeyId.size}（${durationMs}ms）`
       )
 
       return {
@@ -272,7 +272,7 @@ class WeeklyClaudeCostInitService {
         durationMs
       }
     } catch (error) {
-      logger.error(`❌ 本周 Claude 周费用回填失败（${weekString}）：`, error)
+      logger.error(`❌ 本周 Claude 周费用回填Falló（${weekString}）：`, error)
       return { success: false, error: error.message }
     } finally {
       await redis.releaseAccountLock(lockKey, lockValue)

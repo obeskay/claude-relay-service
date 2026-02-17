@@ -10,7 +10,7 @@
               <i class="fas fa-key text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              创建新的 API Key
+              Crear新 API Key
             </h3>
           </div>
           <button
@@ -25,7 +25,7 @@
           class="modal-scroll-content custom-scrollbar flex-1 space-y-4"
           @submit.prevent="createApiKey"
         >
-          <!-- 创建类型选择 -->
+          <!-- CrearTipo选择 -->
           <div
             class="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-3 dark:border-blue-700 dark:from-blue-900/20 dark:to-indigo-900/20 sm:p-4"
           >
@@ -37,7 +37,7 @@
             >
               <label
                 class="flex h-full items-center text-xs font-semibold text-gray-700 dark:text-gray-300 sm:text-sm"
-                >创建类型</label
+                >CrearTipo</label
               >
               <div class="flex items-center gap-3 sm:gap-4">
                 <label class="flex cursor-pointer items-center">
@@ -51,7 +51,7 @@
                     class="flex items-center text-xs text-gray-700 dark:text-gray-300 sm:text-sm"
                   >
                     <i class="fas fa-key mr-1 text-xs" />
-                    单个创建
+                    单 Crear
                   </span>
                 </label>
                 <label class="flex cursor-pointer items-center">
@@ -65,18 +65,18 @@
                     class="flex items-center text-xs text-gray-700 dark:text-gray-300 sm:text-sm"
                   >
                     <i class="fas fa-layer-group mr-1 text-xs" />
-                    批量创建
+                    批量Crear
                   </span>
                 </label>
               </div>
             </div>
 
-            <!-- 批量创建数量输入 -->
+            <!-- 批量Crear数量Entrada -->
             <div v-if="form.createType === 'batch'" class="mt-3">
               <div class="flex items-center gap-4">
                 <div class="flex-1">
                   <label class="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
-                    >创建数量</label
+                    >Crear数量</label
                   >
                   <div class="flex items-center gap-2">
                     <input
@@ -84,12 +84,12 @@
                       class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                       max="500"
                       min="2"
-                      placeholder="输入数量 (2-500)"
+                      placeholder="Entrada数量 (2-500)"
                       required
                       type="number"
                     />
                     <div class="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
-                      最大支持 500 个
+                      最大支持 500  
                     </div>
                   </div>
                 </div>
@@ -97,7 +97,7 @@
               <p class="mt-2 flex items-start text-xs text-amber-600 dark:text-amber-400">
                 <i class="fas fa-info-circle mr-1 mt-0.5 flex-shrink-0" />
                 <span
-                  >批量创建时，每个 Key 的名称会自动添加序号后缀，例如：{{
+                  >批量Crear时，每 claves Nombre会自动添加序号siguiente缀，例如：{{
                     form.name || 'MyKey'
                   }}_1, {{ form.name || 'MyKey' }}_2 ...</span
                 >
@@ -108,7 +108,7 @@
           <div>
             <label
               class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-2 sm:text-sm"
-              >名称 <span class="text-red-500">*</span></label
+              >Nombre <span class="text-red-500">*</span></label
             >
             <div>
               <input
@@ -117,8 +117,8 @@
                 :class="{ 'border-red-500': errors.name }"
                 :placeholder="
                   form.createType === 'batch'
-                    ? '输入基础名称（将自动添加序号）'
-                    : '为您的 API Key 取一个名称'
+                    ? 'Entrada基础Nombre（将自动添加序号）'
+                    : 'para您 API Key 取一 Nombre'
                 "
                 required
                 type="text"
@@ -130,16 +130,16 @@
             </p>
           </div>
 
-          <!-- 标签 -->
+          <!-- Etiqueta -->
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >标签</label
+              >Etiqueta</label
             >
             <div class="space-y-4">
-              <!-- 已选择的标签 -->
+              <!-- 已选择Etiqueta -->
               <div v-if="form.tags.length > 0">
                 <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  已选择的标签:
+                  已选择Etiqueta:
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <span
@@ -159,10 +159,10 @@
                 </div>
               </div>
 
-              <!-- 可选择的已有标签 -->
+              <!-- 可选择已有Etiqueta -->
               <div v-if="unselectedTags.length > 0">
                 <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  点击选择已有标签:
+                  点击选择已有Etiqueta:
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button
@@ -178,16 +178,16 @@
                 </div>
               </div>
 
-              <!-- 创建新标签 -->
+              <!-- Crear新Etiqueta -->
               <div>
                 <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                  创建新标签:
+                  Crear新Etiqueta:
                 </div>
                 <div class="flex gap-2">
                   <input
                     v-model="newTag"
                     class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                    placeholder="输入新标签名称"
+                    placeholder="Ingrese nombre de nueva etiqueta"
                     type="text"
                     @keypress.enter.prevent="addTag"
                   />
@@ -202,12 +202,12 @@
               </div>
 
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                用于标记不同团队或用途，方便筛选管理
+                para标记不同团队o用途，方便Filtrar管理
               </p>
             </div>
           </div>
 
-          <!-- 速率限制设置 -->
+          <!-- 速率LímiteConfiguración -->
           <div
             class="rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-700 dark:bg-blue-900/20"
           >
@@ -218,7 +218,7 @@
                 <i class="fas fa-tachometer-alt text-xs text-white" />
               </div>
               <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                速率限制设置 (可选)
+                速率LímiteConfiguración (可选)
               </h4>
             </div>
 
@@ -232,7 +232,7 @@
                     v-model="form.rateLimitWindow"
                     class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="1"
-                    placeholder="无限制"
+                    placeholder="无Límite"
                     type="number"
                   />
                   <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">时间段单位</p>
@@ -240,46 +240,46 @@
 
                 <div>
                   <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >请求次数限制</label
+                    >Número de solicitudesLímite</label
                   >
                   <input
                     v-model="form.rateLimitRequests"
                     class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="1"
-                    placeholder="无限制"
+                    placeholder="无Límite"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">窗口内最大请求</p>
+                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">窗口内最大Solicitud</p>
                 </div>
 
                 <div>
                   <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >费用限制 (美元)</label
+                    >CostoLimitar (美元)</label
                   >
                   <input
                     v-model="form.rateLimitCost"
                     class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                     min="0"
-                    placeholder="无限制"
+                    placeholder="无Límite"
                     step="0.01"
                     type="number"
                   />
-                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">窗口内最大费用</p>
+                  <p class="ml-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">窗口内最大Costo</p>
                 </div>
               </div>
 
-              <!-- 示例说明 -->
+              <!-- 示例Instrucciones -->
               <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
                 <h5 class="mb-1 text-xs font-semibold text-blue-800 dark:text-blue-400">
                   💡 使用示例
                 </h5>
                 <div class="space-y-0.5 text-xs text-blue-700 dark:text-blue-300">
                   <div>
-                    <strong>示例1:</strong> 时间窗口=60，请求次数=1000 → 每60分钟最多1000次请求
+                    <strong>示例1:</strong> 时间窗口=60，Número de solicitudes=1000 → 每60分钟最多1000vecesSolicitud
                   </div>
-                  <div><strong>示例2:</strong> 时间窗口=1，费用=0.1 → 每分钟最多$0.1费用</div>
+                  <div><strong>示例2:</strong> 时间窗口=1，Costo=0.1 → 每分钟最多$0.1Costo</div>
                   <div>
-                    <strong>示例3:</strong> 窗口=30，请求=50，费用=5 → 每30分钟50次请求且不超$5费用
+                    <strong>示例3:</strong> 窗口=30，Solicitud=50，Costo=5 → 每30分钟50vecesSolicitud且不超$5Costo
                   </div>
                 </div>
               </div>
@@ -288,7 +288,7 @@
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >每日费用限制 (美元)</label
+              >Límite de costo diario (美元)</label
             >
             <div class="space-y-2">
               <div class="flex gap-2">
@@ -325,19 +325,19 @@
                 v-model="form.dailyCostLimit"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
-                placeholder="0 表示无限制"
+                placeholder="0 表示无Límite"
                 step="0.01"
                 type="number"
               />
               <p class="dark:text灰-400 text-xs text-gray-500">
-                设置此 API Key 每日的费用限制，超过限制将拒绝请求，0 或留空表示无限制
+                Configuración此 API Key 每日CostoLímite，超过Límite将拒绝Solicitud，0 o留空表示无Límite
               </p>
             </div>
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >总费用限制 (美元)</label
+              >Límite de costo total (美元)</label
             >
             <div class="space-y-2">
               <div class="flex gap-2">
@@ -374,19 +374,19 @@
                 v-model="form.totalCostLimit"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
-                placeholder="0 表示无限制"
+                placeholder="0 表示无Límite"
                 step="0.01"
                 type="number"
               />
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                设置此 API Key 的累计总费用限制，达到限制后将拒绝所有后续请求，0 或留空表示无限制
+                Configuración此 API Key 累计Límite de costo total，达到Límitesiguiente将拒绝所有siguiente续Solicitud，0 o留空表示无Límite
               </p>
             </div>
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >Claude 模型周费用限制 (美元)</label
+              >Límite de costo semanal de modelos Claude (美元)</label
             >
             <div class="space-y-2">
               <div class="flex gap-2">
@@ -423,46 +423,46 @@
                 v-model="form.weeklyOpusCostLimit"
                 class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
                 min="0"
-                placeholder="0 表示无限制"
+                placeholder="0 表示无Límite"
                 step="0.01"
                 type="number"
               />
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                设置 Claude 模型的周费用限制（周一到周日），仅对 Claude 模型请求生效，0
-                或留空表示无限制
+                Configuración Claude Modelo周CostoLímite（周一到周日），仅对 Claude ModeloSolicitud生效，0
+                o留空表示无Límite
               </p>
             </div>
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >并发限制 (可选)</label
+              >Límite de concurrencia (可选)</label
             >
             <input
               v-model="form.concurrencyLimit"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
               min="0"
-              placeholder="0 表示无限制"
+              placeholder="0 表示无Límite"
               type="number"
             />
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              设置此 API Key 可同时处理的最大请求数，0 或留空表示无限制
+              Configuración此 API Key 可同时处理最大Solicitud数，0 o留空表示无Límite
             </p>
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >备注 (可选)</label
+              >Nota (可选)</label
             >
             <textarea
               v-model="form.description"
               class="form-input w-full resize-none border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-              placeholder="描述此 API Key 的用途..."
+              placeholder="Descripción此 API Key 用途..."
               rows="2"
             />
           </div>
 
-          <!-- 服务倍率设置 -->
+          <!-- 服务倍率Configuración -->
           <div
             class="rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 dark:border-purple-700 dark:from-purple-900/20 dark:to-indigo-900/20 sm:p-4"
           >
@@ -482,7 +482,7 @@
                 </label>
               </div>
               <span class="text-xs text-gray-500 dark:text-gray-400">
-                与全局倍率相乘，用于 VIP 折扣等（如全局1.5 × Key倍率0.8 = 1.2）
+                与Global倍率相乘，para VIP 折扣等（如Global1.5 × Key倍率0.8 = 1.2）
               </span>
             </div>
             <div v-if="enableServiceRates" class="mt-3 space-y-2">
@@ -509,7 +509,7 @@
 
           <div>
             <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >过期设置</label
+              >过期Configuración</label
             >
             <!-- 过期模式选择 -->
             <div
@@ -532,17 +532,17 @@
                     type="radio"
                     value="activation"
                   />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">首次使用后激活</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">首veces使用siguiente激活</span>
                 </label>
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <span v-if="form.expirationMode === 'fixed'">
                   <i class="fas fa-info-circle mr-1" />
-                  固定时间模式：Key 创建后立即生效，按设定时间过期（支持小时和天数）
+                  固定时间模式：Key Crearsiguiente立即生效，按设定时间过期（支持小时y天数）
                 </span>
                 <span v-else>
                   <i class="fas fa-info-circle mr-1" />
-                  激活模式：Key 首次使用时激活，激活后按设定时间过期（支持小时和天数，适合批量销售）
+                  激活模式：Key 首veces使用时激活，激活siguiente按设定时间过期（支持小时y天数，适合批量销售）
                 </span>
               </p>
             </div>
@@ -589,7 +589,7 @@
                   class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                   :max="form.activationUnit === 'hours' ? 8760 : 3650"
                   min="1"
-                  :placeholder="form.activationUnit === 'hours' ? '输入小时数' : '输入天数'"
+                  :placeholder="form.activationUnit === 'hours' ? 'Entrada小时数' : 'Entrada天数'"
                   type="number"
                 />
                 <select
@@ -614,7 +614,7 @@
               </div>
               <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <i class="fas fa-clock mr-1" />
-                Key 将在首次使用后激活，激活后
+                Key 将en首veces使用siguiente激活，激活siguiente
                 {{ form.activationDays || (form.activationUnit === 'hours' ? 24 : 30) }}
                 {{ form.activationUnit === 'hours' ? '小时' : '天' }}过期
               </p>
@@ -668,7 +668,7 @@
               </label>
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              不选择任何服务表示允许访问全部服务
+              不选择任何服务表示允许访问Todos los servicios
             </p>
           </div>
 
@@ -680,7 +680,7 @@
               <button
                 class="flex items-center gap-1 text-sm text-blue-600 transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
                 :disabled="accountsLoading"
-                title="刷新账号列表"
+                title="Actualizar账号列表"
                 type="button"
                 @click="refreshAccounts"
               >
@@ -691,7 +691,7 @@
                     'text-xs'
                   ]"
                 />
-                <span>{{ accountsLoading ? '刷新中...' : '刷新账号' }}</span>
+                <span>{{ accountsLoading ? 'Actualizaren...' : 'Actualizar账号' }}</span>
               </button>
             </div>
             <div class="grid grid-cols-1 gap-3">
@@ -767,7 +767,7 @@
               </div>
             </div>
             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              选择专属账号后，此API Key将只使用该账号，不选择则使用共享账号池
+              选择专属账号siguiente，此API Key将只使用该账号，不选择则使用共享账号池
             </p>
           </div>
 
@@ -783,13 +783,13 @@
                 class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
                 for="enableModelRestriction"
               >
-                启用模型限制
+                HabilitarLímite de modelos
               </label>
             </div>
 
             <div v-if="form.enableModelRestriction" class="space-y-3">
               <div>
-                <label class="mb-2 block text-sm font-medium text-gray-600">限制的模型列表</label>
+                <label class="mb-2 block text-sm font-medium text-gray-600">LímiteModelo列表</label>
                 <div
                   class="mb-3 flex min-h-[32px] flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2"
                 >
@@ -808,7 +808,7 @@
                     </button>
                   </span>
                   <span v-if="form.restrictedModels.length === 0" class="text-sm text-gray-400">
-                    暂无限制的模型
+                    SinLímiteModelo
                   </span>
                 </div>
                 <div class="space-y-3">
@@ -827,16 +827,16 @@
                       v-if="availableQuickModels.length === 0"
                       class="text-sm italic text-gray-400"
                     >
-                      所有常用模型已在限制列表中
+                      所有常用Modelo已enLímite列表en
                     </span>
                   </div>
 
-                  <!-- 手动输入 -->
+                  <!-- 手动Entrada -->
                   <div class="flex gap-2">
                     <input
                       v-model="form.modelInput"
                       class="form-input flex-1"
-                      placeholder="输入模型名称，按回车添加"
+                      placeholder="EntradaNombre del modelo，按回车添加"
                       type="text"
                       @keydown.enter.prevent="addRestrictedModel"
                     />
@@ -850,13 +850,13 @@
                   </div>
                 </div>
                 <p class="mt-2 text-xs text-gray-500">
-                  设置此API Key无法访问的模型，例如：claude-opus-4-20250514
+                  Configuración此API Key无法访问Modelo，例如：claude-opus-4-20250514
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- 客户端限制 -->
+          <!-- Límite de clientes -->
           <div>
             <div class="mb-2 flex items-center">
               <input
@@ -869,7 +869,7 @@
                 class="ml-2 cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300"
                 for="enableClientRestriction"
               >
-                启用客户端限制
+                HabilitarLímite de clientes
               </label>
             </div>
 
@@ -879,7 +879,7 @@
             >
               <div>
                 <label class="mb-2 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                  >允许的客户端</label
+                  >允许客户端</label
                 >
                 <div class="space-y-1">
                   <div v-for="client in supportedClients" :key="client.id" class="flex items-start">
@@ -910,7 +910,7 @@
               type="button"
               @click="$emit('close')"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="btn btn-primary flex-1 px-4 py-2.5 text-sm font-semibold"
@@ -919,7 +919,7 @@
             >
               <div v-if="loading" class="loading-spinner mr-2" />
               <i v-else class="fas fa-plus mr-2" />
-              {{ loading ? '创建中...' : '创建' }}
+              {{ loading ? 'Crearen...' : 'Crear' }}
             </button>
           </div>
         </form>
@@ -973,22 +973,22 @@ const apiKeysStore = useApiKeysStore()
 const loading = ref(false)
 const accountsLoading = ref(false)
 
-// ConfirmModal 状态
+// ConfirmModal Estado
 const showConfirmModal = ref(false)
 const confirmModalConfig = ref({
   title: '',
   message: '',
   type: 'primary',
-  confirmText: '确认',
-  cancelText: '取消'
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar'
 })
 const confirmResolve = ref(null)
 
 const showConfirm = (
   title,
   message,
-  confirmText = '确认',
-  cancelText = '取消',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   type = 'primary'
 ) => {
   return new Promise((resolve) => {
@@ -1018,21 +1018,21 @@ const localAccounts = ref({
   droidGroups: []
 })
 
-// 表单验证状态
+// 表单验证Estado
 const errors = ref({
   name: ''
 })
 
-// 标签相关
+// Etiqueta相关
 const newTag = ref('')
 const availableTags = ref([])
 
-// 计算未选择的标签
+// 计算未选择Etiqueta
 const unselectedTags = computed(() => {
   return availableTags.value.filter((tag) => !form.tags.includes(tag))
 })
 
-// 支持的客户端列表
+// 支持客户端列表
 const supportedClients = ref([])
 
 // 服务倍率相关
@@ -1056,7 +1056,7 @@ const form = reactive({
   serviceRates: {}, // API Key 级别服务倍率
   rateLimitWindow: '',
   rateLimitRequests: '',
-  rateLimitCost: '', // 新增：费用限制
+  rateLimitCost: '', // Agregar：CostoLímite
   concurrencyLimit: '',
   dailyCostLimit: '',
   totalCostLimit: '',
@@ -1064,10 +1064,10 @@ const form = reactive({
   expireDuration: '',
   customExpireDate: '',
   expiresAt: null,
-  expirationMode: 'fixed', // 过期模式：fixed(固定) 或 activation(激活)
-  activationDays: 30, // 激活后有效天数
-  activationUnit: 'days', // 激活时间单位：hours 或 days
-  permissions: [], // 数组格式，空数组表示全部服务
+  expirationMode: 'fixed', // 过期模式：fixed(固定) o activation(激活)
+  activationDays: 30, // 激活siguienteVálido天数
+  activationUnit: 'days', // 激活时间单位：hours o days
+  permissions: [], // 数组格式，空数组表示Todos los servicios
   claudeAccountId: '',
   geminiAccountId: '',
   openaiAccountId: '',
@@ -1081,25 +1081,25 @@ const form = reactive({
   tags: []
 })
 
-// 更新权限（数组格式，空数组=全部服务）
+// Actualizar权限（数组格式，空数组=Todos los servicios）
 const updatePermissions = () => {
   // form.permissions 已经是数组，由 v-model 自动管理
 }
 
-// 加载支持的客户端和已存在的标签
+// 加载支持客户端y已存enEtiqueta
 onMounted(async () => {
   supportedClients.value = await clientsStore.loadSupportedClients()
   availableTags.value = await apiKeysStore.fetchTags()
   // 初始化账号数据
   if (props.accounts) {
-    // props.accounts.gemini 已经包含了 OAuth 和 API 两种类型的账号（父组件已合并）
-    // 保留原有的 platform 属性，不要覆盖
+    // props.accounts.gemini 已经包含 OAuth y API 两种Tipo账号（父组件已合并）
+    // 保留原有 platform 属性，不要覆盖
     const geminiAccounts = (props.accounts.gemini || []).map((account) => ({
       ...account,
-      platform: account.platform || 'gemini' // 保留原有 platform，只在没有时设默认值
+      platform: account.platform || 'gemini' // 保留原有 platform，只en没有时设默认值
     }))
 
-    // props.accounts.openai 只包含 openai 类型，openaiResponses 需要单独处理
+    // props.accounts.openai 只包含 openai Tipo，openaiResponses 需要单独处理
     const openaiAccounts = []
     if (props.accounts.openai) {
       props.accounts.openai.forEach((account) => {
@@ -1134,10 +1134,10 @@ onMounted(async () => {
     }
   }
 
-  // 使用缓存的账号数据，不自动刷新（用户可点击"刷新账号"按钮手动刷新）
+  // 使用Caché账号数据，不自动Actualizar（Usuario可点击"Actualizar账号"按钮手动Actualizar）
 })
 
-// 刷新账号列表
+// Actualizar账号列表
 const refreshAccounts = async () => {
   accountsLoading.value = true
   try {
@@ -1163,7 +1163,7 @@ const refreshAccounts = async () => {
       httpApis.getAccountGroupsApi()
     ])
 
-    // 合并Claude OAuth账户和Claude Console账户
+    // 合并Claude OAuthCuentayClaude ConsoleCuenta
     const claudeAccounts = []
 
     if (claudeData.success) {
@@ -1171,7 +1171,7 @@ const refreshAccounts = async () => {
         claudeAccounts.push({
           ...account,
           platform: 'claude-oauth',
-          isDedicated: account.accountType === 'dedicated' // 保留以便向后兼容
+          isDedicated: account.accountType === 'dedicated' // 保留以便向siguiente兼容
         })
       })
     }
@@ -1181,14 +1181,14 @@ const refreshAccounts = async () => {
         claudeAccounts.push({
           ...account,
           platform: 'claude-console',
-          isDedicated: account.accountType === 'dedicated' // 保留以便向后兼容
+          isDedicated: account.accountType === 'dedicated' // 保留以便向siguiente兼容
         })
       })
     }
 
     localAccounts.value.claude = claudeAccounts
 
-    // 合并 Gemini OAuth 和 Gemini API 账号
+    // 合并 Gemini OAuth y Gemini API 账号
     const geminiAccounts = []
 
     if (geminiData.success) {
@@ -1213,7 +1213,7 @@ const refreshAccounts = async () => {
 
     localAccounts.value.gemini = geminiAccounts
 
-    // 合并 OpenAI 和 OpenAI-Responses 账号
+    // 合并 OpenAI y OpenAI-Responses 账号
     const openaiAccounts = []
 
     if (openaiData.success) {
@@ -1221,7 +1221,7 @@ const refreshAccounts = async () => {
         openaiAccounts.push({
           ...account,
           platform: 'openai',
-          isDedicated: account.accountType === 'dedicated' // 保留以便向后兼容
+          isDedicated: account.accountType === 'dedicated' // 保留以便向siguiente兼容
         })
       })
     }
@@ -1231,7 +1231,7 @@ const refreshAccounts = async () => {
         openaiAccounts.push({
           ...account,
           platform: 'openai-responses',
-          isDedicated: account.accountType === 'dedicated' // 保留以便向后兼容
+          isDedicated: account.accountType === 'dedicated' // 保留以便向siguiente兼容
         })
       })
     }
@@ -1241,7 +1241,7 @@ const refreshAccounts = async () => {
     if (bedrockData.success) {
       localAccounts.value.bedrock = (bedrockData.data || []).map((account) => ({
         ...account,
-        isDedicated: account.accountType === 'dedicated' // 保留以便向后兼容
+        isDedicated: account.accountType === 'dedicated' // 保留以便向siguiente兼容
       }))
     }
 
@@ -1262,9 +1262,9 @@ const refreshAccounts = async () => {
       localAccounts.value.droidGroups = allGroups.filter((g) => g.platform === 'droid')
     }
 
-    showToast('账号列表已刷新', 'success')
+    showToast('账号列表已Actualizar', 'success')
   } catch (error) {
-    showToast('刷新账号列表失败', 'error')
+    showToast('Actualizar账号列表Fallido', 'error')
   } finally {
     accountsLoading.value = false
   }
@@ -1277,7 +1277,7 @@ const minDateTime = computed(() => {
   return now.toISOString().slice(0, 16)
 })
 
-// 更新过期时间
+// Actualizar过期时间
 const updateExpireAt = () => {
   if (!form.expireDuration) {
     form.expiresAt = null
@@ -1315,7 +1315,7 @@ const updateExpireAt = () => {
   }
 }
 
-// 更新自定义过期时间
+// Actualizar自定义过期时间
 const updateCustomExpireAt = () => {
   if (form.customExpireDate) {
     form.expiresAt = new Date(form.customExpireDate).toISOString()
@@ -1334,7 +1334,7 @@ const formatExpireDate = (dateString) => {
   })
 }
 
-// 添加限制的模型
+// 添加LímiteModelo
 const addRestrictedModel = () => {
   if (form.modelInput && !form.restrictedModels.includes(form.modelInput)) {
     form.restrictedModels.push(form.modelInput)
@@ -1342,27 +1342,27 @@ const addRestrictedModel = () => {
   }
 }
 
-// 移除限制的模型
+// 移除LímiteModelo
 const removeRestrictedModel = (index) => {
   form.restrictedModels.splice(index, 1)
 }
 
-// 常用模型列表
+// 常用Modelo列表
 const commonModels = ref(['claude-opus-4-20250514', 'claude-opus-4-1-20250805'])
 
-// 可用的快捷模型（过滤掉已在限制列表中的）
+// 可用快捷Modelo（过滤掉已enLímite列表en）
 const availableQuickModels = computed(() => {
   return commonModels.value.filter((model) => !form.restrictedModels.includes(model))
 })
 
-// 快速添加限制的模型
+// 快速添加LímiteModelo
 const quickAddRestrictedModel = (model) => {
   if (!form.restrictedModels.includes(model)) {
     form.restrictedModels.push(model)
   }
 }
 
-// 标签管理方法
+// Gestión de etiquetas方法
 const addTag = () => {
   if (newTag.value && newTag.value.trim()) {
     const tag = newTag.value.trim()
@@ -1402,45 +1402,45 @@ const getQuickTimeOptions = () => {
   }
 }
 
-// 单位变化时更新数值
+// 单位变化时Actualizar数值
 const updateActivationValue = () => {
   if (form.activationUnit === 'hours') {
-    // 从天切换到小时，设置一个合理的默认值
+    // de天切换到小时，Configuración一 合理默认值
     if (form.activationDays > 24) {
       form.activationDays = 24
     }
   } else {
-    // 从小时切换到天，设置一个合理的默认值
+    // de小时切换到天，Configuración一 合理默认值
     if (form.activationDays < 1) {
       form.activationDays = 1
     }
   }
 }
 
-// 创建 API Key
+// Crear API Key
 const createApiKey = async () => {
   // 验证表单
   errors.value.name = ''
 
   if (!form.name || !form.name.trim()) {
-    errors.value.name = '请输入API Key名称'
+    errors.value.name = 'IngreseAPI KeyNombre'
     return
   }
 
-  // 批量创建时验证数量
+  // 批量Crear时验证数量
   if (form.createType === 'batch') {
     if (!form.batchCount || form.batchCount < 2 || form.batchCount > 500) {
-      showToast('批量创建数量必须在 2-500 之间', 'error')
+      showToast('批量Crear数量必须en 2-500 之间', 'error')
       return
     }
   }
 
-  // 检查是否设置了时间窗口但费用限制为0
+  // 检查是否Configuración时间窗口但CostoLímitepara0
   if (form.rateLimitWindow && (!form.rateLimitCost || parseFloat(form.rateLimitCost) === 0)) {
     const confirmed = await showConfirm(
-      '费用限制提醒',
-      '您设置了时间窗口但费用限制为0，这意味着不会有费用限制。\n\n是否继续？',
-      '继续创建',
+      'CostoLímite提醒',
+      '您Configuración时间窗口但CostoLímitepara0，这意味着不会有CostoLímite。\n\n是否继续？',
+      '继续Crear',
       '返回修改',
       'warning'
     )
@@ -1452,8 +1452,8 @@ const createApiKey = async () => {
   loading.value = true
 
   try {
-    // 准备提交的数据
-    // 过滤掉空值的服务倍率
+    // 准备Enviar数据
+    // 过滤掉空值服务倍率
     const filteredServiceRates = {}
     if (enableServiceRates.value) {
       for (const [key, value] of Object.entries(form.serviceRates)) {
@@ -1466,7 +1466,7 @@ const createApiKey = async () => {
     const baseData = {
       description: form.description || undefined,
       serviceRates: filteredServiceRates,
-      tokenLimit: 0, // 设置为0，清除历史token限制
+      tokenLimit: 0, // Configuraciónpara0，清除历史tokenLímite
       rateLimitWindow:
         form.rateLimitWindow !== '' && form.rateLimitWindow !== null
           ? parseInt(form.rateLimitWindow)
@@ -1507,32 +1507,32 @@ const createApiKey = async () => {
       allowedClients: form.allowedClients
     }
 
-    // 处理Claude账户绑定（区分OAuth和Console）
+    // 处理ClaudeCuenta绑定（区分OAuthyConsole）
     if (form.claudeAccountId) {
       if (form.claudeAccountId.startsWith('console:')) {
-        // Claude Console账户
+        // Claude ConsoleCuenta
         baseData.claudeConsoleAccountId = form.claudeAccountId.substring(8)
-        // 确保不会同时设置OAuth账号
+        // 确保不会同时ConfiguraciónOAuth账号
         delete baseData.claudeAccountId
       } else {
-        // Claude OAuth账户或分组
+        // Claude OAuthCuentao分组
         baseData.claudeAccountId = form.claudeAccountId
-        // 确保不会同时设置Console账号
+        // 确保不会同时ConfiguraciónConsole账号
         delete baseData.claudeConsoleAccountId
       }
     }
 
-    // Gemini账户绑定
+    // GeminiCuenta绑定
     if (form.geminiAccountId) {
       baseData.geminiAccountId = form.geminiAccountId
     }
 
-    // OpenAI账户绑定
+    // OpenAICuenta绑定
     if (form.openaiAccountId) {
       baseData.openaiAccountId = form.openaiAccountId
     }
 
-    // Bedrock账户绑定
+    // BedrockCuenta绑定
     if (form.bedrockAccountId) {
       baseData.bedrockAccountId = form.bedrockAccountId
     }
@@ -1541,7 +1541,7 @@ const createApiKey = async () => {
     }
 
     if (form.createType === 'single') {
-      // 单个创建
+      // 单 Crear
       const data = {
         ...baseData,
         name: form.name
@@ -1550,14 +1550,14 @@ const createApiKey = async () => {
       const result = await httpApis.createApiKeyApi(data)
 
       if (result.success) {
-        showToast('API Key 创建成功', 'success')
+        showToast('API Key Creado exitosamente', 'success')
         emit('success', result.data)
         emit('close')
       } else {
-        showToast(result.message || '创建失败', 'error')
+        showToast(result.message || 'Error al crear', 'error')
       }
     } else {
-      // 批量创建
+      // 批量Crear
       const data = {
         ...baseData,
         createType: 'batch',
@@ -1568,15 +1568,15 @@ const createApiKey = async () => {
       const result = await httpApis.batchCreateApiKeysApi(data)
 
       if (result.success) {
-        showToast(`成功创建 ${result.data.length} 个 API Key`, 'success')
+        showToast(`ExitosoCrear ${result.data.length}   API Key`, 'success')
         emit('batch-success', result.data)
         emit('close')
       } else {
-        showToast(result.message || '批量创建失败', 'error')
+        showToast(result.message || '批量Error al crear', 'error')
       }
     }
   } catch (error) {
-    showToast('创建失败', 'error')
+    showToast('Error al crear', 'error')
   } finally {
     loading.value = false
   }

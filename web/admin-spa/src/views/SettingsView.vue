@@ -1,7 +1,7 @@
 <template>
   <div class="settings-container">
     <div class="card p-4 sm:p-6">
-      <!-- 页面标题 -->
+      <!-- Título de página -->
       <div class="mb-4 sm:mb-6">
         <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
           {{ $t('settings.pageTitle') }}
@@ -11,7 +11,7 @@
         </p>
       </div>
 
-      <!-- 设置分类导航 -->
+      <!-- Navegación de categorías de configuración -->
       <div class="mb-6">
         <nav class="flex space-x-8">
           <button
@@ -72,26 +72,26 @@
             @click="activeSection = 'serviceRates'"
           >
             <i class="fas fa-balance-scale mr-2"></i>
-            服务倍率
+            Tarifas de servicio
           </button>
         </nav>
       </div>
 
-      <!-- 加载状态 -->
+      <!-- Estado de carga -->
       <div v-if="loading" class="py-12 text-center">
         <div class="loading-spinner mx-auto mb-4"></div>
         <p class="text-gray-500 dark:text-gray-400">{{ $t('settings.loading.settings') }}</p>
       </div>
 
-      <!-- 内容区域 -->
+      <!-- Área de contenido -->
       <div v-else>
-        <!-- 品牌设置部分 -->
+        <!-- Sección de configuración de marca -->
         <div v-show="activeSection === 'branding'">
-          <!-- 桌面端表格视图 -->
+          <!-- Vista de tabla para escritorio -->
           <div class="table-container hidden sm:block">
             <table class="min-w-full">
               <tbody class="divide-y divide-gray-200/50 dark:divide-gray-600/50">
-                <!-- 网站名称 -->
+                <!-- Nombre del sitio -->
                 <tr class="table-row">
                   <td class="w-48 whitespace-nowrap px-6 py-4">
                     <div class="flex items-center">
@@ -124,7 +124,7 @@
                   </td>
                 </tr>
 
-                <!-- 网站图标 -->
+                <!-- Icono del sitio -->
                 <tr class="table-row">
                   <td class="w-48 whitespace-nowrap px-6 py-4">
                     <div class="flex items-center">
@@ -145,13 +145,13 @@
                   </td>
                   <td class="px-6 py-4">
                     <div class="space-y-3">
-                      <!-- 图标预览 -->
+                      <!-- Vista previa del icono -->
                       <div
                         v-if="oemSettings.siteIconData || oemSettings.siteIcon"
                         class="inline-flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700"
                       >
                         <img
-                          alt="图标预览"
+                          alt="Vista previa del icono"
                           class="h-8 w-8"
                           :src="oemSettings.siteIconData || oemSettings.siteIcon"
                           @error="handleIconError"
@@ -167,7 +167,7 @@
                         </button>
                       </div>
 
-                      <!-- 文件上传 -->
+                      <!-- Carga de archivo -->
                       <div>
                         <input
                           ref="iconFileInput"
@@ -191,7 +191,7 @@
                   </td>
                 </tr>
 
-                <!-- 管理后台按钮显示控制 -->
+                <!-- Control de visualización del botón del panel de administración -->
                 <tr class="table-row">
                   <td class="w-48 whitespace-nowrap px-6 py-4">
                     <div class="flex items-center">
@@ -225,12 +225,12 @@
                       </label>
                     </div>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      启用后，当模型负载过高返回 529 错误时，系统会自动将该账户排除调度一段时间
+                      Habilitarsiguiente，当Modelo负载过高返回 529 Error时，系统会自动将该Cuenta排除调度一段时间
                     </p>
                   </td>
                 </tr>
 
-                <!-- 全局强制模型路由 -->
+                <!-- Global强制Modelo路由 -->
                 <tr class="table-row">
                   <td class="w-48 whitespace-nowrap px-6 py-4">
                     <div class="flex items-center">
@@ -241,10 +241,10 @@
                       </div>
                       <div>
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          全局强制模型路由
+                          Global强制Modelo路由
                         </div>
                         <div class="text-xs text-gray-500 dark:text-gray-400">
-                          重写所有请求的目标模型
+                          重写所有Solicitud目标Modelo
                         </div>
                       </div>
                     </div>
@@ -253,12 +253,12 @@
                     <input
                       v-model="claudeConfig.globalForcedModel"
                       class="form-input w-full max-w-md dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                      placeholder="例如: ccr/glm-4.7 (留空禁用)"
+                      placeholder="例如: ccr/glm-4.7 (留空Deshabilitar)"
                       type="text"
                       @change="saveClaudeConfig"
                     />
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      所有未单独设置强制路由的 API Key 请求都将强制路由到此模型。
+                      所有未单独Configuración强制路由 API Key Solicitud都将强制路由到此Modelo。
                     </p>
                   </td>
                 </tr>
@@ -274,7 +274,7 @@
                       </div>
                       <div>
                         <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          统计页通知
+                          Estadísticas页通知
                         </div>
                         <div class="text-xs text-gray-500 dark:text-gray-400">API Stats</div>
                       </div>
@@ -292,7 +292,7 @@
                           class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                         ></div>
                         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{
-                          oemSettings.apiStatsNotice.enabled ? '已启用' : '已禁用'
+                          oemSettings.apiStatsNotice.enabled ? '已Habilitar' : '已Deshabilitar'
                         }}</span>
                       </label>
                     </div>
@@ -325,7 +325,7 @@
                   </td>
                 </tr>
 
-                <!-- 操作按钮 -->
+                <!-- Operación按钮 -->
                 <tr>
                   <td class="px-6 py-6" colspan="2">
                     <div class="flex items-center justify-between">
@@ -375,7 +375,7 @@
 
           <!-- 移动端卡片视图 -->
           <div class="space-y-4 sm:hidden">
-            <!-- 站点名称卡片 -->
+            <!-- 站点Nombre卡片 -->
             <div class="glass-card p-4">
               <div class="mb-3 flex items-center gap-3">
                 <div
@@ -384,8 +384,8 @@
                   <i class="fas fa-tag"></i>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">站点名称</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">自定义您的站点品牌名称</p>
+                  <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">站点Nombre</h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">自定义您站点品牌Nombre</p>
                 </div>
               </div>
               <input
@@ -408,32 +408,32 @@
                 <div>
                   <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">站点图标</h3>
                   <p class="text-sm text-gray-500 dark:text-gray-400">
-                    上传自定义图标或输入图标URL
+                    Subir自定义图标oEntrada图标URL
                   </p>
                 </div>
               </div>
               <div class="space-y-3">
-                <!-- 图标预览 -->
+                <!-- 图标Vista previa -->
                 <div
                   v-if="oemSettings.siteIconData || oemSettings.siteIcon"
                   class="inline-flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700"
                 >
                   <img
-                    alt="图标预览"
+                    alt="图标Vista previa"
                     class="h-8 w-8"
                     :src="oemSettings.siteIconData || oemSettings.siteIcon"
                     @error="handleIconError"
                   />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">当前图标</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">当anterior图标</span>
                   <button
                     class="rounded-lg px-3 py-1 font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                     @click="removeIcon"
                   >
-                    删除
+                    Eliminar
                   </button>
                 </div>
 
-                <!-- 上传按钮 -->
+                <!-- Subir按钮 -->
                 <div>
                   <input
                     ref="iconFileInputMobile"
@@ -447,7 +447,7 @@
                     @click="$refs.iconFileInputMobile.click()"
                   >
                     <i class="fas fa-upload mr-2" />
-                    上传图标
+                    Subir图标
                   </button>
                   <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     支持 .ico, .png, .jpg, .svg 格式，最大 350KB
@@ -456,7 +456,7 @@
               </div>
             </div>
 
-            <!-- 管理后台按钮显示控制卡片 -->
+            <!-- 管理siguiente台按钮显示控制卡片 -->
             <div class="glass-card p-4">
               <div class="mb-3 flex items-center gap-3">
                 <div
@@ -466,7 +466,7 @@
                 </div>
                 <div>
                   <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">管理入口</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">控制登录按钮在首页的显示</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">控制Iniciar sesión按钮en首页显示</p>
                 </div>
               </div>
               <div class="space-y-2">
@@ -476,16 +476,16 @@
                     class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"
                   ></div>
                   <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">{{
-                    hideAdminButton ? '隐藏登录按钮' : '显示登录按钮'
+                    hideAdminButton ? '隐藏Iniciar sesión按钮' : '显示Iniciar sesión按钮'
                   }}</span>
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  隐藏后，用户需要直接访问 /admin/login 页面登录
+                  隐藏siguiente，Usuario需要直接访问 /admin/login 页面Iniciar sesión
                 </p>
               </div>
             </div>
 
-            <!-- 操作按钮卡片 -->
+            <!-- Operación按钮卡片 -->
             <div class="glass-card p-4">
               <div class="flex flex-col gap-3">
                 <button
@@ -496,7 +496,7 @@
                 >
                   <div v-if="saving" class="loading-spinner mr-2"></div>
                   <i v-else class="fas fa-save mr-2" />
-                  {{ saving ? '保存中...' : '保存设置' }}
+                  {{ saving ? 'Guardaren...' : 'GuardarConfiguración' }}
                 </button>
 
                 <button
@@ -505,7 +505,7 @@
                   @click="resetOemSettings"
                 >
                   <i class="fas fa-undo mr-2" />
-                  重置为默认
+                  Restablecerpara默认
                 </button>
 
                 <div
@@ -513,14 +513,14 @@
                   class="text-center text-sm text-gray-500 dark:text-gray-400"
                 >
                   <i class="fas fa-clock mr-1" />
-                  上次更新: {{ formatDateTime(oemSettings.updatedAt) }}
+                  arribavecesActualizar: {{ formatDateTime(oemSettings.updatedAt) }}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Webhook 设置部分 -->
+        <!-- Webhook Configuración部分 -->
         <div v-show="activeSection === 'webhook'">
           <!-- 主开关 -->
           <div
@@ -549,7 +549,7 @@
             </div>
           </div>
 
-          <!-- 通知类型设置 -->
+          <!-- 通知TipoConfiguración -->
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
@@ -585,7 +585,7 @@
             </div>
           </div>
 
-          <!-- 平台列表 -->
+          <!-- Plataforma列表 -->
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
@@ -602,7 +602,7 @@
               </button>
             </div>
 
-            <!-- 平台卡片列表 -->
+            <!-- Plataforma卡片列表 -->
             <div
               v-if="webhookConfig.platforms && webhookConfig.platforms.length > 0"
               class="space-y-4"
@@ -687,7 +687,7 @@
                     </div>
                   </div>
                   <div class="ml-4 flex items-center space-x-2">
-                    <!-- 启用/禁用开关 -->
+                    <!-- Habilitar/Deshabilitar开关 -->
                     <label class="relative inline-flex cursor-pointer items-center">
                       <input
                         :checked="platform.enabled"
@@ -707,7 +707,7 @@
                     >
                       <i class="fas fa-vial"></i>
                     </button>
-                    <!-- 编辑按钮 -->
+                    <!-- Editar按钮 -->
                     <button
                       class="rounded-lg bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                       :title="$t('common.action.edit')"
@@ -715,7 +715,7 @@
                     >
                       <i class="fas fa-edit"></i>
                     </button>
-                    <!-- 删除按钮 -->
+                    <!-- Eliminar按钮 -->
                     <button
                       class="rounded-lg bg-red-100 p-2 text-red-600 transition-colors hover:bg-red-200 dark:bg-red-900 dark:text-red-400 dark:hover:bg-red-800"
                       :title="$t('common.action.delete')"
@@ -732,13 +732,13 @@
             </div>
           </div>
 
-          <!-- 高级设置 -->
+          <!-- 高级Configuración -->
           <div class="rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80">
-            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">高级设置</h2>
+            <h2 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">高级Configuración</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  最大重试次数
+                  最大重试veces数
                 </label>
                 <input
                   v-model.number="webhookConfig.retrySettings.maxRetries"
@@ -856,14 +856,14 @@
           @close="showRoutingWizard = false"
           @success="handleWizardSuccess"
         />
-        <!-- 加载状态 -->
+        <!-- 加载Estado -->
         <div v-if="claudeConfigLoading" class="py-12 text-center">
           <div class="loading-spinner mx-auto mb-4"></div>
-          <p class="text-gray-500 dark:text-gray-400">正在加载配置...</p>
+          <p class="text-gray-500 dark:text-gray-400">正en加载配置...</p>
         </div>
 
         <div v-else>
-          <!-- Claude Code 客户端限制 -->
+          <!-- Claude Code Límite de clientes -->
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
@@ -880,11 +880,11 @@
                       仅允许 Claude Code 客户端
                     </h2>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                      启用后，所有
+                      Habilitarsiguiente，所有
                       <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
                         >/api/v1/messages</code
                       >
-                      和
+                      y
                       <code class="rounded bg-gray-100 px-1 dark:bg-gray-700"
                         >/claude/v1/messages</code
                       >
@@ -910,15 +910,15 @@
                 <i class="fas fa-info-circle mt-0.5 text-amber-500"></i>
                 <div class="ml-3">
                   <p class="text-sm text-amber-700 dark:text-amber-300">
-                    此设置与 API Key 级别的客户端限制是 <strong>OR 逻辑</strong>：全局启用或 API Key
-                    设置中启用，都会执行 Claude Code 验证。
+                    此Configuración与 API Key 级别Límite de clientes是 <strong>OR 逻辑</strong>：GlobalHabilitaro API Key
+                    ConfiguraciónenHabilitar，都会执行 Claude Code 验证。
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- 全局会话绑定 -->
+          <!-- Global会话绑定 -->
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
@@ -935,7 +935,7 @@
                       强制会话绑定
                     </h2>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                      启用后，系统会将原始会话 ID 绑定到首次使用的账户，确保上下文的一致性
+                      Habilitarsiguiente，系统会将原始会话 ID 绑定到首veces使用Cuenta，确保arribaabajo文一致性
                     </p>
                   </div>
                 </div>
@@ -953,13 +953,13 @@
               </label>
             </div>
 
-            <!-- 绑定配置详情（仅在启用时显示） -->
+            <!-- 绑定配置Detalles（仅enHabilitar时显示） -->
             <div v-if="claudeConfig.globalSessionBindingEnabled" class="mt-6 space-y-4">
-              <!-- 绑定有效期 -->
+              <!-- 绑定Válido期 -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   <i class="fas fa-clock mr-2 text-gray-400"></i>
-                  绑定有效期（天）
+                  绑定Válido期（天）
                 </label>
                 <input
                   v-model.number="claudeConfig.sessionBindingTtlDays"
@@ -971,25 +971,25 @@
                   @change="saveClaudeConfig"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  会话绑定到账户后的有效时间，过期后会自动解除绑定
+                  会话绑定到CuentasiguienteVálido时间，过期siguiente会自动解除绑定
                 </p>
               </div>
 
-              <!-- 错误提示消息 -->
+              <!-- ErrorSugerencia消息 -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   <i class="fas fa-exclamation-triangle mr-2 text-gray-400"></i>
-                  旧会话污染提示
+                  旧会话污染Sugerencia
                 </label>
                 <textarea
                   v-model="claudeConfig.sessionBindingErrorMessage"
                   class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-gray-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-                  placeholder="你的本地session已污染，请清理后使用。"
+                  placeholder="你本地session已污染，请清理siguiente使用。"
                   rows="2"
                   @change="saveClaudeConfig"
                 ></textarea>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  当检测到为旧的sessionId且未在系统中有调度记录时提示，返回给客户端的错误消息
+                  当检测到para旧sessionId且未en系统en有调度记录时Sugerencia，返回给客户端Error消息
                 </p>
               </div>
             </div>
@@ -999,24 +999,24 @@
                 <i class="fas fa-lightbulb mt-0.5 text-purple-500"></i>
                 <div class="ml-3">
                   <p class="text-sm text-purple-700 dark:text-purple-300">
-                    <strong>工作原理：</strong>系统会提取请求中的原始 session ID （来自
+                    <strong>工作原理：</strong>系统会提取Solicituden原始 session ID （来自
                     <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
                       >metadata.user_id</code
-                    >）， 并将其与首次调度的账户绑定。后续使用相同 session ID
-                    的请求将自动路由到同一账户。
+                    >）， 并将其与首veces调度Cuenta绑定。siguiente续使用相同 session ID
+                    Solicitud将自动路由到同一Cuenta。
                   </p>
                   <p class="mt-2 text-sm text-purple-700 dark:text-purple-300">
-                    <strong>新会话识别：</strong>如果绑定会话历史中没有该sessionId但请求中
+                    <strong>新会话识别：</strong>如果绑定会话历史en没有该sessionId但Solicituden
                     <code class="rounded bg-purple-100 px-1 dark:bg-purple-800"
                       >messages.length > 1</code
-                    >， 系统会认为这是一个污染的会话并拒绝请求。
+                    >， 系统会认para这是一 污染会话并拒绝Solicitud。
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- 用户消息串行队列 -->
+          <!-- Usuario消息串行队列 -->
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
@@ -1030,10 +1030,10 @@
                   </div>
                   <div>
                     <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                      用户消息串行队列
+                      Usuario消息串行队列
                     </h2>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                      启用后，同一账户的用户消息请求将串行执行，并在请求之间添加延迟，防止触发上游限流
+                      Habilitarsiguiente，同一CuentaUsuario消息Solicitud将串行执行，并enSolicitud之间添加延迟，防止触发arriba游限流
                     </p>
                   </div>
                 </div>
@@ -1051,13 +1051,13 @@
               </label>
             </div>
 
-            <!-- 队列配置详情（仅在启用时显示） -->
+            <!-- 队列配置Detalles（仅enHabilitar时显示） -->
             <div v-if="claudeConfig.userMessageQueueEnabled" class="mt-6 space-y-4">
-              <!-- 请求间隔 -->
+              <!-- Solicitud间隔 -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   <i class="fas fa-hourglass-half mr-2 text-gray-400"></i>
-                  请求间隔（毫秒）
+                  Solicitud间隔（毫秒）
                 </label>
                 <input
                   v-model.number="claudeConfig.userMessageQueueDelayMs"
@@ -1069,7 +1069,7 @@
                   @change="saveClaudeConfig"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  同一账户的用户消息请求之间的最小间隔时间（0-10000毫秒）
+                  同一CuentaUsuario消息Solicitud之间最小间隔时间（0-10000毫秒）
                 </p>
               </div>
 
@@ -1089,7 +1089,7 @@
                   @change="saveClaudeConfig"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  请求在队列中等待的最大时间，超时将返回 503 错误（1000-300000毫秒）
+                  Solicituden队列en等待最大时间，超时将返回 503 Error（1000-300000毫秒）
                 </p>
               </div>
             </div>
@@ -1099,18 +1099,18 @@
                 <i class="fas fa-info-circle mt-0.5 text-teal-500"></i>
                 <div class="ml-3">
                   <p class="text-sm text-teal-700 dark:text-teal-300">
-                    <strong>工作原理：</strong>系统检测请求中最后一条消息的
+                    <strong>工作原理：</strong>系统检测Solicituden最siguiente一registros消息
                     <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">role</code>
-                    是否为
+                    是否para
                     <code class="rounded bg-teal-100 px-1 dark:bg-teal-800">user</code
-                    >。用户消息请求需要排队串行执行，而工具调用结果、助手消息续传等不受此限制。
+                    >。Usuario消息Solicitud需要排队串行执行，而工具调用结果、助手消息续传等不受此Límite。
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- 并发请求排队 -->
+          <!-- 并发Solicitud排队 -->
           <div
             class="mb-6 rounded-lg bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:bg-gray-800/80"
           >
@@ -1122,9 +1122,9 @@
                   <i class="fas fa-layer-group text-xl"></i>
                 </div>
                 <div class="ml-4">
-                  <h4 class="text-lg font-semibold text-gray-900 dark:text-white">并发请求排队</h4>
+                  <h4 class="text-lg font-semibold text-gray-900 dark:text-white">并发Solicitud排队</h4>
                   <p class="text-sm text-gray-500 dark:text-gray-400">
-                    当 API Key 并发请求超限时进入队列等待，而非直接拒绝
+                    当 API Key 并发Solicitud超限时进入队列等待，而非直接拒绝
                   </p>
                 </div>
               </div>
@@ -1141,7 +1141,7 @@
               </label>
             </div>
 
-            <!-- 排队配置详情（仅在启用时显示） -->
+            <!-- 排队配置Detalles（仅enHabilitar时显示） -->
             <div v-if="claudeConfig.concurrentRequestQueueEnabled" class="mt-6 space-y-4">
               <!-- 固定最小排队数 -->
               <div>
@@ -1159,7 +1159,7 @@
                   @change="saveClaudeConfig"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  最大排队数的固定最小值（1-100）
+                  最大排队数固定最小值（1-100）
                 </p>
               </div>
 
@@ -1180,7 +1180,7 @@
                   @change="saveClaudeConfig"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  最大排队数 = MAX(倍数 × 并发限制, 固定值)，设为 0 则仅使用固定值
+                  最大排队数 = MAX(倍数 × Límite de concurrencia, 固定值)，设para 0 则仅使用固定值
                 </p>
               </div>
 
@@ -1200,7 +1200,7 @@
                   @change="saveClaudeConfig"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  请求在排队中等待的最大时间，超时将返回 429 错误（5秒-5分钟，默认10秒）
+                  Solicituden排队en等待最大时间，超时将返回 429 Error（5秒-5分钟，默认10秒）
                 </p>
               </div>
             </div>
@@ -1210,9 +1210,9 @@
                 <i class="fas fa-info-circle mt-0.5 text-blue-500"></i>
                 <div class="ml-3">
                   <p class="text-sm text-blue-700 dark:text-blue-300">
-                    <strong>工作原理：</strong>当 API Key 的并发请求超过
+                    <strong>工作原理：</strong>当 API Key 并发Solicitud超过
                     <code class="rounded bg-blue-100 px-1 dark:bg-blue-800">concurrencyLimit</code>
-                    时，超限请求会进入队列等待而非直接返回 429。适合 Claude Code Agent
+                    时，超限Solicitud会进入队列等待而非直接返回 429。适合 Claude Code Agent
                     并行工具调用场景。
                   </p>
                 </div>
@@ -1220,13 +1220,13 @@
             </div>
           </div>
 
-          <!-- 配置更新信息 -->
+          <!-- 配置ActualizarInformación -->
           <div
             v-if="claudeConfig.updatedAt"
             class="rounded-lg bg-gray-50 p-4 text-sm text-gray-500 dark:bg-gray-700/50 dark:text-gray-400"
           >
             <i class="fas fa-history mr-2"></i>
-            最后更新：{{ formatDateTime(claudeConfig.updatedAt) }}
+            最siguienteActualizar：{{ formatDateTime(claudeConfig.updatedAt) }}
             <span v-if="claudeConfig.updatedBy" class="ml-2">
               由 <strong>{{ claudeConfig.updatedBy }}</strong> 修改
             </span>
@@ -1235,14 +1235,14 @@
 
         <!-- 服务倍率配置部分 -->
         <div v-show="activeSection === 'serviceRates'">
-          <!-- 加载状态 -->
+          <!-- 加载Estado -->
           <div v-if="serviceRatesLoading" class="py-12 text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
-            <p class="text-gray-500 dark:text-gray-400">正在加载配置...</p>
+            <p class="text-gray-500 dark:text-gray-400">正en加载配置...</p>
           </div>
 
           <div v-else>
-            <!-- 说明卡片 -->
+            <!-- Instrucciones卡片 -->
             <div
               class="mb-6 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 p-6 dark:from-blue-900/20 dark:to-indigo-900/20"
             >
@@ -1254,12 +1254,12 @@
                 </div>
                 <div>
                   <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                    服务倍率说明
+                    服务倍率Instrucciones
                   </h3>
                   <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    服务倍率用于计算不同服务的计费费用。以
+                    服务倍率para计算不同服务Costo facturado。以
                     <strong>{{ serviceRates.baseService || 'claude' }}</strong>
-                    为基准（倍率 1.0），其他服务按倍率换算。例如：Gemini 倍率 0.5 表示消耗 $1 只扣除
+                    para基准（倍率 1.0），Otro服务按倍率换算。例如：Gemini 倍率 0.5 表示消耗 $1 只扣除
                     $0.5 额度。
                   </p>
                 </div>
@@ -1279,7 +1279,7 @@
                   @click="saveServiceRates"
                 >
                   <i class="fas fa-save mr-2"></i>
-                  {{ serviceRatesSaving ? '保存中...' : '保存配置' }}
+                  {{ serviceRatesSaving ? 'Guardaren...' : 'Guardar配置' }}
                 </button>
               </div>
 
@@ -1325,13 +1325,13 @@
                 </div>
               </div>
 
-              <!-- 更新信息 -->
+              <!-- ActualizarInformación -->
               <div
                 v-if="serviceRates.updatedAt"
                 class="mt-4 rounded-lg bg-gray-50 p-3 text-sm text-gray-500 dark:bg-gray-700/50 dark:text-gray-400"
               >
                 <i class="fas fa-history mr-2"></i>
-                最后更新：{{ formatDateTime(serviceRates.updatedAt) }}
+                最siguienteActualizar：{{ formatDateTime(serviceRates.updatedAt) }}
                 <span v-if="serviceRates.updatedBy" class="ml-2">
                   由 <strong>{{ serviceRates.updatedBy }}</strong> 修改
                 </span>
@@ -1343,7 +1343,7 @@
     </div>
   </div>
 
-  <!-- 添加/编辑平台模态框 -->
+  <!-- 添加/EditarPlataforma模态框 -->
   <div
     v-if="showAddPlatformModal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300 ease-out"
@@ -1366,10 +1366,10 @@
             </div>
             <div>
               <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                {{ editingPlatform ? '编辑' : '添加' }}通知平台
+                {{ editingPlatform ? 'Editar' : '添加' }}通知Plataforma
               </h3>
               <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">
-                配置{{ editingPlatform ? '并更新' : '新的' }}Webhook通知渠道
+                配置{{ editingPlatform ? '并Actualizar' : '新' }}Webhook通知渠道
               </p>
             </div>
           </div>
@@ -1385,13 +1385,13 @@
       <!-- 内容区域 -->
       <div class="p-6">
         <div class="space-y-5">
-          <!-- 平台类型选择 -->
+          <!-- PlataformaTipo选择 -->
           <div>
             <label
               class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               <i class="fas fa-layer-group mr-2 text-gray-400"></i>
-              平台类型
+              PlataformaTipo
             </label>
             <div class="relative">
               <select
@@ -1415,17 +1415,17 @@
             </div>
             <p v-if="editingPlatform" class="mt-1 text-xs text-amber-600 dark:text-amber-400">
               <i class="fas fa-info-circle mr-1"></i>
-              编辑模式下不能更改平台类型
+              Editar模式abajo不能更改PlataformaTipo
             </p>
           </div>
 
-          <!-- 平台名称 -->
+          <!-- PlataformaNombre -->
           <div>
             <label
               class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               <i class="fas fa-tag mr-2 text-gray-400"></i>
-              名称
+              Nombre
               <span class="ml-2 text-xs text-gray-500">(可选)</span>
             </label>
             <input
@@ -1436,7 +1436,7 @@
             />
           </div>
 
-          <!-- Webhook URL (非Bark和SMTP平台) -->
+          <!-- Webhook URL (非BarkySMTPPlataforma) -->
           <div
             v-if="
               platformForm.type !== 'bark' &&
@@ -1482,7 +1482,7 @@
             </div>
           </div>
 
-          <!-- Telegram 平台特有字段 -->
+          <!-- Telegram Plataforma特有字段 -->
           <div v-if="platformForm.type === 'telegram'" class="space-y-5">
             <div>
               <label
@@ -1570,9 +1570,9 @@
             </div>
           </div>
 
-          <!-- Bark 平台特有字段 -->
+          <!-- Bark Plataforma特有字段 -->
           <div v-if="platformForm.type === 'bark'" class="space-y-5">
-            <!-- 设备密钥 -->
+            <!-- 设备Clave -->
             <div>
               <label
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -1589,7 +1589,7 @@
                 type="text"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                在Bark App中查看您的推送密钥
+                enBark AppenVer您推送Clave
               </p>
             </div>
 
@@ -1622,7 +1622,7 @@
                 v-model="platformForm.level"
                 class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
-                <option value="">自动（根据通知类型）</option>
+                <option value="">自动（根据通知Tipo）</option>
                 <option value="passive">被动</option>
                 <option value="active">默认</option>
                 <option value="timeSensitive">时效性</option>
@@ -1642,7 +1642,7 @@
                 v-model="platformForm.sound"
                 class="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
-                <option value="">自动（根据通知类型）</option>
+                <option value="">自动（根据通知Tipo）</option>
                 <option value="default">默认</option>
                 <option value="alarm">警报</option>
                 <option value="bell">铃声</option>
@@ -1671,18 +1671,18 @@
               />
             </div>
 
-            <!-- 提示信息 -->
+            <!-- SugerenciaInformación -->
             <div class="mt-2 flex items-start rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
               <i class="fas fa-info-circle mr-2 mt-0.5 text-blue-600 dark:text-blue-400"></i>
               <div class="text-sm text-blue-700 dark:text-blue-300">
-                <p>1. 在iPhone上安装Bark App</p>
-                <p>2. 打开App获取您的设备密钥</p>
-                <p>3. 将密钥粘贴到上方输入框</p>
+                <p>1. eniPhonearriba安装Bark App</p>
+                <p>2. 打开App获取您设备Clave</p>
+                <p>3. 将ClavePegar到arriba方Entrada框</p>
               </div>
             </div>
           </div>
 
-          <!-- SMTP 平台特有字段 -->
+          <!-- SMTP Plataforma特有字段 -->
           <div v-if="platformForm.type === 'smtp'" class="space-y-5">
             <!-- SMTP 主机 -->
             <div>
@@ -1702,7 +1702,7 @@
               />
             </div>
 
-            <!-- SMTP 端口和安全设置 -->
+            <!-- SMTP 端口y安全Configuración -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label
@@ -1720,7 +1720,7 @@
                   type="number"
                 />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  默认: 587 (TLS) 或 465 (SSL)
+                  默认: 587 (TLS) o 465 (SSL)
                 </p>
               </div>
 
@@ -1741,13 +1741,13 @@
               </div>
             </div>
 
-            <!-- 用户名 -->
+            <!-- Nombre de usuario -->
             <div>
               <label
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-user mr-2 text-gray-400"></i>
-                用户名
+                Nombre de usuario
                 <span class="ml-1 text-xs text-red-500">*</span>
               </label>
               <input
@@ -1759,51 +1759,51 @@
               />
             </div>
 
-            <!-- 密码 -->
+            <!-- Contraseña -->
             <div>
               <label
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-lock mr-2 text-gray-400"></i>
-                密码 / 应用密码
+                Contraseña / 应用Contraseña
                 <span class="ml-1 text-xs text-red-500">*</span>
               </label>
               <input
                 v-model="platformForm.pass"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="邮箱密码或应用专用密码"
+                placeholder="Correo electrónicoContraseñao应用专用Contraseña"
                 required
                 type="password"
               />
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                建议使用应用专用密码，而非邮箱登录密码
+                建议使用应用专用Contraseña，而非Correo electrónicoIniciar sesiónContraseña
               </p>
             </div>
 
-            <!-- 发件人邮箱 -->
+            <!-- 发件人Correo electrónico -->
             <div>
               <label
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-paper-plane mr-2 text-gray-400"></i>
-                发件人邮箱
+                发件人Correo electrónico
                 <span class="ml-2 text-xs text-gray-500">(可选)</span>
               </label>
               <input
                 v-model="platformForm.from"
                 class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500"
-                placeholder="默认使用用户名邮箱"
+                placeholder="默认使用Nombre de usuarioCorreo electrónico"
                 type="email"
               />
             </div>
 
-            <!-- 收件人邮箱 -->
+            <!-- 收件人Correo electrónico -->
             <div>
               <label
                 class="mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 <i class="fas fa-envelope mr-2 text-gray-400"></i>
-                收件人邮箱
+                收件人Correo electrónico
                 <span class="ml-1 text-xs text-red-500">*</span>
               </label>
               <input
@@ -1813,11 +1813,11 @@
                 required
                 type="email"
               />
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">接收通知的邮箱地址</p>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">接收通知Correo electrónico地址</p>
             </div>
           </div>
 
-          <!-- 签名设置（钉钉/飞书） -->
+          <!-- 签名Configuración（钉钉/飞书） -->
           <div
             v-if="platformForm.type === 'dingtalk' || platformForm.type === 'feishu'"
             class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/50"
@@ -1835,14 +1835,14 @@
                     class="ml-3 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
                     <i class="fas fa-shield-alt mr-2 text-gray-400"></i>
-                    启用签名验证
+                    Habilitar签名验证
                   </span>
                 </label>
                 <span
                   v-if="platformForm.enableSign"
                   class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/50 dark:text-green-400"
                 >
-                  已启用
+                  已Habilitar
                 </span>
               </div>
               <transition
@@ -1855,7 +1855,7 @@
               >
                 <div v-if="platformForm.enableSign">
                   <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    签名密钥
+                    签名Clave
                   </label>
                   <input
                     v-model="platformForm.secret"
@@ -1885,7 +1885,7 @@
               @click="closePlatformModal"
             >
               <i class="fas fa-times mr-2 transition-transform group-hover:scale-110"></i>
-              取消
+              Cancelar
             </button>
             <button
               class="group flex items-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-medium text-blue-700 shadow-sm transition-all hover:bg-blue-100 hover:shadow-md dark:border-blue-800 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900/70"
@@ -1898,7 +1898,7 @@
                   testingConnection ? 'fas fa-spinner fa-spin' : 'fas fa-vial group-hover:scale-110'
                 "
               ></i>
-              {{ testingConnection ? '测试中...' : '测试连接' }}
+              {{ testingConnection ? '测试en...' : '测试连接' }}
             </button>
             <button
               class="group flex items-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500"
@@ -1911,7 +1911,7 @@
                   savingPlatform ? 'fas fa-spinner fa-spin' : 'fas fa-save group-hover:scale-110'
                 "
               ></i>
-              {{ savingPlatform ? '保存中...' : editingPlatform ? '保存修改' : '添加平台' }}
+              {{ savingPlatform ? 'Guardaren...' : editingPlatform ? 'Guardar修改' : '添加Plataforma' }}
             </button>
           </div>
         </div>
@@ -1941,7 +1941,7 @@ import { useSettingsStore } from '@/stores/settings'
 import * as httpApis from '@/utils/http_apis'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
-// 定义组件名称，用于keep-alive排除
+// 定义组件Nombre，parakeep-alive排除
 defineOptions({
   name: 'SettingsView'
 })
@@ -1953,31 +1953,31 @@ const { loading, saving, oemSettings } = storeToRefs(settingsStore)
 // 组件refs
 const iconFileInput = ref()
 
-// 当前激活的设置部分
+// 当anterior激活Configuración部分
 const activeSection = ref('branding')
 
-// 组件挂载状态
+// 组件挂载Estado
 const isMounted = ref(true)
 
-// API请求取消控制器
+// APISolicitudCancelar控制器
 const abortController = ref(new AbortController())
 
-// ConfirmModal 状态
+// ConfirmModal Estado
 const showConfirmModal = ref(false)
 const confirmModalConfig = ref({
   title: '',
   message: '',
   type: 'primary',
-  confirmText: '确认',
-  cancelText: '取消'
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar'
 })
 const confirmResolve = ref(null)
 
 const showConfirm = (
   title,
   message,
-  confirmText = '确认',
-  cancelText = '取消',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   type = 'primary'
 ) => {
   return new Promise((resolve) => {
@@ -1995,7 +1995,7 @@ const handleCancelModal = () => {
   confirmResolve.value?.(false)
 }
 
-// 计算属性：隐藏管理后台按钮（反转 showAdminButton 的值）
+// 计算属性：隐藏管理siguiente台按钮（反转 showAdminButton 值）
 const hideAdminButton = computed({
   get() {
     return !oemSettings.value.showAdminButton
@@ -2005,7 +2005,7 @@ const hideAdminButton = computed({
   }
 })
 
-// URL 验证状态
+// URL 验证Estado
 const urlError = ref(false)
 const urlValid = ref(false)
 const testingConnection = ref(false)
@@ -2036,11 +2036,11 @@ const claudeConfigLoading = ref(false)
 const claudeConfig = ref({
   claudeCodeOnlyEnabled: false,
   globalSessionBindingEnabled: false,
-  sessionBindingErrorMessage: '你的本地session已污染，请清理后使用。',
+  sessionBindingErrorMessage: '你本地session已污染，请清理siguiente使用。',
   sessionBindingTtlDays: 1,
-  userMessageQueueEnabled: false, // 与后端默认值保持一致
+  userMessageQueueEnabled: false, // 与siguiente端默认值保持一致
   userMessageQueueDelayMs: 200,
-  userMessageQueueTimeoutMs: 5000, // 与后端默认值保持一致（优化后锁持有时间短无需长等待）
+  userMessageQueueTimeoutMs: 5000, // 与siguiente端默认值保持一致（优化siguiente锁持有时间短无需长等待）
   concurrentRequestQueueEnabled: false,
   concurrentRequestQueueMaxSize: 3,
   concurrentRequestQueueMaxSizeMultiplier: 0,
@@ -2067,7 +2067,7 @@ const serviceRates = ref({
   updatedBy: null
 })
 
-// 平台表单相关
+// Plataforma表单相关
 const showAddPlatformModal = ref(false)
 const editingPlatform = ref(null)
 const platformForm = ref({
@@ -2111,18 +2111,18 @@ const sectionWatcher = watch(activeSection, async (newSection) => {
   }
 })
 
-// 监听平台类型变化，重置验证状态
+// 监听PlataformaTipo变化，Restablecer验证Estado
 const platformTypeWatcher = watch(
   () => platformForm.value.type,
   (newType) => {
-    // 切换平台类型时重置验证状态
+    // 切换PlataformaTipo时Restablecer验证Estado
     urlError.value = false
     urlValid.value = false
 
-    // 如果不是编辑模式，清空相关字段
+    // 如果不是Editar模式，清空相关字段
     if (!editingPlatform.value) {
       if (newType === 'bark') {
-        // 切换到Bark时，清空URL和SMTP相关字段
+        // 切换到Bark时，清空URLySMTP相关字段
         platformForm.value.url = ''
         platformForm.value.enableSign = false
         platformForm.value.secret = ''
@@ -2142,7 +2142,7 @@ const platformTypeWatcher = watch(
         platformForm.value.timeout = null
         platformForm.value.ignoreTLS = false
       } else if (newType === 'smtp') {
-        // 切换到SMTP时，清空URL和Bark相关字段
+        // 切换到SMTP时，清空URLyBark相关字段
         platformForm.value.url = ''
         platformForm.value.enableSign = false
         platformForm.value.secret = ''
@@ -2180,7 +2180,7 @@ const platformTypeWatcher = watch(
         platformForm.value.apiBaseUrl = ''
         platformForm.value.proxyUrl = ''
       } else {
-        // 切换到其他平台时，清空Bark和SMTP相关字段
+        // 切换到OtroPlataforma时，清空BarkySMTP相关字段
         platformForm.value.deviceKey = ''
         platformForm.value.serverUrl = ''
         platformForm.value.level = ''
@@ -2206,16 +2206,16 @@ const platformTypeWatcher = watch(
   }
 )
 
-// 计算属性：判断平台表单是否有效
+// 计算属性：判断Plataforma表单是否Válido
 const isPlatformFormValid = computed(() => {
   if (platformForm.value.type === 'bark') {
-    // Bark平台需要deviceKey
+    // BarkPlataforma需要deviceKey
     return !!platformForm.value.deviceKey
   } else if (platformForm.value.type === 'telegram') {
-    // Telegram需要机器人Token和Chat ID
+    // Telegram需要机器人TokenyChat ID
     return !!(platformForm.value.botToken && platformForm.value.chatId)
   } else if (platformForm.value.type === 'smtp') {
-    // SMTP平台需要必要的配置
+    // SMTPPlataforma需要必要配置
     return !!(
       platformForm.value.host &&
       platformForm.value.user &&
@@ -2223,12 +2223,12 @@ const isPlatformFormValid = computed(() => {
       platformForm.value.to
     )
   } else {
-    // 其他平台需要URL且URL格式正确
+    // OtroPlataforma需要URL且URL格式正确
     return !!platformForm.value.url && !urlError.value
   }
 })
 
-// 页面加载时获取设置
+// 页面加载时获取Configuración
 onMounted(async () => {
   try {
     await settingsStore.loadOemSettings()
@@ -2239,16 +2239,16 @@ onMounted(async () => {
       await loadServiceRates()
     }
   } catch (error) {
-    showToast('加载设置失败', 'error')
+    showToast('加载ConfiguraciónFallido', 'error')
   }
 })
 
-// 组件卸载前清理
+// 组件卸载anterior清理
 onBeforeUnmount(() => {
-  // 设置组件未挂载状态
+  // Configuración组件未挂载Estado
   isMounted.value = false
 
-  // 取消所有API请求
+  // Cancelar所有APISolicitud
   if (abortController.value) {
     abortController.value.abort()
   }
@@ -2261,7 +2261,7 @@ onBeforeUnmount(() => {
     platformTypeWatcher()
   }
 
-  // 安全关闭模态框
+  // 安全Cerrar模态框
   if (showAddPlatformModal.value) {
     showAddPlatformModal.value = false
     editingPlatform.value = null
@@ -2290,12 +2290,12 @@ const loadWebhookConfig = async () => {
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('获取webhook配置失败', 'error')
+    showToast('获取webhook配置Fallido', 'error')
     console.error(error)
   }
 }
 
-// 保存webhook配置
+// Guardarwebhook配置
 const saveWebhookConfig = async () => {
   if (!isMounted.value) return
   try {
@@ -2312,12 +2312,12 @@ const saveWebhookConfig = async () => {
     })
     if (response.success && isMounted.value) {
       webhookConfig.value = payload
-      showToast('配置已保存', 'success')
+      showToast('配置已Guardar', 'success')
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('保存配置失败', 'error')
+    showToast('Guardar配置Fallido', 'error')
     console.error(error)
   }
 }
@@ -2335,11 +2335,11 @@ const loadClaudeConfig = async () => {
         claudeCodeOnlyEnabled: response.config?.claudeCodeOnlyEnabled ?? false,
         globalSessionBindingEnabled: response.config?.globalSessionBindingEnabled ?? false,
         sessionBindingErrorMessage:
-          response.config?.sessionBindingErrorMessage || '你的本地session已污染，请清理后使用。',
+          response.config?.sessionBindingErrorMessage || '你本地session已污染，请清理siguiente使用。',
         sessionBindingTtlDays: response.config?.sessionBindingTtlDays ?? 1,
-        userMessageQueueEnabled: response.config?.userMessageQueueEnabled ?? false, // 与后端默认值保持一致
+        userMessageQueueEnabled: response.config?.userMessageQueueEnabled ?? false, // 与siguiente端默认值保持一致
         userMessageQueueDelayMs: response.config?.userMessageQueueDelayMs ?? 200,
-        userMessageQueueTimeoutMs: response.config?.userMessageQueueTimeoutMs ?? 5000, // 与后端默认值保持一致
+        userMessageQueueTimeoutMs: response.config?.userMessageQueueTimeoutMs ?? 5000, // 与siguiente端默认值保持一致
         concurrentRequestQueueEnabled: response.config?.concurrentRequestQueueEnabled ?? false,
         concurrentRequestQueueMaxSize: response.config?.concurrentRequestQueueMaxSize ?? 3,
         concurrentRequestQueueMaxSizeMultiplier:
@@ -2352,7 +2352,7 @@ const loadClaudeConfig = async () => {
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('获取 Claude 转发配置失败', 'error')
+    showToast('获取 Claude 转发配置Fallido', 'error')
     console.error(error)
   } finally {
     if (isMounted.value) {
@@ -2361,7 +2361,7 @@ const loadClaudeConfig = async () => {
   }
 }
 
-// 保存 Claude 转发配置
+// Guardar Claude 转发配置
 const saveClaudeConfig = async () => {
   if (!isMounted.value) return
   try {
@@ -2389,12 +2389,12 @@ const saveClaudeConfig = async () => {
         updatedAt: response.config?.updatedAt || new Date().toISOString(),
         updatedBy: response.config?.updatedBy || null
       }
-      showToast('Claude 转发配置已保存', 'success')
+      showToast('Claude 转发配置已Guardar', 'success')
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('保存 Claude 转发配置失败', 'error')
+    showToast('Guardar Claude 转发配置Fallido', 'error')
     console.error(error)
   }
 }
@@ -2418,7 +2418,7 @@ const loadServiceRates = async () => {
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    console.error('加载服务倍率配置失败:', error)
+    console.error('加载服务倍率配置Fallido:', error)
   } finally {
     if (isMounted.value) {
       serviceRatesLoading.value = false
@@ -2426,7 +2426,7 @@ const loadServiceRates = async () => {
   }
 }
 
-// 保存服务倍率配置
+// Guardar服务倍率配置
 const saveServiceRates = async () => {
   if (!isMounted.value) return
   serviceRatesSaving.value = true
@@ -2441,12 +2441,12 @@ const saveServiceRates = async () => {
     if (response.success && isMounted.value) {
       serviceRates.value.updatedAt = response.data?.updatedAt || new Date().toISOString()
       serviceRates.value.updatedBy = response.data?.updatedBy
-      showToast('服务倍率配置已保存', 'success')
+      showToast('服务倍率配置已Guardar', 'success')
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('保存服务倍率配置失败', 'error')
+    showToast('Guardar服务倍率配置Fallido', 'error')
     console.error(error)
   } finally {
     if (isMounted.value) {
@@ -2455,7 +2455,7 @@ const saveServiceRates = async () => {
   }
 }
 
-// 服务图标和名称映射
+// 服务图标yNombre映射
 const getServiceIcon = (service) => {
   const icons = {
     claude: 'fas fa-robot',
@@ -2497,7 +2497,7 @@ const getServiceName = (service) => {
 
 // 验证 URL
 const validateUrl = () => {
-  // Bark和SMTP平台不需要验证URL
+  // BarkySMTPPlataforma不需要验证URL
   if (['bark', 'smtp', 'telegram'].includes(platformForm.value.type)) {
     urlError.value = false
     urlValid.value = false
@@ -2526,31 +2526,31 @@ const validateUrl = () => {
   }
 }
 
-// 验证平台配置
+// 验证Plataforma配置
 const validatePlatformForm = () => {
   if (platformForm.value.type === 'bark') {
     if (!platformForm.value.deviceKey) {
-      showToast('请输入Bark设备密钥', 'error')
+      showToast('IngreseBark设备Clave', 'error')
       return false
     }
   } else if (platformForm.value.type === 'telegram') {
     if (!platformForm.value.botToken) {
-      showToast('请输入 Telegram 机器人 Token', 'error')
+      showToast('Ingrese Telegram 机器人 Token', 'error')
       return false
     }
     if (!platformForm.value.chatId) {
-      showToast('请输入 Telegram Chat ID', 'error')
+      showToast('Ingrese Telegram Chat ID', 'error')
       return false
     }
     if (platformForm.value.apiBaseUrl) {
       try {
         const parsed = new URL(platformForm.value.apiBaseUrl)
         if (!['http:', 'https:'].includes(parsed.protocol)) {
-          showToast('Telegram API 基础地址仅支持 http 或 https', 'error')
+          showToast('Telegram API 基础地址仅支持 http o https', 'error')
           return false
         }
       } catch (error) {
-        showToast('请输入有效的 Telegram API 基础地址', 'error')
+        showToast('IngreseVálido Telegram API 基础地址', 'error')
         return false
       }
     }
@@ -2563,38 +2563,38 @@ const validatePlatformForm = () => {
           return false
         }
       } catch (error) {
-        showToast('请输入有效的 Telegram 代理地址', 'error')
+        showToast('IngreseVálido Telegram 代理地址', 'error')
         return false
       }
     }
   } else if (platformForm.value.type === 'smtp') {
     const requiredFields = [
       { field: 'host', message: 'SMTP服务器' },
-      { field: 'user', message: '用户名' },
-      { field: 'pass', message: '密码' },
-      { field: 'to', message: '收件人邮箱' }
+      { field: 'user', message: 'Nombre de usuario' },
+      { field: 'pass', message: 'Contraseña' },
+      { field: 'to', message: '收件人Correo electrónico' }
     ]
 
     for (const { field, message } of requiredFields) {
       if (!platformForm.value[field]) {
-        showToast(`请输入${message}`, 'error')
+        showToast(`Ingrese${message}`, 'error')
         return false
       }
     }
   } else {
     if (!platformForm.value.url) {
-      showToast('请输入Webhook URL', 'error')
+      showToast('IngreseWebhook URL', 'error')
       return false
     }
     if (urlError.value) {
-      showToast('请输入有效的Webhook URL', 'error')
+      showToast('IngreseVálidoWebhook URL', 'error')
       return false
     }
   }
   return true
 }
 
-// 添加/更新平台
+// 添加/ActualizarPlataforma
 const savePlatform = async () => {
   if (!isMounted.value) return
 
@@ -2605,7 +2605,7 @@ const savePlatform = async () => {
   try {
     let response
     if (editingPlatform.value) {
-      // 更新平台
+      // ActualizarPlataforma
       response = await httpApis.updateWebhookPlatformApi(
         editingPlatform.value.id,
         platformForm.value,
@@ -2614,21 +2614,21 @@ const savePlatform = async () => {
         }
       )
     } else {
-      // 添加平台
+      // 添加Plataforma
       response = await httpApis.createWebhookPlatformApi(platformForm.value, {
         signal: abortController.value.signal
       })
     }
 
     if (response.success && isMounted.value) {
-      showToast(editingPlatform.value ? '平台已更新' : '平台已添加', 'success')
+      showToast(editingPlatform.value ? 'Plataforma已Actualizar' : 'Plataforma已添加', 'success')
       await loadWebhookConfig()
       closePlatformModal()
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast(error.message || '操作失败', 'error')
+    showToast(error.message || 'Operación fallida', 'error')
     console.error(error)
   } finally {
     if (isMounted.value) {
@@ -2637,7 +2637,7 @@ const savePlatform = async () => {
   }
 }
 
-// 编辑平台
+// EditarPlataforma
 const editPlatform = (platform) => {
   editingPlatform.value = platform
   platformForm.value = {
@@ -2671,11 +2671,11 @@ const editPlatform = (platform) => {
   showAddPlatformModal.value = true
 }
 
-// 删除平台
+// EliminarPlataforma
 const deletePlatform = async (id) => {
   if (!isMounted.value) return
 
-  if (!(await showConfirm('删除平台', '确定要删除这个平台吗？', '删除', '取消', 'danger'))) {
+  if (!(await showConfirm('EliminarPlataforma', 'Confirmar要Eliminar这 Plataforma吗？', 'Eliminar', 'Cancelar', 'danger'))) {
     return
   }
 
@@ -2684,18 +2684,18 @@ const deletePlatform = async (id) => {
       signal: abortController.value.signal
     })
     if (response.success && isMounted.value) {
-      showToast('平台已删除', 'success')
+      showToast('Plataforma已Eliminar', 'success')
       await loadWebhookConfig()
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('删除失败', 'error')
+    showToast('Error al eliminar', 'error')
     console.error(error)
   }
 }
 
-// 切换平台状态
+// 切换PlataformaEstado
 const togglePlatform = async (id) => {
   if (!isMounted.value) return
 
@@ -2710,12 +2710,12 @@ const togglePlatform = async (id) => {
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast('操作失败', 'error')
+    showToast('Operación fallida', 'error')
     console.error(error)
   }
 }
 
-// 测试平台
+// 测试Plataforma
 const testPlatform = async (platform) => {
   if (!isMounted.value) return
 
@@ -2726,7 +2726,7 @@ const testPlatform = async (platform) => {
       enableSign: platform.enableSign
     }
 
-    // 根据平台类型添加不同字段
+    // 根据PlataformaTipo添加不同字段
     if (platform.type === 'bark') {
       testData.deviceKey = platform.deviceKey
       testData.serverUrl = platform.serverUrl
@@ -2755,17 +2755,17 @@ const testPlatform = async (platform) => {
       signal: abortController.value.signal
     })
     if (response.success && isMounted.value) {
-      showToast('测试成功', 'success')
+      showToast('测试Exitoso', 'success')
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast(error.error || error.message || '测试失败', 'error')
+    showToast(error.error || error.message || '测试Fallido', 'error')
     console.error(error)
   }
 }
 
-// 测试表单中的平台
+// 测试表单enPlataforma
 const testPlatformForm = async () => {
   if (!isMounted.value) return
 
@@ -2778,12 +2778,12 @@ const testPlatformForm = async () => {
       signal: abortController.value.signal
     })
     if (response.success && isMounted.value) {
-      showToast('测试成功', 'success')
+      showToast('测试Exitoso', 'success')
     }
   } catch (error) {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
-    showToast(error.error || error.message || '测试失败', 'error')
+    showToast(error.error || error.message || '测试Fallido', 'error')
     console.error(error)
   } finally {
     if (isMounted.value) {
@@ -2807,19 +2807,19 @@ const sendTestNotification = async () => {
     if (error.name === 'AbortError') return
     if (!isMounted.value) return
     const errorMessage =
-      error?.response?.data?.message || error?.response?.data?.error || error?.message || '发送失败'
+      error?.response?.data?.message || error?.response?.data?.error || error?.message || '发送Fallido'
     showToast(errorMessage, 'error')
     console.error(error)
   }
 }
 
-// 关闭模态框
+// Cerrar模态框
 const closePlatformModal = () => {
   if (!isMounted.value) return
 
   showAddPlatformModal.value = false
 
-  // 使用 setTimeout 确保 DOM 更新完成后再重置状态
+  // 使用 setTimeout 确保 DOM Actualizar完成siguiente再RestablecerEstado
   setTimeout(() => {
     if (!isMounted.value) return
     editingPlatform.value = null
@@ -2891,15 +2891,15 @@ const getPlatformIcon = (type) => {
 
 const getWebhookHint = (type) => {
   const hints = {
-    wechat_work: '请在企业微信群机器人设置中获取Webhook地址',
-    dingtalk: '请在钉钉群机器人设置中获取Webhook地址',
-    feishu: '请在飞书群机器人设置中获取Webhook地址',
-    slack: '请在Slack应用的Incoming Webhooks中获取地址',
-    discord: '请在Discord服务器的集成设置中创建Webhook',
-    telegram: '使用 @BotFather 创建机器人并复制 Token，Chat ID 可通过 @userinfobot 或相关工具获取',
-    bark: '请在Bark App中查看您的设备密钥',
-    smtp: '请配置SMTP服务器信息，支持Gmail、QQ邮箱等',
-    custom: '请输入完整的Webhook接收地址'
+    wechat_work: '请en企业微信群机器人Configuraciónen获取Webhook地址',
+    dingtalk: '请en钉钉群机器人Configuraciónen获取Webhook地址',
+    feishu: '请en飞书群机器人Configuraciónen获取Webhook地址',
+    slack: '请enSlack应用Incoming Webhooksen获取地址',
+    discord: '请enDiscord服务器集成ConfiguraciónenCrearWebhook',
+    telegram: '使用 @BotFather Crear机器人并Copiar Token，Chat ID 可通过 @userinfobot o相关工具获取',
+    bark: '请enBark AppenVer您设备Clave',
+    smtp: '请配置SMTP服务器Información，支持Gmail、QQCorreo electrónico等',
+    custom: 'Ingrese完整Webhook接收地址'
   }
   return hints[type] || ''
 }
@@ -2913,8 +2913,8 @@ const formatTelegramToken = (token) => {
 const getNotificationTypeName = (type) => {
   const names = {
     accountAnomaly: '账号异常',
-    quotaWarning: '配额警告',
-    systemError: '系统错误',
+    quotaWarning: '配额Advertencia',
+    systemError: '系统Error',
     securityAlert: '安全警报',
     rateLimitRecovery: '限流恢复',
     test: '测试通知'
@@ -2924,17 +2924,17 @@ const getNotificationTypeName = (type) => {
 
 const getNotificationTypeDescription = (type) => {
   const descriptions = {
-    accountAnomaly: '账号状态异常、认证失败等',
-    quotaWarning: 'API调用配额不足警告',
-    systemError: '系统运行错误和故障',
-    securityAlert: '安全相关的警报通知',
-    rateLimitRecovery: '限流状态恢复时发送提醒',
-    test: '用于测试Webhook连接是否正常'
+    accountAnomaly: '账号Estado异常、认证Fallido等',
+    quotaWarning: 'API调用配额不足Advertencia',
+    systemError: '系统运行Errory故障',
+    securityAlert: '安全相关警报通知',
+    rateLimitRecovery: '限流Estado恢复时发送提醒',
+    test: 'para测试Webhook连接是否正常'
   }
   return descriptions[type] || ''
 }
 
-// 保存OEM设置
+// GuardarOEMConfiguración
 const saveOemSettings = async () => {
   try {
     const settings = {
@@ -2946,23 +2946,23 @@ const saveOemSettings = async () => {
     }
     const result = await settingsStore.saveOemSettings(settings)
     if (result && result.success) {
-      showToast('OEM设置保存成功', 'success')
+      showToast('OEMConfiguraciónGuardado exitosamente', 'success')
     } else {
-      showToast(result?.message || '保存失败', 'error')
+      showToast(result?.message || 'Error al guardar', 'error')
     }
   } catch (error) {
-    showToast('保存OEM设置失败', 'error')
+    showToast('GuardarOEMConfiguraciónFallido', 'error')
   }
 }
 
-// 重置OEM设置
+// RestablecerOEMConfiguración
 const resetOemSettings = async () => {
   if (
     !(await showConfirm(
-      '重置设置',
-      '确定要重置为默认设置吗？\n\n这将清除所有自定义的网站名称和图标设置。',
-      '重置',
-      '取消',
+      'RestablecerConfiguración',
+      'Confirmar要Restablecerpara默认Configuración吗？\n\n这将清除所有自定义网站Nombrey图标Configuración。',
+      'Restablecer',
+      'Cancelar',
       'warning'
     ))
   )
@@ -2971,16 +2971,16 @@ const resetOemSettings = async () => {
   try {
     const result = await settingsStore.resetOemSettings()
     if (result && result.success) {
-      showToast('已重置为默认设置', 'success')
+      showToast('已Restablecerpara默认Configuración', 'success')
     } else {
-      showToast('重置失败', 'error')
+      showToast('RestablecerFallido', 'error')
     }
   } catch (error) {
-    showToast('重置失败', 'error')
+    showToast('RestablecerFallido', 'error')
   }
 }
 
-// 处理图标上传
+// 处理图标Subir
 const handleIconUpload = async (event) => {
   const file = event.target.files[0]
   if (!file) return
@@ -2993,24 +2993,24 @@ const handleIconUpload = async (event) => {
   }
 
   try {
-    // 转换为Base64
+    // 转换paraBase64
     const base64Data = await settingsStore.fileToBase64(file)
     oemSettings.value.siteIconData = base64Data
   } catch (error) {
-    showToast('文件读取失败', 'error')
+    showToast('文件读取Fallido', 'error')
   }
 
-  // 清除input的值，允许重复选择同一文件
+  // 清除input值，允许重复选择同一文件
   event.target.value = ''
 }
 
-// 删除图标
+// Eliminar图标
 const removeIcon = () => {
   oemSettings.value.siteIcon = ''
   oemSettings.value.siteIconData = ''
 }
 
-// 处理图标加载错误
+// 处理图标加载Error
 const handleIconError = () => {
   console.warn('Icon failed to load')
 }

@@ -11,10 +11,10 @@ class CcrAccountService {
     this.ACCOUNT_KEY_PREFIX = 'ccr_account:'
     this.SHARED_ACCOUNTS_KEY = 'shared_ccr_accounts'
 
-    // 使用 commonHelper 的加密器
+    // 使用 commonHelper 的Cifrado器
     this._encryptor = createEncryptor('ccr-account-salt')
 
-    // 🧹 定期清理缓存（每10分钟）
+    // 🧹 定期LimpiarCaché（每10分钟）
     setInterval(
       () => {
         this._encryptor.clearCache()
@@ -24,34 +24,34 @@ class CcrAccountService {
     )
   }
 
-  // 🏢 创建CCR账户
+  // 🏢 CrearCCRCuenta
   async createAccount(options = {}) {
     const {
       name = 'CCR Account',
       description = '',
       apiUrl = '',
       apiKey = '',
-      priority = 50, // 默认优先级50（1-100）
-      supportedModels = [], // 支持的模型列表或映射表，空数组/对象表示支持所有
+      priority = 50, // Predeterminado优先级50（1-100）
+      supportedModels = [], // Soportar的模型ColumnaTabla或映射Tabla，空Arreglo/ObjetoTabla示Soportar所有
       userAgent = 'claude-relay-service/1.0.0',
-      rateLimitDuration = 60, // 限流时间（分钟）
+      rateLimitDuration = 60, // 限流Tiempo（分钟）
       proxy = null,
       isActive = true,
       accountType = 'shared', // 'dedicated' or 'shared'
       schedulable = true, // 是否可被调度
-      dailyQuota = 0, // 每日额度限制（美元），0表示不限制
-      quotaResetTime = '00:00', // 额度重置时间（HH:mm格式）
-      disableAutoProtection = false // 是否关闭自动防护（429/401/400/529 不自动禁用）
+      dailyQuota = 0, // 每日额度Límite（美元），0Tabla示不Límite
+      quotaResetTime = '00:00', // 额度重置Tiempo（HH:mmFormato）
+      disableAutoProtection = false // 是否关闭自动防护（429/401/400/529 不自动Deshabilitar）
     } = options
 
-    // 验证必填字段
+    // Validar必填Campo
     if (!apiUrl || !apiKey) {
       throw new Error('API URL and API Key are required for CCR account')
     }
 
     const accountId = uuidv4()
 
-    // 处理 supportedModels，确保向后兼容
+    // Procesar supportedModels，确保向后兼容
     const processedModels = this._processModelMapping(supportedModels)
 
     const accountData = {
@@ -69,7 +69,7 @@ class CcrAccountService {
       isActive: isActive.toString(),
       accountType,
 
-      // ✅ 新增：账户订阅到期时间（业务字段，手动管理）
+      // ✅ Nueva característica：Cuenta订阅到期Tiempo（业务Campo，手动管理）
       // 注意：CCR 使用 API Key 认证，没有 OAuth token，因此没有 expiresAt
       subscriptionExpiresAt: options.subscriptionExpiresAt || null,
 
@@ -83,12 +83,12 @@ class CcrAccountService {
       // 调度控制
       schedulable: schedulable.toString(),
       // 额度管理相关
-      dailyQuota: dailyQuota.toString(), // 每日额度限制（美元）
+      dailyQuota: dailyQuota.toString(), // 每日额度Límite（美元）
       dailyUsage: '0', // 当日使用金额（美元）
-      // 使用与统计一致的时区日期，避免边界问题
-      lastResetDate: redis.getDateStringInTimezone(), // 最后重置日期（按配置时区）
-      quotaResetTime, // 额度重置时间
-      quotaStoppedAt: '', // 因额度停用的时间
+      // 使用与Estadística一致的Zona horariaFecha，避免边界问题
+      lastResetDate: redis.getDateStringInTimezone(), // 最后重置Fecha（按ConfiguraciónZona horaria）
+      quotaResetTime, // 额度重置Tiempo
+      quotaStoppedAt: '', // 因额度停用的Tiempo
       disableAutoProtection: disableAutoProtection.toString() // 关闭自动防护
     }
 
@@ -101,7 +101,7 @@ class CcrAccountService {
     await client.hset(`${this.ACCOUNT_KEY_PREFIX}${accountId}`, accountData)
     await redis.addToIndex('ccr_account:index', accountId)
 
-    // 如果是共享账户，添加到共享账户集合
+    // 如果是共享Cuenta，添加到共享Cuenta集合
     if (accountType === 'shared') {
       await client.sadd(this.SHARED_ACCOUNTS_KEY, accountId)
     }
@@ -130,7 +130,7 @@ class CcrAccountService {
     }
   }
 
-  // 📋 获取所有CCR账户
+  // 📋 Obtener所有CCRCuenta
   async getAllAccounts() {
     try {
       const accountIds = await redis.getAllIdsByIndex(
@@ -145,7 +145,7 @@ class CcrAccountService {
       for (let i = 0; i < keys.length; i++) {
         const accountData = dataList[i]
         if (accountData && Object.keys(accountData).length > 0) {
-          // 获取限流状态信息
+          // Obtener限流状态Información
           const rateLimitInfo = this._getRateLimitInfo(accountData)
 
           accounts.push({
@@ -168,9 +168,9 @@ class CcrAccountService {
             status: accountData.status || 'active',
             errorMessage: accountData.errorMessage,
             rateLimitInfo,
-            schedulable: accountData.schedulable !== 'false', // 默认为true，只有明确设置为false才不可调度
+            schedulable: accountData.schedulable !== 'false', // Predeterminado为true，只有明确Establecer为false才不可调度
 
-            // ✅ 前端显示订阅过期时间（业务字段）
+            // ✅ 前端显示订阅过期Tiempo（业务Campo）
             expiresAt: accountData.subscriptionExpiresAt || null,
 
             // 额度管理相关
@@ -191,7 +191,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔍 获取单个账户（内部使用，包含敏感信息）
+  // 🔍 Obtener单个Cuenta（内部使用，Incluir敏感Información）
   async getAccount(accountId) {
     const client = redis.getClientSafe()
     logger.debug(`[DEBUG] Getting CCR account data for ID: ${accountId}`)
@@ -205,7 +205,7 @@ class CcrAccountService {
     logger.debug(`[DEBUG] Raw CCR account data keys: ${Object.keys(accountData).join(', ')}`)
     logger.debug(`[DEBUG] Raw supportedModels value: ${accountData.supportedModels}`)
 
-    // 解密敏感字段（只解密apiKey，apiUrl不加密）
+    // Descifrado敏感Campo（只DescifradoapiKey，apiUrl不Cifrado）
     const decryptedKey = this._decryptSensitiveData(accountData.apiKey)
     logger.debug(
       `[DEBUG] URL exists: ${!!accountData.apiUrl}, Decrypted key exists: ${!!decryptedKey}`
@@ -213,7 +213,7 @@ class CcrAccountService {
 
     accountData.apiKey = decryptedKey
 
-    // 解析JSON字段
+    // AnalizarJSONCampo
     const parsedModels = JSON.parse(accountData.supportedModels || '[]')
     logger.debug(`[DEBUG] Parsed supportedModels: ${JSON.stringify(parsedModels)}`)
 
@@ -224,7 +224,7 @@ class CcrAccountService {
       accountData.rateLimitDuration = Number.isNaN(_parsedDuration) ? 60 : _parsedDuration
     }
     accountData.isActive = accountData.isActive === 'true'
-    accountData.schedulable = accountData.schedulable !== 'false' // 默认为true
+    accountData.schedulable = accountData.schedulable !== 'false' // Predeterminado为true
     accountData.disableAutoProtection = accountData.disableAutoProtection === 'true'
 
     if (accountData.proxy) {
@@ -238,7 +238,7 @@ class CcrAccountService {
     return accountData
   }
 
-  // 📝 更新账户
+  // 📝 ActualizarCuenta
   async updateAccount(accountId, updates) {
     try {
       const existingAccount = await this.getAccount(accountId)
@@ -249,7 +249,7 @@ class CcrAccountService {
       const client = redis.getClientSafe()
       const updatedData = {}
 
-      // 处理各个字段的更新
+      // Procesar各个Campo的Actualizar
       logger.debug(
         `[DEBUG] CCR update request received with fields: ${Object.keys(updates).join(', ')}`
       )
@@ -272,7 +272,7 @@ class CcrAccountService {
       }
       if (updates.supportedModels !== undefined) {
         logger.debug(`[DEBUG] Updating supportedModels: ${JSON.stringify(updates.supportedModels)}`)
-        // 处理 supportedModels，确保向后兼容
+        // Procesar supportedModels，确保向后兼容
         const processedModels = this._processModelMapping(updates.supportedModels)
         updatedData.supportedModels = JSON.stringify(processedModels)
       }
@@ -299,7 +299,7 @@ class CcrAccountService {
       }
 
       // ✅ 直接保存 subscriptionExpiresAt（如果提供）
-      // CCR 使用 API Key，没有 token 刷新逻辑，不会覆盖此字段
+      // CCR 使用 API Key，没有 token 刷新逻辑，不会覆盖此Campo
       if (updates.subscriptionExpiresAt !== undefined) {
         updatedData.subscriptionExpiresAt = updates.subscriptionExpiresAt
       }
@@ -311,7 +311,7 @@ class CcrAccountService {
 
       await client.hset(`${this.ACCOUNT_KEY_PREFIX}${accountId}`, updatedData)
 
-      // 处理共享账户集合变更
+      // Procesar共享Cuenta集合变更
       if (updates.accountType !== undefined) {
         updatedData.accountType = updates.accountType
         if (updates.accountType === 'shared') {
@@ -329,18 +329,18 @@ class CcrAccountService {
     }
   }
 
-  // 🗑️ 删除账户
+  // 🗑️ EliminarCuenta
   async deleteAccount(accountId) {
     try {
       const client = redis.getClientSafe()
 
-      // 从共享账户集合中移除
+      // 从共享Cuenta集合中Eliminación
       await client.srem(this.SHARED_ACCOUNTS_KEY, accountId)
 
-      // 从索引中移除
+      // 从Índice中Eliminación
       await redis.removeFromIndex('ccr_account:index', accountId)
 
-      // 删除账户数据
+      // EliminarCuentaDatos
       const result = await client.del(`${this.ACCOUNT_KEY_PREFIX}${accountId}`)
 
       if (result === 0) {
@@ -355,7 +355,7 @@ class CcrAccountService {
     }
   }
 
-  // 🚫 标记账户为限流状态
+  // 🚫 标记Cuenta为限流状态
   async markAccountRateLimited(accountId) {
     try {
       const client = redis.getClientSafe()
@@ -364,7 +364,7 @@ class CcrAccountService {
         throw new Error('CCR Account not found')
       }
 
-      // 如果限流时间设置为 0，表示不启用限流机制，直接返回
+      // 如果限流TiempoEstablecer为 0，Tabla示不Habilitar限流机制，直接Retornar
       if (account.rateLimitDuration === 0) {
         logger.info(
           `ℹ️ CCR account ${account.name} (${accountId}) has rate limiting disabled, skipping rate limit`
@@ -388,19 +388,19 @@ class CcrAccountService {
     }
   }
 
-  // ✅ 移除账户限流状态
+  // ✅ EliminaciónCuenta限流状态
   async removeAccountRateLimit(accountId) {
     try {
       const client = redis.getClientSafe()
       const accountKey = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
 
-      // 获取账户当前状态和额度信息
+      // ObtenerCuenta当前状态和额度Información
       const [, quotaStoppedAt] = await client.hmget(accountKey, 'status', 'quotaStoppedAt')
 
-      // 删除限流相关字段
+      // Eliminar限流相关Campo
       await client.hdel(accountKey, 'rateLimitedAt', 'rateLimitStatus')
 
-      // 根据不同情况决定是否恢复账户
+      // 根据不同情况决定是否RestauraciónCuenta
       let newStatus = 'active'
       let errorMessage = ''
 
@@ -427,7 +427,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔍 检查账户是否被限流
+  // 🔍 VerificarCuenta是否被限流
   async isAccountRateLimited(accountId) {
     try {
       const client = redis.getClientSafe()
@@ -447,7 +447,7 @@ class CcrAccountService {
         if (now < expireTime) {
           return true
         } else {
-          // 限流时间已过，自动移除限流状态
+          // 限流Tiempo已过，自动Eliminación限流状态
           await this.removeAccountRateLimit(accountId)
           return false
         }
@@ -459,7 +459,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔥 标记账户为过载状态
+  // 🔥 标记Cuenta为过载状态
   async markAccountOverloaded(accountId) {
     try {
       const client = redis.getClientSafe()
@@ -483,13 +483,13 @@ class CcrAccountService {
     }
   }
 
-  // ✅ 移除账户过载状态
+  // ✅ EliminaciónCuenta过载状态
   async removeAccountOverload(accountId) {
     try {
       const client = redis.getClientSafe()
       const accountKey = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
 
-      // 删除过载相关字段
+      // Eliminar过载相关Campo
       await client.hdel(accountKey, 'overloadedAt')
 
       await client.hmset(accountKey, {
@@ -505,7 +505,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔍 检查账户是否过载
+  // 🔍 VerificarCuenta是否过载
   async isAccountOverloaded(accountId) {
     try {
       const client = redis.getClientSafe()
@@ -518,7 +518,7 @@ class CcrAccountService {
     }
   }
 
-  // 🚫 标记账户为未授权状态
+  // 🚫 标记Cuenta为未授权状态
   async markAccountUnauthorized(accountId) {
     try {
       const client = redis.getClientSafe()
@@ -540,24 +540,24 @@ class CcrAccountService {
     }
   }
 
-  // 🔄 处理模型映射
+  // 🔄 Procesar模型映射
   _processModelMapping(supportedModels) {
-    // 如果是空值，返回空对象（支持所有模型）
+    // 如果是空Valor，Retornar空Objeto（Soportar所有模型）
     if (!supportedModels || (Array.isArray(supportedModels) && supportedModels.length === 0)) {
       return {}
     }
 
-    // 如果已经是对象格式（新的映射表格式），直接返回
+    // 如果已经是ObjetoFormato（新的映射TablaFormato），直接Retornar
     if (typeof supportedModels === 'object' && !Array.isArray(supportedModels)) {
       return supportedModels
     }
 
-    // 如果是数组格式（旧格式），转换为映射表
+    // 如果是ArregloFormato（旧Formato），Convertir为映射Tabla
     if (Array.isArray(supportedModels)) {
       const mapping = {}
       supportedModels.forEach((model) => {
         if (model && typeof model === 'string') {
-          mapping[model] = model // 默认映射：原模型名 -> 原模型名
+          mapping[model] = model // Predeterminado映射：原模型名 -> 原模型名
         }
       })
       return mapping
@@ -566,14 +566,14 @@ class CcrAccountService {
     return {}
   }
 
-  // 🔍 检查模型是否被支持
+  // 🔍 Verificar模型是否被Soportar
   isModelSupported(modelMapping, requestedModel) {
-    // 如果映射表为空，支持所有模型
+    // 如果映射Tabla为空，Soportar所有模型
     if (!modelMapping || Object.keys(modelMapping).length === 0) {
       return true
     }
 
-    // 检查请求的模型是否在映射表的键中（精确匹配）
+    // VerificarSolicitud的模型是否在映射Tabla的键中（精确匹配）
     if (Object.prototype.hasOwnProperty.call(modelMapping, requestedModel)) {
       return true
     }
@@ -589,9 +589,9 @@ class CcrAccountService {
     return false
   }
 
-  // 🔄 获取映射后的模型名称
+  // 🔄 Obtener映射后的模型Nombre
   getMappedModel(modelMapping, requestedModel) {
-    // 如果映射表为空，返回原模型
+    // 如果映射Tabla为空，Retornar原模型
     if (!modelMapping || Object.keys(modelMapping).length === 0) {
       return requestedModel
     }
@@ -609,21 +609,21 @@ class CcrAccountService {
       }
     }
 
-    // 如果不存在映射则返回原模型名
+    // 如果不存在映射则Retornar原模型名
     return requestedModel
   }
 
-  // 🔐 加密敏感数据
+  // 🔐 Cifrado敏感Datos
   _encryptSensitiveData(data) {
     return this._encryptor.encrypt(data)
   }
 
-  // 🔓 解密敏感数据
+  // 🔓 Descifrado敏感Datos
   _decryptSensitiveData(encryptedData) {
     return this._encryptor.decrypt(encryptedData)
   }
 
-  // 🔍 获取限流状态信息
+  // 🔍 Obtener限流状态Información
   _getRateLimitInfo(accountData) {
     const { rateLimitedAt } = accountData
     const rateLimitDuration = parseInt(accountData.rateLimitDuration) || 60
@@ -652,12 +652,12 @@ class CcrAccountService {
     }
   }
 
-  // 🔧 创建代理客户端
+  // 🔧 CrearProxyCliente
   _createProxyAgent(proxy) {
     return ProxyHelper.createProxyAgent(proxy)
   }
 
-  // 💰 检查配额使用情况（可选实现）
+  // 💰 VerificarCuota使用情况（Opcional实现）
   async checkQuotaUsage(accountId) {
     try {
       const account = await this.getAccount(accountId)
@@ -666,19 +666,19 @@ class CcrAccountService {
       }
 
       const dailyQuota = parseFloat(account.dailyQuota || '0')
-      // 如果未设置额度限制，则不限制
+      // 如果未Establecer额度Límite，则不Límite
       if (dailyQuota <= 0) {
         return false
       }
 
-      // 检查是否需要重置每日使用量
+      // Verificar是否需要重置每日使用量
       const today = redis.getDateStringInTimezone()
       if (account.lastResetDate !== today) {
         await this.resetDailyUsage(accountId)
         return false // 刚重置，不会超额
       }
 
-      // 获取当日使用统计
+      // Obtener当日使用Estadística
       const usageStats = await this.getAccountUsageStats(accountId)
       if (!usageStats) {
         return false
@@ -688,7 +688,7 @@ class CcrAccountService {
       const isExceeded = dailyUsage >= dailyQuota
 
       if (isExceeded) {
-        // 标记账户因额度停用
+        // 标记Cuenta因额度停用
         const client = redis.getClientSafe()
         await client.hmset(`${this.ACCOUNT_KEY_PREFIX}${accountId}`, {
           status: 'quota_exceeded',
@@ -723,7 +723,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔄 重置每日使用量（可选实现）
+  // 🔄 重置每日使用量（Opcional实现）
   async resetDailyUsage(accountId) {
     try {
       const client = redis.getClientSafe()
@@ -739,7 +739,7 @@ class CcrAccountService {
     }
   }
 
-  // 🚫 检查账户是否超额
+  // 🚫 VerificarCuenta是否超额
   async isAccountQuotaExceeded(accountId) {
     try {
       const account = await this.getAccount(accountId)
@@ -748,12 +748,12 @@ class CcrAccountService {
       }
 
       const dailyQuota = parseFloat(account.dailyQuota || '0')
-      // 如果未设置额度限制，则不限制
+      // 如果未Establecer额度Límite，则不Límite
       if (dailyQuota <= 0) {
         return false
       }
 
-      // 获取当日使用统计
+      // Obtener当日使用Estadística
       const usageStats = await this.getAccountUsageStats(accountId)
       if (!usageStats) {
         return false
@@ -763,7 +763,7 @@ class CcrAccountService {
       const isExceeded = dailyUsage >= dailyQuota
 
       if (isExceeded && !account.quotaStoppedAt) {
-        // 标记账户因额度停用
+        // 标记Cuenta因额度停用
         const client = redis.getClientSafe()
         await client.hmset(`${this.ACCOUNT_KEY_PREFIX}${accountId}`, {
           status: 'quota_exceeded',
@@ -780,7 +780,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔄 重置所有CCR账户的每日使用量
+  // 🔄 重置所有CCRCuenta的每日使用量
   async resetAllDailyUsage() {
     try {
       const accounts = await this.getAllAccounts()
@@ -802,13 +802,13 @@ class CcrAccountService {
     }
   }
 
-  // 📊 获取CCR账户使用统计（含每日费用）
+  // 📊 ObtenerCCRCuenta使用Estadística（含每日费用）
   async getAccountUsageStats(accountId) {
     try {
-      // 使用统一的 Redis 统计
+      // 使用统一的 Redis Estadística
       const usageStats = await redis.getAccountUsageStats(accountId)
 
-      // 叠加账户自身的额度配置
+      // 叠加Cuenta自身的额度Configuración
       const accountData = await this.getAccount(accountId)
       if (!accountData) {
         return null
@@ -834,7 +834,7 @@ class CcrAccountService {
     }
   }
 
-  // 🔄 重置CCR账户所有异常状态
+  // 🔄 重置CCRCuenta所有异常状态
   async resetAccountStatus(accountId) {
     try {
       const accountData = await this.getAccount(accountId)
@@ -871,7 +871,7 @@ class CcrAccountService {
       // 清除临时不可用状态
       await upstreamErrorHelper.clearTempUnavailable(accountId, 'ccr').catch(() => {})
 
-      // 异步发送 Webhook 通知（忽略错误）
+      // Asíncrono发送 Webhook 通知（忽略Error）
       try {
         const webhookNotifier = require('../../utils/webhookNotifier')
         await webhookNotifier.sendAccountAnomalyNotification({
@@ -895,13 +895,13 @@ class CcrAccountService {
   }
 
   /**
-   * ⏰ 检查账户订阅是否过期
-   * @param {Object} account - 账户对象
+   * ⏰ VerificarCuenta订阅是否过期
+   * @param {Object} account - CuentaObjeto
    * @returns {boolean} - true: 已过期, false: 未过期
    */
   isSubscriptionExpired(account) {
     if (!account.subscriptionExpiresAt) {
-      return false // 未设置视为永不过期
+      return false // 未Establecer视为永不过期
     }
     const expiryDate = new Date(account.subscriptionExpiresAt)
     return expiryDate <= new Date()

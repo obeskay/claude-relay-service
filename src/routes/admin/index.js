@@ -1,12 +1,12 @@
 /**
- * Admin Routes - 主入口文件
- * 导入并挂载所有子路由模块
+ * Admin Routes - 主入口Archivo
+ * 导入并挂载所有子RutaMódulo
  */
 
 const express = require('express')
 const router = express.Router()
 
-// 导入所有子路由
+// 导入所有子Ruta
 const apiKeysRoutes = require('./apiKeys')
 const accountGroupsRoutes = require('./accountGroups')
 const claudeAccountsRoutes = require('./claudeAccounts')
@@ -29,8 +29,8 @@ const syncRoutes = require('./sync')
 const serviceRatesRoutes = require('./serviceRates')
 const quotaCardsRoutes = require('./quotaCards')
 
-// 挂载所有子路由
-// 使用完整路径的模块（直接挂载到根路径）
+// 挂载所有子Ruta
+// 使用完整Ruta的Módulo（直接挂载到根Ruta）
 router.use('/', apiKeysRoutes)
 router.use('/', claudeAccountsRoutes)
 router.use('/', claudeConsoleAccountsRoutes)
@@ -48,7 +48,7 @@ router.use('/', syncRoutes)
 router.use('/', serviceRatesRoutes)
 router.use('/', quotaCardsRoutes)
 
-// 使用相对路径的模块（需要指定基础路径前缀）
+// 使用相对Ruta的Módulo（需要指定基础Ruta前缀）
 router.use('/account-groups', accountGroupsRoutes)
 router.use('/ccr-accounts', ccrAccountsRoutes)
 router.use('/bedrock-accounts', bedrockAccountsRoutes)

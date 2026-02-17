@@ -5,8 +5,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment files
+# Note: .env.*.local files are needed for Docker Compose env_file directive
+# Keep .env.local ignored for local development
 .env.local
-.env.*.local
 
 # Logs
 logs/

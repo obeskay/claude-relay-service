@@ -14,7 +14,7 @@ function registerAllProviders(balanceService) {
   balanceService.registerProvider('openai', new GenericBalanceProvider('openai'))
   balanceService.registerProvider('azure_openai', new GenericBalanceProvider('azure_openai'))
 
-  // 其他平台（降级）
+  // 其他平台（Degradación）
   balanceService.registerProvider('gemini', new GeminiBalanceProvider())
   balanceService.registerProvider('gemini-api', new GenericBalanceProvider('gemini-api'))
   balanceService.registerProvider('bedrock', new GenericBalanceProvider('bedrock'))

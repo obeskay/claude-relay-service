@@ -9,18 +9,18 @@ const webhookNotifier = require('../../utils/webhookNotifier')
 
 const router = express.Router()
 
-// 获取所有 Gemini-API 账户
+// Obtener所有 Gemini-API Cuenta
 router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
   try {
     const { platform, groupId } = req.query
     let accounts = await geminiApiAccountService.getAllAccounts(true)
 
-    // 根据查询参数进行筛选
+    // 根据ConsultaParámetro进Fila筛选
     if (platform && platform !== 'gemini-api') {
       accounts = []
     }
 
-    // 根据分组ID筛选
+    // 根据AgruparID筛选
     if (groupId) {
       const group = await accountGroupService.getGroup(groupId)
       if (group && group.platform === 'gemini') {
@@ -33,7 +33,7 @@ router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
 
     const accountIds = accounts.map((a) => a.id)
 
-    // 并行获取：轻量 API Keys + 分组信息 + daily cost + 清除限流状态
+    // 并FilaObtener：轻量 API Keys + AgruparInformación + daily cost + 清除限流状态
     const [allApiKeys, allGroupInfosMap, dailyCostMap] = await Promise.all([
       apiKeyService.getAllApiKeysLite(),
       accountGroupService.batchGetAccountGroupsByIndex(accountIds, 'gemini'),
@@ -42,19 +42,19 @@ router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
       Promise.all(accountIds.map((id) => geminiApiAccountService.checkAndClearRateLimit(id)))
     ])
 
-    // 单次遍历构建绑定数映射（只算直连，不算 group）
+    // 单次遍历Construir绑定数映射（只算直连，不算 group）
     const bindingCountMap = new Map()
     for (const key of allApiKeys) {
       const binding = key.geminiAccountId
       if (!binding) {
         continue
       }
-      // 处理 api: 前缀
+      // Procesar api: 前缀
       const accountId = binding.startsWith('api:') ? binding.substring(4) : binding
       bindingCountMap.set(accountId, (bindingCountMap.get(accountId) || 0) + 1)
     }
 
-    // 批量获取使用统计
+    // 批量Obtener使用Estadística
     const client = redis.getClientSafe()
     const today = redis.getDateStringInTimezone()
     const tzDate = redis.getDateInTimezone()
@@ -68,7 +68,7 @@ router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
     }
     const statsResults = await statsPipeline.exec()
 
-    // 处理统计数据
+    // ProcesarEstadísticaDatos
     const allUsageStatsMap = new Map()
     for (let i = 0; i < accountIds.length; i++) {
       const accountId = accountIds[i]
@@ -98,7 +98,7 @@ router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 处理账户数据
+    // ProcesarCuentaDatos
     const accountsWithStats = accounts.map((account) => {
       const groupInfos = allGroupInfosMap.get(account.id) || []
       const usageStats = allUsageStatsMap.get(account.id) || {
@@ -109,7 +109,7 @@ router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
       const dailyCost = dailyCostMap.get(account.id) || 0
       const boundCount = bindingCountMap.get(account.id) || 0
 
-      // 计算 averages（rpm/tpm）
+      // Calcular averages（rpm/tpm）
       const createdAt = account.createdAt ? new Date(account.createdAt) : new Date()
       const daysSinceCreated = Math.max(
         1,
@@ -141,12 +141,12 @@ router.get('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 创建 Gemini-API 账户
+// Crear Gemini-API Cuenta
 router.post('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
   try {
     const { accountType, groupId, groupIds } = req.body
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (accountType && !['shared', 'dedicated', 'group'].includes(accountType)) {
       return res.status(400).json({
         success: false,
@@ -154,7 +154,7 @@ router.post('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 如果是分组类型，验证groupId或groupIds
+    // 如果是AgruparTipo，ValidargroupId或groupIds
     if (accountType === 'group' && !groupId && (!groupIds || groupIds.length === 0)) {
       return res.status(400).json({
         success: false,
@@ -164,13 +164,13 @@ router.post('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
 
     const account = await geminiApiAccountService.createAccount(req.body)
 
-    // 如果是分组类型，将账户添加到分组
+    // 如果是AgruparTipo，将Cuenta添加到Agrupar
     if (accountType === 'group') {
       if (groupIds && groupIds.length > 0) {
-        // 使用多分组设置
+        // 使用多AgruparEstablecer
         await accountGroupService.setAccountGroups(account.id, groupIds, 'gemini')
       } else if (groupId) {
-        // 兼容单分组模式
+        // 兼容单Agrupar模式
         await accountGroupService.addAccountToGroup(account.id, groupId, 'gemini')
       }
     }
@@ -189,7 +189,7 @@ router.post('/gemini-api-accounts', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取单个 Gemini-API 账户
+// Obtener单个 Gemini-API Cuenta
 router.get('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -202,7 +202,7 @@ router.get('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 隐藏敏感信息
+    // 隐藏敏感Información
     account.apiKey = '***'
 
     res.json({ success: true, data: account })
@@ -215,13 +215,13 @@ router.get('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新 Gemini-API 账户
+// Actualizar Gemini-API Cuenta
 router.put('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
     const updates = req.body
 
-    // 验证priority的有效性（1-100）
+    // Validarpriority的有效性（1-100）
     if (updates.priority !== undefined) {
       const priority = parseInt(updates.priority)
       if (isNaN(priority) || priority < 1 || priority > 100) {
@@ -232,7 +232,7 @@ router.put('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (updates.accountType && !['shared', 'dedicated', 'group'].includes(updates.accountType)) {
       return res.status(400).json({
         success: false,
@@ -240,7 +240,7 @@ router.put('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 如果更新为分组类型，验证groupId或groupIds
+    // 如果Actualizar为AgruparTipo，ValidargroupId或groupIds
     if (
       updates.accountType === 'group' &&
       !updates.groupId &&
@@ -252,7 +252,7 @@ router.put('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 获取账户当前信息以处理分组变更
+    // ObtenerCuenta当前Información以ProcesarAgrupar变更
     const currentAccount = await geminiApiAccountService.getAccount(id)
     if (!currentAccount) {
       return res.status(404).json({
@@ -261,23 +261,23 @@ router.put('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 处理分组的变更
+    // ProcesarAgrupar的变更
     if (updates.accountType !== undefined) {
-      // 如果之前是分组类型，需要从所有分组中移除
+      // 如果之前是AgruparTipo，需要从所有Agrupar中Eliminación
       if (currentAccount.accountType === 'group') {
         await accountGroupService.removeAccountFromAllGroups(id)
       }
 
-      // 如果新类型是分组，添加到新分组
+      // 如果新Tipo是Agrupar，添加到新Agrupar
       if (updates.accountType === 'group') {
-        // 处理多分组/单分组的兼容性
+        // Procesar多Agrupar/单Agrupar的兼容性
         if (Object.prototype.hasOwnProperty.call(updates, 'groupIds')) {
           if (updates.groupIds && updates.groupIds.length > 0) {
-            // 使用多分组设置
+            // 使用多AgruparEstablecer
             await accountGroupService.setAccountGroups(id, updates.groupIds, 'gemini')
           }
         } else if (updates.groupId) {
-          // 兼容单分组模式
+          // 兼容单Agrupar模式
           await accountGroupService.addAccountToGroup(id, updates.groupId, 'gemini')
         }
       }
@@ -301,7 +301,7 @@ router.put('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除 Gemini-API 账户
+// Eliminar Gemini-API Cuenta
 router.delete('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -314,10 +314,10 @@ router.delete('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) =>
       })
     }
 
-    // 自动解绑所有绑定的 API Keys（支持 api: 前缀）
+    // 自动解绑所有绑定的 API Keys（Soportar api: 前缀）
     const unboundCount = await apiKeyService.unbindAccountFromAllKeys(id, 'gemini-api')
 
-    // 从所有分组中移除此账户
+    // 从所有Agrupar中Eliminación此Cuenta
     if (account.accountType === 'group') {
       await accountGroupService.removeAccountFromAllGroups(id)
       logger.info(`Removed Gemini-API account ${id} from all groups`)
@@ -325,7 +325,7 @@ router.delete('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) =>
 
     const result = await geminiApiAccountService.deleteAccount(id)
 
-    let message = 'Gemini-API账号已成功删除'
+    let message = 'Gemini-API账号已ÉxitoEliminar'
     if (unboundCount > 0) {
       message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
@@ -347,7 +347,7 @@ router.delete('/gemini-api-accounts/:id', authenticateAdmin, async (req, res) =>
   }
 })
 
-// 切换 Gemini-API 账户调度状态
+// 切换 Gemini-API Cuenta调度状态
 router.put('/gemini-api-accounts/:id/toggle-schedulable', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -379,7 +379,7 @@ router.put('/gemini-api-accounts/:id/toggle-schedulable', authenticateAdmin, asy
   }
 })
 
-// 切换 Gemini-API 账户激活状态
+// 切换 Gemini-API Cuenta激活状态
 router.put('/gemini-api-accounts/:id/toggle', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -410,7 +410,7 @@ router.put('/gemini-api-accounts/:id/toggle', authenticateAdmin, async (req, res
   }
 })
 
-// 重置 Gemini-API 账户限流状态
+// 重置 Gemini-API Cuenta限流状态
 router.post('/gemini-api-accounts/:id/reset-rate-limit', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -437,7 +437,7 @@ router.post('/gemini-api-accounts/:id/reset-rate-limit', authenticateAdmin, asyn
   }
 })
 
-// 重置 Gemini-API 账户状态（清除所有异常状态）
+// 重置 Gemini-API Cuenta状态（清除所有异常状态）
 router.post('/gemini-api-accounts/:id/reset-status', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -452,7 +452,7 @@ router.post('/gemini-api-accounts/:id/reset-status', authenticateAdmin, async (r
   }
 })
 
-// 测试 Gemini-API 账户连通性（SSE 流式）
+// Probar Gemini-API Cuenta连通性（SSE 流式）
 const ALLOWED_MAX_TOKENS = [100, 500, 1000, 2000, 4096]
 const sanitizeMaxTokens = (value) =>
   ALLOWED_MAX_TOKENS.includes(Number(value)) ? Number(value) : 500
@@ -494,7 +494,7 @@ router.post('/gemini-api-accounts/:accountId/test', authenticateAdmin, async (re
       stream: true
     })
 
-    // 设置 SSE 响应头
+    // Establecer SSE Respuesta头
     if (res.writableEnded || res.destroyed) {
       return
     }
@@ -515,7 +515,7 @@ router.post('/gemini-api-accounts/:accountId/test', authenticateAdmin, async (re
       signal: abortController.signal
     }
 
-    // 配置代理
+    // ConfiguraciónProxy
     if (account.proxy) {
       const agent = ProxyHelper.createProxyAgent(account.proxy)
       if (agent) {

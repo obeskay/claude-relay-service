@@ -11,34 +11,34 @@
         <LogoTitle
           :loading="oemLoading"
           :logo-src="oemSettings.siteIconData || oemSettings.siteIcon"
-          subtitle="管理后台"
+          subtitle="Panel de Administración"
           :title="oemSettings.siteName"
           title-class="text-white dark:text-gray-100"
         >
           <template #after-title>
-            <!-- 版本信息 -->
+            <!-- 版本Información -->
             <div class="flex items-center gap-1 sm:gap-2">
               <span class="font-mono text-xs text-gray-400 dark:text-gray-500 sm:text-sm"
                 >v{{ versionInfo.current || '...' }}</span
               >
-              <!-- 更新提示 -->
+              <!-- ActualizarSugerencia -->
               <a
                 v-if="versionInfo.hasUpdate"
                 class="inline-flex animate-pulse items-center gap-1 rounded-full border border-green-600 bg-green-500 px-2 py-0.5 text-xs text-white transition-colors hover:bg-green-600"
                 :href="versionInfo.releaseInfo?.htmlUrl || '#'"
                 target="_blank"
-                title="有新版本可用"
+                title="Actualización disponible"
               >
                 <i class="fas fa-arrow-up text-[10px]" />
-                <span>新版本</span>
+                <span>Actualización</span>
               </a>
             </div>
           </template>
         </LogoTitle>
       </div>
-      <!-- 主题切换和用户菜单 -->
+      <!-- Tema切换yUsuario菜单 -->
       <div class="flex items-center gap-2 sm:gap-4">
-        <!-- 主题切换按钮 -->
+        <!-- Tema切换按钮 -->
         <div class="flex items-center">
           <ThemeToggle mode="dropdown" />
         </div>
@@ -48,7 +48,7 @@
           class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent opacity-50 dark:via-gray-600"
         />
 
-        <!-- 用户菜单 -->
+        <!-- Usuario菜单 -->
         <div class="user-menu-container relative">
           <button
             class="user-menu-button flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 sm:px-4 sm:py-2.5"
@@ -69,10 +69,10 @@
             style="z-index: 999999"
             @click.stop
           >
-            <!-- 版本信息 -->
+            <!-- 版本Información -->
             <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700">
               <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-500 dark:text-gray-400">当前版本</span>
+                <span class="text-gray-500 dark:text-gray-400">Versión actual</span>
                 <span class="font-mono text-gray-700 dark:text-gray-300"
                   >v{{ versionInfo.current || '...' }}</span
                 >
@@ -80,7 +80,7 @@
               <div v-if="versionInfo.hasUpdate" class="mt-2">
                 <div class="mb-2 flex items-center justify-between text-sm">
                   <span class="font-medium text-green-600 dark:text-green-400">
-                    <i class="fas fa-arrow-up mr-1" />有新版本
+                    <i class="fas fa-arrow-up mr-1" />Actualización disponible
                   </span>
                   <span class="font-mono text-green-600 dark:text-green-400"
                     >v{{ versionInfo.latest }}</span
@@ -91,14 +91,14 @@
                   :href="versionInfo.releaseInfo?.htmlUrl || '#'"
                   target="_blank"
                 >
-                  <i class="fas fa-external-link-alt mr-1" />查看更新
+                  <i class="fas fa-external-link-alt mr-1" />Ver actualización
                 </a>
               </div>
               <div
                 v-else-if="versionInfo.checkingUpdate"
                 class="mt-2 text-center text-xs text-gray-500 dark:text-gray-400"
               >
-                <i class="fas fa-spinner fa-spin mr-1" />检查更新中...
+                <i class="fas fa-spinner fa-spin mr-1" />Buscando actualizaciones...
               </div>
               <div v-else class="mt-2 text-center">
                 <!-- 已是最新版提醒 -->
@@ -109,7 +109,7 @@
                     class="inline-block rounded-lg border border-green-200 bg-green-100 px-3 py-1.5 dark:border-green-800 dark:bg-green-900/30"
                   >
                     <p class="text-xs font-medium text-green-700 dark:text-green-400">
-                      <i class="fas fa-check-circle mr-1" />当前已是最新版本
+                      <i class="fas fa-check-circle mr-1" />当anterior已是最新版本
                     </p>
                   </div>
                   <button
@@ -118,7 +118,7 @@
                     class="text-xs text-blue-500 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                     @click="checkForUpdates()"
                   >
-                    <i class="fas fa-sync-alt mr-1" />检查更新
+                    <i class="fas fa-sync-alt mr-1" />检查Actualizar
                   </button>
                 </transition>
               </div>
@@ -129,7 +129,7 @@
               @click="openChangePasswordModal"
             >
               <i class="fas fa-key text-blue-500" />
-              <span>修改账户信息</span>
+              <span>修改CuentaInformación</span>
             </button>
 
             <hr class="my-2 border-gray-200 dark:border-gray-700" />
@@ -139,7 +139,7 @@
               @click="logout"
             >
               <i class="fas fa-sign-out-alt text-red-500" />
-              <span>退出登录</span>
+              <span>退出Iniciar sesión</span>
             </button>
           </div>
         </div>
@@ -147,7 +147,7 @@
     </div>
   </div>
 
-  <!-- 修改账户信息模态框 -->
+  <!-- 修改CuentaInformación模态框 -->
   <div
     v-if="showChangePasswordModal"
     class="modal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
@@ -160,7 +160,7 @@
           >
             <i class="fas fa-key text-white" />
           </div>
-          <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">修改账户信息</h3>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">修改CuentaInformación</h3>
         </div>
         <button
           class="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
@@ -176,7 +176,7 @@
       >
         <div>
           <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-            >当前用户名</label
+            >当anteriorNombre de usuario</label
           >
           <input
             class="form-input w-full cursor-not-allowed bg-gray-100 dark:bg-gray-700 dark:text-gray-300"
@@ -185,32 +185,32 @@
             :value="currentUser.username || 'Admin'"
           />
           <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            当前用户名，输入新用户名以修改
+            当anteriorNombre de usuario，Entrada新Nombre de usuario以修改
           </p>
         </div>
 
         <div>
           <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-            >新用户名</label
+            >新Nombre de usuario</label
           >
           <input
             v-model="changePasswordForm.newUsername"
             class="form-input w-full"
-            placeholder="输入新用户名（留空保持不变）"
+            placeholder="Entrada新Nombre de usuario（留空保持不变）"
             type="text"
           />
-          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">留空表示不修改用户名</p>
+          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">留空表示不修改Nombre de usuario</p>
         </div>
 
         <div>
           <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-            >当前密码</label
+            >当anteriorContraseña</label
           >
           <div class="relative">
             <input
               v-model="changePasswordForm.currentPassword"
               class="form-input w-full pr-10"
-              placeholder="请输入当前密码"
+              placeholder="Ingrese当anteriorContraseña"
               required
               :type="showCurrentPassword ? 'text' : 'password'"
             />
@@ -226,26 +226,26 @@
 
         <div>
           <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-            >新密码</label
+            >新Contraseña</label
           >
           <input
             v-model="changePasswordForm.newPassword"
             class="form-input w-full"
-            placeholder="请输入新密码"
+            placeholder="Ingrese新Contraseña"
             required
             type="password"
           />
-          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">密码长度至少8位</p>
+          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Contraseña长度a少8位</p>
         </div>
 
         <div>
           <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-            >确认新密码</label
+            >Confirmar新Contraseña</label
           >
           <input
             v-model="changePasswordForm.confirmPassword"
             class="form-input w-full"
-            placeholder="请再次输入新密码"
+            placeholder="请再vecesEntrada新Contraseña"
             required
             type="password"
           />
@@ -257,7 +257,7 @@
             type="button"
             @click="closeChangePasswordModal"
           >
-            取消
+            Cancelar
           </button>
           <button
             class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -266,7 +266,7 @@
           >
             <div v-if="changePasswordLoading" class="loading-spinner mr-2" />
             <i v-else class="fas fa-save mr-2" />
-            {{ changePasswordLoading ? '保存中...' : '保存修改' }}
+            {{ changePasswordLoading ? 'Guardaren...' : 'Guardar修改' }}
           </button>
         </div>
       </form>
@@ -300,14 +300,14 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 
-// 当前用户信息
+// 当anteriorUsuarioInformación
 const currentUser = computed(() => authStore.user || { username: 'Admin' })
 
-// OEM设置
+// OEMConfiguración
 const oemSettings = computed(() => authStore.oemSettings || {})
 const oemLoading = computed(() => authStore.oemLoading)
 
-// 版本信息
+// 版本Información
 const versionInfo = ref({
   current: '...',
   latest: '',
@@ -318,10 +318,10 @@ const versionInfo = ref({
   noUpdateMessage: false
 })
 
-// 用户菜单状态
+// Usuario菜单Estado
 const userMenuOpen = ref(false)
 
-// 修改密码模态框
+// 修改Contraseña模态框
 const showChangePasswordModal = ref(false)
 const changePasswordLoading = ref(false)
 const showCurrentPassword = ref(false)
@@ -332,22 +332,22 @@ const changePasswordForm = reactive({
   newUsername: ''
 })
 
-// ConfirmModal 状态
+// ConfirmModal Estado
 const showConfirmModal = ref(false)
 const confirmModalConfig = ref({
   title: '',
   message: '',
   type: 'primary',
-  confirmText: '确认',
-  cancelText: '取消'
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar'
 })
 const confirmResolve = ref(null)
 
 const showConfirm = (
   title,
   message,
-  confirmText = '确认',
-  cancelText = '取消',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   type = 'primary'
 ) => {
   return new Promise((resolve) => {
@@ -365,7 +365,7 @@ const handleCancelModal = () => {
   confirmResolve.value?.(false)
 }
 
-// 检查更新（同时获取版本信息）
+// 检查Actualizar（同时获取版本Información）
 const checkForUpdates = async () => {
   if (versionInfo.value.checkingUpdate) {
     return
@@ -385,7 +385,7 @@ const checkForUpdates = async () => {
       versionInfo.value.releaseInfo = data.releaseInfo
       versionInfo.value.lastChecked = new Date()
 
-      // 保存到localStorage
+      // Guardar到localStorage
       localStorage.setItem(
         'versionInfo',
         JSON.stringify({
@@ -397,10 +397,10 @@ const checkForUpdates = async () => {
         })
       )
 
-      // 如果没有更新，显示提醒
+      // 如果没有Actualizar，显示提醒
       if (!data.hasUpdate) {
         versionInfo.value.noUpdateMessage = true
-        // 3秒后自动隐藏提醒
+        // 3秒siguiente自动隐藏提醒
         setTimeout(() => {
           versionInfo.value.noUpdateMessage = false
         }, 3000)
@@ -409,7 +409,7 @@ const checkForUpdates = async () => {
   } catch (error) {
     console.error('Error checking for updates:', error)
 
-    // 尝试从localStorage读取缓存的版本信息
+    // 尝试delocalStorage读取Caché版本Información
     const cached = localStorage.getItem('versionInfo')
     if (cached) {
       const cachedInfo = JSON.parse(cached)
@@ -424,7 +424,7 @@ const checkForUpdates = async () => {
   }
 }
 
-// 打开修改密码弹窗
+// 打开修改Contraseña弹窗
 const openChangePasswordModal = () => {
   changePasswordForm.currentPassword = ''
   changePasswordForm.newPassword = ''
@@ -434,20 +434,20 @@ const openChangePasswordModal = () => {
   userMenuOpen.value = false
 }
 
-// 关闭修改密码弹窗
+// Cerrar修改Contraseña弹窗
 const closeChangePasswordModal = () => {
   showChangePasswordModal.value = false
 }
 
-// 修改密码
+// 修改Contraseña
 const changePassword = async () => {
   if (changePasswordForm.newPassword !== changePasswordForm.confirmPassword) {
-    showToast('两次输入的密码不一致', 'error')
+    showToast('两vecesEntradaContraseña不一致', 'error')
     return
   }
 
   if (changePasswordForm.newPassword.length < 8) {
-    showToast('新密码长度至少8位', 'error')
+    showToast('新Contraseña长度a少8位', 'error')
     return
   }
 
@@ -462,33 +462,33 @@ const changePassword = async () => {
 
     if (data.success) {
       const message = changePasswordForm.newUsername
-        ? '账户信息修改成功，请重新登录'
-        : '密码修改成功，请重新登录'
+        ? 'CuentaInformación修改Exitoso，请重新Iniciar sesión'
+        : 'Contraseña修改Exitoso，请重新Iniciar sesión'
       showToast(message, 'success')
       closeChangePasswordModal()
 
-      // 延迟后退出登录
+      // 延迟siguiente退出Iniciar sesión
       setTimeout(() => {
         authStore.logout()
         router.push('/login')
       }, 1500)
     } else {
-      showToast(data.message || '修改失败', 'error')
+      showToast(data.message || '修改Fallido', 'error')
     }
   } catch (error) {
-    showToast('修改密码失败', 'error')
+    showToast('修改ContraseñaFallido', 'error')
   } finally {
     changePasswordLoading.value = false
   }
 }
 
-// 退出登录
+// 退出Iniciar sesión
 const logout = async () => {
   const confirmed = await showConfirm(
-    '退出登录',
-    '确定要退出登录吗？',
-    '确定退出',
-    '取消',
+    '退出Iniciar sesión',
+    'Confirmar要退出Iniciar sesión吗？',
+    'Confirmar退出',
+    'Cancelar',
     'warning'
   )
   if (confirmed) {
@@ -499,7 +499,7 @@ const logout = async () => {
   userMenuOpen.value = false
 }
 
-// 点击外部关闭菜单
+// 点击外部Cerrar菜单
 const handleClickOutside = (event) => {
   const userMenuContainer = event.target.closest('.user-menu-container')
   if (!userMenuContainer && userMenuOpen.value) {
@@ -510,7 +510,7 @@ const handleClickOutside = (event) => {
 onMounted(() => {
   checkForUpdates()
 
-  // 设置自动检查更新（每小时检查一次）
+  // Configuración自动检查Actualizar（每小时检查一veces）
   setInterval(() => {
     checkForUpdates()
   }, 3600000) // 1小时
@@ -524,7 +524,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 用户菜单按钮样式 */
+/* Usuario菜单按钮样式 */
 .user-menu-button {
   position: relative;
   overflow: hidden;
@@ -553,7 +553,7 @@ onUnmounted(() => {
   left: 100%;
 }
 
-/* 用户菜单样式优化 */
+/* Usuario菜单样式优化 */
 .user-menu-dropdown {
   margin-top: 8px;
   animation: slideDown 0.3s ease-out;

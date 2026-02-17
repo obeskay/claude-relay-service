@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :destroy-on-close="true"
     :model-value="show"
-    :title="`配置余额脚本 - ${account?.name || ''}`"
+    :title="`Configurar Script de Saldo - ${account?.name || ''}`"
     top="5vh"
     width="720px"
     @close="emitClose"
@@ -18,7 +18,7 @@
         </div>
         <div class="space-y-2">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200"
-            >请求地址（baseUrl）</label
+            >Dirección de solicitud (baseUrl)</label
           >
           <input v-model="form.baseUrl" class="input-text" placeholder="https://api.example.com" />
         </div>
@@ -28,9 +28,9 @@
         </div>
         <div class="space-y-2">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200"
-            >额外参数 (extra / userId)</label
+            >Parámetros adicionales (extra / userId)</label
           >
-          <input v-model="form.extra" class="input-text" placeholder="用户ID等" />
+          <input v-model="form.extra" class="input-text" placeholder="ID de usuario, etc." />
         </div>
         <div class="space-y-2">
           <label class="text-sm font-medium text-gray-700 dark:text-gray-200">超时时间(秒)</label>
@@ -46,7 +46,7 @@
             min="0"
             type="number"
           />
-          <p class="text-xs text-gray-500 dark:text-gray-400">0 表示仅手动刷新</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">0 表示仅手动Actualizar</p>
         </div>
         <div class="text-xs text-gray-500 dark:text-gray-400 md:col-span-2">
           可用变量：{{ '{' }}{{ '{' }}baseUrl{{ '}' }}{{ '}' }}、{{ '{' }}{{ '{' }}apiKey{{ '}'
@@ -95,17 +95,17 @@
           <div>单位: {{ testResult.mapped?.currency || '—' }}</div>
           <div v-if="testResult.mapped?.planName">套餐: {{ testResult.mapped.planName }}</div>
           <div v-if="testResult.mapped?.errorMessage" class="text-red-500">
-            错误: {{ testResult.mapped.errorMessage }}
+            Error: {{ testResult.mapped.errorMessage }}
           </div>
         </div>
         <details class="text-xs text-gray-500 dark:text-gray-400">
-          <summary class="cursor-pointer">查看 extractor 输出</summary>
+          <summary class="cursor-pointer">Ver extractor Salida</summary>
           <pre class="mt-1 whitespace-pre-wrap break-all">{{
             formatJson(testResult.extracted)
           }}</pre>
         </details>
         <details class="text-xs text-gray-500 dark:text-gray-400">
-          <summary class="cursor-pointer">查看原始响应</summary>
+          <summary class="cursor-pointer">Ver原始响应</summary>
           <pre class="mt-1 whitespace-pre-wrap break-all">{{
             formatJson(testResult.response)
           }}</pre>
@@ -116,8 +116,8 @@
     <template #footer>
       <div class="flex items-center gap-2">
         <el-button :loading="testing" @click="testScript">测试脚本</el-button>
-        <el-button :loading="saving" type="primary" @click="saveConfig">保存配置</el-button>
-        <el-button @click="emitClose">取消</el-button>
+        <el-button :loading="saving" type="primary" @click="saveConfig">Guardar配置</el-button>
+        <el-button @click="emitClose">Cancelar</el-button>
       </div>
     </template>
   </el-dialog>
@@ -168,7 +168,7 @@ const presetScript = `({
     }
     return {
       isValid: false,
-      invalidMessage: (response && response.message) || "查询失败"
+      invalidMessage: (response && response.message) || "查询Fallido"
     };
   }
 })`
@@ -190,7 +190,7 @@ const buildDefaultForm = () => ({
   extra: '',
   timeoutSeconds: 10,
   autoIntervalMinutes: 0,
-  // 默认给出示例脚本，字段保持清空，避免“上一个账户的配置污染当前账户”
+  // 默认给出示例脚本，字段保持清空，避免“anteriorCuenta配置污染当anteriorCuenta”
   scriptBody: presetScript
 })
 
@@ -218,10 +218,10 @@ const saveConfig = async () => {
     ...form
   })
   if (res?.success) {
-    showToast('已保存', 'success')
+    showToast('已Guardar', 'success')
     emit('saved')
   } else {
-    showToast(res?.message || '保存失败', 'error')
+    showToast(res?.message || 'Error al guardar', 'error')
   }
   saving.value = false
 }
@@ -237,7 +237,7 @@ const testScript = async () => {
     testResult.value = res.data
     showToast('测试完成', 'success')
   } else {
-    showToast(res?.error || '测试失败', 'error')
+    showToast(res?.error || '测试Fallido', 'error')
   }
   testing.value = false
 }

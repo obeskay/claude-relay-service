@@ -15,14 +15,14 @@ class WebhookConfigService {
     try {
       const configStr = await redis.client.get(this.DEFAULT_CONFIG_KEY)
       if (!configStr) {
-        // 返回默认配置
+        // Retorna configuración predeterminada
         return this.getDefaultConfig()
       }
 
       const storedConfig = JSON.parse(configStr)
       const defaultConfig = this.getDefaultConfig()
 
-      // 合并默认通知类型，确保新增类型有默认值
+      // Combina tipos de notificación predeterminados, asegura valores predeterminados para nuevos tipos
       storedConfig.notificationTypes = {
         ...defaultConfig.notificationTypes,
         ...(storedConfig.notificationTypes || {})
@@ -50,7 +50,7 @@ class WebhookConfigService {
       // Validate configuration
       this.validateConfig(config)
 
-      // 添加更新时间
+      // Agrega tiempo de actualización
       config.updatedAt = new Date().toISOString()
 
       await redis.client.set(this.DEFAULT_CONFIG_KEY, JSON.stringify(config))
@@ -71,7 +71,7 @@ class WebhookConfigService {
       throw new Error('Invalid configuration format')
     }
 
-    // 验证平台配置
+    // Valida configuración de plataforma
     if (config.platforms) {
       const validPlatforms = [
         'wechat_work',
@@ -90,14 +90,14 @@ class WebhookConfigService {
           throw new Error(`Unsupported platform type: ${platform.type}`)
         }
 
-        // Bark和SMTP平台不使用标准URL
+        // Plataformas Bark y SMTP no usan URL estándar
         if (!['bark', 'smtp', 'telegram'].includes(platform.type)) {
           if (!platform.url || !this.isValidUrl(platform.url)) {
             throw new Error(`Invalid webhook URL: ${platform.url}`)
           }
         }
 
-        // 验证平台特定的配置
+        // Valida configuración específica de plataforma
         this.validatePlatformConfig(platform)
       }
     }
@@ -109,22 +109,22 @@ class WebhookConfigService {
   validatePlatformConfig(platform) {
     switch (platform.type) {
       case 'wechat_work':
-        // 企业微信不需要额外配置
+        // WeChat Enterprise no requiere configuración adicional
         break
       case 'dingtalk':
-        // 钉钉可能需要secret用于签名
+        // DingTalk puede necesitar secret para firma
         if (platform.enableSign && !platform.secret) {
           throw new Error('Secret must be provided when DingTalk signing is enabled')
         }
         break
       case 'feishu':
-        // 飞书可能需要签名
+        // Feishu puede necesitar firma
         if (platform.enableSign && !platform.secret) {
           throw new Error('Secret must be provided when Feishu signing is enabled')
         }
         break
       case 'slack':
-        // Slack webhook URL通常包含token
+        // URL de webhook de Slack generalmente contiene token
         if (!platform.url.includes('hooks.slack.com')) {
           logger.warn('⚠️ Slack webhook URL format may be incorrect')
         }
@@ -132,7 +132,7 @@ class WebhookConfigService {
       case 'discord':
         // Discord webhook URL format check
         if (!platform.url.includes('discord.com/api/webhooks')) {
-          logger.warn('⚠️ Discord webhook URL格式可能不正确')
+          logger.warn('⚠️ Formato de URL de webhook de Discord puede ser incorrecto')
         }
         break
       case 'telegram':
@@ -175,20 +175,20 @@ class WebhookConfigService {
         }
         break
       case 'custom':
-        // 自定义webhook，用户自行负责格式
+        // Webhook personalizado, usuario es responsable del formato
         break
       case 'bark':
-        // 验证设备密钥
+        // Valida clave de dispositivo
         if (!platform.deviceKey) {
           throw new Error('Bark platform must provide device key')
         }
 
-        // 验证设备密钥格式（通常是22-24位字符）
+        // Valida clave de dispositivoFormato（通常是22-24位字符）
         if (platform.deviceKey.length < 20 || platform.deviceKey.length > 30) {
           logger.warn('⚠️ Bark device key length may be incorrect, please check if fully copied')
         }
 
-        // 验证服务器URL（如果提供）
+        // Valida URL del servidor (si se proporciona)
         if (platform.serverUrl) {
           if (!this.isValidUrl(platform.serverUrl)) {
             throw new Error('Invalid Bark server URL format')
@@ -198,7 +198,7 @@ class WebhookConfigService {
           }
         }
 
-        // 验证声音参数（如果提供）
+        // Valida parámetro de sonido (si se proporciona)
         if (platform.sound) {
           const validSounds = [
             'default',
@@ -241,7 +241,7 @@ class WebhookConfigService {
           }
         }
 
-        // 验证级别参数
+        // Valida parámetro de nivel
         if (platform.level) {
           const validLevels = ['active', 'timeSensitive', 'passive', 'critical']
           if (!validLevels.includes(platform.level)) {
@@ -249,18 +249,18 @@ class WebhookConfigService {
           }
         }
 
-        // 验证图标URL（如果提供）
+        // Valida URL de ícono (si se proporciona)
         if (platform.icon && !this.isValidUrl(platform.icon)) {
           logger.warn('⚠️ Bark icon URL format may be incorrect')
         }
 
-        // 验证点击跳转URL（如果提供）
+        // Valida URL de redirección al hacer clic (si se proporciona)
         if (platform.clickUrl && !this.isValidUrl(platform.clickUrl)) {
           logger.warn('⚠️ Bark redirect URL format may be incorrect')
         }
         break
       case 'smtp': {
-        // 验证SMTP必需配置
+        // Valida configuración requerida de SMTP
         if (!platform.host) {
           throw new Error('SMTP platform must provide host address')
         }
@@ -274,26 +274,26 @@ class WebhookConfigService {
           throw new Error('SMTP platform must provide recipient email')
         }
 
-        // 验证端口
+        // Valida puerto
         if (platform.port && (platform.port < 1 || platform.port > 65535)) {
           throw new Error('SMTP port must be between 1-65535')
         }
 
-        // 验证邮箱格式
-        // 支持两种格式：1. 纯邮箱 user@domain.com  2. 带名称 Name <user@domain.com>
+        // Valida formato de correo electrónico
+        // Soporta dos formatos: 1. Correo simple user@domain.com  2. Con nombre Name <user@domain.com>
         const simpleEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-        // 验证接收邮箱
+        // Valida correo de recepción
         const toEmails = Array.isArray(platform.to) ? platform.to : [platform.to]
         for (const email of toEmails) {
-          // 提取实际邮箱地址（如果是 Name <email> 格式）
+          // Extrae dirección de correo real (si es formato Name <email>)
           const actualEmail = email.includes('<') ? email.match(/<([^>]+)>/)?.[1] : email
           if (!actualEmail || !simpleEmailRegex.test(actualEmail)) {
             throw new Error(`Invalid recipient email format: ${email}`)
           }
         }
 
-        // 验证发送邮箱（支持 Name <email> 格式）
+        // Valida correo de envío (soporta formato Name <email>)
         if (platform.from) {
           const actualFromEmail = platform.from.includes('<')
             ? platform.from.match(/<([^>]+)>/)?.[1]
@@ -351,15 +351,15 @@ class WebhookConfigService {
     try {
       const config = await this.getConfig()
 
-      // 生成唯一ID
+      // Genera ID único
       platform.id = platform.id || uuidv4()
       platform.enabled = platform.enabled !== false
       platform.createdAt = new Date().toISOString()
 
-      // 验证平台配置
+      // Valida configuración de plataforma
       this.validatePlatformConfig(platform)
 
-      // 添加到配置
+      // 添加到Configuración
       config.platforms = config.platforms || []
       config.platforms.push(platform)
 
@@ -384,14 +384,14 @@ class WebhookConfigService {
         throw new Error('Specified webhook platform not found')
       }
 
-      // 合并更新
+      // Combina actualización
       config.platforms[index] = {
         ...config.platforms[index],
         ...updates,
         updatedAt: new Date().toISOString()
       }
 
-      // 验证更新后的配置
+      // Valida configuración actualizada
       this.validatePlatformConfig(config.platforms[index])
 
       await this.saveConfig(config)

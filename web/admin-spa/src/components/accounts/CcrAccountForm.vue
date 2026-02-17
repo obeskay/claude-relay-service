@@ -24,7 +24,7 @@
         </div>
 
         <div class="space-y-6">
-          <!-- 基本信息 -->
+          <!-- 基本Información -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
               >{{ $t('label.name') }} *</label
@@ -117,7 +117,7 @@
             </div>
           </div>
 
-          <!-- 限流设置 -->
+          <!-- 限流Configuración -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">{{
               $t('accounts.form.rate_limit_mechanism')
@@ -185,7 +185,7 @@
             </div>
           </div>
 
-          <!-- 模型映射表（可选） -->
+          <!-- Modelo映射表（可选） -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
               >{{ $t('accounts.form.model_mapping') }} ({{ $t('common.optional') }})</label
@@ -238,7 +238,7 @@
             <ProxyConfig v-model="form.proxy" />
           </div>
 
-          <!-- 操作区 -->
+          <!-- Operación区 -->
           <div class="mt-2 flex gap-3">
             <button
               class="flex-1 rounded-xl bg-gray-100 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
@@ -343,7 +343,7 @@ const submit = async () => {
   loading.value = true
   try {
     if (isEdit.value) {
-      // 更新
+      // Actualizar
       const updates = {
         name: form.value.name,
         description: form.value.description,
@@ -361,13 +361,13 @@ const submit = async () => {
       }
       const res = await updateCcrAccountApi(props.account.id, updates)
       if (res.success) {
-        // 不在这里显示 toast，由父组件统一处理
+        // 不en这里显示 toast，由父组件统一处理
         emit('success')
       } else {
-        showToast(res.message || '保存失败', 'error')
+        showToast(res.message || 'Error al guardar', 'error')
       }
     } else {
-      // 创建
+      // Crear
       const payload = {
         name: form.value.name,
         description: form.value.description,
@@ -384,14 +384,14 @@ const submit = async () => {
       }
       const res = await createCcrAccountApi(payload)
       if (res.success) {
-        // 不在这里显示 toast，由父组件统一处理
+        // 不en这里显示 toast，由父组件统一处理
         emit('success')
       } else {
-        showToast(res.message || '创建失败', 'error')
+        showToast(res.message || 'Error al crear', 'error')
       }
     }
   } catch (err) {
-    showToast(err.message || '请求失败', 'error')
+    showToast(err.message || 'SolicitudFallido', 'error')
   } finally {
     loading.value = false
   }
@@ -411,7 +411,7 @@ const populateFromAccount = () => {
   form.value.proxy = a.proxy || null
   enableRateLimit.value = form.value.rateLimitDuration > 0
 
-  // supportedModels 对象转为数组
+  // supportedModels 对象转para数组
   modelMappings.value = []
   const mapping = a.supportedModels || {}
   if (mapping && typeof mapping === 'object') {

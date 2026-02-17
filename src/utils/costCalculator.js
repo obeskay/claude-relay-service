@@ -1,6 +1,6 @@
 const pricingService = require('../services/pricingService')
 
-// Claude模型价格配置 (USD per 1M tokens) - 备用定价
+// Claude模型价格Configuración (USD per 1M tokens) - 备用定价
 const MODEL_PRICING = {
   // Claude 3.5 Sonnet
   'claude-3-5-sonnet-20241022': {
@@ -62,7 +62,7 @@ const MODEL_PRICING = {
     cacheRead: 0.03
   },
 
-  // 默认定价（用于未知模型）
+  // Predeterminado定价（用于未知模型）
   unknown: {
     input: 3.0,
     output: 15.0,
@@ -73,27 +73,27 @@ const MODEL_PRICING = {
 
 class CostCalculator {
   /**
-   * 计算单次请求的费用
-   * @param {Object} usage - 使用量数据
+   * Calcular单次Solicitud的费用
+   * @param {Object} usage - 使用量Datos
    * @param {number} usage.input_tokens - 输入token数量
    * @param {number} usage.output_tokens - 输出token数量
-   * @param {number} usage.cache_creation_input_tokens - 缓存创建token数量
-   * @param {number} usage.cache_read_input_tokens - 缓存读取token数量
-   * @param {string} model - 模型名称
+   * @param {number} usage.cache_creation_input_tokens - CachéCreartoken数量
+   * @param {number} usage.cache_read_input_tokens - CachéLeertoken数量
+   * @param {string} model - 模型Nombre
    * @returns {Object} 费用详情
    */
   static calculateCost(usage, model = 'unknown') {
-    // 如果 usage 包含详细的 cache_creation 对象或是 1M 模型，使用 pricingService 来处理
+    // 如果 usage Incluir详细的 cache_creation Objeto或是 1M 模型，使用 pricingService 来Procesar
     if (
       (usage.cache_creation && typeof usage.cache_creation === 'object') ||
       (model && model.includes('[1m]'))
     ) {
       const result = pricingService.calculateCost(usage, model)
-      // 转换 pricingService 返回的格式到 costCalculator 的格式
+      // Convertir pricingService Retornar的Formato到 costCalculator 的Formato
       return {
         model,
         pricing: {
-          input: result.pricing.input * 1000000, // 转换为 per 1M tokens
+          input: result.pricing.input * 1000000, // Convertir为 per 1M tokens
           output: result.pricing.output * 1000000,
           cacheWrite: result.pricing.cacheCreate * 1000000,
           cacheRead: result.pricing.cacheRead * 1000000
@@ -142,19 +142,19 @@ class CostCalculator {
     const cacheCreateTokens = usage.cache_creation_input_tokens || 0
     const cacheReadTokens = usage.cache_read_input_tokens || 0
 
-    // 优先使用动态价格服务
+    // 优先使用动态价格Servicio
     const pricingData = pricingService.getModelPricing(model)
     let pricing
     let usingDynamicPricing = false
 
     if (pricingData) {
-      // 转换动态价格格式为内部格式
-      const inputPrice = (pricingData.input_cost_per_token || 0) * 1000000 // 转换为per 1M tokens
+      // Convertir动态价格Formato为内部Formato
+      const inputPrice = (pricingData.input_cost_per_token || 0) * 1000000 // Convertir为per 1M tokens
       const outputPrice = (pricingData.output_cost_per_token || 0) * 1000000
       const cacheReadPrice = (pricingData.cache_read_input_token_cost || 0) * 1000000
 
-      // OpenAI 模型的特殊处理：
-      // - 如果没有 cache_creation_input_token_cost，缓存创建按普通 input 价格计费
+      // OpenAI 模型的特殊Procesar：
+      // - 如果没有 cache_creation_input_token_cost，CachéCrear按普通 input 价格计费
       // - Claude 模型有专门的 cache_creation_input_token_cost
       let cacheWritePrice = (pricingData.cache_creation_input_token_cost || 0) * 1000000
 
@@ -163,7 +163,7 @@ class CostCalculator {
         model.includes('gpt') || model.includes('o1') || pricingData.litellm_provider === 'openai'
 
       if (isOpenAIModel && !pricingData.cache_creation_input_token_cost && cacheCreateTokens > 0) {
-        // OpenAI 模型：缓存创建按普通 input 价格计费
+        // OpenAI 模型：CachéCrear按普通 input 价格计费
         cacheWritePrice = inputPrice
       }
 
@@ -175,11 +175,11 @@ class CostCalculator {
       }
       usingDynamicPricing = true
     } else {
-      // 回退到静态价格
+      // Retirada到静态价格
       pricing = MODEL_PRICING[model] || MODEL_PRICING['unknown']
     }
 
-    // 计算各类型token的费用 (USD)
+    // Calcular各Tipotoken的费用 (USD)
     const inputCost = (inputTokens / 1000000) * pricing.input
     const outputCost = (outputTokens / 1000000) * pricing.output
     const cacheWriteCost = (cacheCreateTokens / 1000000) * pricing.cacheWrite
@@ -205,7 +205,7 @@ class CostCalculator {
         cacheRead: cacheReadCost,
         total: totalCost
       },
-      // 格式化的费用字符串
+      // Formato化的费用Cadena
       formatted: {
         input: this.formatCost(inputCost),
         output: this.formatCost(outputCost),
@@ -213,7 +213,7 @@ class CostCalculator {
         cacheRead: this.formatCost(cacheReadCost),
         total: this.formatCost(totalCost)
       },
-      // 添加调试信息
+      // 添加DepurarInformación
       debug: {
         isOpenAIModel: model.includes('gpt') || model.includes('o1'),
         hasCacheCreatePrice: !!pricingData?.cache_creation_input_token_cost,
@@ -224,9 +224,9 @@ class CostCalculator {
   }
 
   /**
-   * 计算聚合使用量的费用
-   * @param {Object} aggregatedUsage - 聚合使用量数据
-   * @param {string} model - 模型名称
+   * Calcular聚合使用量的费用
+   * @param {Object} aggregatedUsage - 聚合使用量Datos
+   * @param {string} model - 模型Nombre
    * @returns {Object} 费用详情
    */
   static calculateAggregatedCost(aggregatedUsage, model = 'unknown') {
@@ -243,12 +243,12 @@ class CostCalculator {
   }
 
   /**
-   * 获取模型定价信息
-   * @param {string} model - 模型名称
-   * @returns {Object} 定价信息
+   * Obtener模型定价Información
+   * @param {string} model - 模型Nombre
+   * @returns {Object} 定价Información
    */
   static getModelPricing(model = 'unknown') {
-    // 特殊处理：gpt-5-codex 回退到 gpt-5（如果没有专门定价）
+    // 特殊Procesar：gpt-5-codex Retirada到 gpt-5（如果没有专门定价）
     if (model === 'gpt-5-codex' && !MODEL_PRICING['gpt-5-codex']) {
       const gpt5Pricing = MODEL_PRICING['gpt-5']
       if (gpt5Pricing) {
@@ -260,7 +260,7 @@ class CostCalculator {
   }
 
   /**
-   * 获取所有支持的模型和定价
+   * Obtener所有Soportar的模型和定价
    * @returns {Object} 所有模型定价
    */
   static getAllModelPricing() {
@@ -268,19 +268,19 @@ class CostCalculator {
   }
 
   /**
-   * 验证模型是否支持
-   * @param {string} model - 模型名称
-   * @returns {boolean} 是否支持
+   * Validar模型是否Soportar
+   * @param {string} model - 模型Nombre
+   * @returns {boolean} 是否Soportar
    */
   static isModelSupported(model) {
     return !!MODEL_PRICING[model]
   }
 
   /**
-   * 格式化费用显示
+   * Formato化费用显示
    * @param {number} cost - 费用金额
    * @param {number} decimals - 小数位数
-   * @returns {string} 格式化的费用字符串
+   * @returns {string} Formato化的费用Cadena
    */
   static formatCost(cost, decimals = 6) {
     if (cost >= 1) {
@@ -293,16 +293,16 @@ class CostCalculator {
   }
 
   /**
-   * 计算费用节省（使用缓存的节省）
-   * @param {Object} usage - 使用量数据
-   * @param {string} model - 模型名称
-   * @returns {Object} 节省信息
+   * Calcular费用节省（使用Caché的节省）
+   * @param {Object} usage - 使用量Datos
+   * @param {string} model - 模型Nombre
+   * @returns {Object} 节省Información
    */
   static calculateCacheSavings(usage, model = 'unknown') {
-    const pricing = this.getModelPricing(model) // 已包含 gpt-5-codex 回退逻辑
+    const pricing = this.getModelPricing(model) // 已Incluir gpt-5-codex Retirada逻辑
     const cacheReadTokens = usage.cache_read_input_tokens || 0
 
-    // 如果这些token不使用缓存，需要按正常input价格计费
+    // 如果这些token不使用Caché，需要按正常input价格计费
     const normalCost = (cacheReadTokens / 1000000) * pricing.input
     const cacheCost = (cacheReadTokens / 1000000) * pricing.cacheRead
     const savings = normalCost - cacheCost

@@ -1,6 +1,6 @@
 <template>
   <div ref="triggerRef" class="relative">
-    <!-- 选择器主体 -->
+    <!-- Cuerpo del selector -->
     <div
       class="form-input flex w-full cursor-pointer items-center justify-between border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
       :class="{ 'opacity-50': disabled }"
@@ -18,7 +18,7 @@
       />
     </div>
 
-    <!-- 下拉菜单 -->
+    <!-- Menú desplegable -->
     <Teleport to="body">
       <Transition
         enter-active-class="transition ease-out duration-100"
@@ -34,14 +34,14 @@
           class="absolute z-50 flex flex-col rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800"
           :style="dropdownStyle"
         >
-          <!-- 搜索框 -->
+          <!-- Caja de búsqueda -->
           <div class="flex-shrink-0 border-b border-gray-200 p-3 dark:border-gray-600">
             <div class="relative">
               <input
                 ref="searchInput"
                 v-model="searchQuery"
                 class="form-input w-full border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
-                placeholder="搜索账号名称..."
+                placeholder="Buscar nombre de cuenta..."
                 style="padding-left: 40px; padding-right: 36px"
                 type="text"
                 @input="handleSearch"
@@ -60,9 +60,9 @@
             </div>
           </div>
 
-          <!-- 选项列表 -->
+          <!-- Lista de opciones -->
           <div class="custom-scrollbar flex-1 overflow-y-auto">
-            <!-- 特殊选项 -->
+            <!-- Opciones especiales -->
             <div
               v-if="specialOptionsList.length > 0"
               class="border-b border-gray-200 dark:border-gray-600"
@@ -84,7 +84,7 @@
               </div>
             </div>
 
-            <!-- 默认选项 -->
+            <!-- Opción predeterminada -->
             <div
               class="cursor-pointer px-4 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
               :class="{ 'bg-blue-50 dark:bg-blue-900/20': !modelValue }"
@@ -93,12 +93,12 @@
               <span class="text-gray-700 dark:text-gray-300">{{ defaultOptionText }}</span>
             </div>
 
-            <!-- 分组选项 -->
+            <!-- Opciones de grupo -->
             <div v-if="filteredGroups.length > 0">
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                调度分组
+                Grupos de programación
               </div>
               <div
                 v-for="group in filteredGroups"
@@ -110,27 +110,27 @@
                 <div class="flex items-center justify-between">
                   <span class="text-gray-700 dark:text-gray-300">{{ group.name }}</span>
                   <span class="text-xs text-gray-500 dark:text-gray-400"
-                    >{{ group.memberCount || 0 }} 个成员</span
+                    >{{ group.memberCount || 0 }} miembros</span
                   >
                 </div>
               </div>
             </div>
 
-            <!-- OAuth 账号 -->
+            <!-- Cuentas OAuth -->
             <div v-if="filteredOAuthAccounts.length > 0">
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
                 {{
                   platform === 'claude'
-                    ? 'Claude OAuth 专属账号'
+                    ? 'Cuenta exclusiva Claude OAuth'
                     : platform === 'openai'
-                      ? 'OpenAI 专属账号'
+                      ? 'Cuenta exclusiva OpenAI'
                       : platform === 'droid'
-                        ? 'Droid 专属账号'
+                        ? 'Cuenta exclusiva Droid'
                         : platform === 'gemini'
-                          ? 'Gemini OAuth 专属账号'
-                          : 'OAuth 专属账号'
+                          ? 'Cuenta exclusiva Gemini OAuth'
+                          : 'Cuenta exclusiva OAuth'
                 }}
               </div>
               <div
@@ -163,12 +163,12 @@
               </div>
             </div>
 
-            <!-- Console 账号（仅 Claude） -->
+            <!-- Cuentas Console (solo Claude) -->
             <div v-if="platform === 'claude' && filteredConsoleAccounts.length > 0">
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                Claude Console 专属账号
+                Cuenta exclusiva Claude Console
               </div>
               <div
                 v-for="account in filteredConsoleAccounts"
@@ -202,12 +202,12 @@
               </div>
             </div>
 
-            <!-- OpenAI-Responses 账号（仅 OpenAI） -->
+            <!-- Cuentas OpenAI-Responses (solo OpenAI) -->
             <div v-if="platform === 'openai' && filteredOpenAIResponsesAccounts.length > 0">
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                OpenAI-Responses 专属账号
+                Cuenta exclusiva OpenAI-Responses
               </div>
               <div
                 v-for="account in filteredOpenAIResponsesAccounts"
@@ -241,12 +241,12 @@
               </div>
             </div>
 
-            <!-- Gemini-API 账号（仅 Gemini） -->
+            <!-- Cuentas Gemini-API (solo Gemini) -->
             <div v-if="platform === 'gemini' && filteredGeminiApiAccounts.length > 0">
               <div
                 class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400"
               >
-                Gemini-API 专属账号
+                Cuenta exclusiva Gemini-API
               </div>
               <div
                 v-for="account in filteredGeminiApiAccounts"
@@ -280,13 +280,13 @@
               </div>
             </div>
 
-            <!-- 无搜索结果 -->
+            <!-- Sin resultados de búsqueda -->
             <div
               v-if="searchQuery && !hasResults"
               class="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
             >
               <i class="fas fa-search mb-2 text-2xl" />
-              <p class="text-sm">没有找到匹配的账号</p>
+              <p class="text-sm">No se encontraron cuentas coincidentes</p>
             </div>
           </div>
         </div>
@@ -323,11 +323,11 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '请选择账号'
+    default: 'Seleccionar cuenta'
   },
   defaultOptionText: {
     type: String,
-    default: '使用共享账号池'
+    default: 'Usar pool de cuentas compartidas'
   },
   specialOptions: {
     type: Array,
@@ -343,10 +343,10 @@ const searchInput = ref(null)
 const dropdownRef = ref(null)
 const dropdownStyle = ref({})
 const triggerRef = ref(null)
-const lastDirection = ref('') // 记住上次的显示方向
+const lastDirection = ref('') // Recordar la dirección de visualización anterior
 const specialOptionsList = computed(() => props.specialOptions || [])
 
-// 获取选中的标签
+// Obtener la etiqueta seleccionada
 const selectedLabel = computed(() => {
   const matchedSpecial = specialOptionsList.value.find(
     (option) => option.value === props.modelValue
@@ -355,17 +355,17 @@ const selectedLabel = computed(() => {
     return matchedSpecial.label
   }
 
-  // 如果没有选中值，显示默认选项文本
+  // Si no hay valor seleccionado, mostrar el texto de opción predeterminado
   if (!props.modelValue) return props.defaultOptionText
 
-  // 分组
+  // Group
   if (props.modelValue.startsWith('group:')) {
     const groupId = props.modelValue.substring(6)
     const group = props.groups.find((g) => g.id === groupId)
-    return group ? `${group.name} (${group.memberCount || 0} 个成员)` : ''
+    return group ? `${group.name} (${group.memberCount || 0} miembros)` : ''
   }
 
-  // Console 账号
+  // Console account
   if (props.modelValue.startsWith('console:')) {
     const accountId = props.modelValue.substring(8)
     const account = props.accounts.find(
@@ -374,7 +374,7 @@ const selectedLabel = computed(() => {
     return account ? `${account.name} (${getAccountStatusText(account)})` : ''
   }
 
-  // OpenAI-Responses 账号
+  // OpenAI-Responses account
   if (props.modelValue.startsWith('responses:')) {
     const accountId = props.modelValue.substring(10)
     const account = props.accounts.find(
@@ -383,71 +383,71 @@ const selectedLabel = computed(() => {
     return account ? `${account.name} (${getAccountStatusText(account)})` : ''
   }
 
-  // Gemini-API 账号
+  // Gemini-API account
   if (props.modelValue.startsWith('api:')) {
     const accountId = props.modelValue.substring(4)
     const account = props.accounts.find((a) => a.id === accountId && a.platform === 'gemini-api')
     return account ? `${account.name} (${getAccountStatusText(account)})` : ''
   }
 
-  // OAuth 账号
+  // OAuth account
   const account = props.accounts.find((a) => a.id === props.modelValue)
   return account ? `${account.name} (${getAccountStatusText(account)})` : ''
 })
 
-// 获取账户状态文本
+// Get account status text
 const getAccountStatusText = (account) => {
-  if (!account) return '未知'
+  if (!account) return 'Desconocido'
 
-  // 处理 OpenAI-Responses 账号（isActive 可能是字符串）
+  // Handle OpenAI-Responses accounts (isActive might be a string)
   const isActive = account.isActive === 'true' || account.isActive === true
 
-  // 优先使用 isActive 判断
+  // Prioritize isActive judgment
   if (!isActive) {
-    // 根据 status 提供更详细的状态信息
+    // Provide more detailed status information based on status
     switch (account.status) {
       case 'unauthorized':
-        return '未授权'
+        return 'No autorizado'
       case 'error':
-        return 'Token错误'
+        return 'Error de token'
       case 'created':
-        return '待验证'
+        return 'Pendiente de verificación'
       case 'rate_limited':
-        return '限流中'
+        return 'Limitado'
       case 'quota_exceeded':
-        return '额度超限'
+        return 'Cuota excedida'
       default:
-        return '异常'
+        return 'Anómalo'
     }
   }
 
-  // 对于激活的账号，如果是限流状态也要显示
+  // For activated accounts, also display if in rate limit status
   if (account.status === 'rate_limited') {
-    return '限流中'
+    return 'Limitado'
   }
 
-  return '正常'
+  return 'Normal'
 }
 
-// 按创建时间倒序排序账号
+// Sort accounts by creation time in descending order
 const sortedAccounts = computed(() => {
   return [...props.accounts].sort((a, b) => {
     const dateA = new Date(a.createdAt || 0)
     const dateB = new Date(b.createdAt || 0)
-    return dateB - dateA // 倒序排序
+    return dateB - dateA // Sort in descending order
   })
 })
 
-// 过滤的分组（根据平台类型过滤）
+// Filtered groups (filtered by platform type)
 const filteredGroups = computed(() => {
-  // 只显示与当前平台匹配的分组
+  // Mostrar solo grupos que coinciden con la plataforma actual
   let groups = props.groups.filter((group) => {
-    // 如果分组有platform属性，则必须匹配当前平台
-    // 如果没有platform属性，则认为是旧数据，根据平台判断
+    // Si el grupo tiene propiedad platform, debe coincidir con la plataforma actual
+    // Si no hay propiedad platform, se considera datos antiguos, juzgar por plataforma
     if (group.platform) {
       return group.platform === props.platform
     }
-    // 向后兼容：如果没有platform字段，通过其他方式判断
+    // Compatibilidad con versiones anteriores: si no hay campo platform, juzgar por otros medios
     return true
   })
 
@@ -459,22 +459,22 @@ const filteredGroups = computed(() => {
   return groups
 })
 
-// 过滤的 OAuth 账号
+// Filtered OAuth accounts
 const filteredOAuthAccounts = computed(() => {
   let accounts = []
 
   if (props.platform === 'claude') {
     accounts = sortedAccounts.value.filter((a) => a.platform === 'claude-oauth')
   } else if (props.platform === 'openai') {
-    // 对于 OpenAI，只显示 openai 类型的账号
+    // For OpenAI, only display openai type accounts
     accounts = sortedAccounts.value.filter((a) => a.platform === 'openai')
   } else if (props.platform === 'droid') {
     accounts = sortedAccounts.value.filter((a) => a.platform === 'droid')
   } else if (props.platform === 'gemini') {
-    // 对于 Gemini，只显示 OAuth 类型的账号（排除 gemini-api）
+    // For Gemini, only display OAuth type accounts (exclude gemini-api)
     accounts = sortedAccounts.value.filter((a) => a.platform === 'gemini')
   } else {
-    // 其他平台显示所有非特殊类型的账号
+    // Other platforms display all non-special type accounts
     accounts = sortedAccounts.value.filter(
       (a) =>
         !['claude-oauth', 'claude-console', 'openai-responses', 'gemini-api'].includes(a.platform)
@@ -489,7 +489,7 @@ const filteredOAuthAccounts = computed(() => {
   return accounts
 })
 
-// 过滤的 Console 账号
+// Filtered Console accounts
 const filteredConsoleAccounts = computed(() => {
   if (props.platform !== 'claude') return []
 
@@ -503,7 +503,7 @@ const filteredConsoleAccounts = computed(() => {
   return accounts
 })
 
-// 过滤的 OpenAI-Responses 账号
+// Filtered OpenAI-Responses accounts
 const filteredOpenAIResponsesAccounts = computed(() => {
   if (props.platform !== 'openai') return []
 
@@ -517,7 +517,7 @@ const filteredOpenAIResponsesAccounts = computed(() => {
   return accounts
 })
 
-// 过滤的 Gemini-API 账号
+// Filtered Gemini-API accounts
 const filteredGeminiApiAccounts = computed(() => {
   if (props.platform !== 'gemini') return []
 
@@ -531,7 +531,7 @@ const filteredGeminiApiAccounts = computed(() => {
   return accounts
 })
 
-// 是否有搜索结果
+// Whether there are search results
 const hasResults = computed(() => {
   return (
     filteredGroups.value.length > 0 ||
@@ -542,9 +542,9 @@ const hasResults = computed(() => {
   )
 })
 
-// 格式化日期
+// Format date
 
-// 更新下拉菜单位置
+// Update dropdown position
 const updateDropdownPosition = () => {
   if (!showDropdown.value || !dropdownRef.value || !triggerRef.value) return
 
@@ -556,20 +556,20 @@ const updateDropdownPosition = () => {
   const windowWidth = window.innerWidth
   const spaceBelow = windowHeight - rect.bottom
   const spaceAbove = rect.top
-  const margin = 8 // 边距
+  const margin = 8 // Margin
 
-  // 获取下拉框的高度
+  // Obtener altura del menú desplegable
   // const dropdownHeight = dropdownRef.value.offsetHeight
 
-  // 计算最大可用高度
+  // Calcular altura máxima disponible
   const maxHeightBelow = spaceBelow - margin
   const maxHeightAbove = spaceAbove - margin
 
-  // 决定显示方向和最大高度
+  // Decide display direction and maximum height
   let showAbove = false
   let maxHeight = maxHeightBelow
 
-  // 优先使用上次的方向，除非空间不足
+  // Prioritize using the last direction, unless space is insufficient
   if (lastDirection.value === 'above' && maxHeightAbove >= 150) {
     showAbove = true
     maxHeight = maxHeightAbove
@@ -577,17 +577,17 @@ const updateDropdownPosition = () => {
     showAbove = false
     maxHeight = maxHeightBelow
   } else {
-    // 如果没有历史方向或空间不足，选择空间更大的方向
+    // If no historical direction or insufficient space, choose the direction with more space
     if (maxHeightAbove > maxHeightBelow && maxHeightBelow < 200) {
       showAbove = true
       maxHeight = maxHeightAbove
     }
   }
 
-  // 记住这次的方向
+  // Remember this direction
   lastDirection.value = showAbove ? 'above' : 'below'
 
-  // 确保下拉框不超出视窗左右边界
+  // Ensure dropdown does not exceed window left and right boundaries
   let left = rect.left
   const dropdownWidth = rect.width
   if (left + dropdownWidth > windowWidth - margin) {
@@ -601,21 +601,21 @@ const updateDropdownPosition = () => {
     position: 'fixed',
     left: `${left}px`,
     width: `${rect.width}px`,
-    maxHeight: `${Math.min(maxHeight, 400)}px`, // 限制最大高度为400px
+    maxHeight: `${Math.min(maxHeight, 400)}px`, // Limit maximum height to 400px
     ...(showAbove ? { bottom: `${windowHeight - rect.top}px` } : { top: `${rect.bottom}px` })
   }
 }
 
-// 切换下拉菜单
+// Toggle dropdown menu
 const toggleDropdown = () => {
   if (!showDropdown.value && triggerRef.value) {
-    // 在显示前就设置初始样式，避免闪烁
+    // Establecer estilos iniciales antes de mostrar para evitar parpadeo
     const rect = triggerRef.value.getBoundingClientRect()
     const windowHeight = window.innerHeight
     const spaceBelow = windowHeight - rect.bottom
     const margin = 8
 
-    // 预先设置一个合理的初始位置
+    // Preestablecer una posición inicial razonable
     dropdownStyle.value = {
       position: 'fixed',
       left: `${rect.left}px`,
@@ -633,32 +633,32 @@ const toggleDropdown = () => {
   }
 }
 
-// 选择账号
+// Select account
 const selectAccount = (value) => {
   emit('update:modelValue', value || '')
   showDropdown.value = false
   searchQuery.value = ''
 }
 
-// 处理搜索
+// Handle search
 const handleSearch = () => {
-  // 搜索时自动触发
+  // Auto-trigger when searching
 }
 
-// 清除搜索
+// Clear search
 const clearSearch = () => {
   searchQuery.value = ''
   searchInput.value?.focus()
 }
 
-// 点击外部关闭
+// Click outside to close
 const handleClickOutside = (event) => {
   if (!triggerRef.value?.contains(event.target) && !dropdownRef.value?.contains(event.target)) {
     showDropdown.value = false
   }
 }
 
-// 监听滚动更新位置
+// Listen for scroll to update position
 const handleScroll = () => {
   if (showDropdown.value) {
     updateDropdownPosition()
@@ -677,11 +677,11 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateDropdownPosition)
 })
 
-// 监听下拉菜单状态变化
+// Listen for dropdown menu state changes
 watch(showDropdown, (newVal) => {
   if (!newVal) {
     searchQuery.value = ''
-    // 关闭时重置方向，下次打开重新计算
+    // Reset direction when closed, recalculate when opened next time
     lastDirection.value = ''
   }
 })

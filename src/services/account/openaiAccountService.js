@@ -16,16 +16,16 @@ const {
 const tokenRefreshService = require('../tokenRefreshService')
 const { createEncryptor } = require('../../utils/commonHelper')
 
-// 使用 commonHelper 的加密器
+// 使用 commonHelper 的Cifrado器
 const encryptor = createEncryptor('openai-account-salt')
 const { encrypt, decrypt } = encryptor
 
-// OpenAI 账户键前缀
+// OpenAI Cuenta键前缀
 const OPENAI_ACCOUNT_KEY_PREFIX = 'openai:account:'
 const SHARED_OPENAI_ACCOUNTS_KEY = 'shared_openai_accounts'
 const ACCOUNT_SESSION_MAPPING_PREFIX = 'openai_session_account_mapping:'
 
-// 🧹 定期清理缓存（每10分钟）
+// 🧹 定期LimpiarCaché（每10分钟）
 setInterval(
   () => {
     encryptor.clearCache()
@@ -113,13 +113,13 @@ function buildCodexUsageSnapshot(accountData) {
   }
 }
 
-// 刷新访问令牌
+// 刷新访问Token
 async function refreshAccessToken(refreshToken, proxy = null) {
   try {
     // Codex CLI 的官方 CLIENT_ID
     const CLIENT_ID = 'app_EMoamEEZ73f0CkXaXp7hrann'
 
-    // 准备请求数据
+    // 准备SolicitudDatos
     const requestData = new URLSearchParams({
       grant_type: 'refresh_token',
       client_id: CLIENT_ID,
@@ -127,7 +127,7 @@ async function refreshAccessToken(refreshToken, proxy = null) {
       scope: 'openid profile email'
     }).toString()
 
-    // 配置请求选项
+    // ConfiguraciónSolicitud选项
     const requestOptions = {
       method: 'POST',
       url: 'https://auth.openai.com/oauth/token',
@@ -136,10 +136,10 @@ async function refreshAccessToken(refreshToken, proxy = null) {
         'Content-Length': requestData.length
       },
       data: requestData,
-      timeout: config.requestTimeout || 600000 // 使用统一的请求超时配置
+      timeout: config.requestTimeout || 600000 // 使用统一的SolicitudTiempo de espera agotadoConfiguración
     }
 
-    // 配置代理（如果有）
+    // ConfiguraciónProxy（如果有）
     const proxyAgent = ProxyHelper.createProxyAgent(proxy)
     if (proxyAgent) {
       requestOptions.httpAgent = proxyAgent
@@ -152,8 +152,8 @@ async function refreshAccessToken(refreshToken, proxy = null) {
       logger.debug('🌐 No proxy configured for OpenAI token refresh')
     }
 
-    // 发送请求
-    logger.info('🔍 发送 token 刷新请求，使用代理:', !!requestOptions.httpsAgent)
+    // 发送Solicitud
+    logger.info('🔍 发送 token 刷新Solicitud，使用Proxy:', !!requestOptions.httpsAgent)
     const response = await axios(requestOptions)
 
     if (response.status === 200 && response.data) {
@@ -161,20 +161,20 @@ async function refreshAccessToken(refreshToken, proxy = null) {
 
       logger.info('✅ Successfully refreshed OpenAI token')
 
-      // 返回新的 token 信息
+      // Retornar新的 token Información
       return {
         access_token: result.access_token,
         id_token: result.id_token,
-        refresh_token: result.refresh_token || refreshToken, // 如果没有返回新的，保留原来的
+        refresh_token: result.refresh_token || refreshToken, // 如果没有Retornar新的，保留原来的
         expires_in: result.expires_in || 3600,
-        expiry_date: Date.now() + (result.expires_in || 3600) * 1000 // 计算过期时间
+        expiry_date: Date.now() + (result.expires_in || 3600) * 1000 // Calcular过期Tiempo
       }
     } else {
       throw new Error(`Failed to refresh token: ${response.status} ${response.statusText}`)
     }
   } catch (error) {
     if (error.response) {
-      // 服务器响应了错误状态码
+      // Servicio器Respuesta了Error状态码
       const errorData = error.response.data || {}
       logger.error('OpenAI token refresh failed:', {
         status: error.response.status,
@@ -182,25 +182,25 @@ async function refreshAccessToken(refreshToken, proxy = null) {
         headers: error.response.headers
       })
 
-      // 构建详细的错误信息
-      let errorMessage = `OpenAI 服务器返回错误 (${error.response.status})`
+      // Construir详细的ErrorInformación
+      let errorMessage = `OpenAI Servicio器RetornarError (${error.response.status})`
 
       if (error.response.status === 400) {
         if (errorData.error === 'invalid_grant') {
           errorMessage = 'Refresh Token 无效或已过期，请重新授权'
         } else if (errorData.error === 'invalid_request') {
-          errorMessage = `请求参数错误：${errorData.error_description || errorData.error}`
+          errorMessage = `SolicitudParámetroError：${errorData.error_description || errorData.error}`
         } else {
-          errorMessage = `请求错误：${errorData.error_description || errorData.error || '未知错误'}`
+          errorMessage = `SolicitudError：${errorData.error_description || errorData.error || '未知Error'}`
         }
       } else if (error.response.status === 401) {
-        errorMessage = '认证失败：Refresh Token 无效'
+        errorMessage = '认证Falló：Refresh Token 无效'
       } else if (error.response.status === 403) {
-        errorMessage = '访问被拒绝：可能是 IP 被封或账户被禁用'
+        errorMessage = '访问被拒绝：可能是 IP 被封或Cuenta被Deshabilitar'
       } else if (error.response.status === 429) {
-        errorMessage = '请求过于频繁，请稍后重试'
+        errorMessage = 'Solicitud过于频繁，请稍后Reintentar'
       } else if (error.response.status >= 500) {
-        errorMessage = 'OpenAI 服务器内部错误，请稍后重试'
+        errorMessage = 'OpenAI Servicio器内部Error，请稍后Reintentar'
       } else if (errorData.error_description) {
         errorMessage = errorData.error_description
       } else if (errorData.error) {
@@ -214,21 +214,21 @@ async function refreshAccessToken(refreshToken, proxy = null) {
       fullError.details = errorData
       throw fullError
     } else if (error.request) {
-      // 请求已发出但没有收到响应
+      // Solicitud已发出但没有收到Respuesta
       logger.error('OpenAI token refresh no response:', error.message)
 
-      let errorMessage = '无法连接到 OpenAI 服务器'
+      let errorMessage = '无法Conexión到 OpenAI Servicio器'
       if (proxy) {
-        errorMessage += `（代理: ${ProxyHelper.getProxyDescription(proxy)}）`
+        errorMessage += `（Proxy: ${ProxyHelper.getProxyDescription(proxy)}）`
       }
       if (error.code === 'ECONNREFUSED') {
-        errorMessage += ' - 连接被拒绝'
+        errorMessage += ' - Conexión被拒绝'
       } else if (error.code === 'ETIMEDOUT') {
-        errorMessage += ' - 连接超时'
+        errorMessage += ' - ConexiónTiempo de espera agotado'
       } else if (error.code === 'ENOTFOUND') {
-        errorMessage += ' - 无法解析域名'
+        errorMessage += ' - 无法Analizar域名'
       } else if (error.code === 'EPROTO') {
-        errorMessage += ' - 协议错误（可能是代理配置问题）'
+        errorMessage += ' - ProtocoloError（可能是ProxyConfiguración问题）'
       } else if (error.message) {
         errorMessage += ` - ${error.message}`
       }
@@ -237,16 +237,16 @@ async function refreshAccessToken(refreshToken, proxy = null) {
       fullError.code = error.code
       throw fullError
     } else {
-      // 设置请求时发生错误
+      // EstablecerSolicitud时发生Error
       logger.error('OpenAI token refresh error:', error.message)
-      const fullError = new Error(`请求设置错误: ${error.message}`)
+      const fullError = new Error(`SolicitudEstablecerError: ${error.message}`)
       fullError.originalError = error
       throw fullError
     }
   }
 }
 
-// 检查 token 是否过期
+// Verificar token 是否过期
 function isTokenExpired(account) {
   if (!account.expiresAt) {
     return false
@@ -255,19 +255,19 @@ function isTokenExpired(account) {
 }
 
 /**
- * 检查账户订阅是否过期
- * @param {Object} account - 账户对象
+ * VerificarCuenta订阅是否过期
+ * @param {Object} account - CuentaObjeto
  * @returns {boolean} - true: 已过期, false: 未过期
  */
 function isSubscriptionExpired(account) {
   if (!account.subscriptionExpiresAt) {
-    return false // 未设置视为永不过期
+    return false // 未Establecer视为永不过期
   }
   const expiryDate = new Date(account.subscriptionExpiresAt)
   return expiryDate <= new Date()
 }
 
-// 刷新账户的 access token（带分布式锁）
+// 刷新Cuenta的 access token（带分布式锁）
 async function refreshAccountToken(accountId) {
   let lockAcquired = false
   let account = null
@@ -281,8 +281,8 @@ async function refreshAccountToken(accountId) {
 
     accountName = account.name || accountId
 
-    // 检查是否有 refresh token
-    // account.refreshToken 在 getAccount 中已经被解密了，直接使用即可
+    // Verificar是否有 refresh token
+    // account.refreshToken 在 getAccount 中已经被Descifrado了，直接使用即可
     const refreshToken = account.refreshToken || null
 
     if (!refreshToken) {
@@ -290,20 +290,20 @@ async function refreshAccountToken(accountId) {
       throw new Error('No refresh token available')
     }
 
-    // 尝试获取分布式锁
+    // 尝试Obtener分布式锁
     lockAcquired = await tokenRefreshService.acquireRefreshLock(accountId, 'openai')
 
     if (!lockAcquired) {
-      // 如果无法获取锁，说明另一个进程正在刷新
+      // 如果无法Obtener锁，说明另一个ProcesoEn progreso刷新
       logger.info(
         `🔒 Token refresh already in progress for OpenAI account: ${accountName} (${accountId})`
       )
       logRefreshSkipped(accountId, accountName, 'openai', 'already_locked')
 
-      // 等待一段时间后返回，期望其他进程已完成刷新
+      // 等待一段Tiempo后Retornar，期望其他Proceso已Completado刷新
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // 重新获取账户数据（可能已被其他进程刷新）
+      // 重新ObtenerCuentaDatos（可能已被其他Proceso刷新）
       const updatedAccount = await getAccount(accountId)
       if (updatedAccount && !isTokenExpired(updatedAccount)) {
         return {
@@ -318,11 +318,11 @@ async function refreshAccountToken(accountId) {
       throw new Error('Token refresh in progress by another process')
     }
 
-    // 获取锁成功，开始刷新
+    // Obtener锁Éxito，Iniciando刷新
     logRefreshStart(accountId, accountName, 'openai')
     logger.info(`🔄 Starting token refresh for OpenAI account: ${accountName} (${accountId})`)
 
-    // 获取代理配置
+    // ObtenerProxyConfiguración
     let proxy = null
     if (account.proxy) {
       try {
@@ -337,17 +337,17 @@ async function refreshAccountToken(accountId) {
       throw new Error('Failed to refresh token')
     }
 
-    // 准备更新数据 - 不要在这里加密，让 updateAccount 统一处理
+    // 准备ActualizarDatos - 不要在这里Cifrado，让 updateAccount 统一Procesar
     const updates = {
-      accessToken: newTokens.access_token, // 不加密，让 updateAccount 处理
+      accessToken: newTokens.access_token, // 不Cifrado，让 updateAccount Procesar
       expiresAt: new Date(newTokens.expiry_date).toISOString()
     }
 
-    // 如果有新的 ID token，也更新它（这对于首次未提供 ID Token 的账户特别重要）
+    // 如果有新的 ID token，也Actualizar它（这对于首次未提供 ID Token 的Cuenta特别重要）
     if (newTokens.id_token) {
-      updates.idToken = newTokens.id_token // 不加密，让 updateAccount 处理
+      updates.idToken = newTokens.id_token // 不Cifrado，让 updateAccount Procesar
 
-      // 如果之前没有 ID Token，尝试解析并更新用户信息
+      // 如果之前没有 ID Token，尝试Analizar并ActualizarUsuarioInformación
       if (!account.idToken || account.idToken === '') {
         try {
           const idTokenParts = newTokens.id_token.split('.')
@@ -355,15 +355,15 @@ async function refreshAccountToken(accountId) {
             const payload = JSON.parse(Buffer.from(idTokenParts[1], 'base64').toString())
             const authClaims = payload['https://api.openai.com/auth'] || {}
 
-            // 更新账户信息 - 使用正确的字段名
-            // OpenAI ID Token中用户ID在chatgpt_account_id、chatgpt_user_id和user_id字段
+            // ActualizarCuentaInformación - 使用正确的Campo名
+            // OpenAI ID Token中UsuarioID在chatgpt_account_id、chatgpt_user_id和user_idCampo
             if (authClaims.chatgpt_account_id) {
               updates.accountId = authClaims.chatgpt_account_id
             }
             if (authClaims.chatgpt_user_id) {
               updates.chatgptUserId = authClaims.chatgpt_user_id
             } else if (authClaims.user_id) {
-              // 有些情况下可能只有user_id字段
+              // 有些情况下可能只有user_idCampo
               updates.chatgptUserId = authClaims.user_id
             }
             if (authClaims.organizations?.[0]?.id) {
@@ -376,7 +376,7 @@ async function refreshAccountToken(accountId) {
               updates.organizationTitle = authClaims.organizations[0].title
             }
             if (payload.email) {
-              updates.email = payload.email // 不加密，让 updateAccount 处理
+              updates.email = payload.email // 不Cifrado，让 updateAccount Procesar
             }
             if (payload.email_verified !== undefined) {
               updates.emailVerified = payload.email_verified
@@ -390,21 +390,21 @@ async function refreshAccountToken(accountId) {
       }
     }
 
-    // 如果返回了新的 refresh token，更新它
+    // 如果Retornar了新的 refresh token，Actualizar它
     if (newTokens.refresh_token && newTokens.refresh_token !== refreshToken) {
-      updates.refreshToken = newTokens.refresh_token // 不加密，让 updateAccount 处理
+      updates.refreshToken = newTokens.refresh_token // 不Cifrado，让 updateAccount Procesar
       logger.info(`Updated refresh token for account ${accountId}`)
     }
 
-    // 更新账户信息
+    // ActualizarCuentaInformación
     await updateAccount(accountId, updates)
 
-    logRefreshSuccess(accountId, accountName, 'openai', newTokens) // 传入完整的 newTokens 对象
+    logRefreshSuccess(accountId, accountName, 'openai', newTokens) // 传入完整的 newTokens Objeto
     return newTokens
   } catch (error) {
     logRefreshError(accountId, account?.name || accountName, 'openai', error.message)
 
-    // 发送 Webhook 通知（如果启用）
+    // 发送 Webhook 通知（如果Habilitar）
     try {
       const webhookNotifier = require('../../utils/webhookNotifier')
       await webhookNotifier.sendAccountAnomalyNotification({
@@ -433,12 +433,12 @@ async function refreshAccountToken(accountId) {
   }
 }
 
-// 创建账户
+// CrearCuenta
 async function createAccount(accountData) {
   const accountId = uuidv4()
   const now = new Date().toISOString()
 
-  // 处理OAuth数据
+  // ProcesarOAuthDatos
   let oauthData = {}
   if (accountData.openaiOauth) {
     oauthData =
@@ -447,10 +447,10 @@ async function createAccount(accountData) {
         : accountData.openaiOauth
   }
 
-  // 处理账户信息
+  // ProcesarCuentaInformación
   const accountInfo = accountData.accountInfo || {}
 
-  // 检查邮箱是否已经是加密格式（包含冒号分隔的32位十六进制字符）
+  // Verificar邮箱是否已经是CifradoFormato（Incluir冒号分隔的32位十六进制字符）
   const isEmailEncrypted =
     accountInfo.email && accountInfo.email.length >= 33 && accountInfo.email.charAt(32) === ':'
 
@@ -465,8 +465,8 @@ async function createAccount(accountData) {
       accountData.rateLimitDuration !== undefined && accountData.rateLimitDuration !== null
         ? accountData.rateLimitDuration
         : 60,
-    // OAuth相关字段（加密存储）
-    // ID Token 现在是可选的，如果没有提供会在首次刷新时自动获取
+    // OAuth相关Campo（Cifrado存储）
+    // ID Token 现在是Opcional的，如果没有提供会在首次刷新时自动Obtener
     idToken: oauthData.idToken && oauthData.idToken.trim() ? encrypt(oauthData.idToken) : '',
     accessToken:
       oauthData.accessToken && oauthData.accessToken.trim() ? encrypt(oauthData.accessToken) : '',
@@ -475,25 +475,25 @@ async function createAccount(accountData) {
         ? encrypt(oauthData.refreshToken)
         : '',
     openaiOauth: encrypt(JSON.stringify(oauthData)),
-    // 账户信息字段 - 确保所有字段都被保存，即使是空字符串
+    // CuentaInformaciónCampo - 确保所有Campo都被保存，即使是空Cadena
     accountId: accountInfo.accountId || '',
     chatgptUserId: accountInfo.chatgptUserId || '',
     organizationId: accountInfo.organizationId || '',
     organizationRole: accountInfo.organizationRole || '',
     organizationTitle: accountInfo.organizationTitle || '',
     planType: accountInfo.planType || '',
-    // 邮箱字段：检查是否已经加密，避免双重加密
+    // 邮箱Campo：Verificar是否已经Cifrado，避免双重Cifrado
     email: isEmailEncrypted ? accountInfo.email : encrypt(accountInfo.email || ''),
     emailVerified: accountInfo.emailVerified === true ? 'true' : 'false',
-    // 过期时间
+    // 过期Tiempo
     expiresAt: oauthData.expires_in
       ? new Date(Date.now() + oauthData.expires_in * 1000).toISOString()
-      : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // OAuth Token 过期时间（技术字段）
+      : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // OAuth Token 过期Tiempo（技术Campo）
 
-    // ✅ 新增：账户订阅到期时间（业务字段，手动管理）
+    // ✅ Nueva característica：Cuenta订阅到期Tiempo（业务Campo，手动管理）
     subscriptionExpiresAt: accountData.subscriptionExpiresAt || null,
 
-    // 状态字段
+    // 状态Campo
     isActive: accountData.isActive !== false ? 'true' : 'false',
     status: 'active',
     schedulable: accountData.schedulable !== false ? 'true' : 'false',
@@ -507,7 +507,7 @@ async function createAccount(accountData) {
     updatedAt: now
   }
 
-  // 代理配置
+  // ProxyConfiguración
   if (accountData.proxy) {
     account.proxy =
       typeof accountData.proxy === 'string' ? accountData.proxy : JSON.stringify(accountData.proxy)
@@ -517,7 +517,7 @@ async function createAccount(accountData) {
   await client.hset(`${OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`, account)
   await redisClient.addToIndex('openai:account:index', accountId)
 
-  // 如果是共享账户，添加到共享账户集合
+  // 如果是共享Cuenta，添加到共享Cuenta集合
   if (account.accountType === 'shared') {
     await client.sadd(SHARED_OPENAI_ACCOUNTS_KEY, accountId)
   }
@@ -526,7 +526,7 @@ async function createAccount(accountData) {
   return account
 }
 
-// 获取账户
+// ObtenerCuenta
 async function getAccount(accountId) {
   const client = redisClient.getClientSafe()
   const accountData = await client.hgetall(`${OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`)
@@ -535,11 +535,11 @@ async function getAccount(accountId) {
     return null
   }
 
-  // 解密敏感数据（仅用于内部处理，不返回给前端）
+  // Descifrado敏感Datos（仅用于内部Procesar，不Retornar给前端）
   if (accountData.idToken) {
     accountData.idToken = decrypt(accountData.idToken)
   }
-  // 注意：accessToken 在 openaiRoutes.js 中会被单独解密，这里不解密
+  // 注意：accessToken 在 openaiRoutes.js 中会被单独Descifrado，这里不Descifrado
   // if (accountData.accessToken) {
   //   accountData.accessToken = decrypt(accountData.accessToken)
   // }
@@ -557,7 +557,7 @@ async function getAccount(accountId) {
     }
   }
 
-  // 解析代理配置
+  // AnalizarProxyConfiguración
   if (accountData.proxy && typeof accountData.proxy === 'string') {
     try {
       accountData.proxy = JSON.parse(accountData.proxy)
@@ -569,7 +569,7 @@ async function getAccount(accountId) {
   return accountData
 }
 
-// 更新账户
+// ActualizarCuenta
 async function updateAccount(accountId, updates) {
   const existingAccount = await getAccount(accountId)
   if (!existingAccount) {
@@ -578,7 +578,7 @@ async function updateAccount(accountId, updates) {
 
   updates.updatedAt = new Date().toISOString()
 
-  // 加密敏感数据
+  // Cifrado敏感Datos
   if (updates.openaiOauth) {
     const oauthData =
       typeof updates.openaiOauth === 'string'
@@ -599,19 +599,19 @@ async function updateAccount(accountId, updates) {
     updates.email = encrypt(updates.email)
   }
 
-  // 处理代理配置
+  // ProcesarProxyConfiguración
   if (updates.proxy) {
     updates.proxy =
       typeof updates.proxy === 'string' ? updates.proxy : JSON.stringify(updates.proxy)
   }
 
-  // ✅ 如果通过路由映射更新了 subscriptionExpiresAt，直接保存
-  // subscriptionExpiresAt 是业务字段，与 token 刷新独立
+  // ✅ 如果通过Ruta映射Actualizar了 subscriptionExpiresAt，直接保存
+  // subscriptionExpiresAt 是业务Campo，与 token 刷新独立
   if (updates.subscriptionExpiresAt !== undefined) {
     // 直接保存，不做任何调整
   }
 
-  // 处理 disableAutoProtection 布尔值转字符串
+  // Procesar disableAutoProtection 布尔Valor转Cadena
   if (updates.disableAutoProtection !== undefined) {
     updates.disableAutoProtection =
       updates.disableAutoProtection === true || updates.disableAutoProtection === 'true'
@@ -619,7 +619,7 @@ async function updateAccount(accountId, updates) {
         : 'false'
   }
 
-  // 更新账户类型时处理共享账户集合
+  // ActualizarCuentaTipo时Procesar共享Cuenta集合
   const client = redisClient.getClientSafe()
   if (updates.accountType && updates.accountType !== existingAccount.accountType) {
     if (updates.accountType === 'shared') {
@@ -633,10 +633,10 @@ async function updateAccount(accountId, updates) {
 
   logger.info(`Updated OpenAI account: ${accountId}`)
 
-  // 合并更新后的账户数据
+  // Combina actualización后的CuentaDatos
   const updatedAccount = { ...existingAccount, ...updates }
 
-  // 返回时解析代理配置
+  // Retornar时AnalizarProxyConfiguración
   if (updatedAccount.proxy && typeof updatedAccount.proxy === 'string') {
     try {
       updatedAccount.proxy = JSON.parse(updatedAccount.proxy)
@@ -648,24 +648,24 @@ async function updateAccount(accountId, updates) {
   return updatedAccount
 }
 
-// 删除账户
+// EliminarCuenta
 async function deleteAccount(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
     throw new Error('Account not found')
   }
 
-  // 从 Redis 删除
+  // 从 Redis Eliminar
   const client = redisClient.getClientSafe()
   await client.del(`${OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`)
   await redisClient.removeFromIndex('openai:account:index', accountId)
 
-  // 从共享账户集合中移除
+  // 从共享Cuenta集合中Eliminación
   if (account.accountType === 'shared') {
     await client.srem(SHARED_OPENAI_ACCOUNTS_KEY, accountId)
   }
 
-  // 清理会话映射（使用反向索引）
+  // LimpiarSesión映射（使用反向Índice）
   const sessionHashes = await client.smembers(`openai_account_sessions:${accountId}`)
   if (sessionHashes.length > 0) {
     const pipeline = client.pipeline()
@@ -678,7 +678,7 @@ async function deleteAccount(accountId) {
   return true
 }
 
-// 获取所有账户
+// Obtener所有Cuenta
 async function getAllAccounts() {
   const _client = redisClient.getClientSafe()
   const accountIds = await redisClient.getAllIdsByIndex(
@@ -695,7 +695,7 @@ async function getAllAccounts() {
     if (accountData && Object.keys(accountData).length > 0) {
       const codexUsage = buildCodexUsageSnapshot(accountData)
 
-      // 解密敏感数据（但不返回给前端）
+      // Descifrado敏感Datos（但不Retornar给前端）
       if (accountData.email) {
         accountData.email = decrypt(accountData.email)
       }
@@ -706,7 +706,7 @@ async function getAllAccounts() {
       const maskedRefreshToken = accountData.refreshToken ? '[ENCRYPTED]' : ''
       const maskedOauth = accountData.openaiOauth ? '[ENCRYPTED]' : ''
 
-      // 屏蔽敏感信息（token等不应该返回给前端）
+      // 屏蔽敏感Información（token等不应该Retornar给前端）
       delete accountData.idToken
       delete accountData.accessToken
       delete accountData.refreshToken
@@ -718,18 +718,18 @@ async function getAllAccounts() {
       delete accountData.codexSecondaryResetAfterSeconds
       delete accountData.codexSecondaryWindowMinutes
       delete accountData.codexPrimaryOverSecondaryLimitPercent
-      // 时间戳改由 codexUsage.updatedAt 暴露
+      // Tiempo戳改由 codexUsage.updatedAt 暴露
       delete accountData.codexUsageUpdatedAt
 
-      // 获取限流状态信息
+      // Obtener限流状态Información
       const rateLimitInfo = await getAccountRateLimitInfo(accountData.id)
 
-      // 解析代理配置
+      // AnalizarProxyConfiguración
       if (accountData.proxy) {
         try {
           accountData.proxy = JSON.parse(accountData.proxy)
         } catch (e) {
-          // 如果解析失败，设置为null
+          // 如果AnalizarFalló，Establecer为null
           accountData.proxy = null
         }
       }
@@ -740,7 +740,7 @@ async function getAllAccounts() {
           ? accountData.subscriptionExpiresAt
           : null
 
-      // 不解密敏感字段，只返回基本信息
+      // 不Descifrado敏感Campo，只Retornar基本Información
       accounts.push({
         ...accountData,
         isActive: accountData.isActive === 'true',
@@ -749,18 +749,18 @@ async function getAllAccounts() {
         accessToken: maskedAccessToken,
         refreshToken: maskedRefreshToken,
 
-        // ✅ 前端显示订阅过期时间（业务字段）
+        // ✅ 前端显示订阅过期Tiempo（业务Campo）
         tokenExpiresAt,
         subscriptionExpiresAt,
         expiresAt: subscriptionExpiresAt,
 
-        // 添加 scopes 字段用于判断认证方式
-        // 处理空字符串的情况
+        // 添加 scopes Campo用于判断认证方式
+        // Procesar空Cadena的情况
         scopes:
           accountData.scopes && accountData.scopes.trim() ? accountData.scopes.split(' ') : [],
         // 添加 hasRefreshToken 标记
         hasRefreshToken: hasRefreshTokenFlag,
-        // 添加限流状态信息（统一格式）
+        // 添加限流状态Información（统一Formato）
         rateLimitStatus: rateLimitInfo
           ? {
               status: rateLimitInfo.status,
@@ -784,7 +784,7 @@ async function getAllAccounts() {
   return accounts
 }
 
-// 获取单个账户的概要信息（用于外部展示基本状态）
+// Obtener单个Cuenta的概要Información（用于外部展示基本状态）
 async function getAccountOverview(accountId) {
   const client = redisClient.getClientSafe()
   const accountData = await client.hgetall(`${OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`)
@@ -825,9 +825,9 @@ async function getAccountOverview(accountId) {
   }
 }
 
-// 选择可用账户（支持专属和共享账户）
+// 选择可用Cuenta（Soportar专属和共享Cuenta）
 async function selectAvailableAccount(apiKeyId, sessionHash = null) {
-  // 首先检查是否有粘性会话
+  // 首先Verificar是否有粘性Sesión
   const client = redisClient.getClientSafe()
   if (sessionHash) {
     const mappedAccountId = await client.get(`${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionHash}`)
@@ -841,17 +841,17 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     }
   }
 
-  // 获取 API Key 信息
+  // Obtener API Key Información
   const apiKeyData = await client.hgetall(`api_key:${apiKeyId}`)
 
-  // 检查是否绑定了 OpenAI 账户
+  // Verificar是否绑定了 OpenAI Cuenta
   if (apiKeyData.openaiAccountId) {
     const account = await getAccount(apiKeyData.openaiAccountId)
     if (account && account.isActive === 'true') {
-      // 检查 token 是否过期
+      // Verificar token 是否过期
       const isExpired = isTokenExpired(account)
 
-      // 记录token使用情况
+      // Registrotoken使用情况
       logTokenUsage(account.id, account.name, 'openai', account.expiresAt, isExpired)
 
       if (isExpired) {
@@ -859,14 +859,14 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
         return await getAccount(account.id)
       }
 
-      // 创建粘性会话映射
+      // Crear粘性Sesión映射
       if (sessionHash) {
         await client.setex(
           `${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionHash}`,
           3600, // 1小时过期
           account.id
         )
-        // 反向索引：accountId -> sessionHash（用于删除账户时快速清理）
+        // 反向Índice：accountId -> sessionHash（用于EliminarCuenta时快速Limpiar）
         await client.sadd(`openai_account_sessions:${account.id}`, sessionHash)
         await client.expire(`openai_account_sessions:${account.id}`, 3600)
       }
@@ -875,7 +875,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     }
   }
 
-  // 从共享账户池选择
+  // 从共享Cuenta池选择
   const sharedAccountIds = await client.smembers(SHARED_OPENAI_ACCOUNTS_KEY)
   const availableAccounts = []
 
@@ -899,20 +899,20 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
     throw new Error('No available OpenAI accounts')
   }
 
-  // 选择使用最少的账户
+  // 选择使用最少的Cuenta
   const selectedAccount = availableAccounts.reduce((prev, curr) => {
     const prevUsage = parseInt(prev.totalUsage || 0)
     const currUsage = parseInt(curr.totalUsage || 0)
     return prevUsage <= currUsage ? prev : curr
   })
 
-  // 检查 token 是否过期
+  // Verificar token 是否过期
   if (isTokenExpired(selectedAccount)) {
     await refreshAccountToken(selectedAccount.id)
     return await getAccount(selectedAccount.id)
   }
 
-  // 创建粘性会话映射
+  // Crear粘性Sesión映射
   if (sessionHash) {
     await client.setex(
       `${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionHash}`,
@@ -926,7 +926,7 @@ async function selectAvailableAccount(apiKeyId, sessionHash = null) {
   return selectedAccount
 }
 
-// 检查账户是否被限流
+// VerificarCuenta是否被限流
 function isRateLimited(account) {
   if (account.rateLimitStatus === 'limited' && account.rateLimitedAt) {
     const limitedAt = new Date(account.rateLimitedAt).getTime()
@@ -938,16 +938,16 @@ function isRateLimited(account) {
   return false
 }
 
-// 设置账户限流状态
+// EstablecerCuenta限流状态
 async function setAccountRateLimited(accountId, isLimited, resetsInSeconds = null) {
   const updates = {
     rateLimitStatus: isLimited ? 'limited' : 'normal',
     rateLimitedAt: isLimited ? new Date().toISOString() : null,
-    // 限流时停止调度，解除限流时恢复调度
+    // 限流时停止调度，解除限流时Restauración调度
     schedulable: isLimited ? 'false' : 'true'
   }
 
-  // 如果提供了重置时间（秒数），计算重置时间戳
+  // 如果提供了重置Tiempo（秒数），Calcular重置Tiempo戳
   if (isLimited && resetsInSeconds !== null && resetsInSeconds > 0) {
     const resetTime = new Date(Date.now() + resetsInSeconds * 1000).toISOString()
     updates.rateLimitResetAt = resetTime
@@ -955,7 +955,7 @@ async function setAccountRateLimited(accountId, isLimited, resetsInSeconds = nul
       `🕐 Account ${accountId} will be reset at ${resetTime} (in ${resetsInSeconds} seconds / ${Math.ceil(resetsInSeconds / 60)} minutes)`
     )
   } else if (isLimited) {
-    // 如果没有提供重置时间，使用默认的60分钟
+    // 如果没有提供重置Tiempo，使用Predeterminado的60分钟
     const defaultResetSeconds = 60 * 60 // 1小时
     const resetTime = new Date(Date.now() + defaultResetSeconds * 1000).toISOString()
     updates.rateLimitResetAt = resetTime
@@ -994,8 +994,8 @@ async function setAccountRateLimited(accountId, isLimited, resetsInSeconds = nul
   }
 }
 
-// 🚫 标记账户为未授权状态（401错误）
-async function markAccountUnauthorized(accountId, reason = 'OpenAI账号认证失败（401错误）') {
+// 🚫 标记Cuenta为未授权状态（401Error）
+async function markAccountUnauthorized(accountId, reason = 'OpenAI账号认证Falló（401Error）') {
   const account = await getAccount(accountId)
   if (!account) {
     throw new Error('Account not found')
@@ -1037,7 +1037,7 @@ async function markAccountUnauthorized(accountId, reason = 'OpenAI账号认证�
   }
 }
 
-// 🔄 重置账户所有异常状态
+// 🔄 重置Cuenta所有异常状态
 async function resetAccountStatus(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
@@ -1045,11 +1045,11 @@ async function resetAccountStatus(accountId) {
   }
 
   const updates = {
-    // 根据是否有有效的 accessToken 来设置 status
+    // 根据是否有有效的 accessToken 来Establecer status
     status: account.accessToken ? 'active' : 'created',
-    // 恢复可调度状态
+    // Restauración可调度状态
     schedulable: 'true',
-    // 清除错误相关字段
+    // 清除Error相关Campo
     errorMessage: null,
     rateLimitedAt: null,
     rateLimitStatus: 'normal',
@@ -1082,7 +1082,7 @@ async function resetAccountStatus(accountId) {
   return { success: true, message: 'Account status reset successfully' }
 }
 
-// 切换账户调度状态
+// 切换Cuenta调度状态
 async function toggleSchedulable(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
@@ -1104,7 +1104,7 @@ async function toggleSchedulable(accountId) {
   }
 }
 
-// 获取账户限流信息
+// ObtenerCuenta限流Información
 async function getAccountRateLimitInfo(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
@@ -1124,7 +1124,7 @@ async function getAccountRateLimitInfo(accountId) {
       remainingTime = Math.max(0, resetAt - now)
     } else if (rateLimitedAt) {
       const limitedAt = new Date(rateLimitedAt).getTime()
-      const limitDuration = 60 * 60 * 1000 // 默认1小时
+      const limitDuration = 60 * 60 * 1000 // Predeterminado1小时
       remainingTime = Math.max(0, limitedAt + limitDuration - now)
     }
 
@@ -1148,7 +1148,7 @@ async function getAccountRateLimitInfo(accountId) {
   }
 }
 
-// 更新账户使用统计（tokens参数可选，默认为0，仅更新最后使用时间）
+// ActualizarCuenta使用Estadística（tokensParámetroOpcional，Predeterminado为0，仅Actualizar最后使用Tiempo）
 async function updateAccountUsage(accountId, tokens = 0) {
   const account = await getAccount(accountId)
   if (!account) {
@@ -1159,7 +1159,7 @@ async function updateAccountUsage(accountId, tokens = 0) {
     lastUsedAt: new Date().toISOString()
   }
 
-  // 如果有 tokens 参数且大于0，同时更新使用统计
+  // 如果有 tokens Parámetro且大于0，同时Actualizar使用Estadística
   if (tokens > 0) {
     const totalUsage = parseInt(account.totalUsage || 0) + tokens
     updates.totalUsage = totalUsage.toString()
@@ -1226,5 +1226,5 @@ module.exports = {
   updateCodexUsageSnapshot,
   encrypt,
   decrypt,
-  encryptor // 暴露加密器以便测试和监控
+  encryptor // 暴露Cifrado器以便Probar和Monitorear
 }

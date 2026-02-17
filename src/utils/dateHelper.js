@@ -1,17 +1,17 @@
 const config = require('../../config/config')
 
 /**
- * 格式化日期时间为指定时区的本地时间字符串
- * @param {Date|number} date - Date对象或时间戳（秒或毫秒）
- * @param {boolean} includeTimezone - 是否在输出中包含时区信息
- * @returns {string} 格式化后的时间字符串
+ * Formato化FechaTiempo为指定Zona horaria的本地TiempoCadena
+ * @param {Date|number} date - DateObjeto或Tiempo戳（秒或毫秒）
+ * @param {boolean} includeTimezone - 是否在输出中IncluirZona horariaInformación
+ * @returns {string} Formato化后的TiempoCadena
  */
 function formatDateWithTimezone(date, includeTimezone = true) {
-  // 处理不同类型的输入
+  // Procesar不同Tipo的输入
   let dateObj
   if (typeof date === 'number') {
-    // 判断是秒还是毫秒时间戳
-    // Unix时间戳（秒）通常小于 10^10，毫秒时间戳通常大于 10^12
+    // 判断是秒还是毫秒Tiempo戳
+    // UnixTiempo戳（秒）通常小于 10^10，毫秒Tiempo戳通常大于 10^12
     if (date < 10000000000) {
       dateObj = new Date(date * 1000) // 秒转毫秒
     } else {
@@ -23,14 +23,14 @@ function formatDateWithTimezone(date, includeTimezone = true) {
     dateObj = new Date(date)
   }
 
-  // 获取配置的时区偏移（小时）
-  const timezoneOffset = config.system.timezoneOffset || 8 // 默认 UTC+8
+  // ObtenerConfiguración的Zona horaria偏移（小时）
+  const timezoneOffset = config.system.timezoneOffset || 8 // Predeterminado UTC+8
 
-  // 计算本地时间
-  const offsetMs = timezoneOffset * 3600000 // 转换为毫秒
+  // Calcular本地Tiempo
+  const offsetMs = timezoneOffset * 3600000 // Convertir为毫秒
   const localTime = new Date(dateObj.getTime() + offsetMs)
 
-  // 格式化为 YYYY-MM-DD HH:mm:ss
+  // Formato化为 YYYY-MM-DD HH:mm:ss
   const year = localTime.getUTCFullYear()
   const month = String(localTime.getUTCMonth() + 1).padStart(2, '0')
   const day = String(localTime.getUTCDate()).padStart(2, '0')
@@ -40,7 +40,7 @@ function formatDateWithTimezone(date, includeTimezone = true) {
 
   let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 
-  // 添加时区信息
+  // 添加Zona horariaInformación
   if (includeTimezone) {
     const sign = timezoneOffset >= 0 ? '+' : ''
     formattedDate += ` (UTC${sign}${timezoneOffset})`
@@ -50,31 +50,31 @@ function formatDateWithTimezone(date, includeTimezone = true) {
 }
 
 /**
- * 获取指定时区的ISO格式时间字符串
- * @param {Date|number} date - Date对象或时间戳
- * @returns {string} ISO格式的时间字符串
+ * Obtener指定Zona horaria的ISOFormatoTiempoCadena
+ * @param {Date|number} date - DateObjeto或Tiempo戳
+ * @returns {string} ISOFormato的TiempoCadena
  */
 function getISOStringWithTimezone(date) {
-  // 先获取本地格式的时间（不含时区后缀）
+  // 先Obtener本地Formato的Tiempo（不含Zona horaria后缀）
   const localTimeStr = formatDateWithTimezone(date, false)
 
-  // 获取时区偏移
+  // ObtenerZona horaria偏移
   const timezoneOffset = config.system.timezoneOffset || 8
 
-  // 构建ISO格式，添加时区偏移
+  // ConstruirISOFormato，添加Zona horaria偏移
   const sign = timezoneOffset >= 0 ? '+' : '-'
   const absOffset = Math.abs(timezoneOffset)
   const offsetHours = String(Math.floor(absOffset)).padStart(2, '0')
   const offsetMinutes = String(Math.round((absOffset % 1) * 60)).padStart(2, '0')
 
-  // 将空格替换为T，并添加时区
+  // 将空格Reemplazo为T，并添加Zona horaria
   return `${localTimeStr.replace(' ', 'T')}${sign}${offsetHours}:${offsetMinutes}`
 }
 
 /**
- * 计算时间差并格式化为人类可读的字符串
+ * CalcularTiempo差并Formato化为人Clase可读的Cadena
  * @param {number} seconds - 秒数
- * @returns {string} 格式化的时间差字符串
+ * @returns {string} Formato化的Tiempo差Cadena
  */
 function formatDuration(seconds) {
   if (seconds < 60) {

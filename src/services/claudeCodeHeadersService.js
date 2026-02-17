@@ -1,5 +1,5 @@
 /**
- * Claude Code Headers 管理服务
+ * Claude Code Headers 管理Servicio
  * 负责存储和管理不同账号使用的 Claude Code headers
  */
 
@@ -49,12 +49,12 @@ class ClaudeCodeHeadersService {
       'accept-encoding'
     ]
 
-    // Headers 缓存 TTL（60秒）
+    // Headers Caché TTL（60秒）
     this.headersCacheTtl = 60000
   }
 
   /**
-   * 从 user-agent 中提取版本号
+   * 从 user-agent 中提取Versión号
    */
   extractVersionFromUserAgent(userAgent) {
     if (!userAgent) {
@@ -65,7 +65,7 @@ class ClaudeCodeHeadersService {
   }
 
   /**
-   * 比较版本号
+   * 比较Versión号
    * @returns {number} 1 if v1 > v2, -1 if v1 < v2, 0 if equal
    */
   compareVersions(v1, v2) {
@@ -92,12 +92,12 @@ class ClaudeCodeHeadersService {
   }
 
   /**
-   * 从客户端 headers 中提取 Claude Code 相关的 headers
+   * 从Cliente headers 中提取 Claude Code 相关的 headers
    */
   extractClaudeCodeHeaders(clientHeaders) {
     const headers = {}
 
-    // 转换所有 header keys 为小写进行比较
+    // Convertir所有 header keys 为小写进Fila比较
     const lowerCaseHeaders = {}
     Object.keys(clientHeaders || {}).forEach((key) => {
       lowerCaseHeaders[key.toLowerCase()] = clientHeaders[key]
@@ -121,10 +121,10 @@ class ClaudeCodeHeadersService {
     try {
       const extractedHeaders = this.extractClaudeCodeHeaders(clientHeaders)
 
-      // 检查是否有 user-agent
+      // Verificar是否有 user-agent
       const userAgent = extractedHeaders['user-agent']
       if (!userAgent || !/^claude-(cli|code)\/[\d.]+\s+\(/i.test(userAgent)) {
-        // 不是 Claude Code 的请求，不存储
+        // 不是 Claude Code 的Solicitud，不存储
         return
       }
 
@@ -134,7 +134,7 @@ class ClaudeCodeHeadersService {
         return
       }
 
-      // 获取当前存储的 headers
+      // Obtener当前存储的 headers
       const key = `claude_code_headers:${accountId}`
       const currentData = await redis.getClient().get(key)
 
@@ -142,7 +142,7 @@ class ClaudeCodeHeadersService {
         const current = JSON.parse(currentData)
         const currentVersion = this.extractVersionFromUserAgent(current.headers['user-agent'])
 
-        // 只有新版本更高时才更新
+        // 只有新Versión更高时才Actualizar
         if (this.compareVersions(version, currentVersion) <= 0) {
           return
         }
@@ -157,7 +157,7 @@ class ClaudeCodeHeadersService {
 
       await redis.getClient().setex(key, 86400 * 7, JSON.stringify(data)) // 7天过期
 
-      // 更新内存缓存，避免延迟
+      // Actualizar内存Caché，避免延迟
       setCachedConfig(key, extractedHeaders, this.headersCacheTtl)
 
       logger.info(`✅ Stored Claude Code headers for account ${accountId}, version: ${version}`)
@@ -167,12 +167,12 @@ class ClaudeCodeHeadersService {
   }
 
   /**
-   * 获取账号的 Claude Code headers（带内存缓存）
+   * Obtener账号的 Claude Code headers（带内存Caché）
    */
   async getAccountHeaders(accountId) {
     const cacheKey = `claude_code_headers:${accountId}`
 
-    // 检查内存缓存
+    // Verificar内存Caché
     const cached = getCachedConfig(cacheKey)
     if (cached) {
       return cached
@@ -186,12 +186,12 @@ class ClaudeCodeHeadersService {
         logger.debug(
           `📋 Retrieved Claude Code headers for account ${accountId}, version: ${parsed.version}`
         )
-        // 缓存到内存
+        // Caché到内存
         setCachedConfig(cacheKey, parsed.headers, this.headersCacheTtl)
         return parsed.headers
       }
 
-      // 返回默认 headers
+      // RetornarPredeterminado headers
       logger.debug(`📋 Using default Claude Code headers for account ${accountId}`)
       return this.defaultHeaders
     } catch (error) {
@@ -207,7 +207,7 @@ class ClaudeCodeHeadersService {
     try {
       const cacheKey = `claude_code_headers:${accountId}`
       await redis.getClient().del(cacheKey)
-      // 删除内存缓存
+      // Eliminar内存Caché
       deleteCachedConfig(cacheKey)
       logger.info(`🗑️ Cleared Claude Code headers for account ${accountId}`)
     } catch (error) {
@@ -216,7 +216,7 @@ class ClaudeCodeHeadersService {
   }
 
   /**
-   * 获取所有账号的 headers 信息（使用 scanKeys 替代 keys）
+   * Obtener所有账号的 headers Información（使用 scanKeys 替代 keys）
    */
   async getAllAccountHeaders() {
     try {

@@ -36,11 +36,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-// 状态
+// Estado
 const toasts = ref([])
 let toastIdCounter = 0
 
-// 获取图标类名
+// Obtener clase de icono
 const getIconClass = (type) => {
   const iconMap = {
     success: 'fas fa-check-circle',
@@ -51,7 +51,7 @@ const getIconClass = (type) => {
   return iconMap[type] || iconMap.info
 }
 
-// 添加Toast
+// Agregar Toast
 const addToast = (message, type = 'info', title = null, duration = 5000) => {
   const id = ++toastIdCounter
   const toast = {
@@ -65,12 +65,12 @@ const addToast = (message, type = 'info', title = null, duration = 5000) => {
 
   toasts.value.push(toast)
 
-  // 下一帧显示动画
+  // Mostrar animación en el siguiente frame
   setTimeout(() => {
     toast.isVisible = true
   }, 10)
 
-  // 自动移除
+  // Eliminar automáticamente
   if (duration > 0) {
     setTimeout(() => {
       removeToast(id)
@@ -80,14 +80,14 @@ const addToast = (message, type = 'info', title = null, duration = 5000) => {
   return id
 }
 
-// 移除Toast
+// Eliminar Toast
 const removeToast = (id) => {
   const index = toasts.value.findIndex((toast) => toast.id === id)
   if (index > -1) {
     const toast = toasts.value[index]
     toast.isVisible = false
 
-    // 等待动画完成后移除
+    // Esperar a que la animación se complete antes de eliminar
     setTimeout(() => {
       const currentIndex = toasts.value.findIndex((t) => t.id === id)
       if (currentIndex > -1) {
@@ -97,7 +97,7 @@ const removeToast = (id) => {
   }
 }
 
-// 清除所有Toast
+// Limpiar todos los Toasts
 const clearAllToasts = () => {
   toasts.value.forEach((toast) => {
     toast.isVisible = false
@@ -108,25 +108,25 @@ const clearAllToasts = () => {
   }, 300)
 }
 
-// 暴露方法给全局使用
+// Exponer métodos para uso global
 const showToast = (message, type = 'info', title = null, duration = 5000) => {
   return addToast(message, type, title, duration)
 }
 
-// 全局方法注册
+// Registro de métodos globales
 onMounted(() => {
-  // 将方法挂载到全局
+  // Montar métodos en el objeto global
   window.showToast = showToast
 })
 
 onUnmounted(() => {
-  // 清理全局方法
+  // Limpiar métodos globales
   if (window.showToast === showToast) {
     delete window.showToast
   }
 })
 
-// 暴露方法供组件使用
+// Exponer métodos para uso de componentes
 defineExpose({
   showToast,
   removeToast,

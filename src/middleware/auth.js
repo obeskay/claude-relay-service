@@ -11,40 +11,40 @@ const claudeRelayConfigService = require('../services/claudeRelayConfigService')
 const { calculateWaitTimeStats } = require('../utils/statsHelper')
 const { isOpusModel } = require('../utils/modelHelper')
 
-// 工具函数
+// 工具Función
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
- * 检查排队是否过载，决定是否应该快速失败
- * 详见 design.md Decision 7: 排队健康检查与快速失败
+ * Verificar排队是否过载，决定是否应该快速Falló
+ * 详见 design.md Decision 7: 排队Verificación de salud与快速Falló
  *
  * @param {string} apiKeyId - API Key ID
- * @param {number} timeoutMs - 排队超时时间（毫秒）
- * @param {Object} queueConfig - 队列配置
+ * @param {number} timeoutMs - 排队Tiempo de espera agotadoTiempo（毫秒）
+ * @param {Object} queueConfig - ColaConfiguración
  * @param {number} maxQueueSize - 最大排队数
  * @returns {Promise<Object>} { reject: boolean, reason?: string, estimatedWaitMs?: number, timeoutMs?: number }
  */
 async function shouldRejectDueToOverload(apiKeyId, timeoutMs, queueConfig, maxQueueSize) {
   try {
-    // 如果健康检查被禁用，直接返回不拒绝
+    // 如果Verificación de salud被Deshabilitar，直接Retornar不拒绝
     if (!queueConfig.concurrentRequestQueueHealthCheckEnabled) {
       return { reject: false, reason: 'health_check_disabled' }
     }
 
-    // 🔑 先检查当前队列长度
+    // 🔑 先Verificar当前Cola长度
     const currentQueueCount = await redis.getConcurrencyQueueCount(apiKeyId).catch(() => 0)
 
-    // 队列为空，说明系统已恢复，跳过健康检查
+    // Cola为空，说明系统已Restauración，跳过Verificación de salud
     if (currentQueueCount === 0) {
       return { reject: false, reason: 'queue_empty', currentQueueCount: 0 }
     }
 
-    // 🔑 关键改进：只有当队列接近满载时才进行健康检查
-    // 队列长度 <= maxQueueSize * 0.5 时，认为系统有足够余量，跳过健康检查
-    // 这避免了在队列较短时过于保守地拒绝请求
-    // 使用 ceil 确保小队列（如 maxQueueSize=3）时阈值为 2，即队列 <=1 时跳过
+    // 🔑 关键Mejora：只有当Cola接近满载时才进FilaVerificación de salud
+    // Cola长度 <= maxQueueSize * 0.5 时，认为系统有足够余量，跳过Verificación de salud
+    // 这避免了在Cola较短时过于保守地拒绝Solicitud
+    // 使用 ceil 确保小Cola（如 maxQueueSize=3）时阈Valor为 2，即Cola <=1 时跳过
     const queueLoadThreshold = Math.ceil(maxQueueSize * 0.5)
     if (currentQueueCount <= queueLoadThreshold) {
       return {
@@ -56,11 +56,11 @@ async function shouldRejectDueToOverload(apiKeyId, timeoutMs, queueConfig, maxQu
       }
     }
 
-    // 获取该 API Key 的等待时间样本
+    // Obtener该 API Key 的等待Tiempo样本
     const waitTimes = await redis.getQueueWaitTimes(apiKeyId)
     const stats = calculateWaitTimeStats(waitTimes)
 
-    // 样本不足（< 10），跳过健康检查，避免冷启动误判
+    // 样本不足（< 10），跳过Verificación de salud，避免冷启动误判
     if (!stats || stats.sampleCount < 10) {
       return { reject: false, reason: 'insufficient_samples', sampleCount: stats?.sampleCount || 0 }
     }
@@ -70,7 +70,7 @@ async function shouldRejectDueToOverload(apiKeyId, timeoutMs, queueConfig, maxQu
       return { reject: false, reason: 'p90_unreliable', sampleCount: stats.sampleCount }
     }
 
-    // 计算健康阈值：P90 >= 超时时间 × 阈值 时拒绝
+    // Calcular健康阈Valor：P90 >= Tiempo de espera agotadoTiempo × 阈Valor 时拒绝
     const threshold = queueConfig.concurrentRequestQueueHealthThreshold || 0.8
     const maxAllowedP90 = timeoutMs * threshold
 
@@ -89,21 +89,21 @@ async function shouldRejectDueToOverload(apiKeyId, timeoutMs, queueConfig, maxQu
 
     return { reject: false, p90: stats.p90, sampleCount: stats.sampleCount, currentQueueCount }
   } catch (error) {
-    // 健康检查出错时不阻塞请求，记录警告并继续
+    // Verificación de salud出错时不BloqueanteSolicitud，RegistroAdvertencia并继续
     logger.warn(`Health check failed for ${apiKeyId}:`, error.message)
     return { reject: false, reason: 'health_check_error', error: error.message }
   }
 }
 
-// 排队轮询配置常量（可通过配置文件覆盖）
-// 性能权衡：初始间隔越短响应越快，但 Redis QPS 越高
-// 当前配置：100 个等待者时约 250-300 QPS（指数退避后）
+// 排队轮询Configuración常量（可通过ConfiguraciónArchivo覆盖）
+// Rendimiento权衡：初始间隔越短Respuesta越快，但 Redis QPS 越高
+// 当前Configuración：100 个等待者时约 250-300 QPS（指数退避后）
 const QUEUE_POLLING_CONFIG = {
-  pollIntervalMs: 200, // 初始轮询间隔（毫秒）- 平衡响应速度和 Redis 压力
-  maxPollIntervalMs: 2000, // 最大轮询间隔（毫秒）- 长时间等待时降低 Redis 压力
+  pollIntervalMs: 200, // 初始轮询间隔（毫秒）- 平衡Respuesta速度和 Redis 压力
+  maxPollIntervalMs: 2000, // 最大轮询间隔（毫秒）- 长Tiempo等待时降低 Redis 压力
   backoffFactor: 1.5, // 指数退避系数
   jitterRatio: 0.2, // 抖动比例（±20%）- 防止惊群效应
-  maxRedisFailCount: 5 // 连续 Redis 失败阈值（从 3 提高到 5，提高网络抖动容忍度）
+  maxRedisFailCount: 5 // 连续 Redis Falló阈Valor（从 3 提高到 5，提高网络抖动容忍度）
 }
 
 const FALLBACK_CONCURRENCY_CONFIG = {
@@ -206,12 +206,12 @@ function normalizeRequestPath(value) {
     return '/'
   }
   let lower = value.split('?')[0].toLowerCase()
-  // 🆕 处理重复的 /v1/v1 路径（可能是客户端 BaseURL 配置错误导致）
+  // 🆕 Procesar重复的 /v1/v1 Ruta（可能是Cliente BaseURL ConfiguraciónError导致）
   if (lower.includes('/v1/v1/')) {
     lower = lower.replace('/v1/v1/', '/v1/')
     logger.api(`🔧 Path normalized (v1 duplication): ${value.split('?')[0]} -> ${lower}`)
   }
-  // 🆕 处理重复的 /api/api 路径
+  // 🆕 Procesar重复的 /api/api Ruta
   if (lower.includes('/api/api/')) {
     lower = lower.replace('/api/api/', '/api/')
     logger.api(`🔧 Path normalized (api duplication): ${value.split('?')[0]} -> ${lower}`)
@@ -236,23 +236,23 @@ function isTokenCountRequest(req) {
 }
 
 /**
- * 等待并发槽位（排队机制核心）
+ * 等待Concurrencia槽位（排队机制核心）
  *
- * 采用「先占后检查」模式避免竞态条件：
+ * 采用「先占后Verificar」模式避免竞态Condición：
  * - 每次轮询时尝试 incrConcurrency 占位
  * - 如果超限则 decrConcurrency 释放并继续等待
- * - 成功获取槽位后返回，调用方无需再次 incrConcurrency
+ * - ÉxitoObtener槽位后Retornar，调用方无需再次 incrConcurrency
  *
- * ⚠️ 重要清理责任说明：
- * - 排队计数：此函数的 finally 块负责调用 decrConcurrencyQueue 清理
- * - 并发槽位：当返回 acquired=true 时，槽位已被占用（通过 incrConcurrency）
- *   调用方必须在请求结束时调用 decrConcurrency 释放槽位
- *   （已在 authenticateApiKey 的 finally 块中处理）
+ * ⚠️ 重要Limpiar责任说明：
+ * - 排队计数：此Función的 finally 块负责调用 decrConcurrencyQueue Limpiar
+ * - Concurrencia槽位：当Retornar acquired=true 时，槽位已被占用（通过 incrConcurrency）
+ *   调用方必须在Solicitud结束时调用 decrConcurrency 释放槽位
+ *   （已在 authenticateApiKey 的 finally 块中Procesar）
  *
- * @param {Object} req - Express 请求对象
- * @param {Object} res - Express 响应对象
+ * @param {Object} req - Express SolicitudObjeto
+ * @param {Object} res - Express RespuestaObjeto
  * @param {string} apiKeyId - API Key ID
- * @param {Object} queueOptions - 配置参数
+ * @param {Object} queueOptions - ConfiguraciónParámetro
  * @returns {Promise<Object>} { acquired: boolean, reason?: string, waitTimeMs: number }
  */
 async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
@@ -269,18 +269,18 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
   } = queueOptions
 
   let clientDisconnected = false
-  // 追踪轮询过程中是否临时占用了槽位（用于异常时清理）
+  // Rastreo轮询过程中是否临时占用了槽位（用于异常时Limpiar）
   // 工作流程：
-  // 1. incrConcurrency 成功且 count <= limit 时，设置 internalSlotAcquired = true
-  // 2. 统计记录完成后，设置 internalSlotAcquired = false 并返回（所有权转移给调用方）
+  // 1. incrConcurrency Éxito且 count <= limit 时，Establecer internalSlotAcquired = true
+  // 2. EstadísticaRegistroCompletado后，Establecer internalSlotAcquired = false 并Retornar（所有权转移给调用方）
   // 3. 如果在步骤 1-2 之间发生异常，finally 块会检测到 internalSlotAcquired = true 并释放槽位
   let internalSlotAcquired = false
 
-  // 监听客户端断开事件
-  // ⚠️ 重要：必须监听 socket 的事件，而不是 req 的事件！
-  // 原因：对于 POST 请求，当 body-parser 读取完请求体后，req（IncomingMessage 可读流）
-  // 的 'close' 事件会立即触发，但这不代表客户端断开连接！客户端仍在等待响应。
-  // socket 的 'close' 事件才是真正的连接关闭信号。
+  // 监听Cliente断开Evento
+  // ⚠️ 重要：必须监听 socket 的Evento，而不是 req 的Evento！
+  // 原因：对于 POST Solicitud，当 body-parser Leer完Solicitud体后，req（IncomingMessage 可读流）
+  // 的 'close' Evento会立即触发，但这不代TablaCliente断开Conexión！Cliente仍在等待Respuesta。
+  // socket 的 'close' Evento才是真正的Conexión关闭信号。
   const { socket } = req
   const onSocketClose = () => {
     clientDisconnected = true
@@ -293,7 +293,7 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
     socket.once('close', onSocketClose)
   }
 
-  // 检查 socket 是否在监听器注册前已被销毁（边界情况）
+  // Verificar socket 是否在Escucha注册前已被销毁（边界情况）
   if (socket?.destroyed) {
     clientDisconnected = true
   }
@@ -301,13 +301,13 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
   const startTime = Date.now()
   let pollInterval = pollIntervalMs
   let redisFailCount = 0
-  // 优先使用配置中的值，否则使用默认值
+  // 优先使用Configuración中的Valor，否则使用PredeterminadoValor
   const maxRedisFailCount = configMaxRedisFailCount || QUEUE_POLLING_CONFIG.maxRedisFailCount
 
   try {
     while (Date.now() - startTime < timeoutMs) {
-      // 检测客户端是否断开（双重检查：事件标记 + socket 状态）
-      // socket.destroyed 是同步检查，确保即使事件处理有延迟也能及时检测
+      // 检测Cliente是否断开（双重Verificar：Evento标记 + socket 状态）
+      // socket.destroyed 是SincronizaciónVerificar，确保即使EventoProcesar有延迟也能及时检测
       if (clientDisconnected || socket?.destroyed) {
         redis
           .incrConcurrencyQueueStats(apiKeyId, 'cancelled')
@@ -319,31 +319,31 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
         }
       }
 
-      // 尝试获取槽位（先占后检查）
+      // 尝试Obtener槽位（先占后Verificar）
       try {
         const count = await redis.incrConcurrency(apiKeyId, requestId, leaseSeconds)
-        redisFailCount = 0 // 重置失败计数
+        redisFailCount = 0 // 重置Falló计数
 
         if (count <= concurrencyLimit) {
-          // 成功获取槽位！
+          // ÉxitoObtener槽位！
           const waitTimeMs = Date.now() - startTime
 
           // 槽位所有权转移说明：
-          // 1. 此时槽位已通过 incrConcurrency 获取
-          // 2. 先标记 internalSlotAcquired = true，确保异常时 finally 块能清理
-          // 3. 统计操作完成后，清除标记并返回，所有权转移给调用方
-          // 4. 调用方（authenticateApiKey）负责在请求结束时释放槽位
+          // 1. 此时槽位已通过 incrConcurrency Obtener
+          // 2. 先标记 internalSlotAcquired = true，确保异常时 finally 块能Limpiar
+          // 3. EstadísticaOperaciónCompletado后，清除标记并Retornar，所有权转移给调用方
+          // 4. 调用方（authenticateApiKey）负责在Solicitud结束时释放槽位
 
-          // 标记槽位已获取（用于异常时 finally 块清理）
+          // 标记槽位已Obtener（用于异常时 finally 块Limpiar）
           internalSlotAcquired = true
 
-          // 记录统计（非阻塞，fire-and-forget 模式）
+          // RegistroEstadística（非Bloqueante，fire-and-forget 模式）
           // ⚠️ 设计说明：
-          // - 故意不 await 这些 Promise，因为统计记录不应阻塞请求处理
-          // - 每个 Promise 都有独立的 .catch()，确保单个失败不影响其他
-          // - 外层 .catch() 是防御性措施，处理 Promise.all 本身的异常
-          // - 即使统计记录在函数返回后才完成/失败，也是安全的（仅日志记录）
-          // - 统计数据丢失可接受，不影响核心业务逻辑
+          // - 故意不 await 这些 Promise，因为EstadísticaRegistro不应BloqueanteSolicitudProcesar
+          // - 每个 Promise 都有独立的 .catch()，确保单个Falló不影响其他
+          // - 外层 .catch() 是防御性措施，Procesar Promise.all 本身的异常
+          // - 即使EstadísticaRegistro在FunciónRetornar后才Completado/Falló，也是Seguridad的（仅RegistroRegistro）
+          // - EstadísticaDatos丢失可接受，不影响核心业务逻辑
           Promise.all([
             redis
               .recordQueueWaitTime(apiKeyId, waitTimeMs)
@@ -356,7 +356,7 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
               .catch((e) => logger.warn('Failed to increment success stats:', e))
           ]).catch((e) => logger.warn('Failed to record queue stats batch:', e))
 
-          // 成功返回前清除标记（所有权转移给调用方，由其负责释放）
+          // ÉxitoRetornar前清除标记（所有权转移给调用方，由其负责释放）
           internalSlotAcquired = false
           return { acquired: true, waitTimeMs }
         }
@@ -365,7 +365,7 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
         try {
           await redis.decrConcurrency(apiKeyId, requestId)
         } catch (decrError) {
-          // 释放失败时记录警告但继续轮询
+          // 释放Falló时RegistroAdvertencia但继续轮询
           // 下次 incrConcurrency 会自然覆盖同一 requestId 的条目
           logger.warn(
             `Failed to release slot during polling for ${apiKeyId}, will retry:`,
@@ -380,7 +380,7 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
         )
 
         if (redisFailCount >= maxRedisFailCount) {
-          // 连续 Redis 失败，放弃排队
+          // 连续 Redis Falló，放弃排队
           return {
             acquired: false,
             reason: 'redis_error',
@@ -392,13 +392,13 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
       // 指数退避等待
       await sleep(pollInterval)
 
-      // 计算下一次轮询间隔（指数退避 + 抖动）
+      // Calcular下一次轮询间隔（指数退避 + 抖动）
       // 1. 先应用指数退避
       let nextInterval = pollInterval * backoffFactor
       // 2. 添加抖动防止惊群效应（±jitterRatio 范围内的随机偏移）
       //    抖动范围：[-jitterRatio, +jitterRatio]，例如 jitterRatio=0.2 时为 ±20%
-      //    这是预期行为：负抖动可使间隔略微缩短，正抖动可使间隔略微延长
-      //    目的是分散多个等待者的轮询时间点，避免同时请求 Redis
+      //    这是预期Fila为：负抖动可使间隔略微缩短，正抖动可使间隔略微延长
+      //    目的是分散多个等待者的轮询Tiempo点，避免同时Solicitud Redis
       const jitter = nextInterval * jitterRatio * (Math.random() * 2 - 1)
       nextInterval = nextInterval + jitter
       // 3. 确保在合理范围内：最小 1ms，最大 maxPollIntervalMs
@@ -406,25 +406,25 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
       pollInterval = Math.max(1, Math.min(nextInterval, maxPollIntervalMs))
     }
 
-    // 超时
+    // Tiempo de espera agotado
     redis
       .incrConcurrencyQueueStats(apiKeyId, 'timeout')
       .catch((e) => logger.warn('Failed to record timeout stat:', e))
     return { acquired: false, reason: 'timeout', waitTimeMs: Date.now() - startTime }
   } finally {
-    // 确保清理：
+    // 确保Limpiar：
     // 1. 减少排队计数（排队计数在调用方已增加，这里负责减少）
     try {
       await redis.decrConcurrencyQueue(apiKeyId)
     } catch (cleanupError) {
-      // 清理失败记录错误（可能导致计数泄漏，但有 TTL 保护）
+      // LimpiarFallóRegistroError（可能导致计数泄漏，但有 TTL 保护）
       logger.error(
         `Failed to decrement queue count in finally block for ${apiKeyId}:`,
         cleanupError
       )
     }
 
-    // 2. 如果内部获取了槽位但未正常返回（异常路径），释放槽位
+    // 2. 如果内部Obtener了槽位但未正常Retornar（异常Ruta），释放槽位
     if (internalSlotAcquired) {
       try {
         await redis.decrConcurrency(apiKeyId, requestId)
@@ -439,14 +439,14 @@ async function waitForConcurrencySlot(req, res, apiKeyId, queueOptions) {
       }
     }
 
-    // 清理 socket 事件监听器
+    // Limpiar socket EventoEscucha
     if (socket) {
       socket.removeListener('close', onSocketClose)
     }
   }
 }
 
-// 🔑 API Key验证中间件（优化版）
+// 🔑 API KeyValidarMiddleware（Optimización版）
 const authenticateApiKey = async (req, res, next) => {
   const startTime = Date.now()
   let authErrored = false
@@ -454,7 +454,7 @@ const authenticateApiKey = async (req, res, next) => {
   let hasConcurrencySlot = false
 
   try {
-    // 安全提取API Key，支持多种格式（包括Gemini CLI支持）
+    // Seguridad提取API Key，Soportar多种Formato（包括Gemini CLISoportar）
     const apiKey = extractApiKey(req)
 
     if (apiKey) {
@@ -470,7 +470,7 @@ const authenticateApiKey = async (req, res, next) => {
       })
     }
 
-    // 基本API Key格式验证
+    // 基本API KeyFormatoValidar
     if (typeof apiKey !== 'string' || apiKey.length < 10 || apiKey.length > 512) {
       logger.security(`Invalid API key format from ${req.ip || 'unknown'}`)
       return res.status(401).json({
@@ -479,7 +479,7 @@ const authenticateApiKey = async (req, res, next) => {
       })
     }
 
-    // 验证API Key（带缓存优化）
+    // ValidarAPI Key（带CachéOptimización）
     const validation = await apiKeyService.validateApiKey(apiKey)
 
     if (!validation.valid) {
@@ -558,13 +558,13 @@ const authenticateApiKey = async (req, res, next) => {
 
     const skipKeyRestrictions = isTokenCountRequest(req)
 
-    // 🔒 检查客户端限制（使用新的验证器）
+    // 🔒 VerificarClienteLímite（使用新的Validar器）
     if (
       !skipKeyRestrictions &&
       validation.keyData.enableClientRestriction &&
       validation.keyData.allowedClients?.length > 0
     ) {
-      // 使用新的 ClientValidator 进行验证
+      // 使用新的 ClientValidator 进FilaValidar
       const validationResult = ClientValidator.validateRequest(
         validation.keyData.allowedClients,
         req
@@ -583,14 +583,14 @@ const authenticateApiKey = async (req, res, next) => {
         })
       }
 
-      // 验证通过
+      // Validar通过
       logger.api(
         `✅ Client validated: ${validationResult.clientName} (${validationResult.matchedClient}) for key: ${validation.keyData.id} (${validation.keyData.name})`
       )
     }
 
-    // 🔒 检查全局 Claude Code 限制（与 API Key 级别是 OR 逻辑）
-    // 仅对 Claude 服务端点生效 (/api/v1/messages 和 /claude/v1/messages)
+    // 🔒 Verificar全局 Claude Code Límite（与 API Key 级别是 OR 逻辑）
+    // 仅对 Claude ServicioEndpoint生效 (/api/v1/messages 和 /claude/v1/messages)
     if (!skipKeyRestrictions) {
       const normalizedPath = (req.originalUrl || req.path || '').toLowerCase()
       const isClaudeMessagesEndpoint =
@@ -601,14 +601,14 @@ const authenticateApiKey = async (req, res, next) => {
         try {
           const globalClaudeCodeOnly = await claudeRelayConfigService.isClaudeCodeOnlyEnabled()
 
-          // API Key 级别的 Claude Code 限制
+          // API Key 级别的 Claude Code Límite
           const keyClaudeCodeOnly =
             validation.keyData.enableClientRestriction &&
             Array.isArray(validation.keyData.allowedClients) &&
             validation.keyData.allowedClients.length === 1 &&
             validation.keyData.allowedClients.includes('claude_code')
 
-          // OR 逻辑：全局开启 或 API Key 级别限制为仅 claude_code
+          // OR 逻辑：全局开启 或 API Key 级别Límite为仅 claude_code
           if (globalClaudeCodeOnly || keyClaudeCodeOnly) {
             const isClaudeCode = ClaudeCodeValidator.validate(req)
 
@@ -635,12 +635,12 @@ const authenticateApiKey = async (req, res, next) => {
           }
         } catch (error) {
           logger.error('❌ Error checking Claude Code restriction:', error)
-          // 配置服务出错时不阻断请求
+          // ConfiguraciónServicio出错时不阻断Solicitud
         }
       }
     }
 
-    // 检查并发限制
+    // VerificarConcurrenciaLímite
     const concurrencyLimit = validation.keyData.concurrencyLimit || 0
     if (!skipKeyRestrictions && concurrencyLimit > 0) {
       const { leaseSeconds: configLeaseSeconds, renewIntervalSeconds: configRenewIntervalSeconds } =
@@ -655,32 +655,32 @@ const authenticateApiKey = async (req, res, next) => {
       }
       const requestId = uuidv4()
 
-      // ⚠️ 优化后的 Connection: close 设置策略
-      // 问题背景：HTTP Keep-Alive 使多个请求共用同一个 TCP 连接
-      // 当第一个请求正在处理，第二个请求进入排队时，它们共用同一个 socket
-      // 如果客户端超时关闭连接，两个请求都会受影响
-      // 优化方案：只有在请求实际进入排队时才设置 Connection: close
-      // 未排队的请求保持 Keep-Alive，避免不必要的 TCP 握手开销
-      // 详见 design.md Decision 2: Connection: close 设置时机
-      // 注意：Connection: close 将在下方代码实际进入排队时设置（第 637 行左右）
+      // ⚠️ Optimización后的 Connection: close EstablecerPolítica
+      // 问题背景：HTTP Keep-Alive 使多个Solicitud共用同一个 TCP Conexión
+      // 当第一个SolicitudEn progresoProcesar，第二个Solicitud进入排队时，它们共用同一个 socket
+      // 如果ClienteTiempo de espera agotado关闭Conexión，两个Solicitud都会受影响
+      // Optimización方案：只有在Solicitud实际进入排队时才Establecer Connection: close
+      // 未排队的Solicitud保持 Keep-Alive，避免不必要的 TCP 握手开销
+      // 详见 design.md Decision 2: Connection: close Establecer时机
+      // 注意：Connection: close 将在下方代码实际进入排队时Establecer（第 637 Fila左右）
 
       // ============================================================
-      // 🔒 并发槽位状态管理说明
+      // 🔒 Concurrencia槽位状态管理说明
       // ============================================================
-      // 此函数中有两个关键状态变量：
-      // - hasConcurrencySlot: 当前是否持有并发槽位
-      // - concurrencyCleanup: 错误时调用的清理函数
+      // 此Función中有两个关键状态变量：
+      // - hasConcurrencySlot: 当前是否持有Concurrencia槽位
+      // - concurrencyCleanup: Error时调用的LimpiarFunción
       //
-      // 状态转换流程：
-      // 1. incrConcurrency 成功 → hasConcurrencySlot=true, 设置临时清理函数
+      // 状态Convertir流程：
+      // 1. incrConcurrency Éxito → hasConcurrencySlot=true, Establecer临时LimpiarFunción
       // 2. 若超限 → 释放槽位，hasConcurrencySlot=false, concurrencyCleanup=null
-      // 3. 若排队成功 → hasConcurrencySlot=true, 升级为完整清理函数（含 interval 清理）
-      // 4. 请求结束（res.close/req.close）→ 调用 decrementConcurrency 释放
-      // 5. 认证错误 → finally 块调用 concurrencyCleanup 释放
+      // 3. 若排队Éxito → hasConcurrencySlot=true, 升级为完整LimpiarFunción（含 interval Limpiar）
+      // 4. Solicitud结束（res.close/req.close）→ 调用 decrementConcurrency 释放
+      // 5. 认证Error → finally 块调用 concurrencyCleanup 释放
       //
-      // 为什么需要两种清理函数？
-      // - 临时清理：在排队/认证过程中出错时使用，只释放槽位
-      // - 完整清理：请求正常开始后使用，还需清理 leaseRenewInterval
+      // 为什么需要两种LimpiarFunción？
+      // - 临时Limpiar：在排队/认证过程中出错时使用，只释放槽位
+      // - 完整Limpiar：Solicitud正常Iniciando后使用，还需Limpiar leaseRenewInterval
       // ============================================================
       const setTemporaryConcurrencyCleanup = () => {
         concurrencyCleanup = async () => {
@@ -723,16 +723,17 @@ const authenticateApiKey = async (req, res, next) => {
         hasConcurrencySlot = false
         concurrencyCleanup = null
 
-        // 2. 获取排队配置
+        // 2. Obtener排队Configuración
         const queueConfig = await claudeRelayConfigService.getConfig()
 
-        // 3. 排队功能未启用，直接返回 429（保持现有行为）
+        // 3. 排队功能未Habilitar，直接Retornar 429（保持现有Fila为）
         if (!queueConfig.concurrentRequestQueueEnabled) {
           logger.security(
-            `🚦 Concurrency limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
+            `🚦 Concurrency limit exceeded for key: ${validation.keyData.id} (${
+              validation.keyData.name
             }), current: ${currentConcurrency - 1}, limit: ${concurrencyLimit}`
           )
-          // 建议客户端在短暂延迟后重试（并发场景下通常很快会有槽位释放）
+          // 建议Cliente在短暂延迟后Reintentar（Concurrencia场景下通常很快会有槽位释放）
           res.set('Retry-After', '1')
           return res.status(429).json({
             error: 'Concurrency limit exceeded',
@@ -742,14 +743,14 @@ const authenticateApiKey = async (req, res, next) => {
           })
         }
 
-        // 4. 计算最大排队数
+        // 4. Calcular最大排队数
         const maxQueueSize = Math.max(
           concurrencyLimit * queueConfig.concurrentRequestQueueMaxSizeMultiplier,
           queueConfig.concurrentRequestQueueMaxSize
         )
 
-        // 4.5 排队健康检查：过载时快速失败
-        // 详见 design.md Decision 7: 排队健康检查与快速失败
+        // 4.5 排队Verificación de salud：过载时快速Falló
+        // 详见 design.md Decision 7: 排队Verificación de salud与快速Falló
         const overloadCheck = await shouldRejectDueToOverload(
           validation.keyData.id,
           queueConfig.concurrentRequestQueueTimeoutMs,
@@ -757,19 +758,19 @@ const authenticateApiKey = async (req, res, next) => {
           maxQueueSize
         )
         if (overloadCheck.reject) {
-          // 使用健康检查返回的当前排队数，避免重复调用 Redis
+          // 使用Verificación de saludRetornar的当前排队数，避免重复调用 Redis
           const currentQueueCount = overloadCheck.currentQueueCount || 0
           logger.api(
             `🚨 Queue overloaded for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-            `P90=${overloadCheck.estimatedWaitMs}ms, timeout=${overloadCheck.timeoutMs}ms, ` +
-            `threshold=${overloadCheck.threshold}, samples=${overloadCheck.sampleCount}, ` +
-            `concurrency=${concurrencyLimit}, queue=${currentQueueCount}/${maxQueueSize}`
+              `P90=${overloadCheck.estimatedWaitMs}ms, timeout=${overloadCheck.timeoutMs}ms, ` +
+              `threshold=${overloadCheck.threshold}, samples=${overloadCheck.sampleCount}, ` +
+              `concurrency=${concurrencyLimit}, queue=${currentQueueCount}/${maxQueueSize}`
           )
-          // 记录被拒绝的过载统计
+          // Registro被拒绝的过载Estadística
           redis
             .incrConcurrencyQueueStats(validation.keyData.id, 'rejected_overload')
             .catch((e) => logger.warn('Failed to record rejected_overload stat:', e))
-          // 返回 429 + Retry-After，让客户端稍后重试
+          // Retornar 429 + Retry-After，让Cliente稍后Reintentar
           const retryAfterSeconds = 30
           res.set('Retry-After', String(retryAfterSeconds))
           return res.status(429).json({
@@ -786,7 +787,7 @@ const authenticateApiKey = async (req, res, next) => {
           })
         }
 
-        // 5. 尝试进入排队（原子操作：先增加再检查，避免竞态条件）
+        // 5. 尝试进入排队（原子Operación：先增加再Verificar，避免竞态Condición）
         let queueIncremented = false
         try {
           const newQueueCount = await redis.incrConcurrencyQueue(
@@ -796,14 +797,14 @@ const authenticateApiKey = async (req, res, next) => {
           queueIncremented = true
 
           if (newQueueCount > maxQueueSize) {
-            // 超过最大排队数，立即释放并返回 429
+            // 超过最大排队数，立即释放并Retornar 429
             await redis.decrConcurrencyQueue(validation.keyData.id)
             queueIncremented = false
             logger.api(
               `🚦 Concurrency queue full for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-              `queue: ${newQueueCount - 1}, maxQueue: ${maxQueueSize}`
+                `queue: ${newQueueCount - 1}, maxQueue: ${maxQueueSize}`
             )
-            // 队列已满，建议客户端在排队超时时间后重试
+            // Cola已满，建议Cliente在排队Tiempo de espera agotadoTiempo后Reintentar
             const retryAfterSeconds = Math.ceil(queueConfig.concurrentRequestQueueTimeoutMs / 1000)
             res.set('Retry-After', String(retryAfterSeconds))
             return res.status(429).json({
@@ -818,18 +819,18 @@ const authenticateApiKey = async (req, res, next) => {
             })
           }
 
-          // 6. 已成功进入排队，记录统计并开始等待槽位
+          // 6. 已Éxito进入排队，RegistroEstadística并Iniciando等待槽位
           logger.api(
             `⏳ Request entering queue for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-            `queue position: ${newQueueCount}`
+              `queue position: ${newQueueCount}`
           )
           redis
             .incrConcurrencyQueueStats(validation.keyData.id, 'entered')
             .catch((e) => logger.warn('Failed to record entered stat:', e))
 
-          // ⚠️ 仅在请求实际进入排队时设置 Connection: close
-          // 详见 design.md Decision 2: Connection: close 设置时机
-          // 未排队的请求保持 Keep-Alive，避免不必要的 TCP 握手开销
+          // ⚠️ 仅在Solicitud实际进入排队时Establecer Connection: close
+          // 详见 design.md Decision 2: Connection: close Establecer时机
+          // 未排队的Solicitud保持 Keep-Alive，避免不必要的 TCP 握手开销
           if (!res.headersSent) {
             res.setHeader('Connection', 'close')
             logger.api(
@@ -837,10 +838,10 @@ const authenticateApiKey = async (req, res, next) => {
             )
           }
 
-          // ⚠️ 记录排队开始时的 socket 标识，用于排队完成后验证
-          // 问题背景：HTTP Keep-Alive 连接复用时，长时间排队可能导致 socket 被其他请求使用
-          // 验证方法：使用 UUID token + socket 对象引用双重验证
-          // 详见 design.md Decision 1: Socket 身份验证机制
+          // ⚠️ Registro排队Iniciando时的 socket 标识，用于排队Completado后Validar
+          // 问题背景：HTTP Keep-Alive Conexión复用时，长Tiempo排队可能导致 socket 被其他Solicitud使用
+          // ValidarMétodo：使用 UUID token + socket Objeto引用双重Validar
+          // 详见 design.md Decision 1: Socket 身份Validar机制
           req._crService = req._crService || {}
           req._crService.queueToken = uuidv4()
           req._crService.originalSocket = req.socket
@@ -849,8 +850,8 @@ const authenticateApiKey = async (req, res, next) => {
           const savedSocket = req._crService.originalSocket
 
           // ⚠️ 重要：在调用前将 queueIncremented 设为 false
-          // 因为 waitForConcurrencySlot 的 finally 块会负责清理排队计数
-          // 如果在调用后设置，当 waitForConcurrencySlot 抛出异常时
+          // 因为 waitForConcurrencySlot 的 finally 块会负责Limpiar排队计数
+          // 如果在调用后Establecer，当 waitForConcurrencySlot 抛出异常时
           // 外层 catch 块会重复减少计数（finally 已经减过一次）
           queueIncremented = false
 
@@ -866,10 +867,10 @@ const authenticateApiKey = async (req, res, next) => {
             maxRedisFailCount: queueConfig.concurrentRequestQueueMaxRedisFailCount
           })
 
-          // 7. 处理排队结果
+          // 7. Procesar排队结果
           if (!slot.acquired) {
             if (slot.reason === 'client_disconnected') {
-              // 客户端已断开，不返回响应（连接已关闭）
+              // Cliente已断开，不RetornarRespuesta（Conexión已关闭）
               logger.api(
                 `🔌 Client disconnected while queuing for key: ${validation.keyData.id} (${validation.keyData.name})`
               )
@@ -877,7 +878,7 @@ const authenticateApiKey = async (req, res, next) => {
             }
 
             if (slot.reason === 'redis_error') {
-              // Redis 连续失败，返回 503
+              // Redis 连续Falló，Retornar 503
               logger.error(
                 `❌ Redis error during queue wait for key: ${validation.keyData.id} (${validation.keyData.name})`
               )
@@ -886,16 +887,16 @@ const authenticateApiKey = async (req, res, next) => {
                 message: 'Failed to acquire concurrency slot due to internal error'
               })
             }
-            // 排队超时（使用 api 级别，与其他排队日志保持一致）
+            // 排队Tiempo de espera agotado（使用 api 级别，与其他排队Registro保持一致）
             logger.api(
               `⏰ Queue timeout for key: ${validation.keyData.id} (${validation.keyData.name}), waited: ${slot.waitTimeMs}ms`
             )
-            // 已等待超时，建议客户端稍后重试
-            // ⚠️ Retry-After 策略优化：
-            // - 请求已经等了完整的 timeout 时间，说明系统负载较高
-            // - 过早重试（如固定 5 秒）会加剧拥塞，导致更多超时
-            // - 合理策略：使用 timeout 时间的一半作为重试间隔
-            // - 最小值 5 秒，最大值 30 秒，避免极端情况
+            // 已等待Tiempo de espera agotado，建议Cliente稍后Reintentar
+            // ⚠️ Retry-After PolíticaOptimización：
+            // - Solicitud已经等了完整的 timeout Tiempo，说明系统负载较高
+            // - 过早Reintentar（如固定 5 秒）会加剧拥塞，导致更多Tiempo de espera agotado
+            // - 合理Política：使用 timeout Tiempo的一半作为Reintentar间隔
+            // - 最小Valor 5 秒，最大Valor 30 秒，避免极端情况
             const timeoutSeconds = Math.ceil(queueConfig.concurrentRequestQueueTimeoutMs / 1000)
             const retryAfterSeconds = Math.max(5, Math.min(30, Math.ceil(timeoutSeconds / 2)))
             res.set('Retry-After', String(retryAfterSeconds))
@@ -911,40 +912,40 @@ const authenticateApiKey = async (req, res, next) => {
             })
           }
 
-          // 8. 排队成功，slot.acquired 表示已在 waitForConcurrencySlot 中获取到槽位
+          // 8. 排队Éxito，slot.acquired Tabla示已在 waitForConcurrencySlot 中Obtener到槽位
           logger.api(
             `✅ Queue wait completed for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-            `waited: ${slot.waitTimeMs}ms`
+              `waited: ${slot.waitTimeMs}ms`
           )
           hasConcurrencySlot = true
           setTemporaryConcurrencyCleanup()
 
-          // 9. ⚠️ 关键检查：排队等待结束后，验证客户端是否还在等待响应
-          // 长时间排队后，客户端可能在应用层已放弃（如 Claude Code 的超时机制），
-          // 但 TCP 连接仍然存活。此时继续处理请求是浪费资源。
-          // 注意：如果发送了心跳，headersSent 会是 true，但这是正常的
+          // 9. ⚠️ 关键Verificar：排队等待结束后，ValidarCliente是否还在等待Respuesta
+          // 长Tiempo排队后，Cliente可能在应用层已放弃（如 Claude Code 的Tiempo de espera agotado机制），
+          // 但 TCP Conexión仍然存活。此时继续ProcesarSolicitud是浪费资源。
+          // 注意：如果发送了Latido，headersSent 会是 true，但这是正常的
           const postQueueSocket = req.socket
-          // 只检查连接是否真正断开（destroyed/writableEnded/socketDestroyed）
-          // headersSent 在心跳场景下是正常的，不应该作为放弃的依据
+          // 只VerificarConexión是否真正断开（destroyed/writableEnded/socketDestroyed）
+          // headersSent 在Latido场景下是正常的，不应该作为放弃的依据
           if (res.destroyed || res.writableEnded || postQueueSocket?.destroyed) {
             logger.warn(
               `⚠️ Client no longer waiting after queue for key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-              `waited: ${slot.waitTimeMs}ms | destroyed: ${res.destroyed}, ` +
-              `writableEnded: ${res.writableEnded}, socketDestroyed: ${postQueueSocket?.destroyed}`
+                `waited: ${slot.waitTimeMs}ms | destroyed: ${res.destroyed}, ` +
+                `writableEnded: ${res.writableEnded}, socketDestroyed: ${postQueueSocket?.destroyed}`
             )
-            // 释放刚获取的槽位
+            // 释放刚Obtener的槽位
             hasConcurrencySlot = false
             await redis
               .decrConcurrency(validation.keyData.id, requestId)
               .catch((e) => logger.error('Failed to release slot after client abandoned:', e))
-            // 不返回响应（客户端已不在等待）
+            // 不RetornarRespuesta（Cliente已不在等待）
             return
           }
 
-          // 10. ⚠️ 关键检查：验证 socket 身份是否改变
-          // HTTP Keep-Alive 连接复用可能导致排队期间 socket 被其他请求使用
-          // 验证方法：UUID token + socket 对象引用双重验证
-          // 详见 design.md Decision 1: Socket 身份验证机制
+          // 10. ⚠️ 关键Verificar：Validar socket 身份是否改变
+          // HTTP Keep-Alive Conexión复用可能导致排队期间 socket 被其他Solicitud使用
+          // ValidarMétodo：UUID token + socket Objeto引用双重Validar
+          // 详见 design.md Decision 1: Socket 身份Validar机制
           const queueData = req._crService
           const socketIdentityChanged =
             !queueData ||
@@ -954,35 +955,35 @@ const authenticateApiKey = async (req, res, next) => {
           if (socketIdentityChanged) {
             logger.error(
               `❌ [Queue] Socket identity changed during queue wait! ` +
-              `key: ${validation.keyData.id} (${validation.keyData.name}), ` +
-              `waited: ${slot.waitTimeMs}ms | ` +
-              `tokenMatch: ${queueData?.queueToken === savedToken}, ` +
-              `socketMatch: ${queueData?.originalSocket === savedSocket}`
+                `key: ${validation.keyData.id} (${validation.keyData.name}), ` +
+                `waited: ${slot.waitTimeMs}ms | ` +
+                `tokenMatch: ${queueData?.queueToken === savedToken}, ` +
+                `socketMatch: ${queueData?.originalSocket === savedSocket}`
             )
-            // 释放刚获取的槽位
+            // 释放刚Obtener的槽位
             hasConcurrencySlot = false
             await redis
               .decrConcurrency(validation.keyData.id, requestId)
               .catch((e) => logger.error('Failed to release slot after socket identity change:', e))
-            // 记录 socket_changed 统计
+            // Registro socket_changed Estadística
             redis
               .incrConcurrencyQueueStats(validation.keyData.id, 'socket_changed')
               .catch((e) => logger.warn('Failed to record socket_changed stat:', e))
-            // 不返回响应（socket 已被其他请求使用）
+            // 不RetornarRespuesta（socket 已被其他Solicitud使用）
             return
           }
         } catch (queueError) {
-          // 异常时清理资源，防止泄漏
-          // 1. 清理排队计数（如果还没被 waitForConcurrencySlot 的 finally 清理）
+          // 异常时Limpiar资源，防止泄漏
+          // 1. Limpiar排队计数（如果还没被 waitForConcurrencySlot 的 finally Limpiar）
           if (queueIncremented) {
             await redis
               .decrConcurrencyQueue(validation.keyData.id)
               .catch((e) => logger.error('Failed to cleanup queue count after error:', e))
           }
 
-          // 2. 防御性清理：如果 waitForConcurrencySlot 内部获取了槽位但在返回前异常
-          //    虽然这种情况极少发生（统计记录的异常会被内部捕获），但为了安全起见
-          //    尝试释放可能已获取的槽位。decrConcurrency 使用 ZREM，即使成员不存在也安全
+          // 2. 防御性Limpiar：如果 waitForConcurrencySlot 内部Obtener了槽位但在Retornar前异常
+          //    虽然这种情况极少发生（EstadísticaRegistro的异常会被内部捕获），但为了Seguridad起见
+          //    尝试释放可能已Obtener的槽位。decrConcurrency 使用 ZREM，即使成员不存在也Seguridad
           if (hasConcurrencySlot) {
             hasConcurrencySlot = false
             await redis
@@ -1004,8 +1005,8 @@ const authenticateApiKey = async (req, res, next) => {
       let leaseRenewInterval = null
 
       if (renewIntervalMs > 0) {
-        // 🔴 关键修复：添加最大刷新次数限制，防止租约永不过期
-        // 默认最大生存时间为 10 分钟，可通过环境变量配置
+        // 🔴 关键Corrección：添加最大刷新次数Límite，防止租约永不过期
+        // Predeterminado最大生存Tiempo为 10 分钟，可通过Variable de entornoConfiguración
         const maxLifetimeMinutes = parseInt(process.env.CONCURRENCY_MAX_LIFETIME_MINUTES) || 10
         const maxRefreshCount = Math.ceil((maxLifetimeMinutes * 60 * 1000) / renewIntervalMs)
         let refreshCount = 0
@@ -1013,17 +1014,17 @@ const authenticateApiKey = async (req, res, next) => {
         leaseRenewInterval = setInterval(() => {
           refreshCount++
 
-          // 超过最大刷新次数，强制停止并清理
+          // 超过最大刷新次数，强制停止并Limpiar
           if (refreshCount > maxRefreshCount) {
             logger.warn(
               `⚠️ Lease refresh exceeded max count (${maxRefreshCount}) for key ${validation.keyData.id} (${validation.keyData.name}), forcing cleanup after ${maxLifetimeMinutes} minutes`
             )
-            // 清理定时器
+            // Limpiar定时器
             if (leaseRenewInterval) {
               clearInterval(leaseRenewInterval)
               leaseRenewInterval = null
             }
-            // 强制减少并发计数（如果还没减少）
+            // 强制减少Concurrencia计数（如果还没减少）
             if (!concurrencyDecremented) {
               concurrencyDecremented = true
               redis.decrConcurrency(validation.keyData.id, requestId).catch((error) => {
@@ -1069,14 +1070,14 @@ const authenticateApiKey = async (req, res, next) => {
           }
         }
       }
-      // 升级为完整清理函数（包含 leaseRenewInterval 清理逻辑）
-      // 此时请求已通过认证，后续由 res.close/req.close 事件触发清理
+      // 升级为完整LimpiarFunción（Incluir leaseRenewInterval Limpiar逻辑）
+      // 此时Solicitud已通过认证，后续由 res.close/req.close Evento触发Limpiar
       if (hasConcurrencySlot) {
         concurrencyCleanup = decrementConcurrency
       }
 
-      // 监听最可靠的事件（避免重复监听）
-      // res.on('close') 是最可靠的，会在连接关闭时触发
+      // 监听最可靠的Evento（避免重复监听）
+      // res.on('close') 是最可靠的，会在Conexión关闭时触发
       res.once('close', () => {
         logger.api(
           `🔌 Response closed for key: ${validation.keyData.id} (${validation.keyData.name})`
@@ -1084,7 +1085,7 @@ const authenticateApiKey = async (req, res, next) => {
         decrementConcurrency()
       })
 
-      // req.on('close') 作为备用，处理请求端断开
+      // req.on('close') 作为备用，ProcesarSolicitud端断开
       req.once('close', () => {
         logger.api(
           `🔌 Request closed for key: ${validation.keyData.id} (${validation.keyData.name})`
@@ -1115,7 +1116,7 @@ const authenticateApiKey = async (req, res, next) => {
         decrementConcurrency()
       })
 
-      // res.on('finish') 处理正常完成的情况
+      // res.on('finish') Procesar正常Completado的情况
       res.once('finish', () => {
         logger.api(
           `✅ Response finished for key: ${validation.keyData.id} (${validation.keyData.name})`
@@ -1123,7 +1124,7 @@ const authenticateApiKey = async (req, res, next) => {
         decrementConcurrency()
       })
 
-      // 存储并发信息到请求对象，便于后续处理
+      // 存储ConcurrenciaInformación到SolicitudObjeto，便于后续Procesar
       req.concurrencyInfo = {
         apiKeyId: validation.keyData.id,
         apiKeyName: validation.keyData.name,
@@ -1132,12 +1133,12 @@ const authenticateApiKey = async (req, res, next) => {
       }
     }
 
-    // 检查时间窗口限流
+    // VerificarTiempo窗口限流
     const rateLimitWindow = validation.keyData.rateLimitWindow || 0
     const rateLimitRequests = validation.keyData.rateLimitRequests || 0
-    const rateLimitCost = validation.keyData.rateLimitCost || 0 // 新增：费用限制
+    const rateLimitCost = validation.keyData.rateLimitCost || 0 // Nueva característica：费用Límite
 
-    // 兼容性检查：如果tokenLimit仍有值，使用tokenLimit；否则使用rateLimitCost
+    // 兼容性Verificar：如果tokenLimit仍有Valor，使用tokenLimit；否则使用rateLimitCost
     const hasRateLimits =
       rateLimitWindow > 0 &&
       (rateLimitRequests > 0 || validation.keyData.tokenLimit > 0 || rateLimitCost > 0)
@@ -1146,41 +1147,41 @@ const authenticateApiKey = async (req, res, next) => {
       const windowStartKey = `rate_limit:window_start:${validation.keyData.id}`
       const requestCountKey = `rate_limit:requests:${validation.keyData.id}`
       const tokenCountKey = `rate_limit:tokens:${validation.keyData.id}`
-      const costCountKey = `rate_limit:cost:${validation.keyData.id}` // 新增：费用计数器
+      const costCountKey = `rate_limit:cost:${validation.keyData.id}` // Nueva característica：费用计数器
 
       const now = Date.now()
-      const windowDuration = rateLimitWindow * 60 * 1000 // 转换为毫秒
+      const windowDuration = rateLimitWindow * 60 * 1000 // Convertir为毫秒
 
-      // 获取窗口开始时间
+      // Obtener窗口IniciandoTiempo
       let windowStart = await redis.getClient().get(windowStartKey)
 
       if (!windowStart) {
-        // 第一次请求，设置窗口开始时间
+        // 第一次Solicitud，Establecer窗口IniciandoTiempo
         await redis.getClient().set(windowStartKey, now, 'PX', windowDuration)
         await redis.getClient().set(requestCountKey, 0, 'PX', windowDuration)
         await redis.getClient().set(tokenCountKey, 0, 'PX', windowDuration)
-        await redis.getClient().set(costCountKey, 0, 'PX', windowDuration) // 新增：重置费用
+        await redis.getClient().set(costCountKey, 0, 'PX', windowDuration) // Nueva característica：重置费用
         windowStart = now
       } else {
         windowStart = parseInt(windowStart)
 
-        // 检查窗口是否已过期
+        // Verificar窗口是否已过期
         if (now - windowStart >= windowDuration) {
           // 窗口已过期，重置
           await redis.getClient().set(windowStartKey, now, 'PX', windowDuration)
           await redis.getClient().set(requestCountKey, 0, 'PX', windowDuration)
           await redis.getClient().set(tokenCountKey, 0, 'PX', windowDuration)
-          await redis.getClient().set(costCountKey, 0, 'PX', windowDuration) // 新增：重置费用
+          await redis.getClient().set(costCountKey, 0, 'PX', windowDuration) // Nueva característica：重置费用
           windowStart = now
         }
       }
 
-      // 获取当前计数
+      // Obtener当前计数
       const currentRequests = parseInt((await redis.getClient().get(requestCountKey)) || '0')
       const currentTokens = parseInt((await redis.getClient().get(tokenCountKey)) || '0')
-      const currentCost = parseFloat((await redis.getClient().get(costCountKey)) || '0') // 新增：当前费用
+      const currentCost = parseFloat((await redis.getClient().get(costCountKey)) || '0') // Nueva característica：当前费用
 
-      // 检查请求次数限制
+      // VerificarSolicitud次数Límite
       if (rateLimitRequests > 0 && currentRequests >= rateLimitRequests) {
         const resetTime = new Date(windowStart + windowDuration)
         const remainingMinutes = Math.ceil((resetTime - now) / 60000)
@@ -1199,10 +1200,10 @@ const authenticateApiKey = async (req, res, next) => {
         })
       }
 
-      // 兼容性检查：优先使用Token限制（历史数据），否则使用费用限制
+      // 兼容性Verificar：优先使用TokenLímite（历史Datos），否则使用费用Límite
       const tokenLimit = parseInt(validation.keyData.tokenLimit)
       if (tokenLimit > 0) {
-        // 使用Token限制（向后兼容）
+        // 使用TokenLímite（向后兼容）
         if (currentTokens >= tokenLimit) {
           const resetTime = new Date(windowStart + windowDuration)
           const remainingMinutes = Math.ceil((resetTime - now) / 60000)
@@ -1221,13 +1222,14 @@ const authenticateApiKey = async (req, res, next) => {
           })
         }
       } else if (rateLimitCost > 0) {
-        // 使用费用限制（新功能）
+        // 使用费用Límite（新功能）
         if (currentCost >= rateLimitCost) {
           const resetTime = new Date(windowStart + windowDuration)
           const remainingMinutes = Math.ceil((resetTime - now) / 60000)
 
           logger.security(
-            `💰 Rate limit exceeded (cost) for key: ${validation.keyData.id} (${validation.keyData.name
+            `💰 Rate limit exceeded (cost) for key: ${validation.keyData.id} (${
+              validation.keyData.name
             }), cost: $${currentCost.toFixed(2)}/$${rateLimitCost}`
           )
 
@@ -1242,33 +1244,34 @@ const authenticateApiKey = async (req, res, next) => {
         }
       }
 
-      // 增加请求计数
+      // 增加Solicitud计数
       await redis.getClient().incr(requestCountKey)
 
-      // 存储限流信息到请求对象
+      // 存储限流Información到SolicitudObjeto
       req.rateLimitInfo = {
         windowStart,
         windowDuration,
         requestCountKey,
         tokenCountKey,
-        costCountKey, // 新增：费用计数器
+        costCountKey, // Nueva característica：费用计数器
         currentRequests: currentRequests + 1,
         currentTokens,
-        currentCost, // 新增：当前费用
+        currentCost, // Nueva característica：当前费用
         rateLimitRequests,
         tokenLimit,
-        rateLimitCost // 新增：费用限制
+        rateLimitCost // Nueva característica：费用Límite
       }
     }
 
-    // 检查每日费用限制
+    // Verificar每日费用Límite
     const dailyCostLimit = validation.keyData.dailyCostLimit || 0
     if (dailyCostLimit > 0) {
       const dailyCost = validation.keyData.dailyCost || 0
 
       if (dailyCost >= dailyCostLimit) {
         logger.security(
-          `💰 Daily cost limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
+          `💰 Daily cost limit exceeded for key: ${validation.keyData.id} (${
+            validation.keyData.name
           }), cost: $${dailyCost.toFixed(2)}/$${dailyCostLimit}`
         )
 
@@ -1285,21 +1288,23 @@ const authenticateApiKey = async (req, res, next) => {
         })
       }
 
-      // 记录当前费用使用情况
+      // Registro当前费用使用情况
       logger.api(
-        `💰 Cost usage for key: ${validation.keyData.id} (${validation.keyData.name
+        `💰 Cost usage for key: ${validation.keyData.id} (${
+          validation.keyData.name
         }), current: $${dailyCost.toFixed(2)}/$${dailyCostLimit}`
       )
     }
 
-    // 检查总费用限制
+    // Verificar总费用Límite
     const totalCostLimit = validation.keyData.totalCostLimit || 0
     if (totalCostLimit > 0) {
       const totalCost = validation.keyData.totalCost || 0
 
       if (totalCost >= totalCostLimit) {
         logger.security(
-          `💰 Total cost limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
+          `💰 Total cost limit exceeded for key: ${validation.keyData.id} (${
+            validation.keyData.name
           }), cost: $${totalCost.toFixed(2)}/$${totalCostLimit}`
         )
 
@@ -1316,15 +1321,16 @@ const authenticateApiKey = async (req, res, next) => {
       }
 
       logger.api(
-        `💰 Total cost usage for key: ${validation.keyData.id} (${validation.keyData.name
+        `💰 Total cost usage for key: ${validation.keyData.id} (${
+          validation.keyData.name
         }), current: $${totalCost.toFixed(2)}/$${totalCostLimit}`
       )
     }
 
-    // 检查 Claude 周费用限制
+    // Verificar Claude 周费用Límite
     const weeklyOpusCostLimit = validation.keyData.weeklyOpusCostLimit || 0
     if (weeklyOpusCostLimit > 0) {
-      // 从请求中获取模型信息
+      // 从Solicitud中Obtener模型Información
       const requestBody = req.body || {}
       const model = requestBody.model || ''
 
@@ -1334,11 +1340,12 @@ const authenticateApiKey = async (req, res, next) => {
 
         if (weeklyOpusCost >= weeklyOpusCostLimit) {
           logger.security(
-            `💰 Weekly Claude cost limit exceeded for key: ${validation.keyData.id} (${validation.keyData.name
+            `💰 Weekly Claude cost limit exceeded for key: ${validation.keyData.id} (${
+              validation.keyData.name
             }), cost: $${weeklyOpusCost.toFixed(2)}/$${weeklyOpusCostLimit}`
           )
 
-          // 计算下周一的重置时间
+          // Calcular下周一的重置Tiempo
           const now = new Date()
           const dayOfWeek = now.getDay()
           const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek) % 7 || 7
@@ -1359,15 +1366,16 @@ const authenticateApiKey = async (req, res, next) => {
           })
         }
 
-        // 记录当前 Claude 费用使用情况
+        // Registro当前 Claude 费用使用情况
         logger.api(
-          `💰 Claude weekly cost usage for key: ${validation.keyData.id} (${validation.keyData.name
+          `💰 Claude weekly cost usage for key: ${validation.keyData.id} (${
+            validation.keyData.name
           }), current: $${weeklyOpusCost.toFixed(2)}/$${weeklyOpusCostLimit}`
         )
       }
     }
 
-    // 将验证信息添加到请求对象（只包含必要信息）
+    // 将ValidarInformación添加到SolicitudObjeto（只Incluir必要Información）
     req.apiKey = {
       id: validation.keyData.id,
       name: validation.keyData.name,
@@ -1382,7 +1390,7 @@ const authenticateApiKey = async (req, res, next) => {
       concurrencyLimit: validation.keyData.concurrencyLimit,
       rateLimitWindow: validation.keyData.rateLimitWindow,
       rateLimitRequests: validation.keyData.rateLimitRequests,
-      rateLimitCost: validation.keyData.rateLimitCost, // 新增：费用限制
+      rateLimitCost: validation.keyData.rateLimitCost, // Nueva característica：费用Límite
       enableModelRestriction: validation.keyData.enableModelRestriction,
       restrictedModels: validation.keyData.restrictedModels,
       enableClientRestriction: validation.keyData.enableClientRestriction,
@@ -1427,12 +1435,12 @@ const authenticateApiKey = async (req, res, next) => {
   }
 }
 
-// 🛡️ 管理员验证中间件（优化版）
+// 🛡️ 管理员ValidarMiddleware（Optimización版）
 const authenticateAdmin = async (req, res, next) => {
   const startTime = Date.now()
 
   try {
-    // 安全提取token，支持多种方式
+    // Seguridad提取token，Soportar多种方式
     const token =
       req.headers['authorization']?.replace(/^Bearer\s+/i, '') ||
       req.cookies?.adminToken ||
@@ -1446,7 +1454,7 @@ const authenticateAdmin = async (req, res, next) => {
       })
     }
 
-    // 基本token格式验证
+    // 基本tokenFormatoValidar
     if (typeof token !== 'string' || token.length < 32 || token.length > 512) {
       logger.security(`Invalid admin token format from ${req.ip || 'unknown'}`)
       return res.status(401).json({
@@ -1455,7 +1463,7 @@ const authenticateAdmin = async (req, res, next) => {
       })
     }
 
-    // 获取管理员会话（带超时处理）
+    // Obtener管理员Sesión（带Tiempo de espera agotadoProcesar）
     const adminSession = await Promise.race([
       redis.getSession(token),
       new Promise((_, reject) =>
@@ -1471,19 +1479,19 @@ const authenticateAdmin = async (req, res, next) => {
       })
     }
 
-    // 🔒 安全修复：验证会话必须字段（防止伪造会话绕过认证）
+    // 🔒 SeguridadCorrección：ValidarSesión必须Campo（防止伪造Sesión绕过认证）
     if (!adminSession.username || !adminSession.loginTime) {
       logger.security(
         `🔒 Corrupted admin session from ${req.ip || 'unknown'} - missing required fields (username: ${!!adminSession.username}, loginTime: ${!!adminSession.loginTime})`
       )
-      await redis.deleteSession(token) // 清理无效/伪造的会话
+      await redis.deleteSession(token) // Limpiar无效/伪造的Sesión
       return res.status(401).json({
         error: 'Invalid session',
         message: 'Session data corrupted or incomplete'
       })
     }
 
-    // 检查会话活跃性（可选：检查最后活动时间）
+    // VerificarSesión活跃性（Opcional：Verificar最后活动Tiempo）
     const now = new Date()
     const lastActivity = new Date(adminSession.lastActivity || adminSession.loginTime)
     const inactiveDuration = now - lastActivity
@@ -1493,14 +1501,14 @@ const authenticateAdmin = async (req, res, next) => {
       logger.security(
         `🔒 Expired admin session for ${adminSession.username} from ${req.ip || 'unknown'}`
       )
-      await redis.deleteSession(token) // 清理过期会话
+      await redis.deleteSession(token) // Limpiar过期Sesión
       return res.status(401).json({
         error: 'Session expired',
         message: 'Admin session has expired due to inactivity'
       })
     }
 
-    // 更新最后活动时间（异步，不阻塞请求）
+    // Actualizar最后活动Tiempo（Asíncrono，不BloqueanteSolicitud）
     redis
       .setSession(
         token,
@@ -1514,7 +1522,7 @@ const authenticateAdmin = async (req, res, next) => {
         logger.error('Failed to update admin session activity:', error)
       })
 
-    // 设置管理员信息（只包含必要信息）
+    // Establecer管理员Información（只Incluir必要Información）
     req.admin = {
       username: adminSession.username,
       sessionId: token,
@@ -1542,12 +1550,12 @@ const authenticateAdmin = async (req, res, next) => {
   }
 }
 
-// 👤 用户验证中间件
+// 👤 UsuarioValidarMiddleware
 const authenticateUser = async (req, res, next) => {
   const startTime = Date.now()
 
   try {
-    // 安全提取用户session token，支持多种方式
+    // Seguridad提取Usuariosession token，Soportar多种方式
     const sessionToken =
       req.headers['authorization']?.replace(/^Bearer\s+/i, '') ||
       req.cookies?.userToken ||
@@ -1561,7 +1569,7 @@ const authenticateUser = async (req, res, next) => {
       })
     }
 
-    // 基本token格式验证
+    // 基本tokenFormatoValidar
     if (typeof sessionToken !== 'string' || sessionToken.length < 32 || sessionToken.length > 128) {
       logger.security(`Invalid user session token format from ${req.ip || 'unknown'}`)
       return res.status(401).json({
@@ -1570,7 +1578,7 @@ const authenticateUser = async (req, res, next) => {
       })
     }
 
-    // 验证用户会话
+    // ValidarUsuarioSesión
     const sessionValidation = await userService.validateUserSession(sessionToken)
 
     if (!sessionValidation) {
@@ -1583,7 +1591,7 @@ const authenticateUser = async (req, res, next) => {
 
     const { session, user } = sessionValidation
 
-    // 检查用户是否被禁用
+    // VerificarUsuario是否被Deshabilitar
     if (!user.isActive) {
       logger.security(
         `🔒 Disabled user login attempt: ${user.username} from ${req.ip || 'unknown'}`
@@ -1594,7 +1602,7 @@ const authenticateUser = async (req, res, next) => {
       })
     }
 
-    // 设置用户信息（只包含必要信息）
+    // EstablecerUsuarioInformación（只Incluir必要Información）
     req.user = {
       id: user.id,
       username: user.username,
@@ -1627,18 +1635,18 @@ const authenticateUser = async (req, res, next) => {
   }
 }
 
-// 👤 用户或管理员验证中间件（支持两种身份）
+// 👤 Usuario或管理员ValidarMiddleware（Soportar两种身份）
 const authenticateUserOrAdmin = async (req, res, next) => {
   const startTime = Date.now()
 
   try {
-    // 检查是否有管理员token
+    // Verificar是否有管理员token
     const adminToken =
       req.headers['authorization']?.replace(/^Bearer\s+/i, '') ||
       req.cookies?.adminToken ||
       req.headers['x-admin-token']
 
-    // 检查是否有用户session token
+    // Verificar是否有Usuariosession token
     const userToken =
       req.headers['x-user-token'] ||
       req.cookies?.userToken ||
@@ -1649,13 +1657,13 @@ const authenticateUserOrAdmin = async (req, res, next) => {
       try {
         const adminSession = await redis.getSession(adminToken)
         if (adminSession && Object.keys(adminSession).length > 0) {
-          // 🔒 安全修复：验证会话必须字段（与 authenticateAdmin 保持一致）
+          // 🔒 SeguridadCorrección：ValidarSesión必须Campo（与 authenticateAdmin 保持一致）
           if (!adminSession.username || !adminSession.loginTime) {
             logger.security(
               `🔒 Corrupted admin session in authenticateUserOrAdmin from ${req.ip || 'unknown'} - missing required fields (username: ${!!adminSession.username}, loginTime: ${!!adminSession.loginTime})`
             )
-            await redis.deleteSession(adminToken) // 清理无效/伪造的会话
-            // 不返回 401，继续尝试用户认证
+            await redis.deleteSession(adminToken) // Limpiar无效/伪造的Sesión
+            // 不Retornar 401，继续尝试Usuario认证
           } else {
             req.admin = {
               username: adminSession.username,
@@ -1675,7 +1683,7 @@ const authenticateUserOrAdmin = async (req, res, next) => {
       }
     }
 
-    // 尝试用户认证
+    // 尝试Usuario认证
     if (userToken) {
       try {
         const sessionValidation = await userService.validateUserSession(userToken)
@@ -1706,7 +1714,7 @@ const authenticateUserOrAdmin = async (req, res, next) => {
       }
     }
 
-    // 如果都失败了，返回未授权
+    // 如果都Falló了，Retornar未授权
     logger.security(`Authentication failed from ${req.ip || 'unknown'}`)
     return res.status(401).json({
       error: 'Authentication required',
@@ -1728,14 +1736,14 @@ const authenticateUserOrAdmin = async (req, res, next) => {
   }
 }
 
-// 🛡️ 权限检查中间件
+// 🛡️ PermisoVerificarMiddleware
 const requireRole = (allowedRoles) => (req, res, next) => {
-  // 管理员始终有权限
+  // 管理员始终有Permiso
   if (req.admin) {
     return next()
   }
 
-  // 检查用户角色
+  // VerificarUsuarioRol
   if (req.user) {
     const userRole = req.user.role
     const allowed = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles]
@@ -1759,13 +1767,13 @@ const requireRole = (allowedRoles) => (req, res, next) => {
   })
 }
 
-// 🔒 管理员权限检查中间件
+// 🔒 管理员PermisoVerificarMiddleware
 const requireAdmin = (req, res, next) => {
   if (req.admin) {
     return next()
   }
 
-  // 检查是否是admin角色的用户
+  // Verificar是否是adminRol的Usuario
   if (req.user && req.user.role === 'admin') {
     return next()
   }
@@ -1779,14 +1787,14 @@ const requireAdmin = (req, res, next) => {
   })
 }
 
-// 注意：使用统计现在直接在/api/v1/messages路由中处理，
-// 以便从Claude API响应中提取真实的usage数据
+// 注意：使用Estadística现在直接在/api/v1/messagesRuta中Procesar，
+// 以便从Claude APIRespuesta中提取真实的usageDatos
 
-// 🚦 CORS中间件（优化版，支持Chrome插件）
+// 🚦 CORSMiddleware（Optimización版，SoportarChromeComplemento）
 const corsMiddleware = (req, res, next) => {
   const { origin } = req.headers
 
-  // 允许的源（可以从配置文件读取）
+  // 允许的源（可以从ConfiguraciónArchivoLeer）
   const allowedOrigins = [
     'http://localhost:3000',
     'https://localhost:3000',
@@ -1794,10 +1802,10 @@ const corsMiddleware = (req, res, next) => {
     'https://127.0.0.1:3000'
   ]
 
-  // 🆕 检查是否为Chrome插件请求
+  // 🆕 Verificar是否为ChromeComplementoSolicitud
   const isChromeExtension = origin && origin.startsWith('chrome-extension://')
 
-  // 设置CORS头
+  // EstablecerCORS头
   if (allowedOrigins.includes(origin) || !origin || isChromeExtension) {
     res.header('Access-Control-Allow-Origin', origin || '*')
   }
@@ -1822,7 +1830,7 @@ const corsMiddleware = (req, res, next) => {
 
   res.header('Access-Control-Expose-Headers', ['X-Request-ID', 'Content-Type'].join(', '))
 
-  res.header('Access-Control-Max-Age', '86400') // 24小时预检缓存
+  res.header('Access-Control-Max-Age', '86400') // 24小时预检Caché
   res.header('Access-Control-Allow-Credentials', 'true')
 
   if (req.method === 'OPTIONS') {
@@ -1832,21 +1840,21 @@ const corsMiddleware = (req, res, next) => {
   }
 }
 
-// 📝 请求日志中间件（优化版）
+// 📝 SolicitudRegistroMiddleware（Optimización版）
 const requestLogger = (req, res, next) => {
   const start = Date.now()
   const requestId = Math.random().toString(36).substring(2, 15)
 
-  // 添加请求ID到请求对象
+  // 添加SolicitudID到SolicitudObjeto
   req.requestId = requestId
   res.setHeader('X-Request-ID', requestId)
 
-  // 获取客户端信息
+  // ObtenerClienteInformación
   const clientIP = req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown'
   const userAgent = req.get('User-Agent') || 'unknown'
   const referer = req.get('Referer') || 'none'
 
-  // 请求开始 → debug 级别（减少正常请求的日志量）
+  // SolicitudIniciando → debug 级别（减少正常Solicitud的Registro量）
   const isDebugRoute = req.originalUrl.includes('event_logging')
   if (req.originalUrl !== '/health') {
     logger.debug(`▶ [${requestId}] ${req.method} ${req.originalUrl}`, {
@@ -1855,7 +1863,7 @@ const requestLogger = (req, res, next) => {
     })
   }
 
-  // 拦截 res.json() 捕获响应体
+  // 拦截 res.json() 捕获Respuesta体
   const originalJson = res.json.bind(res)
   res.json = (body) => {
     res._responseBody = body
@@ -1874,39 +1882,39 @@ const requestLogger = (req, res, next) => {
     const emoji = status >= 500 ? '❌' : status >= 400 ? '⚠️ ' : '🟢'
     const level = status >= 500 ? 'error' : status >= 400 ? 'warn' : 'info'
 
-    // 主消息行
+    // 主消息Fila
     const msg = `${emoji} ${status} ${req.method} ${req.originalUrl}  ${duration}ms ${contentLength}B`
 
-    // 构建树形 metadata
+    // Construir树形 metadata
     const meta = { requestId }
 
-    // 请求体（非 GET 且有内容时显示）
+    // Solicitud体（非 GET 且有内容时显示）
     if (req.method !== 'GET' && req.body && Object.keys(req.body).length > 0) {
       meta.req = req.body
     }
 
-    // 查询参数（GET 请求且有查询参数时单独显示）
+    // ConsultaParámetro（GET Solicitud且有ConsultaParámetro时单独显示）
     const queryIdx = req.originalUrl.indexOf('?')
     if (queryIdx > -1) {
       meta.query = req.originalUrl.substring(queryIdx + 1)
     }
 
-    // 响应体
+    // Respuesta体
     if (res._responseBody) {
       meta.res = res._responseBody
     }
 
-    // API Key 信息（合并到同一条日志）
+    // API Key Información（合并到同一条Registro）
     if (req.apiKey) {
       meta.key = `${req.apiKey.name} (${req.apiKey.id})`
     }
 
-    // 认证信息
+    // 认证Información
     if (req._authInfo) {
       meta.auth = req._authInfo
     }
 
-    // 完整信息写入文件
+    // 完整InformaciónEscribirArchivo
     meta.ip = clientIP
     meta.ua = userAgent
     meta.referer = referer
@@ -1917,7 +1925,7 @@ const requestLogger = (req, res, next) => {
       logger[level](msg, meta)
     }
 
-    // 慢请求警告
+    // 慢SolicitudAdvertencia
     if (duration > 5000) {
       logger.warn(`🐌 Slow request: ${duration}ms ${req.method} ${req.originalUrl}`)
     }
@@ -1931,20 +1939,20 @@ const requestLogger = (req, res, next) => {
   next()
 }
 
-// 🛡️ 安全中间件（增强版）
+// 🛡️ Middleware de seguridad（增强版）
 const securityMiddleware = (req, res, next) => {
-  // 设置基础安全头
+  // Establecer基础Seguridad头
   res.setHeader('X-Content-Type-Options', 'nosniff')
   res.setHeader('X-Frame-Options', 'DENY')
   res.setHeader('X-XSS-Protection', '1; mode=block')
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
 
-  // 添加更多安全头
+  // 添加更多Seguridad头
   res.setHeader('X-DNS-Prefetch-Control', 'off')
   res.setHeader('X-Download-Options', 'noopen')
   res.setHeader('X-Permitted-Cross-Domain-Policies', 'none')
 
-  // Cross-Origin-Opener-Policy (仅对可信来源设置)
+  // Cross-Origin-Opener-Policy (仅对可信来源Establecer)
   const host = req.get('host') || ''
   const isLocalhost =
     host.includes('localhost') || host.includes('127.0.0.1') || host.includes('0.0.0.0')
@@ -1979,11 +1987,11 @@ const securityMiddleware = (req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains')
   }
 
-  // 移除泄露服务器信息的头
+  // Eliminación泄露Servicio器Información的头
   res.removeHeader('X-Powered-By')
   res.removeHeader('Server')
 
-  // 防止信息泄露
+  // 防止Información泄露
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
@@ -1991,12 +1999,12 @@ const securityMiddleware = (req, res, next) => {
   next()
 }
 
-// 🚨 错误处理中间件（增强版）
+// 🚨 ErrorProcesarMiddleware（增强版）
 const errorHandler = (error, req, res, _next) => {
   const requestId = req.requestId || 'unknown'
   const isDevelopment = process.env.NODE_ENV === 'development'
 
-  // 记录详细错误信息
+  // Registro详细ErrorInformación
   logger.error(`💥 [${requestId}] Unhandled error:`, {
     error: error.message,
     stack: error.stack,
@@ -2017,7 +2025,7 @@ const errorHandler = (error, req, res, _next) => {
     statusCode = error.status
   }
 
-  // 根据错误类型提供友好的错误消息
+  // 根据ErrorTipo提供友好的Error消息
   switch (error.name) {
     case 'ValidationError':
       statusCode = 400
@@ -2042,7 +2050,7 @@ const errorHandler = (error, req, res, _next) => {
       break
     default:
       if (error.message && !isDevelopment) {
-        // 在生产环境中，只显示安全的错误消息
+        // 在生产环境中，只显示Seguridad的Error消息
         if (error.message.includes('ECONNREFUSED')) {
           userMessage = 'Service temporarily unavailable'
         } else if (error.message.includes('timeout')) {
@@ -2051,10 +2059,10 @@ const errorHandler = (error, req, res, _next) => {
       }
   }
 
-  // 设置响应头
+  // EstablecerRespuesta头
   res.setHeader('X-Request-ID', requestId)
 
-  // 构建错误响应
+  // ConstruirErrorRespuesta
   const errorResponse = {
     error: errorMessage,
     message: isDevelopment ? error.message : userMessage,
@@ -2062,7 +2070,7 @@ const errorHandler = (error, req, res, _next) => {
     timestamp: new Date().toISOString()
   }
 
-  // 在开发环境中包含更多调试信息
+  // 在开发环境中Incluir更多DepurarInformación
   if (isDevelopment) {
     errorResponse.stack = error.stack
     errorResponse.url = req.originalUrl
@@ -2072,10 +2080,10 @@ const errorHandler = (error, req, res, _next) => {
   res.status(statusCode).json(errorResponse)
 }
 
-// 🌐 全局速率限制中间件（延迟初始化）
+// 🌐 全局速率LímiteMiddleware（延迟Inicializar）
 // const rateLimiter = null // 暂时未使用
 
-// 暂时注释掉未使用的函数
+// 暂时注释掉未使用的Función
 // const getRateLimiter = () => {
 //   if (!rateLimiter) {
 //     try {
@@ -2088,9 +2096,9 @@ const errorHandler = (error, req, res, _next) => {
 //       rateLimiter = new RateLimiterRedis({
 //         storeClient: client,
 //         keyPrefix: 'global_rate_limit',
-//         points: 1000, // 请求数量
+//         points: 1000, // Solicitud数量
 //         duration: 900, // 15分钟 (900秒)
-//         blockDuration: 900 // 阻塞时间15分钟
+//         blockDuration: 900 // BloqueanteTiempo15分钟
 //       })
 //
 //       logger.info('✅ Rate limiter initialized successfully')
@@ -2103,19 +2111,19 @@ const errorHandler = (error, req, res, _next) => {
 // }
 
 const globalRateLimit = async (req, res, next) =>
-  // 已禁用全局IP限流 - 直接跳过所有请求
+  // 已Deshabilitar全局IP限流 - 直接跳过所有Solicitud
   next()
 
-// 以下代码已被禁用
+// 以下代码已被Deshabilitar
 /*
-  // 跳过健康检查和内部请求
+  // 跳过Verificación de salud和内部Solicitud
   if (req.path === '/health' || req.path === '/api/health') {
     return next()
   }
 
   const limiter = getRateLimiter()
   if (!limiter) {
-    // 如果Redis不可用，直接跳过速率限制
+    // 如果Redis不可用，直接跳过速率Límite
     return next()
   }
 
@@ -2145,7 +2153,7 @@ const globalRateLimit = async (req, res, next) =>
   }
   */
 
-// 📊 请求大小限制中间件
+// 📊 Límite de tamaño de solicitudMiddleware
 const requestSizeLimit = (req, res, next) => {
   const MAX_SIZE_MB = parseInt(process.env.REQUEST_MAX_SIZE_MB || '100', 10)
   const maxSize = MAX_SIZE_MB * 1024 * 1024

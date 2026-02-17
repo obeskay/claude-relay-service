@@ -12,7 +12,7 @@
               <i class="fas fa-edit text-sm text-white sm:text-base" />
             </div>
             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-              批量编辑 API Keys ({{ selectedCount }} 个)
+              Edición por lotes API Keys ({{ selectedCount }}  )
             </h3>
           </div>
           <button
@@ -27,59 +27,59 @@
           class="modal-scroll-content custom-scrollbar flex-1 space-y-4 sm:space-y-6"
           @submit.prevent="batchUpdateApiKeys"
         >
-          <!-- 说明文本 -->
+          <!-- Instrucciones文本 -->
           <div class="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
             <div class="flex items-start gap-3">
               <i class="fas fa-info-circle mt-1 text-blue-500" />
               <div>
-                <p class="text-sm font-medium text-blue-800 dark:text-blue-300">批量编辑说明</p>
+                <p class="text-sm font-medium text-blue-800 dark:text-blue-300">Edición por lotesInstrucciones</p>
                 <p class="mt-1 text-sm text-blue-700 dark:text-blue-400">
-                  以下设置将应用到所选的 {{ selectedCount }} 个 API
-                  Key。只有填写或修改的字段才会被更新，空白字段将保持原值不变。
+                  以abajoConfiguración将应用到所选 {{ selectedCount }}   API
+                  Key。只有填写o修改字段才会被Actualizar，空白字段将保持原值不变。
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- 标签编辑 -->
+          <!-- EtiquetaEditar -->
           <div>
             <label
               class="mb-1.5 block text-xs font-semibold text-gray-700 dark:text-gray-300 sm:mb-3 sm:text-sm"
             >
-              标签 (批量操作)
+              Etiqueta (Operación por lotes)
             </label>
             <div class="space-y-4">
-              <!-- 标签操作模式选择 -->
+              <!-- EtiquetaOperación模式选择 -->
               <div class="flex flex-wrap gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input v-model="tagOperation" class="mr-2" type="radio" value="replace" />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">替换标签</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">替换Etiqueta</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input v-model="tagOperation" class="mr-2" type="radio" value="add" />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">添加标签</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">添加Etiqueta</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input v-model="tagOperation" class="mr-2" type="radio" value="remove" />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">移除标签</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">移除Etiqueta</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input v-model="tagOperation" class="mr-2" type="radio" value="none" />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">不修改标签</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">不修改Etiqueta</span>
                 </label>
               </div>
 
-              <!-- 标签编辑区域 -->
+              <!-- EtiquetaEditar区域 -->
               <div v-if="tagOperation !== 'none'" class="space-y-3">
-                <!-- 已选择的标签 -->
+                <!-- 已选择Etiqueta -->
                 <div v-if="form.tags.length > 0">
                   <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
                     {{
                       tagOperation === 'replace'
-                        ? '新标签列表:'
+                        ? '新Etiqueta列表:'
                         : tagOperation === 'add'
-                          ? '要添加的标签:'
-                          : '要移除的标签:'
+                          ? '要添加Etiqueta:'
+                          : '要移除Etiqueta:'
                     }}
                   </div>
                   <div class="flex flex-wrap gap-2">
@@ -100,10 +100,10 @@
                   </div>
                 </div>
 
-                <!-- 可选择的已有标签 -->
+                <!-- 可选择已有Etiqueta -->
                 <div v-if="unselectedTags.length > 0">
                   <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                    点击选择已有标签:
+                    点击选择已有Etiqueta:
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <button
@@ -119,16 +119,16 @@
                   </div>
                 </div>
 
-                <!-- 创建新标签 -->
+                <!-- Crear新Etiqueta -->
                 <div>
                   <div class="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">
-                    创建新标签:
+                    Crear新Etiqueta:
                   </div>
                   <div class="flex gap-2">
                     <input
                       v-model="newTag"
                       class="form-input flex-1 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-                      placeholder="输入新标签名称"
+                      placeholder="Ingrese nombre de nueva etiqueta"
                       type="text"
                       @keypress.enter.prevent="addTag"
                     />
@@ -145,7 +145,7 @@
             </div>
           </div>
 
-          <!-- 速率限制设置 -->
+          <!-- 速率LímiteConfiguración -->
           <div
             class="rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-700 dark:bg-blue-900/20"
           >
@@ -155,7 +155,7 @@
               >
                 <i class="fas fa-tachometer-alt text-xs text-white" />
               </div>
-              <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">速率限制设置</h4>
+              <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">速率LímiteConfiguración</h4>
             </div>
 
             <div class="space-y-2">
@@ -175,7 +175,7 @@
 
                 <div>
                   <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >请求次数限制</label
+                    >Número de solicitudesLímite</label
                   >
                   <input
                     v-model="form.rateLimitRequests"
@@ -188,7 +188,7 @@
 
                 <div>
                   <label class="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300"
-                    >费用限制 (美元)</label
+                    >CostoLimitar (美元)</label
                   >
                   <input
                     v-model="form.rateLimitCost"
@@ -203,16 +203,16 @@
             </div>
           </div>
 
-          <!-- 每日费用限制 -->
+          <!-- Límite de costo diario -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              每日费用限制 (美元)
+              Límite de costo diario (美元)
             </label>
             <input
               v-model="form.dailyCostLimit"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
               min="0"
-              placeholder="不修改 (0 表示无限制)"
+              placeholder="不修改 (0 表示无Límite)"
               step="0.01"
               type="number"
             />
@@ -220,54 +220,54 @@
 
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              总费用限制 (美元)
+              Límite de costo total (美元)
             </label>
             <input
               v-model="form.totalCostLimit"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
               min="0"
-              placeholder="不修改 (0 表示无限制)"
+              placeholder="不修改 (0 表示无Límite)"
               step="0.01"
               type="number"
             />
           </div>
 
-          <!-- Claude 模型周费用限制 -->
+          <!-- Límite de costo semanal de modelos Claude -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Claude 模型周费用限制 (美元)
+              Límite de costo semanal de modelos Claude (美元)
             </label>
             <input
               v-model="form.weeklyOpusCostLimit"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
               min="0"
-              placeholder="不修改 (0 表示无限制)"
+              placeholder="不修改 (0 表示无Límite)"
               step="0.01"
               type="number"
             />
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              设置 Claude 模型的周费用限制（周一到周日），仅对 Claude 模型请求生效
+              Configuración Claude Modelo周CostoLímite（周一到周日），仅对 Claude ModeloSolicitud生效
             </p>
           </div>
 
-          <!-- 并发限制 -->
+          <!-- Límite de concurrencia -->
           <div>
             <label class="mb-3 block text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >并发限制</label
+              >Límite de concurrencia</label
             >
             <input
               v-model="form.concurrencyLimit"
               class="form-input w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
               min="0"
-              placeholder="不修改 (0 表示无限制)"
+              placeholder="不修改 (0 表示无Límite)"
               type="number"
             />
           </div>
 
-          <!-- 激活状态 -->
+          <!-- 激活Estado -->
           <div>
             <div class="mb-3 flex items-center gap-4">
-              <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">激活状态</label>
+              <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">激活Estado</label>
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center">
                   <input v-model="form.isActive" class="mr-2" type="radio" :value="true" />
@@ -275,7 +275,7 @@
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input v-model="form.isActive" class="mr-2" type="radio" :value="false" />
-                  <span class="text-sm text-gray-700 dark:text-gray-300">禁用</span>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">Deshabilitar</span>
                 </label>
                 <label class="flex cursor-pointer items-center">
                   <input v-model="form.isActive" class="mr-2" type="radio" :value="null" />
@@ -297,7 +297,7 @@
               </label>
               <label class="flex cursor-pointer items-center">
                 <input v-model="form.permissions" class="mr-2" type="radio" value="all" />
-                <span class="text-sm text-gray-700">全部服务</span>
+                <span class="text-sm text-gray-700">Todos los servicios</span>
               </label>
               <label class="flex cursor-pointer items-center">
                 <input v-model="form.permissions" class="mr-2" type="radio" value="claude" />
@@ -327,7 +327,7 @@
               <button
                 class="flex items-center gap-1 text-sm text-blue-600 transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-50 dark:text-blue-400 dark:hover:text-blue-300"
                 :disabled="accountsLoading"
-                title="刷新账号列表"
+                title="Actualizar账号列表"
                 type="button"
                 @click="refreshAccounts"
               >
@@ -338,7 +338,7 @@
                     'text-xs'
                   ]"
                 />
-                <span>{{ accountsLoading ? '刷新中...' : '刷新账号' }}</span>
+                <span>{{ accountsLoading ? 'Actualizaren...' : 'Actualizar账号' }}</span>
               </button>
             </div>
             <div class="grid grid-cols-1 gap-3">
@@ -426,7 +426,7 @@
               type="button"
               @click="$emit('close')"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="btn btn-primary flex-1 px-6 py-3 font-semibold"
@@ -435,7 +435,7 @@
             >
               <div v-if="loading" class="loading-spinner mr-2" />
               <i v-else class="fas fa-save mr-2" />
-              {{ loading ? '保存中...' : '批量保存' }}
+              {{ loading ? 'Guardaren...' : '批量Guardar' }}
             </button>
           </div>
         </form>
@@ -490,27 +490,27 @@ const localAccounts = ref({
   droidGroups: []
 })
 
-// 标签相关
+// Etiqueta相关
 const newTag = ref('')
 const availableTags = ref([])
 const tagOperation = ref('none') // 'replace', 'add', 'remove', 'none'
 
 const selectedCount = computed(() => props.selectedKeys.length)
 
-// 计算未选择的标签
+// 计算未选择Etiqueta
 const unselectedTags = computed(() => {
   return availableTags.value.filter((tag) => !form.tags.includes(tag))
 })
 
 // 表单数据
 const form = reactive({
-  rateLimitCost: '', // 费用限制替代token限制
+  rateLimitCost: '', // CostoLímite替代tokenLímite
   rateLimitWindow: '',
   rateLimitRequests: '',
   concurrencyLimit: '',
   dailyCostLimit: '',
   totalCostLimit: '',
-  weeklyOpusCostLimit: '', // 新增Claude周费用限制
+  weeklyOpusCostLimit: '', // AgregarClaude周CostoLímite
   permissions: '', // 空字符串表示不修改
   claudeAccountId: '',
   geminiAccountId: '',
@@ -554,7 +554,7 @@ const isServiceSelectable = (service) => {
   return form.permissions === service
 }
 
-// 标签管理方法
+// Gestión de etiquetas方法
 const addTag = () => {
   if (newTag.value && newTag.value.trim()) {
     const tag = newTag.value.trim()
@@ -575,7 +575,7 @@ const removeTag = (index) => {
   form.tags.splice(index, 1)
 }
 
-// 刷新账号列表
+// Actualizar账号列表
 const refreshAccounts = async () => {
   accountsLoading.value = true
   try {
@@ -601,7 +601,7 @@ const refreshAccounts = async () => {
       httpApis.getAccountGroupsApi()
     ])
 
-    // 合并Claude OAuth账户和Claude Console账户
+    // 合并Claude OAuthCuentayClaude ConsoleCuenta
     const claudeAccounts = []
 
     if (claudeData.success) {
@@ -626,7 +626,7 @@ const refreshAccounts = async () => {
 
     localAccounts.value.claude = claudeAccounts
 
-    // 合并 Gemini OAuth 和 Gemini API 账号
+    // 合并 Gemini OAuth y Gemini API 账号
     const geminiAccounts = []
 
     if (geminiData.success) {
@@ -699,23 +699,23 @@ const refreshAccounts = async () => {
       localAccounts.value.droidGroups = allGroups.filter((g) => g.platform === 'droid')
     }
 
-    showToast('账号列表已刷新', 'success')
+    showToast('账号列表已Actualizar', 'success')
   } catch (error) {
-    showToast('刷新账号列表失败', 'error')
+    showToast('Actualizar账号列表Fallido', 'error')
   } finally {
     accountsLoading.value = false
   }
 }
 
-// 批量更新API Keys
+// 批量ActualizarAPI Keys
 const batchUpdateApiKeys = async () => {
   loading.value = true
 
   try {
-    // 准备提交的数据
+    // 准备Enviar数据
     const updates = {}
 
-    // 只有非空值才添加到更新对象中
+    // 只有非空值才添加到Actualizar对象en
     if (form.rateLimitCost !== '' && form.rateLimitCost !== null) {
       updates.rateLimitCost = parseFloat(form.rateLimitCost)
     }
@@ -738,12 +738,12 @@ const batchUpdateApiKeys = async () => {
       updates.weeklyOpusCostLimit = parseFloat(form.weeklyOpusCostLimit)
     }
 
-    // 权限设置
+    // 权限Configuración
     if (form.permissions !== '') {
       updates.permissions = form.permissions
     }
 
-    // 账户绑定
+    // Cuenta绑定
     if (form.claudeAccountId !== '') {
       if (form.claudeAccountId === 'SHARED_POOL') {
         updates.claudeAccountId = null
@@ -792,12 +792,12 @@ const batchUpdateApiKeys = async () => {
       }
     }
 
-    // 激活状态
+    // 激活Estado
     if (form.isActive !== null) {
       updates.isActive = form.isActive
     }
 
-    // 标签处理
+    // Etiqueta处理
     if (tagOperation.value !== 'none') {
       updates.tags = form.tags
       updates.tagOperation = tagOperation.value
@@ -812,43 +812,43 @@ const batchUpdateApiKeys = async () => {
       const { successCount, failedCount, errors } = result.data
 
       if (successCount > 0) {
-        showToast(`成功批量编辑 ${successCount} 个 API Keys`, 'success')
+        showToast(`ExitosoEdición por lotes ${successCount}   API Keys`, 'success')
 
         if (failedCount > 0) {
           const errorMessages = errors.map((e) => `${e.keyId}: ${e.error}`).join('\n')
-          showToast(`${failedCount} 个编辑失败:\n${errorMessages}`, 'warning')
+          showToast(`${failedCount}  EditarFallido:\n${errorMessages}`, 'warning')
         }
       } else {
-        showToast('所有 API Keys 编辑失败', 'error')
+        showToast('所有 API Keys EditarFallido', 'error')
       }
 
       emit('success')
       emit('close')
     } else {
-      showToast(result.message || '批量编辑失败', 'error')
+      showToast(result.message || 'Edición por lotesFallido', 'error')
     }
   } catch (error) {
-    showToast('批量编辑失败', 'error')
-    console.error('批量编辑 API Keys 失败:', error)
+    showToast('Edición por lotesFallido', 'error')
+    console.error('Edición por lotes API Keys Fallido:', error)
   } finally {
     loading.value = false
   }
 }
 
 onMounted(async () => {
-  // 加载已存在的标签
+  // 加载已存enEtiqueta
   availableTags.value = await apiKeysStore.fetchTags()
 
   // 初始化账号数据
   if (props.accounts) {
-    // props.accounts.gemini 已经包含了 OAuth 和 API 两种类型的账号（父组件已合并）
-    // 保留原有的 platform 属性，不要覆盖
+    // props.accounts.gemini 已经包含 OAuth y API 两种Tipo账号（父组件已合并）
+    // 保留原有 platform 属性，不要覆盖
     const geminiAccounts = (props.accounts.gemini || []).map((account) => ({
       ...account,
-      platform: account.platform || 'gemini' // 保留原有 platform，只在没有时设默认值
+      platform: account.platform || 'gemini' // 保留原有 platform，只en没有时设默认值
     }))
 
-    // props.accounts.openai 只包含 openai 类型，openaiResponses 需要单独处理
+    // props.accounts.openai 只包含 openai Tipo，openaiResponses 需要单独处理
     const openaiAccounts = []
     if (props.accounts.openai) {
       props.accounts.openai.forEach((account) => {

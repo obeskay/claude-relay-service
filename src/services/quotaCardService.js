@@ -1,6 +1,6 @@
 /**
- * 额度卡/时间卡服务
- * 管理员生成卡，用户核销，管理员可撤销
+ * 额度卡/Tiempo卡Servicio
+ * 管理员Generar卡，Usuario核销，管理员可撤销
  */
 const redis = require('../models/redis')
 const logger = require('../utils/logger')
@@ -16,7 +16,7 @@ class QuotaCardService {
   }
 
   /**
-   * 获取额度卡上限配置
+   * Obtener额度卡上限Configuración
    */
   async getLimitsConfig() {
     try {
@@ -24,7 +24,7 @@ class QuotaCardService {
       if (configStr) {
         return JSON.parse(configStr)
       }
-      // 没有 Redis 配置时，使用 config.js 默认值
+      // 没有 Redis Configuración时，使用 config.js PredeterminadoValor
       const config = require('../../config/config')
       return (
         config.quotaCardLimits || {
@@ -40,7 +40,7 @@ class QuotaCardService {
   }
 
   /**
-   * 保存额度卡上限配置
+   * 保存额度卡上限Configuración
    */
   async saveLimitsConfig(config) {
     try {
@@ -62,10 +62,10 @@ class QuotaCardService {
   }
 
   /**
-   * 生成卡号（16位，格式：CC_XXXX_XXXX_XXXX）
+   * Generar卡号（16位，Formato：CC_XXXX_XXXX_XXXX）
    */
   _generateCardCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // 排除容易混淆的字符
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // Excluir容易混淆的字符
     let code = ''
     for (let i = 0; i < 12; i++) {
       code += chars.charAt(crypto.randomInt(chars.length))
@@ -74,16 +74,16 @@ class QuotaCardService {
   }
 
   /**
-   * 创建额度卡/时间卡
-   * @param {Object} options - 卡配置
-   * @param {string} options.type - 卡类型：'quota' | 'time' | 'combo'
-   * @param {number} options.quotaAmount - CC 额度数量（quota/combo 类型必填）
-   * @param {number} options.timeAmount - 时间数量（time/combo 类型必填）
-   * @param {string} options.timeUnit - 时间单位：'hours' | 'days' | 'months'
-   * @param {string} options.expiresAt - 卡本身的有效期（可选）
+   * Crear额度卡/Tiempo卡
+   * @param {Object} options - 卡Configuración
+   * @param {string} options.type - 卡Tipo：'quota' | 'time' | 'combo'
+   * @param {number} options.quotaAmount - CC 额度数量（quota/combo Tipo必填）
+   * @param {number} options.timeAmount - Tiempo数量（time/combo Tipo必填）
+   * @param {string} options.timeUnit - Tiempo单位：'hours' | 'days' | 'months'
+   * @param {string} options.expiresAt - 卡本身的有效期（Opcional）
    * @param {string} options.note - 备注
-   * @param {string} options.createdBy - 创建者 ID
-   * @returns {Object} 创建的卡信息
+   * @param {string} options.createdBy - Crear者 ID
+   * @returns {Object} Crear的卡Información
    */
   async createCard(options = {}) {
     try {
@@ -97,7 +97,7 @@ class QuotaCardService {
         createdBy = 'admin'
       } = options
 
-      // 验证
+      // Validar
       if (!['quota', 'time', 'combo'].includes(type)) {
         throw new Error('Invalid card type')
       }
@@ -125,25 +125,25 @@ class QuotaCardService {
         createdAt: new Date().toISOString(),
         expiresAt: expiresAt || '',
         note: note || '',
-        // 核销信息
+        // 核销Información
         redeemedBy: '',
         redeemedByUsername: '',
         redeemedApiKeyId: '',
         redeemedApiKeyName: '',
         redeemedAt: '',
-        // 撤销信息
+        // 撤销Información
         revokedAt: '',
         revokedBy: '',
         revokeReason: ''
       }
 
-      // 保存卡数据
+      // 保存卡Datos
       await redis.client.hset(`${this.CARD_PREFIX}${cardId}`, cardData)
 
       // 建立卡号到 ID 的映射（用于快速查找）
       await redis.client.set(`quota_card_code:${cardCode}`, cardId)
 
-      // 添加到卡列表索引
+      // 添加到卡ColumnaTablaÍndice
       await redis.client.sadd('quota_cards:all', cardId)
       await redis.client.sadd(`quota_cards:status:${cardData.status}`, cardId)
 
@@ -169,10 +169,10 @@ class QuotaCardService {
   }
 
   /**
-   * 批量创建卡
-   * @param {Object} options - 卡配置
-   * @param {number} count - 创建数量
-   * @returns {Array} 创建的卡列表
+   * 批量Crear卡
+   * @param {Object} options - 卡Configuración
+   * @param {number} count - Crear数量
+   * @returns {Array} Crear的卡ColumnaTabla
    */
   async createCardsBatch(options = {}, count = 1) {
     const cards = []
@@ -185,7 +185,7 @@ class QuotaCardService {
   }
 
   /**
-   * 通过卡号获取卡信息
+   * 通过卡号Obtener卡Información
    */
   async getCardByCode(code) {
     try {
@@ -201,7 +201,7 @@ class QuotaCardService {
   }
 
   /**
-   * 通过 ID 获取卡信息
+   * 通过 ID Obtener卡Información
    */
   async getCardById(cardId) {
     try {
@@ -238,10 +238,10 @@ class QuotaCardService {
   }
 
   /**
-   * 获取所有卡列表
-   * @param {Object} options - 查询选项
+   * Obtener所有卡ColumnaTabla
+   * @param {Object} options - Consulta选项
    * @param {string} options.status - 按状态筛选
-   * @param {number} options.limit - 限制数量
+   * @param {number} options.limit - Límite数量
    * @param {number} options.offset - 偏移量
    */
   async getAllCards(options = {}) {
@@ -255,7 +255,7 @@ class QuotaCardService {
         cardIds = await redis.client.smembers('quota_cards:all')
       }
 
-      // 排序（按创建时间倒序）
+      // Ordenar（按CrearTiempo倒序）
       const cards = []
       for (const cardId of cardIds) {
         const card = await this.getCardById(cardId)
@@ -286,46 +286,46 @@ class QuotaCardService {
    * 核销卡
    * @param {string} code - 卡号
    * @param {string} apiKeyId - 目标 API Key ID
-   * @param {string} userId - 核销用户 ID
-   * @param {string} username - 核销用户名
+   * @param {string} userId - 核销Usuario ID
+   * @param {string} username - 核销Usuario名
    * @returns {Object} 核销结果
    */
   async redeemCard(code, apiKeyId, userId, username = '') {
     try {
-      // 获取卡信息
+      // Obtener卡Información
       const card = await this.getCardByCode(code)
       if (!card) {
         throw new Error('卡号不存在')
       }
 
-      // 检查卡状态
+      // Verificar卡状态
       if (card.status !== 'unused') {
         const statusMap = { used: '已使用', expired: '已过期', revoked: '已撤销' }
         throw new Error(`卡片${statusMap[card.status] || card.status}，无法兑换`)
       }
 
-      // 检查卡是否过期
+      // Verificar卡是否过期
       if (card.expiresAt && new Date(card.expiresAt) < new Date()) {
-        // 更新卡状态为过期
+        // Actualizar卡状态为过期
         await this._updateCardStatus(card.id, 'expired')
         throw new Error('卡片已过期')
       }
 
-      // 获取 API Key 信息
+      // Obtener API Key Información
       const apiKeyService = require('./apiKeyService')
       const keyData = await redis.getApiKey(apiKeyId)
       if (!keyData || Object.keys(keyData).length === 0) {
         throw new Error('API Key 不存在')
       }
 
-      // 获取上限配置
+      // Obtener上限Configuración
       const limits = await this.getLimitsConfig()
 
-      // 执行核销
+      // Ejecutar核销
       const redemptionId = uuidv4()
       const now = new Date().toISOString()
 
-      // 记录核销前状态
+      // Registro核销前状态
       const beforeLimit = parseFloat(keyData.totalCostLimit || 0)
       const beforeExpiry = keyData.expiresAt || ''
 
@@ -334,13 +334,13 @@ class QuotaCardService {
       let afterExpiry = beforeExpiry
       let quotaAdded = 0
       let timeAdded = 0
-      let actualTimeUnit = card.timeUnit // 实际使用的时间单位（截断时会改为 days）
-      const warnings = [] // 截断警告信息
+      let actualTimeUnit = card.timeUnit // 实际使用的Tiempo单位（截断时会改为 days）
+      const warnings = [] // 截断AdvertenciaInformación
 
       if (card.type === 'quota' || card.type === 'combo') {
         let amountToAdd = card.quotaAmount
 
-        // 上限保护：检查是否超过最大额度限制
+        // 上限保护：Verificar是否超过最大额度Límite
         if (limits.enabled && limits.maxTotalCostLimit > 0) {
           const maxAllowed = limits.maxTotalCostLimit - beforeLimit
           if (amountToAdd > maxAllowed) {
@@ -360,7 +360,7 @@ class QuotaCardService {
       }
 
       if (card.type === 'time' || card.type === 'combo') {
-        // 计算新的过期时间
+        // Calcular新的过期Tiempo
         let baseDate = beforeExpiry ? new Date(beforeExpiry) : new Date()
         if (baseDate < new Date()) {
           baseDate = new Date()
@@ -379,26 +379,26 @@ class QuotaCardService {
             break
         }
 
-        // 上限保护：检查是否超过最大有效期
+        // 上限保护：Verificar是否超过最大有效期
         if (limits.enabled && limits.maxExpiryDays > 0) {
           const maxExpiry = new Date()
           maxExpiry.setDate(maxExpiry.getDate() + limits.maxExpiryDays)
           if (newExpiry > maxExpiry) {
             newExpiry = maxExpiry
-            warnings.push(`有效期已达上限（${limits.maxExpiryDays}天），时间已截断`)
-            logger.warn(`时间卡兑换超出上限，已截断至 ${maxExpiry.toISOString()}`)
+            warnings.push(`有效期已达上限（${limits.maxExpiryDays}天），Tiempo已截断`)
+            logger.warn(`Tiempo卡兑换超出上限，已截断至 ${maxExpiry.toISOString()}`)
           }
         }
 
         const result = await apiKeyService.extendExpiry(apiKeyId, card.timeAmount, card.timeUnit)
-        // 如果有上限保护，使用截断后的时间
+        // 如果有上限保护，使用截断后的Tiempo
         if (limits.enabled && limits.maxExpiryDays > 0) {
           const maxExpiry = new Date()
           maxExpiry.setDate(maxExpiry.getDate() + limits.maxExpiryDays)
           if (new Date(result.newExpiresAt) > maxExpiry) {
             await redis.client.hset(`apikey:${apiKeyId}`, 'expiresAt', maxExpiry.toISOString())
             afterExpiry = maxExpiry.toISOString()
-            // 计算实际增加的天数，截断时统一用天
+            // Calcular实际增加的天数，截断时统一用天
             const actualDays = Math.max(
               0,
               Math.ceil((maxExpiry - baseDate) / (1000 * 60 * 60 * 24))
@@ -415,7 +415,7 @@ class QuotaCardService {
         }
       }
 
-      // 更新卡状态
+      // Actualizar卡状态
       await redis.client.hset(`${this.CARD_PREFIX}${card.id}`, {
         status: 'redeemed',
         redeemedBy: userId,
@@ -425,11 +425,11 @@ class QuotaCardService {
         redeemedAt: now
       })
 
-      // 更新状态索引
+      // Actualizar状态Índice
       await redis.client.srem(`quota_cards:status:unused`, card.id)
       await redis.client.sadd(`quota_cards:status:redeemed`, card.id)
 
-      // 创建核销记录
+      // Crear核销Registro
       const redemptionData = {
         id: redemptionId,
         cardId: card.id,
@@ -452,7 +452,7 @@ class QuotaCardService {
 
       await redis.client.hset(`${this.REDEMPTION_PREFIX}${redemptionId}`, redemptionData)
 
-      // 添加到核销记录索引
+      // 添加到核销RegistroÍndice
       await redis.client.sadd('redemptions:all', redemptionId)
       await redis.client.sadd(`redemptions:user:${userId}`, redemptionId)
       await redis.client.sadd(`redemptions:apikey:${apiKeyId}`, redemptionId)
@@ -481,14 +481,14 @@ class QuotaCardService {
 
   /**
    * 撤销核销
-   * @param {string} redemptionId - 核销记录 ID
+   * @param {string} redemptionId - 核销Registro ID
    * @param {string} revokedBy - 撤销者 ID
    * @param {string} reason - 撤销原因
    * @returns {Object} 撤销结果
    */
   async revokeRedemption(redemptionId, revokedBy, reason = '') {
     try {
-      // 获取核销记录
+      // Obtener核销Registro
       const redemptionData = await redis.client.hgetall(`${this.REDEMPTION_PREFIX}${redemptionId}`)
       if (!redemptionData || Object.keys(redemptionData).length === 0) {
         throw new Error('Redemption record not found')
@@ -511,10 +511,10 @@ class QuotaCardService {
         ;({ actualDeducted } = result)
       }
 
-      // 注意：时间卡撤销比较复杂，这里简化处理，不回退时间
-      // 如果需要回退时间，可以在这里添加逻辑
+      // 注意：Tiempo卡撤销比较复杂，这里简化Procesar，不RetiradaTiempo
+      // 如果需要RetiradaTiempo，可以在这里添加逻辑
 
-      // 更新核销记录状态
+      // Actualizar核销Registro状态
       await redis.client.hset(`${this.REDEMPTION_PREFIX}${redemptionId}`, {
         status: 'revoked',
         revokedAt: now,
@@ -523,7 +523,7 @@ class QuotaCardService {
         actualDeducted: String(actualDeducted)
       })
 
-      // 更新卡状态
+      // Actualizar卡状态
       const { cardId } = redemptionData
       await redis.client.hset(`${this.CARD_PREFIX}${cardId}`, {
         status: 'revoked',
@@ -532,7 +532,7 @@ class QuotaCardService {
         revokeReason: reason
       })
 
-      // 更新状态索引
+      // Actualizar状态Índice
       await redis.client.srem(`quota_cards:status:redeemed`, cardId)
       await redis.client.sadd(`quota_cards:status:revoked`, cardId)
 
@@ -552,11 +552,11 @@ class QuotaCardService {
   }
 
   /**
-   * 获取核销记录
-   * @param {Object} options - 查询选项
-   * @param {string} options.userId - 按用户筛选
+   * Obtener核销Registro
+   * @param {Object} options - Consulta选项
+   * @param {string} options.userId - 按Usuario筛选
    * @param {string} options.apiKeyId - 按 API Key 筛选
-   * @param {number} options.limit - 限制数量
+   * @param {number} options.limit - Límite数量
    * @param {number} options.offset - 偏移量
    */
   async getRedemptions(options = {}) {
@@ -602,7 +602,7 @@ class QuotaCardService {
         }
       }
 
-      // 排序（按时间倒序）
+      // Ordenar（按Tiempo倒序）
       redemptions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
 
       // 分页
@@ -622,7 +622,7 @@ class QuotaCardService {
   }
 
   /**
-   * 删除未使用的卡
+   * Eliminar未使用的卡
    */
   async deleteCard(cardId) {
     try {
@@ -635,11 +635,11 @@ class QuotaCardService {
         throw new Error('Only unused cards can be deleted')
       }
 
-      // 删除卡数据
+      // Eliminar卡Datos
       await redis.client.del(`${this.CARD_PREFIX}${cardId}`)
       await redis.client.del(`quota_card_code:${card.code}`)
 
-      // 从索引中移除
+      // 从Índice中Eliminación
       await redis.client.srem('quota_cards:all', cardId)
       await redis.client.srem(`quota_cards:status:unused`, cardId)
 
@@ -653,7 +653,7 @@ class QuotaCardService {
   }
 
   /**
-   * 更新卡状态（内部方法）
+   * Actualizar卡状态（内部Método）
    */
   async _updateCardStatus(cardId, newStatus) {
     const card = await this.getCardById(cardId)
@@ -664,13 +664,13 @@ class QuotaCardService {
     const oldStatus = card.status
     await redis.client.hset(`${this.CARD_PREFIX}${cardId}`, 'status', newStatus)
 
-    // 更新状态索引
+    // Actualizar状态Índice
     await redis.client.srem(`quota_cards:status:${oldStatus}`, cardId)
     await redis.client.sadd(`quota_cards:status:${newStatus}`, cardId)
   }
 
   /**
-   * 获取卡统计信息
+   * Obtener卡EstadísticaInformación
    */
   async getCardStats() {
     try {

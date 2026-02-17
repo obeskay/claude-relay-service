@@ -38,7 +38,7 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                API Key 端点测试
+                Prueba de Endpoint de API Key
               </h3>
               <p class="text-xs text-gray-500 dark:text-gray-400">
                 {{ displayName }}
@@ -73,11 +73,11 @@
               </div>
             </div>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              测试将使用此 API Key 调用当前服务的 /api 端点
+              La prueba usará esta API Key para llamar al endpoint /api del servicio actual
             </p>
           </div>
 
-          <!-- 测试信息 -->
+          <!-- 测试Información -->
           <div class="mb-4 space-y-2">
             <div class="flex items-center justify-between text-sm">
               <span class="text-gray-500 dark:text-gray-400">测试端点</span>
@@ -90,7 +90,7 @@
             </div>
             <div class="text-sm">
               <div class="mb-1 flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">测试模型</span>
+                <span class="text-gray-500 dark:text-gray-400">测试Modelo</span>
                 <select
                   v-model="testModel"
                   class="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
@@ -106,7 +106,7 @@
             </div>
             <div class="text-sm">
               <div class="mb-1 flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">最大输出 Token</span>
+                <span class="text-gray-500 dark:text-gray-400">最大Salida Token</span>
                 <select
                   v-model="maxTokens"
                   class="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
@@ -125,20 +125,20 @@
             </div>
           </div>
 
-          <!-- 提示词输入 -->
+          <!-- Sugerencia词Entrada -->
           <div class="mb-4">
             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              提示词
+              Prompt
             </label>
             <textarea
               v-model="testPrompt"
               class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-              placeholder="输入测试提示词..."
+              placeholder="Ingresa el prompt de prueba..."
               rows="2"
             />
           </div>
 
-          <!-- 状态指示 -->
+          <!-- Estado指示 -->
           <div :class="['mb-4 rounded-xl border p-4 transition-all duration-300', statusCardClass]">
             <div class="flex items-center gap-3">
               <div
@@ -182,7 +182,7 @@
                 class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
               >
                 <i class="fas fa-circle-notch fa-spin" />
-                等待响应中...
+                等待响应en...
               </p>
               <p
                 v-else-if="testStatus === 'error' && errorMessage"
@@ -203,7 +203,7 @@
           </div>
         </div>
 
-        <!-- 底部操作栏 -->
+        <!-- 底部Operación栏 -->
         <div
           class="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/80 px-5 py-3 dark:border-gray-800 dark:bg-gray-900/50"
         >
@@ -212,7 +212,7 @@
             :disabled="testStatus === 'testing'"
             @click="handleClose"
           >
-            关闭
+            Cerrar
           </button>
           <button
             :class="[
@@ -227,7 +227,7 @@
             <i :class="['fas', testStatus === 'testing' ? 'fa-spinner fa-spin' : 'fa-play']" />
             {{
               testStatus === 'testing'
-                ? '测试中...'
+                ? '测试en...'
                 : testStatus === 'idle'
                   ? '开始测试'
                   : '重新测试'
@@ -249,17 +249,17 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  // API Key 完整值（用于测试）
+  // API Key completo (para prueba)
   apiKeyValue: {
     type: String,
     default: ''
   },
-  // API Key 名称（用于显示）
+  // Nombre de la API Key (para mostrar)
   apiKeyName: {
     type: String,
     default: ''
   },
-  // 服务类型: claude, gemini, openai
+  // 服务Tipo: claude, gemini, openai
   serviceType: {
     type: String,
     default: 'claude',
@@ -269,7 +269,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-// 状态
+// Estado
 const testStatus = ref('idle') // idle, testing, success, error
 const responseText = ref('')
 const errorMessage = ref('')
@@ -277,13 +277,13 @@ const testDuration = ref(0)
 const testStartTime = ref(null)
 const abortController = ref(null)
 
-// 测试模型
+// 测试Modelo
 const testModel = ref('claude-sonnet-4-5-20250929')
 
-// 测试提示词
+// 测试Sugerencia词
 const testPrompt = ref('hi')
 
-// 最大输出 token
+// 最大Salida token
 const maxTokens = ref(1000)
 const maxTokensOptions = [
   { value: 100, label: '100' },
@@ -293,14 +293,14 @@ const maxTokensOptions = [
   { value: 4096, label: '4096' }
 ]
 
-// 从 API 获取的模型列表
+// de API 获取Modelo列表
 const modelsFromApi = ref({
   claude: [],
   gemini: [],
   openai: []
 })
 
-// 加载模型列表
+// 加载Modelo列表
 const loadModels = async () => {
   try {
     const result = await getModelsApi()
@@ -341,19 +341,19 @@ const serviceConfig = computed(() => {
   return configs[props.serviceType] || configs.claude
 })
 
-// 可用模型列表（从 API 获取）
+// 可用Modelo列表（de API 获取）
 const availableModels = computed(() => {
   return modelsFromApi.value[props.serviceType] || []
 })
 
-// 组件挂载时加载模型
+// 组件挂载时加载Modelo
 onMounted(() => {
   loadModels()
 })
 
 // 计算属性
 const displayName = computed(() => {
-  return props.apiKeyName || '当前 API Key'
+  return props.apiKeyName || '当anterior API Key'
 })
 
 const maskedApiKey = computed(() => {
@@ -369,22 +369,22 @@ const statusTitle = computed(() => {
     case 'idle':
       return '准备就绪'
     case 'testing':
-      return '正在测试...'
+      return '正en测试...'
     case 'success':
-      return '测试成功'
+      return '测试Exitoso'
     case 'error':
-      return '测试失败'
+      return '测试Fallido'
     default:
-      return '未知状态'
+      return 'DesconocidoEstado'
   }
 })
 
 const statusDescription = computed(() => {
   switch (testStatus.value) {
     case 'idle':
-      return '点击下方按钮开始测试 API Key 连通性'
+      return '点击abajo方按钮开始测试 API Key 连通性'
     case 'testing':
-      return '正在通过 /api 端点发送测试请求'
+      return '正en通过 /api 端点发送测试Solicitud'
     case 'success':
       return 'API Key 可以正常访问服务'
     case 'error':
@@ -473,25 +473,25 @@ const statusTextClass = computed(() => {
 async function startTest() {
   if (!props.apiKeyValue) return
 
-  // 重置状态
+  // RestablecerEstado
   testStatus.value = 'testing'
   responseText.value = ''
   errorMessage.value = ''
   testDuration.value = 0
   testStartTime.value = Date.now()
 
-  // 取消之前的请求
+  // Cancelar之anteriorSolicitud
   if (abortController.value) {
     abortController.value.abort()
   }
   abortController.value = new AbortController()
 
-  // 使用公开的测试端点，不需要管理员认证
-  // apiStats 路由挂载在 /apiStats 下
+  // 使用公开测试端点，不需要Administrador认证
+  // apiStats 路由挂载en /apiStats abajo
   const endpoint = `${APP_CONFIG.apiPrefix}/apiStats${serviceConfig.value.endpoint}`
 
   try {
-    // 使用fetch发送POST请求并处理SSE
+    // 使用fetch发送POSTSolicitud并处理SSE
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -532,18 +532,18 @@ async function startTest() {
             const data = JSON.parse(line.substring(6))
             handleSSEEvent(data)
           } catch {
-            // 忽略解析错误
+            // 忽略解析Error
           }
         }
       }
     }
   } catch (err) {
     if (err.name === 'AbortError') {
-      // 请求被取消
+      // Solicitud被Cancelar
       return
     }
     testStatus.value = 'error'
-    errorMessage.value = err.message || '连接失败'
+    errorMessage.value = err.message || '连接Fallido'
     testDuration.value = Date.now() - testStartTime.value
   }
 }
@@ -565,12 +565,12 @@ function handleSSEEvent(data) {
         testStatus.value = 'success'
       } else {
         testStatus.value = 'error'
-        errorMessage.value = data.error || '测试失败'
+        errorMessage.value = data.error || '测试Fallido'
       }
       break
     case 'error':
       testStatus.value = 'error'
-      errorMessage.value = data.error || '未知错误'
+      errorMessage.value = data.error || 'Error desconocido'
       testDuration.value = Date.now() - testStartTime.value
       break
   }
@@ -579,13 +579,13 @@ function handleSSEEvent(data) {
 function handleClose() {
   if (testStatus.value === 'testing') return
 
-  // 取消请求
+  // CancelarSolicitud
   if (abortController.value) {
     abortController.value.abort()
     abortController.value = null
   }
 
-  // 重置状态
+  // RestablecerEstado
   testStatus.value = 'idle'
   responseText.value = ''
   errorMessage.value = ''
@@ -594,7 +594,7 @@ function handleClose() {
   emit('close')
 }
 
-// 监听show变化，重置状态
+// 监听show变化，RestablecerEstado
 watch(
   () => props.show,
   (newVal) => {
@@ -603,16 +603,16 @@ watch(
       responseText.value = ''
       errorMessage.value = ''
       testDuration.value = 0
-      // 重置为当前服务的默认模型
+      // Restablecerpara当anterior服务默认Modelo
       testModel.value = serviceConfig.value.defaultModel
-      // 重置提示词和 maxTokens
+      // RestablecerSugerencia词y maxTokens
       testPrompt.value = 'hi'
       maxTokens.value = 1000
     }
   }
 )
 
-// 监听服务类型变化，重置模型
+// 监听服务Tipo变化，RestablecerModelo
 watch(
   () => props.serviceType,
   () => {

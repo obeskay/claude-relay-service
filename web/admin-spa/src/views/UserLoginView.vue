@@ -2,7 +2,7 @@
   <div
     class="relative flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8"
   >
-    <!-- 主题切换按钮 -->
+    <!-- Botón de cambio de tema -->
     <div class="fixed right-4 top-4 z-10">
       <ThemeToggle mode="dropdown" />
     </div>
@@ -193,7 +193,7 @@ const handleLogin = async () => {
 }
 
 onMounted(() => {
-  // 初始化主题（因为该页面不在 MainLayout 内）
+  // Inicializar tema (porque esta página no está dentro de MainLayout)
   themeStore.initTheme()
 })
 </script>

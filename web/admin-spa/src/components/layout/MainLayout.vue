@@ -8,7 +8,7 @@
       class="glass-strong rounded-xl p-3 shadow-xl sm:rounded-2xl sm:p-4 md:rounded-3xl md:p-6"
       style="z-index: 1; min-height: calc(100vh - 120px)"
     >
-      <!-- 标签栏 -->
+      <!-- Etiqueta栏 -->
       <TabBar :active-tab="activeTab" @tab-change="handleTabChange" />
 
       <!-- 内容区域 -->
@@ -30,7 +30,7 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-// 根据路由设置当前激活的标签
+// 根据路由Configuración当anterior激活Etiqueta
 const activeTab = ref('dashboard')
 
 // 根据 LDAP 配置动态生成路由映射
@@ -43,7 +43,7 @@ const tabRouteMap = computed(() => {
     settings: '/settings'
   }
 
-  // 只有在 LDAP 启用时才包含用户管理路由
+  // 只有en LDAP Habilitar时才包含Gestión de usuarios路由
   if (authStore.oemSettings?.ldapEnabled) {
     baseMap.userManagement = '/user-management'
   }
@@ -51,7 +51,7 @@ const tabRouteMap = computed(() => {
   return baseMap
 })
 
-// 初始化当前激活的标签
+// 初始化当anterior激活Etiqueta
 const initActiveTab = () => {
   const currentPath = route.path
   const tabKey = Object.keys(tabRouteMap.value).find(
@@ -61,7 +61,7 @@ const initActiveTab = () => {
   if (tabKey) {
     activeTab.value = tabKey
   } else {
-    // 如果路径不匹配任何标签，尝试从路由名称获取
+    // 如果路径不匹配任何Etiqueta，尝试de路由Nombre获取
     const routeName = route.name
     const nameToTabMap = {
       Dashboard: 'dashboard',
@@ -73,7 +73,7 @@ const initActiveTab = () => {
     if (routeName && nameToTabMap[routeName]) {
       activeTab.value = nameToTabMap[routeName]
     } else {
-      // 默认选中仪表板
+      // 默认选enPanel
       activeTab.value = 'dashboard'
     }
   }
@@ -82,7 +82,7 @@ const initActiveTab = () => {
 // 初始化
 initActiveTab()
 
-// 监听路由变化，更新激活的标签
+// 监听路由变化，Actualizar激活Etiqueta
 watch(
   () => route.path,
   (newPath) => {
@@ -90,7 +90,7 @@ watch(
     if (tabKey) {
       activeTab.value = tabKey
     } else {
-      // 如果路径不匹配任何标签，尝试从路由名称获取
+      // 如果路径不匹配任何Etiqueta，尝试de路由Nombre获取
       const routeName = route.name
       const nameToTabMap = {
         Dashboard: 'dashboard',
@@ -107,30 +107,30 @@ watch(
   }
 )
 
-// 处理标签切换
+// 处理Etiqueta切换
 const handleTabChange = async (tabKey) => {
-  // 如果已经在目标路由，不需要做任何事
+  // 如果已经en目标路由，不需要做任何事
   if (tabRouteMap.value[tabKey] === route.path) {
     return
   }
 
-  // 先更新activeTab状态
+  // 先ActualizaractiveTabEstado
   activeTab.value = tabKey
 
   // 使用 await 确保路由切换完成
   try {
     await router.push(tabRouteMap.value[tabKey])
-    // 等待下一个DOM更新周期，确保组件正确渲染
+    // 等待siguienteDOMActualizar周期，确保组件正确渲染
     await nextTick()
   } catch (err) {
-    // 如果路由切换失败，恢复activeTab状态
+    // 如果路由切换Fallido，恢复activeTabEstado
     if (err.name !== 'NavigationDuplicated') {
-      console.error('路由切换失败:', err)
-      // 恢复到当前路由对应的tab
+      console.error('路由切换Fallido:', err)
+      // 恢复到当anterior路由对应tab
       initActiveTab()
     }
   }
 }
 
-// OEM设置已在App.vue中加载，无需重复加载
+// OEMConfiguración已enApp.vueen加载，无需重复加载
 </script>

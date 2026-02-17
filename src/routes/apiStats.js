@@ -16,12 +16,12 @@ const { getSafeMessage } = require('../utils/errorSanitizer')
 
 const router = express.Router()
 
-// 📋 获取可用模型列表（公开接口）
+// 📋 Obtener可用模型ColumnaTabla（公开Interfaz）
 router.get('/models', (req, res) => {
   const { service } = req.query
 
   if (service) {
-    // 返回指定服务的模型
+    // Retornar指定Servicio的模型
     const models = modelsConfig.getModelsByService(service)
     return res.json({
       success: true,
@@ -29,7 +29,7 @@ router.get('/models', (req, res) => {
     })
   }
 
-  // 返回所有模型（按服务分组 + 平台维度）
+  // Retornar所有模型（按ServicioAgrupar + 平台维度）
   res.json({
     success: true,
     data: {
@@ -43,12 +43,12 @@ router.get('/models', (req, res) => {
   })
 })
 
-// 🏠 重定向页面请求到新版 admin-spa
+// 🏠 重定向PáginaSolicitud到新版 admin-spa
 router.get('/', (req, res) => {
   res.redirect(301, '/admin-next/api-stats')
 })
 
-// 🔑 获取 API Key 对应的 ID
+// 🔑 Obtener API Key 对应的 ID
 router.post('/api/get-key-id', async (req, res) => {
   try {
     const { apiKey } = req.body
@@ -60,7 +60,7 @@ router.post('/api/get-key-id', async (req, res) => {
       })
     }
 
-    // 基本API Key格式验证
+    // 基本API KeyFormatoValidar
     if (typeof apiKey !== 'string' || apiKey.length < 10 || apiKey.length > 512) {
       return res.status(400).json({
         error: 'Invalid API key format',
@@ -68,7 +68,7 @@ router.post('/api/get-key-id', async (req, res) => {
       })
     }
 
-    // 验证API Key（使用不触发激活的验证方法）
+    // ValidarAPI Key（使用不触发激活的ValidarMétodo）
     const validation = await apiKeyService.validateApiKeyForStats(apiKey)
 
     if (!validation.valid) {
@@ -97,7 +97,7 @@ router.post('/api/get-key-id', async (req, res) => {
   }
 })
 
-// 📊 用户API Key统计查询接口 - 安全的自查询接口
+// 📊 UsuarioAPI KeyEstadísticaConsultaInterfaz - Seguridad的自ConsultaInterfaz
 router.post('/api/user-stats', async (req, res) => {
   try {
     const { apiKey, apiId } = req.body
@@ -106,7 +106,7 @@ router.post('/api/user-stats', async (req, res) => {
     let keyId
 
     if (apiId) {
-      // 通过 apiId 查询
+      // 通过 apiId Consulta
       if (
         typeof apiId !== 'string' ||
         !apiId.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i)
@@ -117,7 +117,7 @@ router.post('/api/user-stats', async (req, res) => {
         })
       }
 
-      // 直接通过 ID 获取 API Key 数据
+      // 直接通过 ID Obtener API Key Datos
       keyData = await redis.getApiKey(apiId)
 
       if (!keyData || Object.keys(keyData).length === 0) {
@@ -128,7 +128,7 @@ router.post('/api/user-stats', async (req, res) => {
         })
       }
 
-      // 检查是否激活
+      // Verificar是否激活
       if (keyData.isActive !== 'true') {
         const keyName = keyData.name || 'Unknown'
         return res.status(403).json({
@@ -138,7 +138,7 @@ router.post('/api/user-stats', async (req, res) => {
         })
       }
 
-      // 检查是否过期
+      // Verificar是否过期
       if (keyData.expiresAt && new Date() > new Date(keyData.expiresAt)) {
         const keyName = keyData.name || 'Unknown'
         return res.status(403).json({
@@ -150,15 +150,15 @@ router.post('/api/user-stats', async (req, res) => {
 
       keyId = apiId
 
-      // 获取使用统计
+      // Obtener使用Estadística
       const usage = await redis.getUsageStats(keyId)
 
-      // 获取当日费用统计
+      // Obtener当日费用Estadística
       const dailyCost = await redis.getDailyCost(keyId)
       const costStats = await redis.getCostStats(keyId)
 
-      // 处理数据格式，与 validateApiKey 返回的格式保持一致
-      // 解析限制模型数据
+      // ProcesarDatosFormato，与 validateApiKey Retornar的Formato保持一致
+      // AnalizarLímite模型Datos
       let restrictedModels = []
       try {
         restrictedModels = keyData.restrictedModels ? JSON.parse(keyData.restrictedModels) : []
@@ -166,7 +166,7 @@ router.post('/api/user-stats', async (req, res) => {
         restrictedModels = []
       }
 
-      // 解析允许的客户端数据
+      // Analizar允许的ClienteDatos
       let allowedClients = []
       try {
         allowedClients = keyData.allowedClients ? JSON.parse(keyData.allowedClients) : []
@@ -174,7 +174,7 @@ router.post('/api/user-stats', async (req, res) => {
         allowedClients = []
       }
 
-      // 格式化 keyData
+      // Formato化 keyData
       keyData = {
         ...keyData,
         tokenLimit: parseInt(keyData.tokenLimit) || 0,
@@ -190,15 +190,15 @@ router.post('/api/user-stats', async (req, res) => {
         enableClientRestriction: keyData.enableClientRestriction === 'true',
         allowedClients,
         permissions: keyData.permissions,
-        // 添加激活相关字段
+        // 添加激活相关Campo
         expirationMode: keyData.expirationMode || 'fixed',
         isActivated: keyData.isActivated === 'true',
         activationDays: parseInt(keyData.activationDays || 0),
         activatedAt: keyData.activatedAt || null,
-        usage // 使用完整的 usage 数据，而不是只有 total
+        usage // 使用完整的 usage Datos，而不是只有 total
       }
     } else if (apiKey) {
-      // 通过 apiKey 查询（保持向后兼容）
+      // 通过 apiKey Consulta（保持向后兼容）
       if (typeof apiKey !== 'string' || apiKey.length < 10 || apiKey.length > 512) {
         logger.security(`Invalid API key format in user stats query from ${req.ip || 'unknown'}`)
         return res.status(400).json({
@@ -207,7 +207,7 @@ router.post('/api/user-stats', async (req, res) => {
         })
       }
 
-      // 验证API Key（使用不触发激活的验证方法）
+      // ValidarAPI Key（使用不触发激活的ValidarMétodo）
       const validation = await apiKeyService.validateApiKeyForStats(apiKey)
 
       if (!validation.valid) {
@@ -232,30 +232,30 @@ router.post('/api/user-stats', async (req, res) => {
       })
     }
 
-    // 记录合法查询
+    // Registro合法Consulta
     logger.api(
       `📊 User stats query from key: ${keyData.name} (${keyId}) from ${req.ip || 'unknown'}`
     )
 
-    // 获取验证结果中的完整keyData（包含isActive状态和cost信息）
+    // ObtenerValidar结果中的完整keyData（IncluirisActive状态和costInformación）
     const fullKeyData = keyData
 
     // 🔧 FIX: 使用 allTimeCost 而不是扫描月度键
-    // 计算总费用 - 优先使用持久化的总费用计数器
+    // Calcula costo total - 优先使用持久化的总费用计数器
     let totalCost = 0
     let formattedCost = '$0.000000'
 
     try {
       const client = redis.getClientSafe()
 
-      // 读取累积的总费用（没有 TTL 的持久键）
+      // Leer累积的总费用（没有 TTL 的持久键）
       const totalCostKey = `usage:cost:total:${keyId}`
       const allTimeCost = parseFloat((await client.get(totalCostKey)) || '0')
 
       if (allTimeCost > 0) {
         totalCost = allTimeCost
         formattedCost = CostCalculator.formatCost(allTimeCost)
-        logger.debug(`📊 使用 allTimeCost 计算用户统计: ${allTimeCost}`)
+        logger.debug(`📊 使用 allTimeCost CalcularUsuarioEstadística: ${allTimeCost}`)
       } else {
         // Fallback: 如果 allTimeCost 为空（旧键），尝试月度键
         const allModelResults = await redis.scanAndGetAllChunked(`usage:${keyId}:model:monthly:*:*`)
@@ -287,7 +287,7 @@ router.post('/api/user-stats', async (req, res) => {
           }
         }
 
-        // 按模型计算费用并汇总
+        // 按模型Calcular费用并汇总
         for (const [model, usage] of modelUsageMap) {
           const usageData = {
             input_tokens: usage.inputTokens,
@@ -300,7 +300,7 @@ router.post('/api/user-stats', async (req, res) => {
           totalCost += costResult.costs.total
         }
 
-        // 如果没有模型级别的详细数据，回退到总体数据计算
+        // 如果没有模型级别的详细Datos，Retirada到总体DatosCalcular
         if (modelUsageMap.size === 0 && fullKeyData.usage?.total?.allTokens > 0) {
           const usage = fullKeyData.usage.total
           const costUsage = {
@@ -318,7 +318,7 @@ router.post('/api/user-stats', async (req, res) => {
       }
     } catch (error) {
       logger.warn(`Failed to calculate cost for key ${keyId}:`, error)
-      // 回退到简单计算
+      // Retirada到简单Calcular
       if (fullKeyData.usage?.total?.allTokens > 0) {
         const usage = fullKeyData.usage.total
         const costUsage = {
@@ -334,53 +334,53 @@ router.post('/api/user-stats', async (req, res) => {
       }
     }
 
-    // 获取当前使用量
+    // Obtener当前使用量
     let currentWindowRequests = 0
     let currentWindowTokens = 0
-    let currentWindowCost = 0 // 新增：当前窗口费用
+    let currentWindowCost = 0 // Nueva característica：当前窗口费用
     let currentDailyCost = 0
     let windowStartTime = null
     let windowEndTime = null
     let windowRemainingSeconds = null
 
     try {
-      // 获取当前时间窗口的请求次数、Token使用量和费用
+      // Obtener当前Tiempo窗口的Solicitud次数、Token使用量和费用
       if (fullKeyData.rateLimitWindow > 0) {
         const client = redis.getClientSafe()
         const requestCountKey = `rate_limit:requests:${keyId}`
         const tokenCountKey = `rate_limit:tokens:${keyId}`
-        const costCountKey = `rate_limit:cost:${keyId}` // 新增：费用计数key
+        const costCountKey = `rate_limit:cost:${keyId}` // Nueva característica：费用计数key
         const windowStartKey = `rate_limit:window_start:${keyId}`
 
         currentWindowRequests = parseInt((await client.get(requestCountKey)) || '0')
         currentWindowTokens = parseInt((await client.get(tokenCountKey)) || '0')
-        currentWindowCost = parseFloat((await client.get(costCountKey)) || '0') // 新增：获取当前窗口费用
+        currentWindowCost = parseFloat((await client.get(costCountKey)) || '0') // Nueva característica：Obtener当前窗口费用
 
-        // 获取窗口开始时间和计算剩余时间
+        // Obtener窗口IniciandoTiempo和Calcular剩余Tiempo
         const windowStart = await client.get(windowStartKey)
         if (windowStart) {
           const now = Date.now()
           windowStartTime = parseInt(windowStart)
-          const windowDuration = fullKeyData.rateLimitWindow * 60 * 1000 // 转换为毫秒
+          const windowDuration = fullKeyData.rateLimitWindow * 60 * 1000 // Convertir为毫秒
           windowEndTime = windowStartTime + windowDuration
 
           // 如果窗口还有效
           if (now < windowEndTime) {
             windowRemainingSeconds = Math.max(0, Math.floor((windowEndTime - now) / 1000))
           } else {
-            // 窗口已过期，下次请求会重置
+            // 窗口已过期，下次Solicitud会重置
             windowStartTime = null
             windowEndTime = null
             windowRemainingSeconds = 0
             // 重置计数为0，因为窗口已过期
             currentWindowRequests = 0
             currentWindowTokens = 0
-            currentWindowCost = 0 // 新增：重置窗口费用
+            currentWindowCost = 0 // Nueva característica：重置窗口费用
           }
         }
       }
 
-      // 获取当日费用
+      // Obtener当日费用
       currentDailyCost = (await redis.getDailyCost(keyId)) || 0
     } catch (error) {
       logger.warn(`Failed to get current usage for key ${keyId}:`, error)
@@ -430,22 +430,22 @@ router.post('/api/user-stats', async (req, res) => {
       await Promise.allSettled(accountDetailTasks)
     }
 
-    // 构建响应数据（只返回该API Key自己的信息，确保不泄露其他信息）
+    // ConstruirRespuestaDatos（只Retornar该API Key自己的Información，确保不泄露其他Información）
     const responseData = {
       id: keyId,
       name: fullKeyData.name,
       description: fullKeyData.description || keyData.description || '',
-      isActive: true, // 如果能通过validateApiKey验证，说明一定是激活的
+      isActive: true, // 如果能通过validateApiKeyValidar，说明一定是激活的
       createdAt: fullKeyData.createdAt || keyData.createdAt,
       expiresAt: fullKeyData.expiresAt || keyData.expiresAt,
-      // 添加激活相关字段
+      // 添加激活相关Campo
       expirationMode: fullKeyData.expirationMode || 'fixed',
       isActivated: fullKeyData.isActivated === true || fullKeyData.isActivated === 'true',
       activationDays: parseInt(fullKeyData.activationDays || 0),
       activatedAt: fullKeyData.activatedAt || null,
       permissions: fullKeyData.permissions,
 
-      // 使用统计（使用验证结果中的完整数据）
+      // 使用Estadística（使用Validar结果中的完整Datos）
       usage: {
         total: {
           ...(fullKeyData.usage?.total || {
@@ -462,30 +462,30 @@ router.post('/api/user-stats', async (req, res) => {
         }
       },
 
-      // 限制信息（显示配置和当前使用量）
+      // LímiteInformación（显示Configuración和当前使用量）
       limits: {
         tokenLimit: fullKeyData.tokenLimit || 0,
         concurrencyLimit: fullKeyData.concurrencyLimit || 0,
         rateLimitWindow: fullKeyData.rateLimitWindow || 0,
         rateLimitRequests: fullKeyData.rateLimitRequests || 0,
-        rateLimitCost: parseFloat(fullKeyData.rateLimitCost) || 0, // 新增：费用限制
+        rateLimitCost: parseFloat(fullKeyData.rateLimitCost) || 0, // Nueva característica：费用Límite
         dailyCostLimit: fullKeyData.dailyCostLimit || 0,
         totalCostLimit: fullKeyData.totalCostLimit || 0,
-        weeklyOpusCostLimit: parseFloat(fullKeyData.weeklyOpusCostLimit) || 0, // Opus 周费用限制
+        weeklyOpusCostLimit: parseFloat(fullKeyData.weeklyOpusCostLimit) || 0, // Opus 周费用Límite
         // 当前使用量
         currentWindowRequests,
         currentWindowTokens,
-        currentWindowCost, // 新增：当前窗口费用
+        currentWindowCost, // Nueva característica：当前窗口费用
         currentDailyCost,
         currentTotalCost: totalCost,
         weeklyOpusCost: (await redis.getWeeklyOpusCost(keyId)) || 0, // 当前 Opus 周费用
-        // 时间窗口信息
+        // Tiempo窗口Información
         windowStartTime,
         windowEndTime,
         windowRemainingSeconds
       },
 
-      // 绑定的账户信息（只显示ID，不显示敏感信息）
+      // 绑定的CuentaInformación（只显示ID，不显示敏感Información）
       accounts: {
         claudeAccountId:
           fullKeyData.claudeAccountId && fullKeyData.claudeAccountId !== ''
@@ -502,7 +502,7 @@ router.post('/api/user-stats', async (req, res) => {
         details: Object.keys(boundAccountDetails).length > 0 ? boundAccountDetails : null
       },
 
-      // 模型和客户端限制信息
+      // 模型和ClienteLímiteInformación
       restrictions: {
         enableModelRestriction: fullKeyData.enableModelRestriction || false,
         restrictedModels: fullKeyData.restrictedModels || [],
@@ -510,7 +510,7 @@ router.post('/api/user-stats', async (req, res) => {
         allowedClients: fullKeyData.allowedClients || []
       },
 
-      // Key 级别的服务倍率
+      // Key 级别的Servicio倍率
       serviceRates: (() => {
         try {
           return fullKeyData.serviceRates
@@ -537,12 +537,12 @@ router.post('/api/user-stats', async (req, res) => {
   }
 })
 
-// 📊 批量查询统计数据接口
+// 📊 批量ConsultaEstadísticaDatosInterfaz
 router.post('/api/batch-stats', async (req, res) => {
   try {
     const { apiIds } = req.body
 
-    // 验证输入
+    // Validar输入
     if (!apiIds || !Array.isArray(apiIds) || apiIds.length === 0) {
       return res.status(400).json({
         error: 'Invalid input',
@@ -550,7 +550,7 @@ router.post('/api/batch-stats', async (req, res) => {
       })
     }
 
-    // 限制最多查询 30 个
+    // Límite最多Consulta 30 个
     if (apiIds.length > 30) {
       return res.status(400).json({
         error: 'Too many keys',
@@ -558,7 +558,7 @@ router.post('/api/batch-stats', async (req, res) => {
       })
     }
 
-    // 验证所有 ID 格式
+    // Validar所有 ID Formato
     const uuidRegex = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
     const invalidIds = apiIds.filter((id) => !uuidRegex.test(id))
     if (invalidIds.length > 0) {
@@ -604,7 +604,7 @@ router.post('/api/batch-stats', async (req, res) => {
       }
     }
 
-    // 并行查询所有 API Key 数据（复用单key查询逻辑）
+    // 并FilaConsulta所有 API Key Datos（复用单keyConsulta逻辑）
     const results = await Promise.allSettled(
       apiIds.map(async (apiId) => {
         const keyData = await redis.getApiKey(apiId)
@@ -613,20 +613,20 @@ router.post('/api/batch-stats', async (req, res) => {
           return { error: 'Not found', apiId }
         }
 
-        // 检查是否激活
+        // Verificar是否激活
         if (keyData.isActive !== 'true') {
           return { error: 'Disabled', apiId }
         }
 
-        // 检查是否过期
+        // Verificar是否过期
         if (keyData.expiresAt && new Date() > new Date(keyData.expiresAt)) {
           return { error: 'Expired', apiId }
         }
 
-        // 复用单key查询的逻辑：获取使用统计
+        // 复用单keyConsulta的逻辑：Obtener使用Estadística
         const usage = await redis.getUsageStats(apiId)
 
-        // 获取费用统计（与单key查询一致）
+        // Obtener费用Estadística（与单keyConsulta一致）
         const costStats = await redis.getCostStats(apiId)
 
         return {
@@ -660,7 +660,7 @@ router.post('/api/batch-stats', async (req, res) => {
       })
     )
 
-    // 处理结果并聚合
+    // Procesar结果并聚合
     results.forEach((result) => {
       if (result.status === 'fulfilled' && result.value && !result.value.error) {
         const stats = result.value
@@ -697,7 +697,7 @@ router.post('/api/batch-stats', async (req, res) => {
         aggregated.monthlyUsage.allTokens += stats.monthlyStats.allTokens || 0
         aggregated.monthlyUsage.cost += stats.monthlyStats.cost || 0
 
-        // 添加到个体统计
+        // 添加到个体Estadística
         individualStats.push({
           apiId: stats.apiId,
           name: stats.name,
@@ -715,7 +715,7 @@ router.post('/api/batch-stats', async (req, res) => {
       }
     })
 
-    // 格式化费用显示
+    // Formato化费用显示
     aggregated.usage.formattedCost = CostCalculator.formatCost(aggregated.usage.cost)
     aggregated.dailyUsage.formattedCost = CostCalculator.formatCost(aggregated.dailyUsage.cost)
     aggregated.monthlyUsage.formattedCost = CostCalculator.formatCost(aggregated.monthlyUsage.cost)
@@ -738,12 +738,12 @@ router.post('/api/batch-stats', async (req, res) => {
   }
 })
 
-// 📊 批量模型统计查询接口
+// 📊 批量模型EstadísticaConsultaInterfaz
 router.post('/api/batch-model-stats', async (req, res) => {
   try {
     const { apiIds, period = 'daily' } = req.body
 
-    // 验证输入
+    // Validar输入
     if (!apiIds || !Array.isArray(apiIds) || apiIds.length === 0) {
       return res.status(400).json({
         error: 'Invalid input',
@@ -751,7 +751,7 @@ router.post('/api/batch-model-stats', async (req, res) => {
       })
     }
 
-    // 限制最多查询 30 个
+    // Límite最多Consulta 30 个
     if (apiIds.length > 30) {
       return res.status(400).json({
         error: 'Too many keys',
@@ -766,7 +766,7 @@ router.post('/api/batch-model-stats', async (req, res) => {
 
     const modelUsageMap = new Map()
 
-    // 并行查询所有 API Key 的模型统计
+    // 并FilaConsulta所有 API Key 的模型Estadística
     await Promise.all(
       apiIds.map(async (apiId) => {
         const pattern =
@@ -813,7 +813,7 @@ router.post('/api/batch-model-stats', async (req, res) => {
             modelUsage.allTokens += parseInt(data.allTokens) || 0
             modelUsage.realCostMicro += parseInt(data.realCostMicro) || 0
             modelUsage.ratedCostMicro += parseInt(data.ratedCostMicro) || 0
-            // 检查 Redis 数据是否包含成本字段
+            // Verificar Redis Datos是否Incluir成本Campo
             if ('realCostMicro' in data || 'ratedCostMicro' in data) {
               modelUsage.hasStoredCost = true
             }
@@ -822,7 +822,7 @@ router.post('/api/batch-model-stats', async (req, res) => {
       })
     )
 
-    // 转换为数组并处理费用
+    // Convertir为Arreglo并Procesar费用
     const modelStats = []
     for (const [model, usage] of modelUsageMap) {
       const usageData = {
@@ -832,11 +832,11 @@ router.post('/api/batch-model-stats', async (req, res) => {
         cache_read_input_tokens: usage.cacheReadTokens
       }
 
-      // 优先使用存储的费用，否则回退到重新计算
+      // 优先使用存储的费用，否则Retirada到重新Calcular
       const { hasStoredCost } = usage
       const costData = CostCalculator.calculateCost(usageData, model)
 
-      // 如果有存储的费用，覆盖计算的费用
+      // 如果有存储的费用，覆盖Calcular的费用
       if (hasStoredCost) {
         costData.costs.real = (usage.realCostMicro || 0) / 1000000
         costData.costs.rated = (usage.ratedCostMicro || 0) / 1000000
@@ -859,7 +859,7 @@ router.post('/api/batch-model-stats', async (req, res) => {
       })
     }
 
-    // 按总 token 数降序排列
+    // 按总 token 数降序排Columna
     modelStats.sort((a, b) => b.allTokens - a.allTokens)
 
     logger.api(`📊 Batch model stats query for ${apiIds.length} keys, period: ${period}`)
@@ -883,7 +883,7 @@ const ALLOWED_MAX_TOKENS = [100, 500, 1000, 2000, 4096]
 const sanitizeMaxTokens = (value) =>
   ALLOWED_MAX_TOKENS.includes(Number(value)) ? Number(value) : 1000
 
-// 🧪 API Key 端点测试接口 - 测试API Key是否能正常访问服务
+// 🧪 API Key EndpointProbarInterfaz - ProbarAPI Key是否能正常访问Servicio
 router.post('/api-key/test', async (req, res) => {
   const config = require('../../config/config')
   const { sendStreamTestRequest } = require('../utils/testPayloadHelper')
@@ -943,7 +943,7 @@ router.post('/api-key/test', async (req, res) => {
   }
 })
 
-// 🧪 Gemini API Key 端点测试接口
+// 🧪 Gemini API Key EndpointProbarInterfaz
 router.post('/api-key/test-gemini', async (req, res) => {
   const config = require('../../config/config')
   const { createGeminiTestPayload } = require('../utils/testPayloadHelper')
@@ -974,7 +974,7 @@ router.post('/api-key/test-gemini', async (req, res) => {
       })
     }
 
-    // 检查 Gemini 权限
+    // Verificar Gemini Permiso
     if (!apiKeyService.hasPermission(validation.keyData.permissions, 'gemini')) {
       return res.status(403).json({
         error: 'Permission denied',
@@ -989,7 +989,7 @@ router.post('/api-key/test-gemini', async (req, res) => {
     const port = config.server.port || 3000
     const apiUrl = `http://127.0.0.1:${port}/gemini/v1/models/${model}:streamGenerateContent?alt=sse`
 
-    // 设置 SSE 响应头
+    // Establecer SSE Respuesta头
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
@@ -1052,7 +1052,7 @@ router.post('/api-key/test-gemini', async (req, res) => {
 
           try {
             const data = JSON.parse(jsonStr)
-            // Gemini 格式: candidates[0].content.parts[0].text
+            // Gemini Formato: candidates[0].content.parts[0].text
             const text = data.candidates?.[0]?.content?.parts?.[0]?.text
             if (text) {
               res.write(`data: ${JSON.stringify({ type: 'content', text })}\n\n`)
@@ -1095,7 +1095,7 @@ router.post('/api-key/test-gemini', async (req, res) => {
   }
 })
 
-// 🧪 OpenAI/Codex API Key 端点测试接口
+// 🧪 OpenAI/Codex API Key EndpointProbarInterfaz
 router.post('/api-key/test-openai', async (req, res) => {
   const config = require('../../config/config')
   const { createOpenAITestPayload } = require('../utils/testPayloadHelper')
@@ -1126,7 +1126,7 @@ router.post('/api-key/test-openai', async (req, res) => {
       })
     }
 
-    // 检查 OpenAI 权限
+    // Verificar OpenAI Permiso
     if (!apiKeyService.hasPermission(validation.keyData.permissions, 'openai')) {
       return res.status(403).json({
         error: 'Permission denied',
@@ -1141,7 +1141,7 @@ router.post('/api-key/test-openai', async (req, res) => {
     const port = config.server.port || 3000
     const apiUrl = `http://127.0.0.1:${port}/openai/responses`
 
-    // 设置 SSE 响应头
+    // Establecer SSE Respuesta头
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
@@ -1205,7 +1205,7 @@ router.post('/api-key/test-openai', async (req, res) => {
 
           try {
             const data = JSON.parse(jsonStr)
-            // OpenAI Responses 格式: output[].content[].text 或 delta
+            // OpenAI Responses Formato: output[].content[].text 或 delta
             if (data.type === 'response.output_text.delta' && data.delta) {
               res.write(`data: ${JSON.stringify({ type: 'content', text: data.delta })}\n\n`)
             } else if (data.type === 'response.content_part.delta' && data.delta?.text) {
@@ -1249,7 +1249,7 @@ router.post('/api-key/test-openai', async (req, res) => {
   }
 })
 
-// 📊 用户模型统计查询接口 - 安全的自查询接口
+// 📊 Usuario模型EstadísticaConsultaInterfaz - Seguridad的自ConsultaInterfaz
 router.post('/api/user-model-stats', async (req, res) => {
   try {
     const { apiKey, apiId, period = 'monthly' } = req.body
@@ -1258,7 +1258,7 @@ router.post('/api/user-model-stats', async (req, res) => {
     let keyId
 
     if (apiId) {
-      // 通过 apiId 查询
+      // 通过 apiId Consulta
       if (
         typeof apiId !== 'string' ||
         !apiId.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i)
@@ -1269,7 +1269,7 @@ router.post('/api/user-model-stats', async (req, res) => {
         })
       }
 
-      // 直接通过 ID 获取 API Key 数据
+      // 直接通过 ID Obtener API Key Datos
       keyData = await redis.getApiKey(apiId)
 
       if (!keyData || Object.keys(keyData).length === 0) {
@@ -1280,7 +1280,7 @@ router.post('/api/user-model-stats', async (req, res) => {
         })
       }
 
-      // 检查是否激活
+      // Verificar是否激活
       if (keyData.isActive !== 'true') {
         const keyName = keyData.name || 'Unknown'
         return res.status(403).json({
@@ -1292,12 +1292,12 @@ router.post('/api/user-model-stats', async (req, res) => {
 
       keyId = apiId
 
-      // 获取使用统计
+      // Obtener使用Estadística
       const usage = await redis.getUsageStats(keyId)
       keyData.usage = { total: usage.total }
     } else if (apiKey) {
-      // 通过 apiKey 查询（保持向后兼容）
-      // 验证API Key
+      // 通过 apiKey Consulta（保持向后兼容）
+      // ValidarAPI Key
       const validation = await apiKeyService.validateApiKey(apiKey)
 
       if (!validation.valid) {
@@ -1328,9 +1328,9 @@ router.post('/api/user-model-stats', async (req, res) => {
       `📊 User model stats query from key: ${keyData.name} (${keyId}) for period: ${period}`
     )
 
-    // 重用管理后台的模型统计逻辑，但只返回该API Key的数据
+    // 重用管理后台的模型Estadística逻辑，但只Retornar该API Key的Datos
     const _client = redis.getClientSafe()
-    // 使用与管理页面相同的时区处理逻辑
+    // 使用与管理Página相同的Zona horariaProcesar逻辑
     const tzDate = redis.getDateInTimezone()
     const today = redis.getDateStringInTimezone()
     const currentMonth = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}`
@@ -1369,14 +1369,14 @@ router.post('/api/user-model-stats', async (req, res) => {
           cache_read_input_tokens: parseInt(data.cacheReadTokens) || 0
         }
 
-        // 优先使用存储的费用，否则回退到重新计算
-        // 检查字段是否存在（而非 > 0），以支持真正的零成本场景
+        // 优先使用存储的费用，否则Retirada到重新Calcular
+        // VerificarCampo是否存在（而非 > 0），以Soportar真正的零成本场景
         const realCostMicro = parseInt(data.realCostMicro) || 0
         const ratedCostMicro = parseInt(data.ratedCostMicro) || 0
         const hasStoredCost = 'realCostMicro' in data || 'ratedCostMicro' in data
         const costData = CostCalculator.calculateCost(usage, model)
 
-        // 如果有存储的费用，覆盖计算的费用
+        // 如果有存储的费用，覆盖Calcular的费用
         if (hasStoredCost) {
           costData.costs.real = realCostMicro / 1000000
           costData.costs.rated = ratedCostMicro / 1000000
@@ -1384,7 +1384,7 @@ router.post('/api/user-model-stats', async (req, res) => {
           costData.formatted.total = `$${costData.costs.real.toFixed(6)}`
         }
 
-        // alltime 键不存储 allTokens，需要计算
+        // alltime 键不存储 allTokens，需要Calcular
         const allTokens =
           period === 'alltime'
             ? usage.input_tokens +
@@ -1409,13 +1409,13 @@ router.post('/api/user-model-stats', async (req, res) => {
       }
     }
 
-    // 如果没有详细的模型数据，不显示历史数据以避免混淆
-    // 只有在查询特定时间段时返回空数组，表示该时间段确实没有数据
+    // 如果没有详细的模型Datos，不显示历史Datos以避免混淆
+    // 只有在Consulta特定Tiempo段时Retornar空Arreglo，Tabla示该Tiempo段确实没有Datos
     if (modelStats.length === 0) {
       logger.info(`📊 No model stats found for key ${keyId} in period ${period}`)
     }
 
-    // 按总token数降序排列
+    // 按总token数降序排Columna
     modelStats.sort((a, b) => b.allTokens - a.allTokens)
 
     return res.json({
@@ -1432,7 +1432,7 @@ router.post('/api/user-model-stats', async (req, res) => {
   }
 })
 
-// 📊 获取服务倍率配置（公开接口）
+// 📊 ObtenerServicio倍率Configuración（公开Interfaz）
 router.get('/service-rates', async (req, res) => {
   try {
     const rates = await serviceRatesService.getRates()
@@ -1449,7 +1449,7 @@ router.get('/service-rates', async (req, res) => {
   }
 })
 
-// 🎫 公开的额度卡兑换接口（通过 apiId 验证身份）
+// 🎫 公开的额度卡兑换Interfaz（通过 apiId Validar身份）
 router.post('/api/redeem-card', async (req, res) => {
   const quotaCardService = require('../services/quotaCardService')
 
@@ -1458,18 +1458,18 @@ router.post('/api/redeem-card', async (req, res) => {
     const clientIP = req.ip || req.connection?.remoteAddress || 'unknown'
     const hour = new Date().toISOString().slice(0, 13)
 
-    // 防暴力破解：检查失败锁定
+    // 防暴力破解：VerificarFalló锁定
     const failKey = `redeem_card:fail:${clientIP}`
     const failCount = parseInt((await redis.client.get(failKey)) || '0')
     if (failCount >= 5) {
       logger.security(`🔒 Card redemption locked for IP: ${clientIP}`)
       return res.status(403).json({
         success: false,
-        error: '失败次数过多，请1小时后再试'
+        error: 'Falló次数过多，请1小时后再试'
       })
     }
 
-    // 防暴力破解：检查 IP 速率限制
+    // 防暴力破解：Verificar IP 速率Límite
     const ipKey = `redeem_card:ip:${clientIP}:${hour}`
     const ipCount = await redis.client.incr(ipKey)
     await redis.client.expire(ipKey, 3600)
@@ -1477,7 +1477,7 @@ router.post('/api/redeem-card', async (req, res) => {
       logger.security(`🚨 Card redemption rate limit for IP: ${clientIP}`)
       return res.status(429).json({
         success: false,
-        error: '请求过于频繁，请稍后再试'
+        error: 'Solicitud过于频繁，请稍后再试'
       })
     }
 
@@ -1488,18 +1488,18 @@ router.post('/api/redeem-card', async (req, res) => {
       })
     }
 
-    // 验证 apiId 格式
+    // Validar apiId Formato
     if (
       typeof apiId !== 'string' ||
       !apiId.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i)
     ) {
       return res.status(400).json({
         success: false,
-        error: 'API ID 格式无效'
+        error: 'API ID Formato无效'
       })
     }
 
-    // 验证 API Key 存在且有效
+    // Validar API Key 存在且有效
     const keyData = await redis.getApiKey(apiId)
     if (!keyData || Object.keys(keyData).length === 0) {
       return res.status(404).json({
@@ -1511,14 +1511,14 @@ router.post('/api/redeem-card', async (req, res) => {
     if (keyData.isActive !== 'true') {
       return res.status(403).json({
         success: false,
-        error: 'API Key 已禁用'
+        error: 'API Key 已Deshabilitar'
       })
     }
 
-    // 调用兑换服务
+    // 调用兑换Servicio
     const result = await quotaCardService.redeemCard(code, apiId, null, keyData.name || 'API Stats')
 
-    // 成功时清除失败计数（静默处理，不影响成功响应）
+    // Éxito时清除Falló计数（静默Procesar，不影响ÉxitoRespuesta）
     redis.client.del(failKey).catch(() => {})
 
     logger.api(`🎫 Card redeemed via API Stats: ${code} -> ${apiId}`)
@@ -1528,7 +1528,7 @@ router.post('/api/redeem-card', async (req, res) => {
       data: result
     })
   } catch (error) {
-    // 失败时增加失败计数（静默处理，不影响错误响应）
+    // Falló时增加Falló计数（静默Procesar，不影响ErrorRespuesta）
     const clientIP = req.ip || req.connection?.remoteAddress || 'unknown'
     const failKey = `redeem_card:fail:${clientIP}`
     redis.client
@@ -1544,7 +1544,7 @@ router.post('/api/redeem-card', async (req, res) => {
   }
 })
 
-// 📋 公开的兑换记录查询接口（通过 apiId 验证身份）
+// 📋 公开的兑换RegistroConsultaInterfaz（通过 apiId Validar身份）
 router.get('/api/redemption-history', async (req, res) => {
   const quotaCardService = require('../services/quotaCardService')
 
@@ -1558,18 +1558,18 @@ router.get('/api/redemption-history', async (req, res) => {
       })
     }
 
-    // 验证 apiId 格式
+    // Validar apiId Formato
     if (
       typeof apiId !== 'string' ||
       !apiId.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i)
     ) {
       return res.status(400).json({
         success: false,
-        error: 'API ID 格式无效'
+        error: 'API ID Formato无效'
       })
     }
 
-    // 验证 API Key 存在
+    // Validar API Key 存在
     const keyData = await redis.getApiKey(apiId)
     if (!keyData || Object.keys(keyData).length === 0) {
       return res.status(404).json({
@@ -1578,7 +1578,7 @@ router.get('/api/redemption-history', async (req, res) => {
       })
     }
 
-    // 获取该 API Key 的兑换记录
+    // Obtener该 API Key 的兑换Registro
     const result = await quotaCardService.getRedemptions({
       apiKeyId: apiId,
       limit: parseInt(limit),

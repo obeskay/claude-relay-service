@@ -8,17 +8,17 @@ const ProxyHelper = require('./proxyHelper')
 const axios = require('axios')
 const logger = require('./logger')
 
-// OAuth 配置常量 - 从claude-code-login.js提取
+// OAuth Configuración常量 - 从claude-code-login.js提取
 const OAUTH_CONFIG = {
   AUTHORIZE_URL: 'https://claude.ai/oauth/authorize',
   TOKEN_URL: 'https://console.anthropic.com/v1/oauth/token',
   CLIENT_ID: '9d1c250a-e61b-44d9-88ed-5944d1962f5e',
   REDIRECT_URI: 'https://platform.claude.com/oauth/code/callback',
   SCOPES: 'org:create_api_key user:profile user:inference user:sessions:claude_code',
-  SCOPES_SETUP: 'user:inference' // Setup Token 只需要推理权限
+  SCOPES_SETUP: 'user:inference' // Setup Token 只需要推理Permiso
 }
 
-// Cookie自动授权配置常量
+// Cookie自动授权Configuración常量
 const COOKIE_OAUTH_CONFIG = {
   CLAUDE_AI_URL: 'https://claude.ai',
   ORGANIZATIONS_URL: 'https://claude.ai/api/organizations',
@@ -26,35 +26,35 @@ const COOKIE_OAUTH_CONFIG = {
 }
 
 /**
- * 生成随机的 state 参数
- * @returns {string} 随机生成的 state (base64url编码)
+ * Generar随机的 state Parámetro
+ * @returns {string} 随机Generar的 state (base64urlCodificación)
  */
 function generateState() {
   return crypto.randomBytes(32).toString('base64url')
 }
 
 /**
- * 生成随机的 code verifier（PKCE）
- * 符合 RFC 7636 标准：32字节随机数 → base64url编码 → 43字符
- * @returns {string} base64url 编码的随机字符串
+ * Generar随机的 code verifier（PKCE）
+ * 符合 RFC 7636 标准：32字节随机数 → base64urlCodificación → 43字符
+ * @returns {string} base64url Codificación的随机Cadena
  */
 function generateCodeVerifier() {
   return crypto.randomBytes(32).toString('base64url')
 }
 
 /**
- * 生成 code challenge（PKCE）
- * @param {string} codeVerifier - code verifier 字符串
- * @returns {string} SHA256 哈希后的 base64url 编码字符串
+ * Generar code challenge（PKCE）
+ * @param {string} codeVerifier - code verifier Cadena
+ * @returns {string} SHA256 哈希后的 base64url CodificaciónCadena
  */
 function generateCodeChallenge(codeVerifier) {
   return crypto.createHash('sha256').update(codeVerifier).digest('base64url')
 }
 
 /**
- * 生成授权 URL
+ * Generar授权 URL
  * @param {string} codeChallenge - PKCE code challenge
- * @param {string} state - state 参数
+ * @param {string} state - state Parámetro
  * @returns {string} 完整的授权 URL
  */
 function generateAuthUrl(codeChallenge, state) {
@@ -73,7 +73,7 @@ function generateAuthUrl(codeChallenge, state) {
 }
 
 /**
- * 生成OAuth授权URL和相关参数
+ * GenerarOAuth授权URL和相关Parámetro
  * @returns {{authUrl: string, codeVerifier: string, state: string, codeChallenge: string}}
  */
 function generateOAuthParams() {
@@ -92,9 +92,9 @@ function generateOAuthParams() {
 }
 
 /**
- * 生成 Setup Token 授权 URL
+ * Generar Setup Token 授权 URL
  * @param {string} codeChallenge - PKCE code challenge
- * @param {string} state - state 参数
+ * @param {string} state - state Parámetro
  * @returns {string} 完整的授权 URL
  */
 function generateSetupTokenAuthUrl(codeChallenge, state) {
@@ -113,7 +113,7 @@ function generateSetupTokenAuthUrl(codeChallenge, state) {
 }
 
 /**
- * 生成Setup Token授权URL和相关参数
+ * GenerarSetup Token授权URL和相关Parámetro
  * @returns {{authUrl: string, codeVerifier: string, state: string, codeChallenge: string}}
  */
 function generateSetupTokenParams() {
@@ -132,24 +132,24 @@ function generateSetupTokenParams() {
 }
 
 /**
- * 创建代理agent（使用统一的代理工具）
- * @param {object|null} proxyConfig - 代理配置对象
- * @returns {object|null} 代理agent或null
+ * CrearProxyagent（使用统一的Proxy工具）
+ * @param {object|null} proxyConfig - ProxyConfiguraciónObjeto
+ * @returns {object|null} Proxyagent或null
  */
 function createProxyAgent(proxyConfig) {
   return ProxyHelper.createProxyAgent(proxyConfig)
 }
 
 /**
- * 使用授权码交换访问令牌
+ * 使用授权码交换访问Token
  * @param {string} authorizationCode - 授权码
  * @param {string} codeVerifier - PKCE code verifier
- * @param {string} state - state 参数
- * @param {object|null} proxyConfig - 代理配置（可选）
- * @returns {Promise<object>} Claude格式的token响应
+ * @param {string} state - state Parámetro
+ * @param {object|null} proxyConfig - ProxyConfiguración（Opcional）
+ * @returns {Promise<object>} ClaudeFormato的tokenRespuesta
  */
 async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, proxyConfig = null) {
-  // 清理授权码，移除URL片段
+  // Limpiar授权码，EliminaciónURL片段
   const cleanedCode = authorizationCode.split('#')[0]?.split('&')[0] ?? authorizationCode
 
   const params = {
@@ -161,7 +161,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
     state
   }
 
-  // 创建代理agent
+  // CrearProxyagent
   const agent = createProxyAgent(proxyConfig)
 
   try {
@@ -201,10 +201,10 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
 
     const response = await axios.post(OAUTH_CONFIG.TOKEN_URL, params, axiosConfig)
 
-    // 记录完整的响应数据到专门的认证详细日志
+    // Registro完整的RespuestaDatos到专门的认证详细Registro
     logger.authDetail('OAuth token exchange response', response.data)
 
-    // 记录简化版本到主日志
+    // Registro简化Versión到主Registro
     logger.info('📊 OAuth token exchange response (analyzing for subscription info):', {
       status: response.status,
       hasData: !!response.data,
@@ -216,7 +216,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
       hasAccessToken: !!response.data?.access_token,
       hasRefreshToken: !!response.data?.refresh_token,
       scopes: response.data?.scope,
-      // 尝试提取可能的套餐信息字段
+      // 尝试提取可能的套餐InformaciónCampo
       subscription: response.data?.subscription,
       plan: response.data?.plan,
       tier: response.data?.tier,
@@ -227,12 +227,12 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
 
     const { data } = response
 
-    // 解析组织与账户信息
+    // Analizar组织与CuentaInformación
     const organizationInfo = data.organization || null
     const accountInfo = data.account || null
     const extInfo = extractExtInfo(data)
 
-    // 返回Claude格式的token数据，包含可能的套餐信息
+    // RetornarClaudeFormato的tokenDatos，Incluir可能的套餐Información
     const result = {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
@@ -244,7 +244,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
       extInfo
     }
 
-    // 如果响应中包含套餐信息，添加到返回结果中
+    // 如果Respuesta中Incluir套餐Información，添加到Retornar结果中
     if (data.subscription || data.plan || data.tier || data.account_type) {
       result.subscriptionInfo = {
         subscription: data.subscription,
@@ -259,9 +259,9 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
 
     return result
   } catch (error) {
-    // 处理axios错误响应
+    // ProcesaraxiosErrorRespuesta
     if (error.response) {
-      // 服务器返回了错误状态码
+      // Servicio器Retornar了Error状态码
       const { status } = error.response
       const errorData = error.response.data
 
@@ -274,7 +274,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
         codePrefix: `${cleanedCode.substring(0, 10)}...`
       })
 
-      // 尝试从错误响应中提取有用信息
+      // 尝试从ErrorRespuesta中提取有用Información
       let errorMessage = `HTTP ${status}`
 
       if (errorData) {
@@ -292,7 +292,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
 
       throw new Error(`Token exchange failed: ${errorMessage}`)
     } else if (error.request) {
-      // 请求被发送但没有收到响应
+      // Solicitud被发送但没有收到Respuesta
       logger.error('❌ OAuth token exchange failed with network error', {
         message: error.message,
         code: error.code,
@@ -300,7 +300,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
       })
       throw new Error('Token exchange failed: No response from server (network error or timeout)')
     } else {
-      // 其他错误
+      // 其他Error
       logger.error('❌ OAuth token exchange failed with unknown error', {
         message: error.message,
         stack: error.stack
@@ -311,7 +311,7 @@ async function exchangeCodeForTokens(authorizationCode, codeVerifier, state, pro
 }
 
 /**
- * 解析回调 URL 或授权码
+ * Analizar回调 URL 或授权码
  * @param {string} input - 完整的回调 URL 或直接的授权码
  * @returns {string} 授权码
  */
@@ -322,14 +322,14 @@ function parseCallbackUrl(input) {
 
   const trimmedInput = input.trim()
 
-  // 情况1: 尝试作为完整URL解析
+  // 情况1: 尝试作为完整URLAnalizar
   if (trimmedInput.startsWith('http://') || trimmedInput.startsWith('https://')) {
     try {
       const urlObj = new URL(trimmedInput)
       const authorizationCode = urlObj.searchParams.get('code')
 
       if (!authorizationCode) {
-        throw new Error('回调 URL 中未找到授权码 (code 参数)')
+        throw new Error('回调 URL 中未找到授权码 (code Parámetro)')
       }
 
       return authorizationCode
@@ -337,23 +337,23 @@ function parseCallbackUrl(input) {
       if (error.message.includes('回调 URL 中未找到授权码')) {
         throw error
       }
-      throw new Error('无效的 URL 格式，请检查回调 URL 是否正确')
+      throw new Error('无效的 URL Formato，请Verificar回调 URL 是否正确')
     }
   }
 
-  // 情况2: 直接的授权码（可能包含URL fragments）
-  // 参考claude-code-login.js的处理方式：移除URL fragments和参数
+  // 情况2: 直接的授权码（可能IncluirURL fragments）
+  // 参考claude-code-login.js的Procesar方式：EliminaciónURL fragments和Parámetro
   const cleanedCode = trimmedInput.split('#')[0]?.split('&')[0] ?? trimmedInput
 
-  // 验证授权码格式（Claude的授权码通常是base64url格式）
+  // Validar授权码Formato（Claude的授权码通常是base64urlFormato）
   if (!cleanedCode || cleanedCode.length < 10) {
-    throw new Error('授权码格式无效，请确保复制了完整的 Authorization Code')
+    throw new Error('授权码Formato无效，请确保复制了完整的 Authorization Code')
   }
 
-  // 基本格式验证：授权码应该只包含字母、数字、下划线、连字符
+  // 基本FormatoValidar：授权码应该只Incluir字母、Número、下划线、连字符
   const validCodePattern = /^[A-Za-z0-9_-]+$/
   if (!validCodePattern.test(cleanedCode)) {
-    throw new Error('授权码包含无效字符，请检查是否复制了正确的 Authorization Code')
+    throw new Error('授权码Incluir无效字符，请Verificar是否复制了正确的 Authorization Code')
   }
 
   return cleanedCode
@@ -363,12 +363,12 @@ function parseCallbackUrl(input) {
  * 使用授权码交换Setup Token
  * @param {string} authorizationCode - 授权码
  * @param {string} codeVerifier - PKCE code verifier
- * @param {string} state - state 参数
- * @param {object|null} proxyConfig - 代理配置（可选）
- * @returns {Promise<object>} Claude格式的token响应
+ * @param {string} state - state Parámetro
+ * @param {object|null} proxyConfig - ProxyConfiguración（Opcional）
+ * @returns {Promise<object>} ClaudeFormato的tokenRespuesta
  */
 async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, proxyConfig = null) {
-  // 清理授权码，移除URL片段
+  // Limpiar授权码，EliminaciónURL片段
   const cleanedCode = authorizationCode.split('#')[0]?.split('&')[0] ?? authorizationCode
 
   const params = {
@@ -378,10 +378,10 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
     redirect_uri: OAUTH_CONFIG.REDIRECT_URI,
     code_verifier: codeVerifier,
     state,
-    expires_in: 31536000 // Setup Token 可以设置较长的过期时间
+    expires_in: 31536000 // Setup Token 可以Establecer较长的过期Tiempo
   }
 
-  // 创建代理agent
+  // CrearProxyagent
   const agent = createProxyAgent(proxyConfig)
 
   try {
@@ -421,10 +421,10 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
 
     const response = await axios.post(OAUTH_CONFIG.TOKEN_URL, params, axiosConfig)
 
-    // 记录完整的响应数据到专门的认证详细日志
+    // Registro完整的RespuestaDatos到专门的认证详细Registro
     logger.authDetail('Setup Token exchange response', response.data)
 
-    // 记录简化版本到主日志
+    // Registro简化Versión到主Registro
     logger.info('📊 Setup Token exchange response (analyzing for subscription info):', {
       status: response.status,
       hasData: !!response.data,
@@ -435,7 +435,7 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
       status: response.status,
       hasAccessToken: !!response.data?.access_token,
       scopes: response.data?.scope,
-      // 尝试提取可能的套餐信息字段
+      // 尝试提取可能的套餐InformaciónCampo
       subscription: response.data?.subscription,
       plan: response.data?.plan,
       tier: response.data?.tier,
@@ -446,12 +446,12 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
 
     const { data } = response
 
-    // 解析组织与账户信息
+    // Analizar组织与CuentaInformación
     const organizationInfo = data.organization || null
     const accountInfo = data.account || null
     const extInfo = extractExtInfo(data)
 
-    // 返回Claude格式的token数据，包含可能的套餐信息
+    // RetornarClaudeFormato的tokenDatos，Incluir可能的套餐Información
     const result = {
       accessToken: data.access_token,
       refreshToken: '',
@@ -463,7 +463,7 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
       extInfo
     }
 
-    // 如果响应中包含套餐信息，添加到返回结果中
+    // 如果Respuesta中Incluir套餐Información，添加到Retornar结果中
     if (data.subscription || data.plan || data.tier || data.account_type) {
       result.subscriptionInfo = {
         subscription: data.subscription,
@@ -478,7 +478,7 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
 
     return result
   } catch (error) {
-    // 使用与标准OAuth相同的错误处理逻辑
+    // 使用与标准OAuth相同的ErrorProcesar逻辑
     if (error.response) {
       const { status } = error.response
       const errorData = error.response.data
@@ -526,9 +526,9 @@ async function exchangeSetupTokenCode(authorizationCode, codeVerifier, state, pr
 }
 
 /**
- * 格式化为Claude标准格式
- * @param {object} tokenData - token数据
- * @returns {object} claudeAiOauth格式的数据
+ * Formato化为Claude标准Formato
+ * @param {object} tokenData - tokenDatos
+ * @returns {object} claudeAiOauthFormato的Datos
  */
 function formatClaudeCredentials(tokenData) {
   return {
@@ -546,9 +546,9 @@ function formatClaudeCredentials(tokenData) {
 }
 
 /**
- * 从令牌响应中提取扩展信息
- * @param {object} data - 令牌响应
- * @returns {object|null} 包含组织与账户UUID的扩展信息
+ * 从TokenRespuesta中提取ExtensiónInformación
+ * @param {object} data - TokenRespuesta
+ * @returns {object|null} Incluir组织与CuentaUUID的ExtensiónInformación
  */
 function extractExtInfo(data) {
   if (!data || typeof data !== 'object') {
@@ -579,13 +579,13 @@ function extractExtInfo(data) {
 }
 
 // =============================================================================
-// Cookie自动授权相关方法 (基于Clove项目实现)
+// Cookie自动授权相关Método (基于Clove项目实现)
 // =============================================================================
 
 /**
- * 构建带Cookie的请求头
- * @param {string} sessionKey - sessionKey值
- * @returns {object} 请求头对象
+ * Construir带Cookie的Solicitud头
+ * @param {string} sessionKey - sessionKeyValor
+ * @returns {object} Solicitud头Objeto
  */
 function buildCookieHeaders(sessionKey) {
   return {
@@ -601,9 +601,9 @@ function buildCookieHeaders(sessionKey) {
 }
 
 /**
- * 使用Cookie获取组织UUID和能力列表
- * @param {string} sessionKey - sessionKey值
- * @param {object|null} proxyConfig - 代理配置（可选）
+ * 使用CookieObtener组织UUID和能力ColumnaTabla
+ * @param {string} sessionKey - sessionKeyValor
+ * @param {object|null} proxyConfig - ProxyConfiguración（Opcional）
  * @returns {Promise<{organizationUuid: string, capabilities: string[]}>}
  */
 async function getOrganizationInfo(sessionKey, proxyConfig = null) {
@@ -635,7 +635,7 @@ async function getOrganizationInfo(sessionKey, proxyConfig = null) {
     const response = await axios.get(COOKIE_OAUTH_CONFIG.ORGANIZATIONS_URL, axiosConfig)
 
     if (!response.data || !Array.isArray(response.data)) {
-      throw new Error('获取组织信息失败：响应格式无效')
+      throw new Error('Obtener组织InformaciónFalló：RespuestaFormato无效')
     }
 
     // 找到具有chat能力且能力最多的组织
@@ -679,12 +679,12 @@ async function getOrganizationInfo(sessionKey, proxyConfig = null) {
       }
 
       if (status === 302) {
-        throw new Error('请求被Cloudflare拦截，请稍后重试')
+        throw new Error('Solicitud被Cloudflare拦截，请稍后Reintentar')
       }
 
-      throw new Error(`获取组织信息失败：HTTP ${status}`)
+      throw new Error(`Obtener组织InformaciónFalló：HTTP ${status}`)
     } else if (error.request) {
-      throw new Error('获取组织信息失败：网络错误或超时')
+      throw new Error('Obtener组织InformaciónFalló：网络Error或Tiempo de espera agotado')
     }
 
     throw error
@@ -692,26 +692,26 @@ async function getOrganizationInfo(sessionKey, proxyConfig = null) {
 }
 
 /**
- * 使用Cookie自动获取授权code
- * @param {string} sessionKey - sessionKey值
+ * 使用Cookie自动Obtener授权code
+ * @param {string} sessionKey - sessionKeyValor
  * @param {string} organizationUuid - 组织UUID
  * @param {string} scope - 授权scope
- * @param {object|null} proxyConfig - 代理配置（可选）
+ * @param {object|null} proxyConfig - ProxyConfiguración（Opcional）
  * @returns {Promise<{authorizationCode: string, codeVerifier: string, state: string}>}
  */
 async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyConfig = null) {
-  // 生成PKCE参数
+  // GenerarPKCEParámetro
   const codeVerifier = generateCodeVerifier()
   const codeChallenge = generateCodeChallenge(codeVerifier)
   const state = generateState()
 
-  // 构建授权URL
+  // Construir授权URL
   const authorizeUrl = COOKIE_OAUTH_CONFIG.AUTHORIZE_URL_TEMPLATE.replace(
     '{organization_uuid}',
     organizationUuid
   )
 
-  // 构建请求payload
+  // ConstruirSolicitudpayload
   const payload = {
     response_type: 'code',
     client_id: OAUTH_CONFIG.CLIENT_ID,
@@ -757,16 +757,16 @@ async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyCon
 
     const response = await axios.post(authorizeUrl, payload, axiosConfig)
 
-    // 从响应中获取redirect_uri
+    // 从Respuesta中Obtenerredirect_uri
     const redirectUri = response.data?.redirect_uri
 
     if (!redirectUri) {
-      throw new Error('授权响应中未找到redirect_uri')
+      throw new Error('授权Respuesta中未找到redirect_uri')
     }
 
     logger.debug('📎 Got redirect URI', { redirectUri: `${redirectUri.substring(0, 80)}...` })
 
-    // 解析redirect_uri获取authorization code
+    // Analizarredirect_uriObtenerauthorization code
     const url = new URL(redirectUri)
     const authorizationCode = url.searchParams.get('code')
     const responseState = url.searchParams.get('state')
@@ -775,7 +775,7 @@ async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyCon
       throw new Error('redirect_uri中未找到授权码')
     }
 
-    // 构建完整的授权码（包含state，如果有的话）
+    // Construir完整的授权码（Incluirstate，如果有的话）
     const fullCode = responseState ? `${authorizationCode}#${responseState}` : authorizationCode
 
     logger.success('Got authorization code via Cookie', {
@@ -797,7 +797,7 @@ async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyCon
       }
 
       if (status === 302) {
-        throw new Error('请求被Cloudflare拦截，请稍后重试')
+        throw new Error('Solicitud被Cloudflare拦截，请稍后Reintentar')
       }
 
       const errorData = error.response.data
@@ -811,9 +811,9 @@ async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyCon
         }
       }
 
-      throw new Error(`授权请求失败：${errorMessage}`)
+      throw new Error(`授权SolicitudFalló：${errorMessage}`)
     } else if (error.request) {
-      throw new Error('授权请求失败：网络错误或超时')
+      throw new Error('授权SolicitudFalló：网络Error或Tiempo de espera agotado')
     }
 
     throw error
@@ -822,8 +822,8 @@ async function authorizeWithCookie(sessionKey, organizationUuid, scope, proxyCon
 
 /**
  * 完整的Cookie自动授权流程
- * @param {string} sessionKey - sessionKey值
- * @param {object|null} proxyConfig - 代理配置（可选）
+ * @param {string} sessionKey - sessionKeyValor
+ * @param {object|null} proxyConfig - ProxyConfiguración（Opcional）
  * @param {boolean} isSetupToken - 是否为Setup Token模式
  * @returns {Promise<{claudeAiOauth: object, organizationUuid: string, capabilities: string[]}>}
  */
@@ -833,11 +833,11 @@ async function oauthWithCookie(sessionKey, proxyConfig = null, isSetupToken = fa
     hasProxy: !!proxyConfig
   })
 
-  // 步骤1：获取组织信息
+  // 步骤1：Obtener组织Información
   logger.debug('Step 1/3: Fetching organization info...')
   const { organizationUuid, capabilities } = await getOrganizationInfo(sessionKey, proxyConfig)
 
-  // 步骤2：确定scope并获取授权code
+  // 步骤2：确定scope并Obtener授权code
   const scope = isSetupToken ? OAUTH_CONFIG.SCOPES_SETUP : 'user:profile user:inference'
 
   logger.debug('Step 2/3: Getting authorization code...', { scope })
@@ -884,7 +884,7 @@ module.exports = {
   generateAuthUrl,
   generateSetupTokenAuthUrl,
   createProxyAgent,
-  // Cookie自动授权相关方法
+  // Cookie自动授权相关Método
   buildCookieHeaders,
   getOrganizationInfo,
   authorizeWithCookie,

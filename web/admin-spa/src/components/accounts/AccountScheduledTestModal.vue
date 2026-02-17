@@ -8,7 +8,7 @@
       <div
         class="relative z-10 mx-3 flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-gray-200/70 bg-white/95 shadow-2xl ring-1 ring-black/5 transition-all dark:border-gray-700/60 dark:bg-gray-900/95 dark:ring-white/10 sm:mx-4"
       >
-        <!-- 顶部栏 -->
+        <!-- Barra superior -->
         <div
           class="flex items-center justify-between border-b border-gray-100 bg-white/80 px-5 py-4 backdrop-blur dark:border-gray-800 dark:bg-gray-900/80"
         >
@@ -19,9 +19,9 @@
               <i class="fas fa-clock" />
             </div>
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">定时测试配置</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Pruebas programadas</h3>
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ account?.name || '未知账户' }}
+                {{ account?.name || 'Cuenta desconocida' }}
               </p>
             </div>
           </div>
@@ -34,20 +34,20 @@
           </button>
         </div>
 
-        <!-- 内容区域 -->
+        <!-- Área de contenido -->
         <div class="px-5 py-4">
-          <!-- 加载状态 -->
+          <!-- Estado de carga -->
           <div v-if="loading" class="flex items-center justify-center py-8">
             <i class="fas fa-spinner fa-spin mr-2 text-blue-500" />
-            <span class="text-gray-500 dark:text-gray-400">加载配置中...</span>
+            <span class="text-gray-500 dark:text-gray-400">Cargando configuración...</span>
           </div>
 
           <template v-else>
-            <!-- 启用开关 -->
+            <!-- Interruptor de activación -->
             <div class="mb-5 flex items-center justify-between">
               <div>
-                <p class="font-medium text-gray-700 dark:text-gray-300">启用定时测试</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">按计划自动测试账户连通性</p>
+                <p class="font-medium text-gray-700 dark:text-gray-300">Habilitar定时测试</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Probar conectividad de cuenta automáticamente según programación</p>
               </div>
               <button
                 :class="[
@@ -65,10 +65,10 @@
               </button>
             </div>
 
-            <!-- Cron 表达式配置 -->
+            <!-- Configuración de expresión Cron -->
             <div class="mb-5">
               <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Cron 表达式
+                Expresión Cron
               </label>
               <input
                 v-model="config.cronExpression"
@@ -78,14 +78,14 @@
                 type="text"
               />
               <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                格式: 分 时 日 月 周 (例: "0 8 * * *" = 每天8:00)
+                Formato: min hora día mes sem (ej: "0 8 * * *" = todos los días 8:00)
               </p>
             </div>
 
-            <!-- 快捷选项 -->
+            <!-- Opciones rápidas -->
             <div class="mb-5">
               <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                快捷设置
+                Configuración rápida
               </label>
               <div class="flex flex-wrap gap-2">
                 <button
@@ -106,10 +106,10 @@
               </div>
             </div>
 
-            <!-- 测试模型选择 -->
+            <!-- Selección de modelo de prueba -->
             <div class="mb-5">
               <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                测试模型
+                Modelo de prueba
               </label>
               <input
                 v-model="config.model"
@@ -137,10 +137,10 @@
               </div>
             </div>
 
-            <!-- 测试历史 -->
+            <!-- Historial de pruebas -->
             <div v-if="testHistory.length > 0" class="mb-4">
               <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                最近测试记录
+                Registros de prueba recientes
               </label>
               <div
                 class="max-h-40 space-y-2 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50"
@@ -183,12 +183,12 @@
               class="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
             >
               <i class="fas fa-history mb-2 text-2xl text-gray-300 dark:text-gray-600" />
-              <p>暂无测试记录</p>
+              <p>Sin测试记录</p>
             </div>
           </template>
         </div>
 
-        <!-- 底部操作栏 -->
+        <!-- 底部Operación栏 -->
         <div
           class="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/80 px-5 py-3 dark:border-gray-800 dark:bg-gray-900/50"
         >
@@ -197,7 +197,7 @@
             :disabled="saving"
             @click="handleClose"
           >
-            取消
+            Cancelar
           </button>
           <button
             :class="[
@@ -210,7 +210,7 @@
             @click="saveConfig"
           >
             <i :class="['fas', saving ? 'fa-spinner fa-spin' : 'fa-save']" />
-            {{ saving ? '保存中...' : '保存配置' }}
+            {{ saving ? 'Guardaren...' : 'Guardar配置' }}
           </button>
         </div>
       </div>
@@ -236,7 +236,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'saved'])
 
-// 状态
+// Estado
 const loading = ref(false)
 const saving = ref(false)
 const config = ref({
@@ -256,7 +256,7 @@ const cronPresets = [
   { label: '工作日 9:00', value: '0 9 * * 1-5' }
 ]
 
-// 模型选项
+// Modelo选项
 const modelOptions = [
   { label: 'Claude Sonnet 4.5', value: 'claude-sonnet-4-5-20250929' },
   { label: 'Claude Haiku 4.5', value: 'claude-haiku-4-5-20251001' },
@@ -265,7 +265,7 @@ const modelOptions = [
 
 // 格式化时间戳
 function formatTimestamp(timestamp) {
-  if (!timestamp) return '未知'
+  if (!timestamp) return 'Desconocido'
   const date = new Date(timestamp)
   return date.toLocaleString('zh-CN', {
     month: '2-digit',
@@ -284,12 +284,12 @@ async function loadConfig() {
     const authToken = localStorage.getItem('authToken')
     const platform = props.account.platform
 
-    // 根据平台获取配置端点
+    // 根据Plataforma获取配置端点
     let endpoint = ''
     if (platform === 'claude') {
       endpoint = `${APP_CONFIG.apiPrefix}/admin/claude-accounts/${props.account.id}/test-config`
     } else {
-      // 其他平台暂不支持
+      // OtroPlataforma暂不支持
       loading.value = false
       return
     }
@@ -327,13 +327,13 @@ async function loadConfig() {
       }
     }
   } catch (err) {
-    showToast('加载配置失败: ' + err.message, 'error')
+    showToast('加载配置Fallido: ' + err.message, 'error')
   } finally {
     loading.value = false
   }
 }
 
-// 保存配置
+// Guardar配置
 async function saveConfig() {
   if (!props.account) return
 
@@ -364,21 +364,21 @@ async function saveConfig() {
     })
 
     if (res.ok) {
-      showToast('配置已保存', 'success')
+      showToast('配置已Guardar', 'success')
       emit('saved')
       handleClose()
     } else {
       const errorData = await res.json().catch(() => ({}))
-      showToast(errorData.message || '保存失败', 'error')
+      showToast(errorData.message || 'Error al guardar', 'error')
     }
   } catch (err) {
-    showToast('保存失败: ' + err.message, 'error')
+    showToast('Error al guardar: ' + err.message, 'error')
   } finally {
     saving.value = false
   }
 }
 
-// 关闭模态框
+// Cerrar模态框
 function handleClose() {
   if (saving.value) return
   emit('close')

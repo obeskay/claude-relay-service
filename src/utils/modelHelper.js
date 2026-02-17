@@ -5,8 +5,8 @@
  * Supports parsing model strings like "ccr,model_name" to extract vendor type and base model.
  */
 
-// 仅保留原仓库既有的模型前缀：CCR 路由
-// Gemini/Antigravity 采用“路径分流”，避免在 model 字段里混入 vendor 前缀造成混乱
+// Solo mantiene prefijos de modelo existentes del repositorio original: enrutamiento CCR
+// Gemini/Antigravity 采用“Ruta分流”，避免在 model Campo里混入 vendor 前缀造成混乱
 const SUPPORTED_VENDOR_PREFIXES = ['ccr']
 
 /**
@@ -189,8 +189,8 @@ function isOpus45OrNewer(modelName) {
 }
 
 /**
- * 判断是否为 Opus 模型（任意版本）
- * 匹配所有包含 "opus" 关键词的 Claude 模型
+ * Determina si es un modelo Opus (cualquier versión)
+ * Coincide con todos los modelos Claude que contienen la palabra clave "opus"
  */
 function isOpusModel(modelName) {
   if (!modelName || typeof modelName !== 'string') {
@@ -205,14 +205,14 @@ function isOpusModel(modelName) {
 }
 
 /**
- * 判断某个 model 名称是否属于 Anthropic Claude 系列模型。
+ * Determina si un nombre de modelo pertenece a la serie de modelos Anthropic Claude.
  *
- * 用于 API Key 维度的限额/统计（Claude 周费用）。这里刻意覆盖以下命名：
- * - 标准 Anthropic 模型：claude-*，包括 claude-3-opus、claude-sonnet-*、claude-haiku-* 等
- * - Bedrock 模型：{region}.anthropic.claude-... / anthropic.claude-...
- * - 少数情况下 model 字段可能只包含家族关键词（sonnet/haiku/opus），也视为 Claude 系列
+ * Usado para límites/estadísticas a nivel de API Key (costo semanal de Claude). Cubre intencionalmente los siguientes nombres:
+ * - Modelos Anthropic estándar: claude-*, incluyendo claude-3-opus, claude-sonnet-*, claude-haiku-*, etc.
+ * - Modelos Bedrock: {region}.anthropic.claude-... / anthropic.claude-...
+ * - En casos raros, el campo model puede contener solo palabras clave de familia (sonnet/haiku/opus), también se considera serie Claude
  *
- * 注意：会先去掉支持的 vendor 前缀（例如 "ccr,"）。
+ * Nota: primero eliminará prefijos de vendor soportados (ejemplo "ccr,").
  */
 function isClaudeFamilyModel(modelName) {
   if (!modelName || typeof modelName !== 'string') {
@@ -225,7 +225,7 @@ function isClaudeFamilyModel(modelName) {
     return false
   }
 
-  // Bedrock 模型格式
+  // Formato de modelo Bedrock
   if (
     m.includes('.anthropic.claude-') ||
     m.startsWith('anthropic.claude-') ||
@@ -234,12 +234,12 @@ function isClaudeFamilyModel(modelName) {
     return true
   }
 
-  // 标准 Anthropic 模型 ID
+  // ID de modelo Anthropic estándar
   if (m.startsWith('claude-') || m.includes('claude-')) {
     return true
   }
 
-  // 兜底：某些下游链路里 model 字段可能不带 "claude-" 前缀，但仍包含家族关键词。
+  // Respaldo: en algunas cadenas descendentes el campo model puede no tener el prefijo "claude-", pero aún contiene palabras clave de familia.
   if (m.includes('opus') || m.includes('sonnet') || m.includes('haiku')) {
     return true
   }

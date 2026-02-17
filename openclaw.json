@@ -1,0 +1,195 @@
+{
+  "agentName": "obeskay-pi",
+  "agentType": "PI",
+  "version": "1.0.0",
+  "environment": "production",
+  "deployTarget": "coolify-vps",
+
+  "personality": {
+    "mode": "autonomous-agile",
+    "verbosity": "minimal",
+    "decisionStyle": "simple-scales",
+    "priorities": [
+      "dx-ux-first",
+      "self-healing",
+      "async-monitoring",
+      "proactive-notifications"
+    ]
+  },
+
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "chatId": "${TELEGRAM_CHAT_ID}",
+      "notifications": {
+        "alerts": true,
+        "deployments": true,
+        "healthChecks": true,
+        "cronReports": true,
+        "securityEvents": true,
+        "performance": true
+      },
+      "proactiveRules": {
+        "errorThreshold": 3,
+        "responseTimeThreshold": 2000,
+        "memoryThreshold": 85,
+        "diskThreshold": 80,
+        "autoHealAttempts": 3
+      }
+    },
+
+    "webhook": {
+      "enabled": true,
+      "endpoints": ["${WEBHOOK_ENDPOINT}"],
+      "events": ["deployment", "incident", "recovery", "cron-complete"]
+    },
+
+    "email": {
+      "enabled": false,
+      "recipients": []
+    }
+  },
+
+  "skills": {
+    "monitoring": {
+      "enabled": true,
+      "metrics": [
+        "response-time",
+        "error-rate",
+        "memory-usage",
+        "cpu-usage",
+        "disk-space",
+        "redis-health",
+        "database-health"
+      ],
+      "retentionDays": 30,
+      "samplingInterval": "5m"
+    },
+
+    "selfHealing": {
+      "enabled": true,
+      "actions": [
+        "restart-failed-services",
+        "clear-stale-connections",
+        "rotate-logs",
+        "cleanup-cache",
+        "restart-overloaded-workers"
+      ],
+      "maxRetries": 3,
+      "cooldownPeriod": "10m"
+    },
+
+    "deployment": {
+      "enabled": true,
+      "strategy": "rolling",
+      "healthCheckPath": "/health",
+      "healthCheckTimeout": "30s",
+      "rollbackOnError": true
+    },
+
+    "security": {
+      "enabled": true,
+      "scanOnDeploy": true,
+      "monitorAnomalies": true,
+      "rateLimitAlerts": true,
+      "auditLogRetention": "90d"
+    },
+
+    "performance": {
+      "enabled": true,
+      "optimizeQueries": true,
+      "cacheStrategy": "aggressive",
+      "compressionEnabled": true,
+      "cdnIntegration": false
+    }
+  },
+
+  "monitoredProjects": [
+    {
+      "name": "claude-relay-service",
+      "type": "nodejs",
+      "path": "/var/www/claude-relay-service",
+      "repo": "https://github.com/obeskay/claude-relay-service",
+      "branch": "main",
+      "healthCheck": {
+        "url": "${RELAY_SERVICE_URL}/health",
+        "interval": "2m",
+        "timeout": "10s"
+      },
+      "alerts": ["downtime", "high-error-rate", "redis-failure", "auth-failures"],
+      "critical": true
+    },
+    {
+      "name": "sticky-covers",
+      "type": "nextjs",
+      "path": "/var/www/sticky-covers",
+      "repo": "https://github.com/obeskay/sticky-covers",
+      "branch": "main",
+      "healthCheck": {
+        "url": "${STICKY_COVERS_URL}/api/health",
+        "interval": "5m",
+        "timeout": "15s"
+      },
+      "alerts": ["build-failure", "downtime", "api-errors"],
+      "critical": false
+    },
+    {
+      "name": "qrapidito",
+      "type": "nodejs",
+      "path": "/var/www/qrapidito",
+      "repo": "https://github.com/obeskay/qrapidito",
+      "branch": "main",
+      "healthCheck": {
+        "url": "${QRAPIDITO_URL}/health",
+        "interval": "5m",
+        "timeout": "10s"
+      },
+      "alerts": ["downtime", "database-error", "queue-backlog"],
+      "critical": false
+    },
+    {
+      "name": "chatea-la",
+      "type": "nextjs",
+      "path": "/var/www/chatea-la",
+      "repo": "https://github.com/obeskay/chatea-la",
+      "branch": "main",
+      "healthCheck": {
+        "url": "${CHATEA_LA_URL}/api/health",
+        "interval": "5m",
+        "timeout": "15s"
+      },
+      "alerts": ["downtime", "websocket-failures", "high-latency"],
+      "critical": false
+    }
+  ],
+
+  "cronSchedule": "./cron-schedule.json",
+
+  "behavior": {
+    "responseStyle": "concise",
+    "maxMessageLength": 280,
+    "useEmoji": true,
+    "groupByProject": true,
+    "includeActionableAdvice": true,
+    "avoidTechnicalJargon": false,
+    "proactiveCommunication": true
+  },
+
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "output": ["stdout", "file"],
+    "file": {
+      "path": "./logs/pi-agent.log",
+      "rotation": "daily",
+      "retention": "30d"
+    }
+  },
+
+  "storage": {
+    "metricsBackend": "redis",
+    "stateFile": "./.openclaw-state.json",
+    "backupInterval": "1h"
+  }
+}

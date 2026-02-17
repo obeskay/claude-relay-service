@@ -1,10 +1,10 @@
 /**
- * 客户端定义配置
- * 定义所有支持的客户端类型和它们的属性
+ * Cliente定义Configuración
+ * 定义所有Soportar的ClienteTipo和它们的Propiedad
  *
- * allowedPathPrefixes: 允许访问的路径前缀白名单
- * - 当启用客户端限制时，只有匹配白名单的路径才允许访问
- * - 防止通过其他兼容端点（如 /v1/chat/completions）绕过客户端限制
+ * allowedPathPrefixes: 允许访问的Ruta前缀白名单
+ * - 当HabilitarClienteLímite时，只有匹配白名单的Ruta才允许访问
+ * - 防止通过其他兼容Endpoint（如 /v1/chat/completions）绕过ClienteLímite
  */
 
 const CLIENT_DEFINITIONS = {
@@ -14,7 +14,7 @@ const CLIENT_DEFINITIONS = {
     displayName: 'Claude Code CLI',
     description: 'Claude Code command-line interface',
     icon: '🤖',
-    // Claude Code 仅允许访问 Claude 原生端点，禁止访问 OpenAI 兼容端点
+    // Claude Code 仅允许访问 Claude 原生Endpoint，禁止访问 OpenAI 兼容Endpoint
     allowedPathPrefixes: [
       '/api/v1/messages',
       '/api/v1/models',
@@ -42,7 +42,7 @@ const CLIENT_DEFINITIONS = {
     displayName: 'Gemini Command Line Tool',
     description: 'Google Gemini API command-line interface',
     icon: '💎',
-    // Gemini CLI 仅允许访问 Gemini 端点
+    // Gemini CLI 仅允许访问 Gemini Endpoint
     allowedPathPrefixes: ['/gemini/']
   },
 
@@ -52,7 +52,7 @@ const CLIENT_DEFINITIONS = {
     displayName: 'Codex Command Line Tool',
     description: 'Cursor/Codex command-line interface',
     icon: '🔷',
-    // Codex CLI 仅允许访问 OpenAI Responses 和 Azure 端点
+    // Codex CLI 仅允许访问 OpenAI Responses 和 Azure Endpoint
     allowedPathPrefixes: ['/openai/responses', '/openai/v1/responses', '/azure/']
   },
 
@@ -62,12 +62,12 @@ const CLIENT_DEFINITIONS = {
     displayName: 'Factory Droid CLI',
     description: 'Factory Droid platform command-line interface',
     icon: '🤖',
-    // Droid CLI 仅允许访问 Droid 端点
+    // Droid CLI 仅允许访问 Droid Endpoint
     allowedPathPrefixes: ['/droid/']
   }
 }
 
-// 导出客户端ID枚举
+// 导出ClienteID枚举
 const CLIENT_IDS = {
   CLAUDE_CODE: 'claude_code',
   GEMINI_CLI: 'gemini_cli',
@@ -75,25 +75,25 @@ const CLIENT_IDS = {
   DROID_CLI: 'droid_cli'
 }
 
-// 获取所有客户端定义
+// Obtener所有Cliente定义
 function getAllClientDefinitions() {
   return Object.values(CLIENT_DEFINITIONS)
 }
 
-// 根据ID获取客户端定义
+// 根据IDObtenerCliente定义
 function getClientDefinitionById(clientId) {
   return Object.values(CLIENT_DEFINITIONS).find((client) => client.id === clientId)
 }
 
-// 检查客户端ID是否有效
+// VerificarClienteID是否有效
 function isValidClientId(clientId) {
   return Object.values(CLIENT_IDS).includes(clientId)
 }
 
 /**
- * 检查路径是否允许指定客户端访问
- * @param {string} clientId - 客户端ID
- * @param {string} path - 请求路径 (originalUrl 或 path)
+ * VerificarRuta是否允许指定Cliente访问
+ * @param {string} clientId - ClienteID
+ * @param {string} path - SolicitudRuta (originalUrl 或 path)
  * @returns {boolean} 是否允许
  */
 function isPathAllowedForClient(clientId, path) {
@@ -102,7 +102,7 @@ function isPathAllowedForClient(clientId, path) {
     return false
   }
 
-  // 如果没有定义 allowedPathPrefixes，则不限制路径（向后兼容）
+  // 如果没有定义 allowedPathPrefixes，则不LímiteRuta（向后兼容）
   if (!definition.allowedPathPrefixes || definition.allowedPathPrefixes.length === 0) {
     return true
   }

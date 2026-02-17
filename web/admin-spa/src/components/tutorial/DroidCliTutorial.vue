@@ -1,9 +1,9 @@
 <template>
   <div class="tutorial-section">
-    <!-- 第一步：安装 Node.js -->
+    <!-- Paso 1: Instalar Node.js -->
     <NodeInstallTutorial :platform="platform" :step-number="1" tool-name="Droid CLI" />
 
-    <!-- 第二步：配置 Droid CLI -->
+    <!-- Paso 2: Configurar Droid CLI -->
     <div class="mb-4 sm:mb-10 sm:mb-6">
       <h4
         class="mb-3 flex items-center text-lg font-semibold text-gray-800 dark:text-gray-300 sm:mb-4 sm:text-xl"
@@ -15,19 +15,19 @@
         配置 Droid CLI
       </h4>
       <p class="mb-3 text-sm text-gray-700 dark:text-gray-300 sm:mb-4 sm:text-base">
-        Droid CLI 使用
+        Droid CLI usa
         <code class="rounded bg-gray-100 px-1 dark:bg-gray-800">~/.factory/config.json</code>
-        保存自定义模型；
+        para guardar modelos personalizados;
         <template v-if="platform === 'windows'">
-          在 Windows 中可直接编辑
+          en Windows puedes editar directamente
           <code class="rounded bg-gray-100 px-1 dark:bg-gray-800"
-            >C:\Users\你的用户名\.factory\config.json</code
+            >C:\Users\tu_usuario\.factory\config.json</code
           >。
         </template>
         <template v-else>
-          在终端中可使用
+          en la terminal puedes usar
           <code class="rounded bg-gray-100 px-1 dark:bg-gray-800">vim ~/.factory/config.json</code>
-          编辑。
+          para editar.
         </template>
       </p>
       <div
@@ -37,7 +37,7 @@
           配置文件示例
         </h6>
         <p class="mb-3 text-sm text-blue-700 dark:text-blue-200">
-          将以下内容追加到配置文件中，并替换示例中的域名和 API 密钥：
+          将以abajo内容追加到配置文件en，并替换示例en域名y API Clave：
         </p>
         <div
           class="overflow-x-auto rounded bg-gray-900 p-2 font-mono text-xs text-green-400 sm:p-3 sm:text-sm"
@@ -51,7 +51,7 @@
           </div>
         </div>
         <p class="mt-3 text-xs text-blue-700 dark:text-blue-200 sm:text-sm">
-          💡 在 Droid CLI 中选择自定义模型即可使用新的 Droid 账号池；确保服务地址可被本地访问。
+          💡 en Droid CLI en选择自定义Modelo即可使用新 Droid 账号池；确保服务地址可被本地访问。
         </p>
       </div>
     </div>
@@ -80,7 +80,7 @@ const droidCliConfigLines = computed(() => [
   '      "model_display_name": "Sonnet 4.5 [crs]",',
   '      "model": "claude-sonnet-4-5-20250929",',
   `      "base_url": "${droidClaudeBaseUrl.value}",`,
-  '      "api_key": "你的API密钥",',
+  '      "api_key": "你APIClave",',
   '      "provider": "anthropic",',
   '      "max_tokens": 8192',
   '    },',
@@ -88,7 +88,7 @@ const droidCliConfigLines = computed(() => [
   '      "model_display_name": "GPT5-Codex [crs]",',
   '      "model": "gpt-5-codex",',
   `      "base_url": "${droidOpenaiBaseUrl.value}",`,
-  '      "api_key": "你的API密钥",',
+  '      "api_key": "你APIClave",',
   '      "provider": "openai",',
   '      "max_tokens": 16384',
   '    }',

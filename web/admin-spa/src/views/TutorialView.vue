@@ -5,14 +5,14 @@
         class="mb-3 flex items-center text-xl font-bold text-gray-900 dark:text-gray-100 sm:mb-4 sm:text-2xl"
       >
         <i class="fas fa-graduation-cap mr-2 text-blue-600 sm:mr-3" />
-        {{ currentToolTitle }} 使用教程
+        Tutorial de {{ currentToolTitle }}
       </h3>
       <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-lg">
-        跟着这个教程，你可以轻松在自己的电脑上安装并使用 {{ currentToolTitle }}。
+        Con este tutorial, puedes instalar y usar fácilmente {{ currentToolTitle }} en tu computadora.
       </p>
     </div>
 
-    <!-- 系统选择标签 -->
+    <!-- Etiquetas de selección del sistema -->
     <div class="mb-4 sm:mb-6">
       <div class="flex flex-wrap gap-1 rounded-xl bg-gray-100 p-1 dark:bg-gray-800 sm:gap-2 sm:p-2">
         <button
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <!-- CLI 工具选择标签 -->
+    <!-- Etiquetas de selección de herramientas CLI -->
     <div class="mb-4 sm:mb-8">
       <div class="flex flex-wrap gap-1 rounded-xl bg-gray-100 p-1 dark:bg-gray-800 sm:gap-2 sm:p-2">
         <button
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <!-- 动态组件 -->
+    <!-- Componente dinámico -->
     <component :is="currentTutorialComponent" :platform="activeTutorialSystem" />
   </div>
 </template>
@@ -64,20 +64,20 @@ import GeminiCliTutorial from '@/components/tutorial/GeminiCliTutorial.vue'
 import CodexTutorial from '@/components/tutorial/CodexTutorial.vue'
 import DroidCliTutorial from '@/components/tutorial/DroidCliTutorial.vue'
 
-// 当前系统选择
+// Selección del sistema actual
 const activeTutorialSystem = ref('windows')
 
-// 当前 CLI 工具选择
+// Selección de herramienta CLI actual
 const activeCliTool = ref('claude-code')
 
-// 系统列表
+// Lista de sistemas
 const tutorialSystems = [
   { key: 'windows', name: 'Windows', icon: 'fab fa-windows' },
   { key: 'macos', name: 'macOS', icon: 'fab fa-apple' },
   { key: 'linux', name: 'Linux / WSL2', icon: 'fab fa-linux' }
 ]
 
-// CLI 工具列表
+// Lista de herramientas CLI
 const cliTools = [
   { key: 'claude-code', name: 'Claude Code', icon: 'fas fa-robot', component: ClaudeCodeTutorial },
   { key: 'codex', name: 'Codex', icon: 'fas fa-code', component: CodexTutorial },
@@ -85,13 +85,13 @@ const cliTools = [
   { key: 'droid-cli', name: 'Droid CLI', icon: 'fas fa-terminal', component: DroidCliTutorial }
 ]
 
-// 当前工具标题
+// Título de la herramienta actual
 const currentToolTitle = computed(() => {
   const tool = cliTools.find((t) => t.key === activeCliTool.value)
-  return tool ? tool.name : 'CLI 工具'
+  return tool ? tool.name : 'Herramienta CLI'
 })
 
-// 当前教程组件
+// Componente del tutorial actual
 const currentTutorialComponent = computed(() => {
   const tool = cliTools.find((t) => t.key === activeCliTool.value)
   return tool ? tool.component : null

@@ -4,7 +4,7 @@ const logger = require('../../utils/logger')
 const config = require('../../../config/config')
 const upstreamErrorHelper = require('../../utils/upstreamErrorHelper')
 
-// 转换模型名称（去掉 azure/ 前缀）
+// Convertir模型Nombre（去掉 azure/ 前缀）
 function normalizeModelName(model) {
   if (model && model.startsWith('azure/')) {
     return model.replace('azure/', '')
@@ -12,21 +12,21 @@ function normalizeModelName(model) {
   return model
 }
 
-// 处理 Azure OpenAI 请求
+// Procesar Azure OpenAI Solicitud
 async function handleAzureOpenAIRequest({
   account,
   requestBody,
-  headers: _headers = {}, // 前缀下划线表示未使用
+  headers: _headers = {}, // 前缀下划线Tabla示未使用
   isStream = false,
   endpoint = 'chat/completions'
 }) {
-  // 声明变量在函数顶部，确保在 catch 块中也能访问
+  // 声明变量在Función顶部，确保在 catch 块中也能访问
   let requestUrl = ''
   let proxyAgent = null
   let deploymentName = ''
 
   try {
-    // 构建 Azure OpenAI 请求 URL
+    // Construir Azure OpenAI Solicitud URL
     const baseUrl = account.azureEndpoint
     deploymentName = account.deploymentName || 'default'
     // Azure Responses API requires preview versions; fall back appropriately
@@ -40,21 +40,21 @@ async function handleAzureOpenAIRequest({
       requestUrl = `${baseUrl}/openai/deployments/${deploymentName}/${endpoint}?api-version=${apiVersion}`
     }
 
-    // 准备请求头
+    // 准备Solicitud头
     const requestHeaders = {
       'Content-Type': 'application/json',
       'api-key': account.apiKey
     }
 
-    // 移除不需要的头部
+    // Eliminación不需要的头部
     delete requestHeaders['anthropic-version']
     delete requestHeaders['x-api-key']
     delete requestHeaders['host']
 
-    // 处理请求体
+    // ProcesarSolicitud体
     const processedBody = { ...requestBody }
 
-    // 标准化模型名称
+    // 标准化模型Nombre
     if (endpoint === 'responses') {
       processedBody.model = deploymentName
     } else if (processedBody.model) {
@@ -63,10 +63,10 @@ async function handleAzureOpenAIRequest({
       processedBody.model = 'gpt-4'
     }
 
-    // 使用统一的代理创建工具
+    // 使用统一的ProxyCrear工具
     proxyAgent = ProxyHelper.createProxyAgent(account.proxy)
 
-    // 配置请求选项
+    // ConfiguraciónSolicitud选项
     const axiosConfig = {
       method: 'POST',
       url: requestUrl,
@@ -74,19 +74,19 @@ async function handleAzureOpenAIRequest({
       data: processedBody,
       timeout: config.requestTimeout || 600000,
       validateStatus: () => true,
-      // 添加连接保活选项
+      // 添加Conexión保活选项
       keepAlive: true,
       maxRedirects: 5,
       // 防止socket hang up
       socketKeepAlive: true
     }
 
-    // 如果有代理，添加代理配置
+    // 如果有Proxy，添加ProxyConfiguración
     if (proxyAgent) {
       axiosConfig.httpAgent = proxyAgent
       axiosConfig.httpsAgent = proxyAgent
       axiosConfig.proxy = false
-      // 为代理添加额外的keep-alive设置
+      // 为Proxy添加额外的keep-aliveEstablecer
       if (proxyAgent.options) {
         proxyAgent.options.keepAlive = true
         proxyAgent.options.keepAliveMsecs = 1000
@@ -96,7 +96,7 @@ async function handleAzureOpenAIRequest({
       )
     }
 
-    // 流式请求特殊处理
+    // 流式Solicitud特殊Procesar
     if (isStream) {
       axiosConfig.responseType = 'stream'
       requestHeaders.accept = 'text/event-stream'
@@ -133,7 +133,7 @@ async function handleAzureOpenAIRequest({
     const requestStartTime = Date.now()
     logger.debug(`🔄 Starting Azure OpenAI HTTP request at ${new Date().toISOString()}`)
 
-    // 发送请求
+    // 发送Solicitud
     const response = await axios(axiosConfig)
 
     const requestDuration = Date.now() - requestStartTime
@@ -166,7 +166,7 @@ async function handleAzureOpenAIRequest({
       stack: error.stack
     }
 
-    // 特殊错误类型的详细日志
+    // 特殊ErrorTipo的详细Registro
     if (error.code === 'ENOTFOUND') {
       logger.error('DNS Resolution Failed for Azure OpenAI', {
         ...errorDetails,
@@ -213,7 +213,7 @@ async function handleAzureOpenAIRequest({
       logger.error('Azure OpenAI Request Failed', errorDetails)
     }
 
-    // 网络错误标记临时不可用
+    // 网络Error标记临时不可用
     const azureAutoProtectionDisabled =
       account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
     if (account?.id && !azureAutoProtectionDisabled) {
@@ -227,7 +227,7 @@ async function handleAzureOpenAIRequest({
   }
 }
 
-// 安全的流管理器
+// Seguridad的流管理器
 class StreamManager {
   constructor() {
     this.activeStreams = new Set()
@@ -262,11 +262,11 @@ class StreamManager {
 
 const streamManager = new StreamManager()
 
-// SSE 缓冲区大小限制
+// SSE 缓冲区大小Límite
 const MAX_BUFFER_SIZE = 64 * 1024 // 64KB
-const MAX_EVENT_SIZE = 16 * 1024 // 16KB 单个事件最大大小
+const MAX_EVENT_SIZE = 16 * 1024 // 16KB 单个Evento最大大小
 
-// 处理流式响应
+// Procesar流式Respuesta
 function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
   const { onData, onEnd, onError } = options
   const streamId = `stream_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -287,14 +287,14 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
     let actualModel = null
     let hasEnded = false
     let eventCount = 0
-    const maxEvents = 10000 // 最大事件数量限制
+    const maxEvents = 10000 // 最大Evento数量Límite
 
-    // 专门用于保存最后几个chunks以提取usage数据
+    // 专门用于保存最后几个chunks以提取usageDatos
     let finalChunksBuffer = ''
     const FINAL_CHUNKS_SIZE = 32 * 1024 // 32KB保留最终chunks
-    const allParsedEvents = [] // 存储所有解析的事件用于最终usage提取
+    const allParsedEvents = [] // 存储所有Analizar的Evento用于最终usage提取
 
-    // 设置响应头
+    // EstablecerRespuesta头
     clientResponse.setHeader('Content-Type', 'text/event-stream')
     clientResponse.setHeader('Cache-Control', 'no-cache')
     clientResponse.setHeader('Connection', 'keep-alive')
@@ -313,33 +313,33 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
       }
     })
 
-    // 立即刷新响应头
+    // 立即刷新Respuesta头
     if (typeof clientResponse.flushHeaders === 'function') {
       clientResponse.flushHeaders()
     }
 
-    // 强化的SSE事件解析，保存所有事件用于最终处理
+    // 强化的SSEEventoAnalizar，保存所有Evento用于最终Procesar
     const parseSSEForUsage = (data, isFromFinalBuffer = false) => {
       const lines = data.split('\n')
 
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           try {
-            const jsonStr = line.slice(6) // 移除 'data: ' 前缀
+            const jsonStr = line.slice(6) // Eliminación 'data: ' 前缀
             if (jsonStr.trim() === '[DONE]') {
               continue
             }
             const eventData = JSON.parse(jsonStr)
 
-            // 保存所有成功解析的事件
+            // 保存所有ÉxitoAnalizar的Evento
             allParsedEvents.push(eventData)
 
-            // 获取模型信息
+            // Obtener模型Información
             if (eventData.model) {
               actualModel = eventData.model
             }
 
-            // 使用强化的usage提取函数
+            // 使用强化的usage提取Función
             const { usageData: extractedUsage, actualModel: extractedModel } =
               extractUsageDataRobust(
                 eventData,
@@ -360,7 +360,7 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
 
             // 原有的简单提取作为备用
             if (!usageData) {
-              // 获取使用统计（Responses API: response.completed -> response.usage）
+              // Obtener使用Estadística（Responses API: response.completed -> response.usage）
               if (eventData.type === 'response.completed' && eventData.response) {
                 if (eventData.response.model) {
                   actualModel = eventData.response.model
@@ -384,7 +384,7 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
       }
     }
 
-    // 注册流清理
+    // 注册流Limpiar
     const cleanup = () => {
       if (!hasEnded) {
         hasEnded = true
@@ -420,12 +420,12 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
 
         const chunkStr = chunk.toString()
 
-        // 转发数据给客户端
+        // 转发Datos给Cliente
         if (!clientResponse.destroyed) {
           clientResponse.write(chunk)
         }
 
-        // 同时解析数据以捕获 usage 信息，带缓冲区大小限制
+        // 同时AnalizarDatos以捕获 usage Información，带缓冲区大小Límite
         buffer += chunkStr
 
         // 保留最后的chunks用于最终usage提取（不被truncate影响）
@@ -434,19 +434,19 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
           finalChunksBuffer = finalChunksBuffer.slice(-FINAL_CHUNKS_SIZE)
         }
 
-        // 防止主缓冲区过大 - 但保持最后部分用于usage解析
+        // 防止主缓冲区过大 - 但保持最后部分用于usageAnalizar
         if (buffer.length > MAX_BUFFER_SIZE) {
           logger.warn(
             `Stream ${streamId} buffer exceeded limit, truncating main buffer but preserving final chunks`
           )
-          // 保留最后1/4而不是1/2，为usage数据留更多空间
+          // 保留最后1/4而不是1/2，为usageDatos留更多空间
           buffer = buffer.slice(-MAX_BUFFER_SIZE / 4)
         }
 
-        // 处理完整的 SSE 事件
+        // Procesar完整的 SSE Evento
         if (buffer.includes('\n\n')) {
           const events = buffer.split('\n\n')
-          buffer = events.pop() || '' // 保留最后一个可能不完整的事件
+          buffer = events.pop() || '' // 保留最后一个可能不完整的Evento
 
           for (const event of events) {
             if (event.trim() && event.length <= MAX_EVENT_SIZE) {
@@ -483,22 +483,22 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
           hasUsageData: !!usageData
         })
 
-        // 多层次的最终usage提取策略
+        // 多层次的最终usage提取Política
         if (!usageData) {
           logger.debug('🔍 No usage found during stream, trying final extraction methods...')
 
-          // 方法1: 解析剩余的主buffer
+          // Método1: Analizar剩余的主buffer
           if (buffer.trim() && buffer.length <= MAX_EVENT_SIZE) {
             parseSSEForUsage(buffer, false)
           }
 
-          // 方法2: 解析保留的final chunks buffer
+          // Método2: Analizar保留的final chunks buffer
           if (!usageData && finalChunksBuffer.trim()) {
             logger.debug('🔍 Trying final chunks buffer for usage extraction...')
             parseSSEForUsage(finalChunksBuffer, true)
           }
 
-          // 方法3: 从所有解析的事件中重新搜索usage
+          // Método3: 从所有Analizar的Evento中重新搜索usage
           if (!usageData && allParsedEvents.length > 0) {
             logger.debug('🔍 Searching through all parsed events for usage...')
 
@@ -519,7 +519,7 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
             }
           }
 
-          // 方法4: 尝试合并所有事件并搜索
+          // Método4: 尝试合并所有Evento并搜索
           if (!usageData && allParsedEvents.length > 0) {
             logger.debug('🔍 Trying combined events analysis...')
             const combinedData = {
@@ -605,7 +605,7 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
       reject(error)
     })
 
-    // 客户端断开时清理
+    // Cliente断开时Limpiar
     const clientCleanup = () => {
       streamManager.cleanup(streamId)
     }
@@ -616,7 +616,7 @@ function handleStreamResponse(upstreamResponse, clientResponse, options = {}) {
   })
 }
 
-// 强化的用量数据提取函数
+// 强化的用量Datos提取Función
 function extractUsageDataRobust(responseData, context = 'unknown') {
   logger.debug(`🔍 Attempting usage extraction for ${context}`, {
     responseDataKeys: Object.keys(responseData || {}),
@@ -629,21 +629,21 @@ function extractUsageDataRobust(responseData, context = 'unknown') {
   let actualModel = null
 
   try {
-    // 策略 1: 顶层 usage (标准 Chat Completions)
+    // Política 1: 顶层 usage (标准 Chat Completions)
     if (responseData?.usage) {
       usageData = responseData.usage
       actualModel = responseData.model
       logger.debug('✅ Usage extracted via Strategy 1 (top-level)', { usageData, actualModel })
     }
 
-    // 策略 2: response.usage (Responses API)
+    // Política 2: response.usage (Responses API)
     else if (responseData?.response?.usage) {
       usageData = responseData.response.usage
       actualModel = responseData.response.model || responseData.model
       logger.debug('✅ Usage extracted via Strategy 2 (response.usage)', { usageData, actualModel })
     }
 
-    // 策略 3: 嵌套搜索 - 深度查找 usage 字段
+    // Política 3: 嵌套搜索 - 深度查找 usage Campo
     else {
       const findUsageRecursive = (obj, path = '') => {
         if (!obj || typeof obj !== 'object') {
@@ -687,9 +687,9 @@ function extractUsageDataRobust(responseData, context = 'unknown') {
       }
     }
 
-    // 策略 4: 特殊响应格式处理
+    // Política 4: 特殊RespuestaFormatoProcesar
     if (!usageData) {
-      // 检查是否有 choices 数组，usage 可能在最后一个 choice 中
+      // Verificar是否有 choices Arreglo，usage 可能在最后一个 choice 中
       if (responseData?.choices?.length > 0) {
         const lastChoice = responseData.choices[responseData.choices.length - 1]
         if (lastChoice?.usage) {
@@ -700,7 +700,7 @@ function extractUsageDataRobust(responseData, context = 'unknown') {
       }
     }
 
-    // 最终验证和记录
+    // 最终Validar和Registro
     if (usageData) {
       logger.debug('🎯 Final usage extraction result', {
         context,
@@ -730,13 +730,13 @@ function extractUsageDataRobust(responseData, context = 'unknown') {
   return { usageData, actualModel }
 }
 
-// 处理非流式响应
+// Procesar非流式Respuesta
 function handleNonStreamResponse(upstreamResponse, clientResponse) {
   try {
-    // 设置状态码
+    // Establecer状态码
     clientResponse.status(upstreamResponse.status)
 
-    // 设置响应头
+    // EstablecerRespuesta头
     clientResponse.setHeader('Content-Type', 'application/json')
 
     // 透传某些头部
@@ -752,7 +752,7 @@ function handleNonStreamResponse(upstreamResponse, clientResponse) {
       }
     })
 
-    // 返回响应数据
+    // RetornarRespuestaDatos
     const responseData = upstreamResponse.data
     clientResponse.json(responseData)
 

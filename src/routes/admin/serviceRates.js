@@ -1,5 +1,5 @@
 /**
- * 服务倍率配置管理路由
+ * Servicio倍率Configuración管理Ruta
  */
 const express = require('express')
 const router = express.Router()
@@ -7,7 +7,7 @@ const serviceRatesService = require('../../services/serviceRatesService')
 const logger = require('../../utils/logger')
 const { authenticateAdmin } = require('../../middleware/auth')
 
-// 获取服务倍率配置
+// ObtenerServicio倍率Configuración
 router.get('/service-rates', authenticateAdmin, async (req, res) => {
   try {
     const rates = await serviceRatesService.getRates()
@@ -24,7 +24,7 @@ router.get('/service-rates', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新服务倍率配置
+// ActualizarServicio倍率Configuración
 router.put('/service-rates', authenticateAdmin, async (req, res) => {
   try {
     const { rates, baseService } = req.body
@@ -52,7 +52,7 @@ router.put('/service-rates', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取可用服务列表
+// Obtener可用ServicioColumnaTabla
 router.get('/service-rates/services', authenticateAdmin, async (req, res) => {
   try {
     const services = await serviceRatesService.getAvailableServices()

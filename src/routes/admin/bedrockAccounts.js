@@ -1,6 +1,6 @@
 /**
  * Admin Routes - Bedrock Accounts Management
- * AWS Bedrock 账户管理路由
+ * AWS Bedrock Cuenta管理Ruta
  */
 
 const express = require('express')
@@ -14,9 +14,9 @@ const logger = require('../../utils/logger')
 const webhookNotifier = require('../../utils/webhookNotifier')
 const { formatAccountExpiry, mapExpiryField } = require('./utils')
 
-// ☁️ Bedrock 账户管理
+// ☁️ Bedrock Cuenta管理
 
-// 获取所有Bedrock账户
+// Obtener所有BedrockCuenta
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const { platform, groupId } = req.query
@@ -29,16 +29,16 @@ router.get('/', authenticateAdmin, async (req, res) => {
 
     let accounts = result.data
 
-    // 根据查询参数进行筛选
+    // 根据ConsultaParámetro进Fila筛选
     if (platform && platform !== 'all' && platform !== 'bedrock') {
-      // 如果指定了其他平台，返回空数组
+      // 如果指定了其他平台，Retornar空Arreglo
       accounts = []
     }
 
-    // 如果指定了分组筛选
+    // 如果指定了Agrupar筛选
     if (groupId && groupId !== 'all') {
       if (groupId === 'ungrouped') {
-        // 筛选未分组账户
+        // 筛选未AgruparCuenta
         const filteredAccounts = []
         for (const account of accounts) {
           const groups = await accountGroupService.getAccountGroups(account.id)
@@ -48,13 +48,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
         }
         accounts = filteredAccounts
       } else {
-        // 筛选特定分组的账户
+        // 筛选特定Agrupar的Cuenta
         const groupMembers = await accountGroupService.getGroupMembers(groupId)
         accounts = accounts.filter((account) => groupMembers.includes(account.id))
       }
     }
 
-    // 为每个账户添加使用统计信息
+    // 为每个Cuenta添加使用EstadísticaInformación
     const accountsWithStats = await Promise.all(
       accounts.map(async (account) => {
         try {
@@ -114,7 +114,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 创建新的Bedrock账户
+// Crear新的BedrockCuenta
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
     const {
@@ -133,19 +133,19 @@ router.post('/', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Name is required' })
     }
 
-    // 验证priority的有效性（1-100）
+    // Validarpriority的有效性（1-100）
     if (priority !== undefined && (priority < 1 || priority > 100)) {
       return res.status(400).json({ error: 'Priority must be between 1 and 100' })
     }
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (accountType && !['shared', 'dedicated'].includes(accountType)) {
       return res
         .status(400)
         .json({ error: 'Invalid account type. Must be "shared" or "dedicated"' })
     }
 
-    // 验证credentialType的有效性
+    // ValidarcredentialType的有效性
     if (credentialType && !['access_key', 'bearer_token'].includes(credentialType)) {
       return res.status(400).json({
         error: 'Invalid credential type. Must be "access_key" or "bearer_token"'
@@ -181,16 +181,16 @@ router.post('/', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新Bedrock账户
+// ActualizarBedrockCuenta
 router.put('/:accountId', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
     const updates = req.body
 
-    // ✅ 【新增】映射字段名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
+    // ✅ 【Nueva característica】映射Campo名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
     const mappedUpdates = mapExpiryField(updates, 'Bedrock', accountId)
 
-    // 验证priority的有效性（1-100）
+    // Validarpriority的有效性（1-100）
     if (
       mappedUpdates.priority !== undefined &&
       (mappedUpdates.priority < 1 || mappedUpdates.priority > 100)
@@ -198,14 +198,14 @@ router.put('/:accountId', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Priority must be between 1 and 100' })
     }
 
-    // 验证accountType的有效性
+    // ValidaraccountType的有效性
     if (mappedUpdates.accountType && !['shared', 'dedicated'].includes(mappedUpdates.accountType)) {
       return res
         .status(400)
         .json({ error: 'Invalid account type. Must be "shared" or "dedicated"' })
     }
 
-    // 验证credentialType的有效性
+    // ValidarcredentialType的有效性
     if (
       mappedUpdates.credentialType &&
       !['access_key', 'bearer_token'].includes(mappedUpdates.credentialType)
@@ -233,7 +233,7 @@ router.put('/:accountId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除Bedrock账户
+// EliminarBedrockCuenta
 router.delete('/:accountId', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -249,7 +249,7 @@ router.delete('/:accountId', authenticateAdmin, async (req, res) => {
         .json({ error: 'Failed to delete Bedrock account', message: result.error })
     }
 
-    let message = 'Bedrock账号已成功删除'
+    let message = 'Bedrock账号已ÉxitoEliminar'
     if (unboundCount > 0) {
       message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
@@ -268,7 +268,7 @@ router.delete('/:accountId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 切换Bedrock账户状态
+// 切换BedrockCuenta状态
 router.put('/:accountId/toggle', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -303,7 +303,7 @@ router.put('/:accountId/toggle', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 切换Bedrock账户调度状态
+// 切换BedrockCuenta调度状态
 router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -324,7 +324,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
         .json({ error: 'Failed to toggle schedulable status', message: updateResult.error })
     }
 
-    // 如果账号被禁用，发送webhook通知
+    // 如果账号被Deshabilitar，发送webhook通知
     if (!newSchedulable) {
       await webhookNotifier.sendAccountAnomalyNotification({
         accountId: accountResult.data.id,
@@ -332,7 +332,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
         platform: 'bedrock',
         status: 'disabled',
         errorCode: 'BEDROCK_MANUALLY_DISABLED',
-        reason: '账号已被管理员手动禁用调度',
+        reason: '账号已被管理员手动Deshabilitar调度',
         timestamp: new Date().toISOString()
       })
     }
@@ -351,7 +351,7 @@ router.put('/:accountId/toggle-schedulable', authenticateAdmin, async (req, res)
   }
 })
 
-// 测试Bedrock账户连接（SSE 流式）
+// ProbarBedrockCuentaConexión（SSE 流式）
 router.post('/:accountId/test', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -359,11 +359,11 @@ router.post('/:accountId/test', authenticateAdmin, async (req, res) => {
     await bedrockAccountService.testAccountConnection(accountId, res)
   } catch (error) {
     logger.error('❌ Failed to test Bedrock account:', error)
-    // 错误已在服务层处理，这里仅做日志记录
+    // Error已在Servicio层Procesar，这里仅做RegistroRegistro
   }
 })
 
-// 重置 Bedrock 账户状态
+// 重置 Bedrock Cuenta状态
 router.post('/:accountId/reset-status', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params

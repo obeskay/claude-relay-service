@@ -3,13 +3,13 @@
 const { v4: uuidv4 } = require('uuid')
 
 /**
- * 预热请求拦截器
- * 检测并拦截低价值请求（标题生成、Warmup等），直接返回模拟响应
+ * 预热SolicitudInterceptor
+ * 检测并拦截低价ValorSolicitud（标题Generar、Warmup等），直接Retornar模拟Respuesta
  */
 
 /**
- * 检测是否为预热请求
- * @param {Object} body - 请求体
+ * 检测是否为预热Solicitud
+ * @param {Object} body - Solicitud体
  * @returns {boolean}
  */
 function isWarmupRequest(body) {
@@ -17,10 +17,10 @@ function isWarmupRequest(body) {
     return false
   }
 
-  // 检查 messages
+  // Verificar messages
   if (body.messages && Array.isArray(body.messages)) {
     for (const msg of body.messages) {
-      // 处理 content 为数组的情况
+      // Procesar content 为Arreglo的情况
       if (Array.isArray(msg.content)) {
         for (const content of msg.content) {
           if (content.type === 'text' && typeof content.text === 'string') {
@@ -30,7 +30,7 @@ function isWarmupRequest(body) {
           }
         }
       }
-      // 处理 content 为字符串的情况
+      // Procesar content 为Cadena的情况
       if (typeof msg.content === 'string') {
         if (isTitleOrWarmupText(msg.content)) {
           return true
@@ -39,7 +39,7 @@ function isWarmupRequest(body) {
     }
   }
 
-  // 检查 system prompt
+  // Verificar system prompt
   if (body.system) {
     const systemText = extractSystemText(body.system)
     if (isTitleExtractionSystemPrompt(systemText)) {
@@ -51,7 +51,7 @@ function isWarmupRequest(body) {
 }
 
 /**
- * 检查文本是否为标题生成或Warmup请求
+ * Verificar文本是否为标题Generar或WarmupSolicitud
  */
 function isTitleOrWarmupText(text) {
   if (!text) {
@@ -64,7 +64,7 @@ function isTitleOrWarmupText(text) {
 }
 
 /**
- * 检查system prompt是否为标题提取类型
+ * Verificarsystem prompt是否为标题提取Tipo
  */
 function isTitleExtractionSystemPrompt(systemText) {
   if (!systemText) {
@@ -76,7 +76,7 @@ function isTitleExtractionSystemPrompt(systemText) {
 }
 
 /**
- * 从system字段提取文本
+ * 从systemCampo提取文本
  */
 function extractSystemText(system) {
   if (typeof system === 'string') {
@@ -89,8 +89,8 @@ function extractSystemText(system) {
 }
 
 /**
- * 生成模拟的非流式响应
- * @param {string} model - 模型名称
+ * Generar模拟的非流式Respuesta
+ * @param {string} model - 模型Nombre
  * @returns {Object}
  */
 function buildMockWarmupResponse(model) {
@@ -110,9 +110,9 @@ function buildMockWarmupResponse(model) {
 }
 
 /**
- * 发送模拟的流式响应
- * @param {Object} res - Express response对象
- * @param {string} model - 模型名称
+ * 发送模拟的流式Respuesta
+ * @param {Object} res - Express responseObjeto
+ * @param {string} model - 模型Nombre
  */
 function sendMockWarmupStream(res, model) {
   const effectiveModel = model || 'claude-3-5-sonnet-20241022'

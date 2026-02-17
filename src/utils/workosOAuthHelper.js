@@ -24,8 +24,8 @@ class WorkOSDeviceAuthError extends Error {
 
 /**
  * 启动设备码授权流程
- * @param {object|null} proxyConfig - 代理配置
- * @returns {Promise<object>} WorkOS 返回的数据
+ * @param {object|null} proxyConfig - ProxyConfiguración
+ * @returns {Promise<object>} WorkOS Retornar的Datos
  */
 async function startDeviceAuthorization(proxyConfig = null) {
   const form = new URLSearchParams({
@@ -35,7 +35,7 @@ async function startDeviceAuthorization(proxyConfig = null) {
   const agent = ProxyHelper.createProxyAgent(proxyConfig)
 
   try {
-    logger.info('🔐 请求 WorkOS 设备码授权', {
+    logger.info('🔐 Solicitud WorkOS 设备码授权', {
       url: WORKOS_DEVICE_AUTHORIZE_URL,
       hasProxy: !!agent
     })
@@ -58,7 +58,7 @@ async function startDeviceAuthorization(proxyConfig = null) {
     const data = response.data || {}
 
     if (!data.device_code || !data.verification_uri) {
-      throw new Error('WorkOS 返回数据缺少必要字段 (device_code / verification_uri)')
+      throw new Error('WorkOS RetornarDatos缺少必要Campo (device_code / verification_uri)')
     }
 
     logger.success('✅ Successfully obtained WorkOS device code authorization info', {
@@ -82,8 +82,8 @@ async function startDeviceAuthorization(proxyConfig = null) {
       })
       throw new WorkOSDeviceAuthError(
         error.response.data?.error_description ||
-        error.response.data?.error ||
-        'WorkOS 设备码授权失败',
+          error.response.data?.error ||
+          'WorkOS 设备码授权Falló',
         error.response.data?.error
       )
     }
@@ -98,8 +98,8 @@ async function startDeviceAuthorization(proxyConfig = null) {
 /**
  * 轮询授权结果
  * @param {string} deviceCode - 设备码
- * @param {object|null} proxyConfig - 代理配置
- * @returns {Promise<object>} WorkOS 返回的 token 数据
+ * @param {object|null} proxyConfig - ProxyConfiguración
+ * @returns {Promise<object>} WorkOS Retornar的 token Datos
  */
 async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
   if (!deviceCode) {
@@ -152,7 +152,7 @@ async function pollDeviceAuthorization(deviceCode, proxyConfig = null) {
       const responseData = error.response.data || {}
       const errorCode = responseData.error || `http_${error.response.status}`
       const errorDescription =
-        responseData.error_description || responseData.error || 'WorkOS 授权失败'
+        responseData.error_description || responseData.error || 'WorkOS 授权Falló'
 
       if (errorCode === 'authorization_pending' || errorCode === 'slow_down') {
         const retryAfter =

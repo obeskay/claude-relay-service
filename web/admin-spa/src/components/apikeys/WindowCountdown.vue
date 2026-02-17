@@ -17,11 +17,11 @@
       <span v-else class="font-medium text-gray-400"> {{ rateLimitWindow }} 分钟 </span>
     </div>
 
-    <!-- 进度条（仅在有限制时显示） -->
+    <!-- 进度registros（仅en有Límite时显示） -->
     <div v-if="showProgress" class="space-y-0.5">
       <div v-if="hasRequestLimit" class="space-y-0.5">
         <div class="flex items-center justify-between text-xs">
-          <span class="text-gray-400">请求</span>
+          <span class="text-gray-400">Solicitud</span>
           <span class="text-gray-600"> {{ currentRequests || 0 }}/{{ requestLimit }} </span>
         </div>
         <div class="h-1 w-full rounded-full bg-gray-200">
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <!-- Token限制（向后兼容） -->
+      <!-- TokenLimit（向siguiente兼容） -->
       <div v-if="hasTokenLimit" class="space-y-0.5">
         <div class="flex items-center justify-between text-xs">
           <span class="text-gray-400">Token</span>
@@ -50,10 +50,10 @@
         </div>
       </div>
 
-      <!-- 费用限制（新功能） -->
+      <!-- CostoLímite（新功能） -->
       <div v-if="hasCostLimit" class="space-y-0.5">
         <div class="flex items-center justify-between text-xs">
-          <span class="text-gray-400">费用</span>
+          <span class="text-gray-400">Costo</span>
           <span class="text-gray-600">
             ${{ (currentCost || 0).toFixed(2) }}/${{ costLimit.toFixed(2) }}
           </span>
@@ -68,14 +68,14 @@
       </div>
     </div>
 
-    <!-- 额外提示信息 -->
+    <!-- 额外SugerenciaInformación -->
     <div v-if="windowState === 'active' && showTooltip" class="text-xs text-gray-500">
       <i class="fas fa-info-circle mr-1" />
-      <span v-if="remainingSeconds < 60">即将重置</span>
+      <span v-if="remainingSeconds < 60">即将Restablecer</span>
       <span v-else-if="remainingSeconds < 300"
-        >{{ Math.ceil(remainingSeconds / 60) }} 分钟后重置</span
+        >{{ Math.ceil(remainingSeconds / 60) }} 分钟siguienteRestablecer</span
       >
-      <span v-else>{{ formatDetailedTime(remainingSeconds) }}后重置</span>
+      <span v-else>{{ formatDetailedTime(remainingSeconds) }}siguienteRestablecer</span>
     </div>
   </div>
 </template>
@@ -86,7 +86,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 const props = defineProps({
   label: {
     type: String,
-    default: '窗口限制'
+    default: '窗口Límite'
   },
   rateLimitWindow: {
     type: Number,
@@ -151,7 +151,7 @@ const windowState = computed(() => {
     return 'expired' // 窗口已过期
   }
   if (remainingSeconds.value > 0) {
-    return 'active' // 窗口活跃中
+    return 'active' // 窗口活跃en
   }
   return 'unknown'
 })
@@ -236,7 +236,7 @@ const getCostProgressColor = () => {
   return 'bg-green-500'
 }
 
-// 更新倒计时
+// Actualizar倒计时
 const updateCountdown = () => {
   if (props.windowEndTime && remainingSeconds.value > 0) {
     const now = Date.now()
@@ -279,7 +279,7 @@ watch(
 // 生命周期钩子
 onMounted(() => {
   if (props.windowEndTime && remainingSeconds.value > 0) {
-    // 立即更新一次
+    // 立即Actualizar一veces
     updateCountdown()
     // 启动定时器
     intervalId = setInterval(updateCountdown, 1000)

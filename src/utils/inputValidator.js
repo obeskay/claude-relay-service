@@ -1,61 +1,61 @@
 /**
- * 输入验证工具类
- * 提供各种输入验证和清理功能，防止注入攻击
+ * 输入Validar工具Clase
+ * 提供各种输入Validar和Limpiar功能，防止注入攻击
  */
 class InputValidator {
   /**
-   * 验证用户名
-   * @param {string} username - 用户名
-   * @returns {string} 验证后的用户名
-   * @throws {Error} 如果用户名无效
+   * ValidarUsuario名
+   * @param {string} username - Usuario名
+   * @returns {string} Validar后的Usuario名
+   * @throws {Error} 如果Usuario名无效
    */
   validateUsername(username) {
     if (!username || typeof username !== 'string') {
-      throw new Error('用户名必须是非空字符串')
+      throw new Error('Usuario名必须是非空Cadena')
     }
 
     const trimmed = username.trim()
 
-    // 长度检查
+    // 长度Verificar
     if (trimmed.length < 3 || trimmed.length > 64) {
-      throw new Error('用户名长度必须在3-64个字符之间')
+      throw new Error('Usuario名长度必须在3-64个字符之间')
     }
 
-    // 格式检查：只允许字母、数字、下划线、连字符
+    // FormatoVerificar：只允许字母、Número、下划线、连字符
     const usernameRegex = /^[a-zA-Z0-9_-]+$/
     if (!usernameRegex.test(trimmed)) {
-      throw new Error('用户名只能包含字母、数字、下划线和连字符')
+      throw new Error('Usuario名只能Incluir字母、Número、下划线和连字符')
     }
 
     // 不能以连字符开头或结尾
     if (trimmed.startsWith('-') || trimmed.endsWith('-')) {
-      throw new Error('用户名不能以连字符开头或结尾')
+      throw new Error('Usuario名不能以连字符开头或结尾')
     }
 
     return trimmed
   }
 
   /**
-   * 验证电子邮件
+   * Validar电子邮件
    * @param {string} email - 电子邮件地址
-   * @returns {string} 验证后的电子邮件
+   * @returns {string} Validar后的电子邮件
    * @throws {Error} 如果电子邮件无效
    */
   validateEmail(email) {
     if (!email || typeof email !== 'string') {
-      throw new Error('电子邮件必须是非空字符串')
+      throw new Error('电子邮件必须是非空Cadena')
     }
 
     const trimmed = email.trim().toLowerCase()
 
-    // 基本格式验证
+    // 基本FormatoValidar
     const emailRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
     if (!emailRegex.test(trimmed)) {
-      throw new Error('电子邮件格式无效')
+      throw new Error('电子邮件Formato无效')
     }
 
-    // 长度限制
+    // 长度Límite
     if (trimmed.length > 254) {
       throw new Error('电子邮件地址过长')
     }
@@ -64,13 +64,13 @@ class InputValidator {
   }
 
   /**
-   * 验证密码强度
+   * Validar密码强度
    * @param {string} password - 密码
-   * @returns {boolean} 验证结果
+   * @returns {boolean} Validar结果
    */
   validatePassword(password) {
     if (!password || typeof password !== 'string') {
-      throw new Error('密码必须是非空字符串')
+      throw new Error('密码必须是非空Cadena')
     }
 
     // 最小长度
@@ -87,47 +87,47 @@ class InputValidator {
   }
 
   /**
-   * 验证角色
-   * @param {string} role - 用户角色
-   * @returns {string} 验证后的角色
-   * @throws {Error} 如果角色无效
+   * ValidarRol
+   * @param {string} role - UsuarioRol
+   * @returns {string} Validar后的Rol
+   * @throws {Error} 如果Rol无效
    */
   validateRole(role) {
     const validRoles = ['admin', 'user', 'viewer']
 
     if (!role || typeof role !== 'string') {
-      throw new Error('角色必须是非空字符串')
+      throw new Error('Rol必须是非空Cadena')
     }
 
     const trimmed = role.trim().toLowerCase()
 
     if (!validRoles.includes(trimmed)) {
-      throw new Error(`角色必须是以下之一: ${validRoles.join(', ')}`)
+      throw new Error(`Rol必须是以下之一: ${validRoles.join(', ')}`)
     }
 
     return trimmed
   }
 
   /**
-   * 验证Webhook URL
+   * ValidarWebhook URL
    * @param {string} url - Webhook URL
-   * @returns {string} 验证后的URL
+   * @returns {string} Validar后的URL
    * @throws {Error} 如果URL无效
    */
   validateWebhookUrl(url) {
     if (!url || typeof url !== 'string') {
-      throw new Error('Webhook URL必须是非空字符串')
+      throw new Error('Webhook URL必须是非空Cadena')
     }
 
     const trimmed = url.trim()
 
-    // URL格式验证
+    // URLFormatoValidar
     try {
       const urlObj = new URL(trimmed)
 
-      // 只允许HTTP和HTTPS协议
+      // 只允许HTTP和HTTPSProtocolo
       if (!['http:', 'https:'].includes(urlObj.protocol)) {
-        throw new Error('Webhook URL必须使用HTTP或HTTPS协议')
+        throw new Error('Webhook URL必须使用HTTP或HTTPSProtocolo')
       }
 
       // 防止SSRF攻击：禁止访问内网地址
@@ -137,20 +137,20 @@ class InputValidator {
         '127.0.0.1',
         '0.0.0.0',
         '::1',
-        '169.254.169.254', // AWS元数据服务
-        'metadata.google.internal' // GCP元数据服务
+        '169.254.169.254', // AWS元DatosServicio
+        'metadata.google.internal' // GCP元DatosServicio
       ]
 
       if (dangerousHosts.includes(hostname)) {
-        throw new Error('Webhook URL不能指向内部服务')
+        throw new Error('Webhook URL不能指向内部Servicio')
       }
 
-      // 检查是否是内网IP
+      // Verificar是否是内网IP
       const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/
       if (ipRegex.test(hostname)) {
         const parts = hostname.split('.').map(Number)
 
-        // 检查私有IP范围
+        // Verificar私有IP范围
         if (
           parts[0] === 10 || // 10.0.0.0/8
           (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) || // 172.16.0.0/12
@@ -165,42 +165,42 @@ class InputValidator {
       if (error.message.includes('Webhook URL')) {
         throw error
       }
-      throw new Error('Webhook URL格式无效')
+      throw new Error('Webhook URLFormato无效')
     }
   }
 
   /**
-   * 验证显示名称
-   * @param {string} displayName - 显示名称
-   * @returns {string} 验证后的显示名称
-   * @throws {Error} 如果显示名称无效
+   * Validar显示Nombre
+   * @param {string} displayName - 显示Nombre
+   * @returns {string} Validar后的显示Nombre
+   * @throws {Error} 如果显示Nombre无效
    */
   validateDisplayName(displayName) {
     if (!displayName || typeof displayName !== 'string') {
-      throw new Error('显示名称必须是非空字符串')
+      throw new Error('显示Nombre必须是非空Cadena')
     }
 
     const trimmed = displayName.trim()
 
-    // 长度检查
+    // 长度Verificar
     if (trimmed.length < 1 || trimmed.length > 100) {
-      throw new Error('显示名称长度必须在1-100个字符之间')
+      throw new Error('显示Nombre长度必须在1-100个字符之间')
     }
 
-    // 禁止特殊控制字符（排除常见的换行和制表符）
+    // 禁止特殊控制字符（Excluir常见的换Fila和制Tabla符）
     // eslint-disable-next-line no-control-regex
     const controlCharRegex = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/
     if (controlCharRegex.test(trimmed)) {
-      throw new Error('显示名称不能包含控制字符')
+      throw new Error('显示Nombre不能Incluir控制字符')
     }
 
     return trimmed
   }
 
   /**
-   * 清理HTML标签（防止XSS）
-   * @param {string} input - 输入字符串
-   * @returns {string} 清理后的字符串
+   * LimpiarHTML标签（防止XSS）
+   * @param {string} input - 输入Cadena
+   * @returns {string} Limpiar后的Cadena
    */
   sanitizeHtml(input) {
     if (!input || typeof input !== 'string') {
@@ -217,38 +217,38 @@ class InputValidator {
   }
 
   /**
-   * 验证API Key名称
-   * @param {string} name - API Key名称
-   * @returns {string} 验证后的名称
-   * @throws {Error} 如果名称无效
+   * ValidarAPI KeyNombre
+   * @param {string} name - API KeyNombre
+   * @returns {string} Validar后的Nombre
+   * @throws {Error} 如果Nombre无效
    */
   validateApiKeyName(name) {
     if (!name || typeof name !== 'string') {
-      throw new Error('API Key名称必须是非空字符串')
+      throw new Error('API KeyNombre必须是非空Cadena')
     }
 
     const trimmed = name.trim()
 
-    // 长度检查
+    // 长度Verificar
     if (trimmed.length < 1 || trimmed.length > 100) {
-      throw new Error('API Key名称长度必须在1-100个字符之间')
+      throw new Error('API KeyNombre长度必须在1-100个字符之间')
     }
 
-    // 禁止特殊控制字符（排除常见的换行和制表符）
+    // 禁止特殊控制字符（Excluir常见的换Fila和制Tabla符）
     // eslint-disable-next-line no-control-regex
     const controlCharRegex = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/
     if (controlCharRegex.test(trimmed)) {
-      throw new Error('API Key名称不能包含控制字符')
+      throw new Error('API KeyNombre不能Incluir控制字符')
     }
 
     return trimmed
   }
 
   /**
-   * 验证分页参数
+   * Validar分页Parámetro
    * @param {number} page - 页码
    * @param {number} limit - 每页数量
-   * @returns {{page: number, limit: number}} 验证后的分页参数
+   * @returns {{page: number, limit: number}} Validar后的分页Parámetro
    */
   validatePagination(page, limit) {
     const pageNum = parseInt(page, 10) || 1
@@ -269,19 +269,19 @@ class InputValidator {
   }
 
   /**
-   * 验证UUID格式
-   * @param {string} uuid - UUID字符串
-   * @returns {string} 验证后的UUID
+   * ValidarUUIDFormato
+   * @param {string} uuid - UUIDCadena
+   * @returns {string} Validar后的UUID
    * @throws {Error} 如果UUID无效
    */
   validateUuid(uuid) {
     if (!uuid || typeof uuid !== 'string') {
-      throw new Error('UUID必须是非空字符串')
+      throw new Error('UUID必须是非空Cadena')
     }
 
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(uuid)) {
-      throw new Error('UUID格式无效')
+      throw new Error('UUIDFormato无效')
     }
 
     return uuid.toLowerCase()

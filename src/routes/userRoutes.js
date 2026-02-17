@@ -10,20 +10,20 @@ const { RateLimiterRedis } = require('rate-limiter-flexible')
 const redis = require('../models/redis')
 const { authenticateUser, authenticateUserOrAdmin, requireAdmin } = require('../middleware/auth')
 
-// 🚦 配置登录速率限制
-// 只基于IP地址限制，避免攻击者恶意锁定特定账户
+// 🚦 Configuración登录速率Límite
+// 只基于IP地址Límite，避免攻击者恶意锁定特定Cuenta
 
-// 延迟初始化速率限制器，确保 Redis 已连接
+// 延迟Inicializar速率Límite器，确保 Redis 已Conexión
 let ipRateLimiter = null
 let strictIpRateLimiter = null
 
-// 初始化速率限制器函数
+// Inicializar速率Límite器Función
 function initRateLimiters() {
   if (!ipRateLimiter) {
     try {
       const redisClient = redis.getClientSafe()
 
-      // IP地址速率限制 - 正常限制
+      // IP地址速率Límite - 正常Límite
       ipRateLimiter = new RateLimiterRedis({
         storeClient: redisClient,
         keyPrefix: 'login_ip_limiter',
@@ -32,7 +32,7 @@ function initRateLimiters() {
         blockDuration: 900 // 超限后封禁15分钟
       })
 
-      // IP地址速率限制 - 严格限制（用于检测暴力破解）
+      // IP地址速率Límite - 严格Límite（用于检测暴力破解）
       strictIpRateLimiter = new RateLimiterRedis({
         storeClient: redisClient,
         keyPrefix: 'login_ip_strict',
@@ -41,23 +41,23 @@ function initRateLimiters() {
         blockDuration: 3600 // 超限后封禁1小时
       })
     } catch (error) {
-      logger.error('❌ 初始化速率限制器失败:', error)
-      // 速率限制器初始化失败时继续运行，但记录错误
+      logger.error('❌ Inicializar速率Límite器Falló:', error)
+      // 速率Límite器InicializarFalló时继续运Fila，但RegistroError
     }
   }
   return { ipRateLimiter, strictIpRateLimiter }
 }
 
-// 🔐 用户登录端点
+// 🔐 Usuario登录Endpoint
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body
     const clientIp = req.ip || req.connection.remoteAddress || 'unknown'
 
-    // 初始化速率限制器（如果尚未初始化）
+    // Inicializar速率Límite器（如果尚未Inicializar）
     const limiters = initRateLimiters()
 
-    // 检查IP速率限制 - 基础限制
+    // VerificarIP速率Límite - 基础Límite
     if (limiters.ipRateLimiter) {
       try {
         await limiters.ipRateLimiter.consume(clientIp)
@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
       }
     }
 
-    // 检查IP速率限制 - 严格限制（防止暴力破解）
+    // VerificarIP速率Límite - 严格Límite（防止暴力破解）
     if (limiters.strictIpRateLimiter) {
       try {
         await limiters.strictIpRateLimiter.consume(clientIp)
@@ -94,7 +94,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // 验证输入格式
+    // Validar输入Formato
     let validatedUsername
     try {
       validatedUsername = inputValidator.validateUsername(username)
@@ -106,7 +106,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // 检查用户管理是否启用
+    // VerificarUsuario管理是否Habilitar
     if (!config.userManagement.enabled) {
       return res.status(503).json({
         error: 'Service unavailable',
@@ -114,7 +114,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // 检查LDAP是否启用
+    // VerificarLDAP是否Habilitar
     if (!config.ldap || !config.ldap.enabled) {
       return res.status(503).json({
         error: 'Service unavailable',
@@ -126,7 +126,7 @@ router.post('/login', async (req, res) => {
     const authResult = await ldapService.authenticateUserCredentials(validatedUsername, password)
 
     if (!authResult.success) {
-      // 登录失败
+      // 登录Falló
       logger.info(`🚫 Failed login attempt for user: ${validatedUsername} from IP: ${clientIp}`)
       return res.status(401).json({
         error: 'Authentication failed',
@@ -134,7 +134,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // 登录成功
+    // 登录Éxito
     logger.info(`✅ User login successful: ${validatedUsername} from IP: ${clientIp}`)
 
     res.json({
@@ -160,7 +160,7 @@ router.post('/login', async (req, res) => {
   }
 })
 
-// 🚪 用户登出端点
+// 🚪 Usuario登出Endpoint
 router.post('/logout', authenticateUser, async (req, res) => {
   try {
     await userService.invalidateUserSession(req.user.sessionToken)
@@ -180,7 +180,7 @@ router.post('/logout', authenticateUser, async (req, res) => {
   }
 })
 
-// 👤 获取当前用户信息
+// 👤 Obtener当前UsuarioInformación
 router.get('/profile', authenticateUser, async (req, res) => {
   try {
     const user = await userService.getUserById(req.user.id)
@@ -221,13 +221,13 @@ router.get('/profile', authenticateUser, async (req, res) => {
   }
 })
 
-// 🔑 获取用户的API Keys
+// 🔑 ObtenerUsuario的API Keys
 router.get('/api-keys', authenticateUser, async (req, res) => {
   try {
     const { includeDeleted = 'false' } = req.query
     const apiKeys = await apiKeyService.getUserApiKeys(req.user.id, includeDeleted === 'true')
 
-    // 移除敏感信息并格式化usage数据
+    // Eliminación敏感Información并Formato化usageDatos
     const safeApiKeys = apiKeys.map((key) => {
       // Flatten usage structure for frontend compatibility
       let flatUsage = {
@@ -260,7 +260,7 @@ router.get('/api-keys', authenticateUser, async (req, res) => {
         dailyCostLimit: key.dailyCostLimit,
         totalCost: key.totalCost,
         totalCostLimit: key.totalCostLimit,
-        // 不返回实际的key值，只返回前缀和后几位
+        // 不Retornar实际的keyValor，只Retornar前缀和后几位
         keyPreview: key.key
           ? `${key.key.substring(0, 8)}...${key.key.substring(key.key.length - 4)}`
           : null,
@@ -286,7 +286,7 @@ router.get('/api-keys', authenticateUser, async (req, res) => {
   }
 })
 
-// 🔑 创建新的API Key
+// 🔑 Crear新的API Key
 router.post('/api-keys', authenticateUser, async (req, res) => {
   try {
     const { name, description, tokenLimit, expiresAt, dailyCostLimit, totalCostLimit } = req.body
@@ -310,7 +310,7 @@ router.post('/api-keys', authenticateUser, async (req, res) => {
       })
     }
 
-    // 检查用户API Key数量限制
+    // VerificarUsuarioAPI Key数量Límite
     const userApiKeys = await apiKeyService.getUserApiKeys(req.user.id)
     if (userApiKeys.length >= config.userManagement.maxApiKeysPerUser) {
       return res.status(400).json({
@@ -319,7 +319,7 @@ router.post('/api-keys', authenticateUser, async (req, res) => {
       })
     }
 
-    // 创建API Key数据
+    // CrearAPI KeyDatos
     const apiKeyData = {
       name: name.trim(),
       description: description?.trim() || '',
@@ -330,13 +330,13 @@ router.post('/api-keys', authenticateUser, async (req, res) => {
       dailyCostLimit: dailyCostLimit || null,
       totalCostLimit: totalCostLimit || null,
       createdBy: 'user',
-      // 设置服务权限为全部服务，确保前端显示“服务权限”为“全部服务”且具备完整访问权限
+      // EstablecerServicioPermiso为全部Servicio，确保前端显示“ServicioPermiso”为“全部Servicio”且具备完整访问Permiso
       permissions: 'all'
     }
 
     const newApiKey = await apiKeyService.createApiKey(apiKeyData)
 
-    // 更新用户API Key数量
+    // ActualizarUsuarioAPI Key数量
     await userService.updateUserApiKeyCount(req.user.id, userApiKeys.length + 1)
 
     logger.info(`🔑 User ${req.user.username} created API key: ${name}`)
@@ -348,7 +348,7 @@ router.post('/api-keys', authenticateUser, async (req, res) => {
         id: newApiKey.id,
         name: newApiKey.name,
         description: newApiKey.description,
-        key: newApiKey.apiKey, // 只在创建时返回完整key
+        key: newApiKey.apiKey, // 只在Crear时Retornar完整key
         tokenLimit: newApiKey.tokenLimit,
         expiresAt: newApiKey.expiresAt,
         dailyCostLimit: newApiKey.dailyCostLimit,
@@ -365,12 +365,12 @@ router.post('/api-keys', authenticateUser, async (req, res) => {
   }
 })
 
-// 🗑️ 删除API Key
+// 🗑️ EliminarAPI Key
 router.delete('/api-keys/:keyId', authenticateUser, async (req, res) => {
   try {
     const { keyId } = req.params
 
-    // 检查是否允许用户删除自己的API Keys
+    // Verificar是否允许UsuarioEliminar自己的API Keys
     if (!config.userManagement.allowUserDeleteApiKeys) {
       return res.status(403).json({
         error: 'Operation not allowed',
@@ -379,7 +379,7 @@ router.delete('/api-keys/:keyId', authenticateUser, async (req, res) => {
       })
     }
 
-    // 检查API Key是否属于当前用户
+    // VerificarAPI Key是否属于当前Usuario
     const existingKey = await apiKeyService.getApiKeyById(keyId)
     if (!existingKey || existingKey.userId !== req.user.id) {
       return res.status(404).json({
@@ -390,7 +390,7 @@ router.delete('/api-keys/:keyId', authenticateUser, async (req, res) => {
 
     await apiKeyService.deleteApiKey(keyId, req.user.username, 'user')
 
-    // 更新用户API Key数量
+    // ActualizarUsuarioAPI Key数量
     const userApiKeys = await apiKeyService.getUserApiKeys(req.user.id)
     await userService.updateUserApiKeyCount(req.user.id, userApiKeys.length)
 
@@ -409,12 +409,12 @@ router.delete('/api-keys/:keyId', authenticateUser, async (req, res) => {
   }
 })
 
-// 📊 获取用户使用统计
+// 📊 ObtenerUsuario使用Estadística
 router.get('/usage-stats', authenticateUser, async (req, res) => {
   try {
     const { period = 'week', model } = req.query
 
-    // 获取用户的API Keys (including deleted ones for complete usage stats)
+    // ObtenerUsuario的API Keys (including deleted ones for complete usage stats)
     const userApiKeys = await apiKeyService.getUserApiKeys(req.user.id, true)
     const apiKeyIds = userApiKeys.map((key) => key.id)
 
@@ -432,7 +432,7 @@ router.get('/usage-stats', authenticateUser, async (req, res) => {
       })
     }
 
-    // 获取使用统计
+    // Obtener使用Estadística
     const stats = await apiKeyService.getAggregatedUsageStats(apiKeyIds, { period, model })
 
     res.json({
@@ -448,9 +448,9 @@ router.get('/usage-stats', authenticateUser, async (req, res) => {
   }
 })
 
-// === 管理员用户管理端点 ===
+// === 管理员Usuario管理Endpoint ===
 
-// 📋 获取用户列表（管理员）
+// 📋 ObtenerUsuarioColumnaTabla（管理员）
 router.get('/', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const { page = 1, limit = 20, role, isActive, search } = req.query
@@ -464,7 +464,7 @@ router.get('/', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
 
     const result = await userService.getAllUsers(options)
 
-    // 如果有搜索条件，进行过滤
+    // 如果有搜索Condición，进FilaFiltrar
     let filteredUsers = result.users
     if (search) {
       const searchLower = search.toLowerCase()
@@ -495,7 +495,7 @@ router.get('/', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   }
 })
 
-// 👤 获取特定用户信息（管理员）
+// 👤 Obtener特定UsuarioInformación（管理员）
 router.get('/:userId', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params
@@ -508,7 +508,7 @@ router.get('/:userId', authenticateUserOrAdmin, requireAdmin, async (req, res) =
       })
     }
 
-    // 获取用户的API Keys（包括已删除的以保留统计数据）
+    // ObtenerUsuario的API Keys（包括已Eliminar的以保留EstadísticaDatos）
     const apiKeys = await apiKeyService.getUserApiKeys(userId, true)
 
     res.json({
@@ -557,7 +557,7 @@ router.get('/:userId', authenticateUserOrAdmin, requireAdmin, async (req, res) =
   }
 })
 
-// 🔄 更新用户状态（管理员）
+// 🔄 ActualizarUsuario状态（管理员）
 router.patch('/:userId/status', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params
@@ -596,7 +596,7 @@ router.patch('/:userId/status', authenticateUserOrAdmin, requireAdmin, async (re
   }
 })
 
-// 🔄 更新用户角色（管理员）
+// 🔄 ActualizarUsuarioRol（管理员）
 router.patch('/:userId/role', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params
@@ -634,7 +634,7 @@ router.patch('/:userId/role', authenticateUserOrAdmin, requireAdmin, async (req,
   }
 })
 
-// 🔑 禁用用户的所有API Keys（管理员）
+// 🔑 DeshabilitarUsuario的所有API Keys（管理员）
 router.post('/:userId/disable-keys', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params
@@ -666,7 +666,7 @@ router.post('/:userId/disable-keys', authenticateUserOrAdmin, requireAdmin, asyn
   }
 })
 
-// 📊 获取用户使用统计（管理员）
+// 📊 ObtenerUsuario使用Estadística（管理员）
 router.get('/:userId/usage-stats', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params
@@ -680,7 +680,7 @@ router.get('/:userId/usage-stats', authenticateUserOrAdmin, requireAdmin, async 
       })
     }
 
-    // 获取用户的API Keys（包括已删除的以保留统计数据）
+    // ObtenerUsuario的API Keys（包括已Eliminar的以保留EstadísticaDatos）
     const userApiKeys = await apiKeyService.getUserApiKeys(userId, true)
     const apiKeyIds = userApiKeys.map((key) => key.id)
 
@@ -703,7 +703,7 @@ router.get('/:userId/usage-stats', authenticateUserOrAdmin, requireAdmin, async 
       })
     }
 
-    // 获取使用统计
+    // Obtener使用Estadística
     const stats = await apiKeyService.getAggregatedUsageStats(apiKeyIds, { period, model })
 
     res.json({
@@ -724,7 +724,7 @@ router.get('/:userId/usage-stats', authenticateUserOrAdmin, requireAdmin, async 
   }
 })
 
-// 📊 获取用户管理统计（管理员）
+// 📊 ObtenerUsuario管理Estadística（管理员）
 router.get('/stats/overview', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const stats = await userService.getUserStats()
@@ -742,7 +742,7 @@ router.get('/stats/overview', authenticateUserOrAdmin, requireAdmin, async (req,
   }
 })
 
-// 🔧 测试LDAP连接（管理员）
+// 🔧 ProbarLDAPConexión（管理员）
 router.get('/admin/ldap-test', authenticateUserOrAdmin, requireAdmin, async (req, res) => {
   try {
     const testResult = await ldapService.testConnection()
@@ -762,7 +762,7 @@ router.get('/admin/ldap-test', authenticateUserOrAdmin, requireAdmin, async (req
 })
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 额度卡核销相关路由
+// 额度卡核销相关Ruta
 // ═══════════════════════════════════════════════════════════════════════════
 
 const quotaCardService = require('../services/quotaCardService')
@@ -786,7 +786,7 @@ router.post('/redeem-card', authenticateUser, async (req, res) => {
       })
     }
 
-    // 验证 API Key 属于当前用户
+    // Validar API Key 属于当前Usuario
     const keyData = await redis.getApiKey(apiKeyId)
     if (!keyData || Object.keys(keyData).length === 0) {
       return res.status(404).json({
@@ -802,7 +802,7 @@ router.post('/redeem-card', authenticateUser, async (req, res) => {
       })
     }
 
-    // 执行核销
+    // Ejecutar核销
     const result = await quotaCardService.redeemCard(code, apiKeyId, req.user.id, req.user.username)
 
     logger.success(`🎫 User ${req.user.username} redeemed card ${code} to key ${apiKeyId}`)
@@ -820,7 +820,7 @@ router.post('/redeem-card', authenticateUser, async (req, res) => {
   }
 })
 
-// 📋 获取用户的核销历史
+// 📋 ObtenerUsuario的核销历史
 router.get('/redemption-history', authenticateUser, async (req, res) => {
   try {
     const { limit = 50, offset = 0 } = req.query
@@ -844,7 +844,7 @@ router.get('/redemption-history', authenticateUser, async (req, res) => {
   }
 })
 
-// 📊 获取用户的额度信息
+// 📊 ObtenerUsuario的额度Información
 router.get('/quota-info', authenticateUser, async (req, res) => {
   try {
     const { apiKeyId } = req.query
@@ -856,7 +856,7 @@ router.get('/quota-info', authenticateUser, async (req, res) => {
       })
     }
 
-    // 验证 API Key 属于当前用户
+    // Validar API Key 属于当前Usuario
     const keyData = await redis.getApiKey(apiKeyId)
     if (!keyData || Object.keys(keyData).length === 0) {
       return res.status(404).json({
@@ -872,7 +872,7 @@ router.get('/quota-info', authenticateUser, async (req, res) => {
       })
     }
 
-    // 检查是否为聚合 Key
+    // Verificar是否为聚合 Key
     if (keyData.isAggregated !== 'true') {
       return res.json({
         success: true,
@@ -883,7 +883,7 @@ router.get('/quota-info', authenticateUser, async (req, res) => {
       })
     }
 
-    // 解析聚合 Key 数据
+    // Analizar聚合 Key Datos
     let permissions = []
     let serviceQuotaLimits = {}
     let serviceQuotaUsed = {}
@@ -898,7 +898,7 @@ router.get('/quota-info', authenticateUser, async (req, res) => {
       serviceQuotaLimits = JSON.parse(keyData.serviceQuotaLimits || '{}')
       serviceQuotaUsed = JSON.parse(keyData.serviceQuotaUsed || '{}')
     } catch (e) {
-      // 解析失败使用默认值
+      // AnalizarFalló使用PredeterminadoValor
     }
 
     res.json({

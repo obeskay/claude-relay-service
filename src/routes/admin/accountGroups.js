@@ -10,9 +10,9 @@ const logger = require('../../utils/logger')
 
 const router = express.Router()
 
-// 👥 账户分组管理
+// 👥 CuentaAgrupar管理
 
-// 创建账户分组
+// CrearCuentaAgrupar
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
     const { name, platform, description } = req.body
@@ -30,7 +30,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取所有分组
+// Obtener所有Agrupar
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const { platform } = req.query
@@ -42,7 +42,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取分组详情
+// ObtenerAgrupar详情
 router.get('/:groupId', authenticateAdmin, async (req, res) => {
   try {
     const { groupId } = req.params
@@ -59,7 +59,7 @@ router.get('/:groupId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新分组
+// ActualizarAgrupar
 router.put('/:groupId', authenticateAdmin, async (req, res) => {
   try {
     const { groupId } = req.params
@@ -73,7 +73,7 @@ router.put('/:groupId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除分组
+// EliminarAgrupar
 router.delete('/:groupId', authenticateAdmin, async (req, res) => {
   try {
     const { groupId } = req.params
@@ -85,7 +85,7 @@ router.delete('/:groupId', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取分组成员
+// ObtenerAgrupar成员
 router.get('/:groupId/members', authenticateAdmin, async (req, res) => {
   try {
     const { groupId } = req.params
@@ -97,10 +97,10 @@ router.get('/:groupId/members', authenticateAdmin, async (req, res) => {
 
     const memberIds = await accountGroupService.getGroupMembers(groupId)
 
-    // 获取成员详细信息
+    // Obtener成员详细Información
     const members = []
     for (const memberId of memberIds) {
-      // 根据分组平台优先查找对应账户
+      // 根据Agrupar平台优先查找对应Cuenta
       let account = null
       switch (group.platform) {
         case 'droid':
@@ -121,7 +121,7 @@ router.get('/:groupId/members', authenticateAdmin, async (req, res) => {
           break
       }
 
-      // 兼容旧数据：若按平台未找到，则继续尝试其他平台
+      // 兼容旧Datos：若按平台未找到，则继续尝试其他平台
       if (!account) {
         account = await claudeAccountService.getAccount(memberId)
       }

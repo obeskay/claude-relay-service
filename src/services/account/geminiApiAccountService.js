@@ -8,7 +8,7 @@ const upstreamErrorHelper = require('../../utils/upstreamErrorHelper')
 
 class GeminiApiAccountService {
   constructor() {
-    // 加密相关常量
+    // Cifrado相关常量
     this.ENCRYPTION_ALGORITHM = 'aes-256-cbc'
     this.ENCRYPTION_SALT = 'gemini-api-salt'
 
@@ -16,13 +16,13 @@ class GeminiApiAccountService {
     this.ACCOUNT_KEY_PREFIX = 'gemini_api_account:'
     this.SHARED_ACCOUNTS_KEY = 'shared_gemini_api_accounts'
 
-    // 🚀 性能优化：缓存派生的加密密钥，避免每次重复计算
+    // 🚀 RendimientoOptimización：Caché派生的CifradoClave，避免每次重复Calcular
     this._encryptionKeyCache = null
 
-    // 🔄 解密结果缓存，提高解密性能
+    // 🔄 Descifrado结果Caché，提高DescifradoRendimiento
     this._decryptCache = new LRUCache(500)
 
-    // 🧹 定期清理缓存（每10分钟）
+    // 🧹 定期LimpiarCaché（每10分钟）
     setInterval(
       () => {
         this._decryptCache.cleanup()
@@ -32,24 +32,24 @@ class GeminiApiAccountService {
     )
   }
 
-  // 创建账户
+  // CrearCuenta
   async createAccount(options = {}) {
     const {
       name = 'Gemini API Account',
       description = '',
       apiKey = '', // 必填：Google AI Studio API Key
-      baseUrl = 'https://generativelanguage.googleapis.com', // 默认 Gemini API 基础 URL
+      baseUrl = 'https://generativelanguage.googleapis.com', // Predeterminado Gemini API 基础 URL
       proxy = null,
       priority = 50, // 调度优先级 (1-100)
       isActive = true,
       accountType = 'shared', // 'dedicated' or 'shared'
       schedulable = true, // 是否可被调度
-      supportedModels = [], // 支持的模型列表
-      rateLimitDuration = 60, // 限流时间（分钟）
+      supportedModels = [], // Soportar的模型ColumnaTabla
+      rateLimitDuration = 60, // 限流Tiempo（分钟）
       disableAutoProtection = false
     } = options
 
-    // 验证必填字段
+    // Validar必填Campo
     if (!apiKey) {
       throw new Error('API Key is required for Gemini-API account')
     }
@@ -95,11 +95,11 @@ class GeminiApiAccountService {
 
     return {
       ...accountData,
-      apiKey: '***' // 返回时隐藏敏感信息
+      apiKey: '***' // Retornar时隐藏敏感Información
     }
   }
 
-  // 获取账户
+  // ObtenerCuenta
   async getAccount(accountId) {
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
@@ -109,10 +109,10 @@ class GeminiApiAccountService {
       return null
     }
 
-    // 解密敏感数据
+    // Descifrado敏感Datos
     accountData.apiKey = this._decryptSensitiveData(accountData.apiKey)
 
-    // 解析 JSON 字段
+    // Analizar JSON Campo
     if (accountData.proxy) {
       try {
         accountData.proxy = JSON.parse(accountData.proxy)
@@ -132,19 +132,19 @@ class GeminiApiAccountService {
     return accountData
   }
 
-  // 更新账户
+  // ActualizarCuenta
   async updateAccount(accountId, updates) {
     const account = await this.getAccount(accountId)
     if (!account) {
       throw new Error('Account not found')
     }
 
-    // 处理敏感字段加密
+    // Procesar敏感CampoCifrado
     if (updates.apiKey) {
       updates.apiKey = this._encryptSensitiveData(updates.apiKey)
     }
 
-    // 处理 JSON 字段
+    // Procesar JSON Campo
     if (updates.proxy !== undefined) {
       updates.proxy = updates.proxy ? JSON.stringify(updates.proxy) : ''
     }
@@ -160,7 +160,7 @@ class GeminiApiAccountService {
         : updates.baseUrl
     }
 
-    // 处理 disableAutoProtection 布尔值转字符串
+    // Procesar disableAutoProtection 布尔Valor转Cadena
     if (updates.disableAutoProtection !== undefined) {
       updates.disableAutoProtection =
         updates.disableAutoProtection === true || updates.disableAutoProtection === 'true'
@@ -168,7 +168,7 @@ class GeminiApiAccountService {
           : 'false'
     }
 
-    // 更新 Redis
+    // Actualizar Redis
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
     await client.hset(key, updates)
@@ -178,18 +178,18 @@ class GeminiApiAccountService {
     return { success: true }
   }
 
-  // 删除账户
+  // EliminarCuenta
   async deleteAccount(accountId) {
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
 
-    // 从共享账户列表中移除
+    // 从共享CuentaColumnaTabla中Eliminación
     await client.srem(this.SHARED_ACCOUNTS_KEY, accountId)
 
-    // 从索引中移除
+    // 从Índice中Eliminación
     await redis.removeFromIndex('gemini_api_account:index', accountId)
 
-    // 删除账户数据
+    // EliminarCuentaDatos
     await client.del(key)
 
     logger.info(`🗑️ Deleted Gemini-API account: ${accountId}`)
@@ -197,7 +197,7 @@ class GeminiApiAccountService {
     return { success: true }
   }
 
-  // 获取所有账户
+  // Obtener所有Cuenta
   async getAllAccounts(includeInactive = false) {
     const client = redis.getClientSafe()
     const accountIds = await client.smembers(this.SHARED_ACCOUNTS_KEY)
@@ -206,15 +206,15 @@ class GeminiApiAccountService {
     for (const accountId of accountIds) {
       const account = await this.getAccount(accountId)
       if (account) {
-        // 过滤非活跃账户
+        // Filtrar非活跃Cuenta
         if (includeInactive || account.isActive === 'true') {
-          // 隐藏敏感信息
+          // 隐藏敏感Información
           account.apiKey = '***'
 
-          // 获取限流状态信息
+          // Obtener限流状态Información
           const rateLimitInfo = this._getRateLimitInfo(account)
 
-          // 格式化 rateLimitStatus 为对象
+          // Formato化 rateLimitStatus 为Objeto
           account.rateLimitStatus = rateLimitInfo.isRateLimited
             ? {
                 isRateLimited: true,
@@ -227,9 +227,9 @@ class GeminiApiAccountService {
                 minutesRemaining: 0
               }
 
-          // 转换 schedulable 字段为布尔值
+          // Convertir schedulable Campo为布尔Valor
           account.schedulable = account.schedulable !== 'false'
-          // 转换 isActive 字段为布尔值
+          // Convertir isActive Campo为布尔Valor
           account.isActive = account.isActive === 'true'
 
           account.platform = account.platform || 'gemini-api'
@@ -239,7 +239,7 @@ class GeminiApiAccountService {
       }
     }
 
-    // 直接从 Redis 获取所有账户（包括非共享账户）
+    // 直接从 Redis Obtener所有Cuenta（包括非共享Cuenta）
     const allAccountIds = await redis.getAllIdsByIndex(
       'gemini_api_account:index',
       `${this.ACCOUNT_KEY_PREFIX}*`,
@@ -252,12 +252,12 @@ class GeminiApiAccountService {
       if (!accountIds.includes(accountId)) {
         const accountData = dataList[i]
         if (accountData && accountData.id) {
-          // 过滤非活跃账户
+          // Filtrar非活跃Cuenta
           if (includeInactive || accountData.isActive === 'true') {
-            // 隐藏敏感信息
+            // 隐藏敏感Información
             accountData.apiKey = '***'
 
-            // 解析 JSON 字段
+            // Analizar JSON Campo
             if (accountData.proxy) {
               try {
                 accountData.proxy = JSON.parse(accountData.proxy)
@@ -274,10 +274,10 @@ class GeminiApiAccountService {
               }
             }
 
-            // 获取限流状态信息
+            // Obtener限流状态Información
             const rateLimitInfo = this._getRateLimitInfo(accountData)
 
-            // 格式化 rateLimitStatus 为对象
+            // Formato化 rateLimitStatus 为Objeto
             accountData.rateLimitStatus = rateLimitInfo.isRateLimited
               ? {
                   isRateLimited: true,
@@ -290,9 +290,9 @@ class GeminiApiAccountService {
                   minutesRemaining: 0
                 }
 
-            // 转换 schedulable 字段为布尔值
+            // Convertir schedulable Campo为布尔Valor
             accountData.schedulable = accountData.schedulable !== 'false'
-            // 转换 isActive 字段为布尔值
+            // Convertir isActive Campo为布尔Valor
             accountData.isActive = accountData.isActive === 'true'
 
             accountData.platform = accountData.platform || 'gemini-api'
@@ -306,14 +306,14 @@ class GeminiApiAccountService {
     return accounts
   }
 
-  // 标记账户已使用
+  // 标记Cuenta已使用
   async markAccountUsed(accountId) {
     await this.updateAccount(accountId, {
       lastUsedAt: new Date().toISOString()
     })
   }
 
-  // 标记账户限流
+  // 标记Cuenta限流
   async setAccountRateLimited(accountId, isLimited, duration = null) {
     const account = await this.getAccount(accountId)
     if (!account) {
@@ -353,8 +353,8 @@ class GeminiApiAccountService {
     }
   }
 
-  // 🚫 标记账户为未授权状态（401错误）
-  async markAccountUnauthorized(accountId, reason = 'Gemini API账号认证失败（401错误）') {
+  // 🚫 标记Cuenta为未授权状态（401Error）
+  async markAccountUnauthorized(accountId, reason = 'Gemini API账号认证Falló（401Error）') {
     const account = await this.getAccount(accountId)
     if (!account) {
       return
@@ -395,7 +395,7 @@ class GeminiApiAccountService {
     }
   }
 
-  // 检查并清除过期的限流状态
+  // Verificar并清除过期的限流状态
   async checkAndClearRateLimit(accountId) {
     const account = await this.getAccount(accountId)
     if (!account || account.rateLimitStatus !== 'limited') {
@@ -405,7 +405,7 @@ class GeminiApiAccountService {
     const now = new Date()
     let shouldClear = false
 
-    // 优先使用 rateLimitResetAt 字段
+    // 优先使用 rateLimitResetAt Campo
     if (account.rateLimitResetAt) {
       const resetAt = new Date(account.rateLimitResetAt)
       shouldClear = now >= resetAt
@@ -447,7 +447,7 @@ class GeminiApiAccountService {
     }
   }
 
-  // 重置账户状态（清除所有异常状态）
+  // 重置Cuenta状态（清除所有异常状态）
   async resetAccountStatus(accountId) {
     const account = await this.getAccount(accountId)
     if (!account) {
@@ -455,11 +455,11 @@ class GeminiApiAccountService {
     }
 
     const updates = {
-      // 根据是否有有效的 apiKey 来设置 status
+      // 根据是否有有效的 apiKey 来Establecer status
       status: account.apiKey ? 'active' : 'created',
-      // 恢复可调度状态
+      // Restauración可调度状态
       schedulable: 'true',
-      // 清除错误相关字段
+      // 清除Error相关Campo
       errorMessage: '',
       rateLimitedAt: '',
       rateLimitStatus: '',
@@ -500,7 +500,7 @@ class GeminiApiAccountService {
     return false
   }
 
-  // 获取限流信息
+  // Obtener限流Información
   _getRateLimitInfo(accountData) {
     if (accountData.rateLimitStatus !== 'limited') {
       return { isRateLimited: false }
@@ -510,7 +510,7 @@ class GeminiApiAccountService {
     let willBeAvailableAt
     let remainingMinutes
 
-    // 优先使用 rateLimitResetAt 字段
+    // 优先使用 rateLimitResetAt Campo
     if (accountData.rateLimitResetAt) {
       willBeAvailableAt = new Date(accountData.rateLimitResetAt)
       remainingMinutes = Math.max(0, Math.ceil((willBeAvailableAt - now) / 60000))
@@ -530,7 +530,7 @@ class GeminiApiAccountService {
     }
   }
 
-  // 加密敏感数据
+  // Cifrado敏感Datos
   _encryptSensitiveData(text) {
     if (!text) {
       return ''
@@ -546,13 +546,13 @@ class GeminiApiAccountService {
     return `${iv.toString('hex')}:${encrypted.toString('hex')}`
   }
 
-  // 解密敏感数据
+  // Descifrado敏感Datos
   _decryptSensitiveData(text) {
     if (!text || text === '') {
       return ''
     }
 
-    // 检查缓存
+    // VerificarCaché
     const cacheKey = crypto.createHash('sha256').update(text).digest('hex')
     const cached = this._decryptCache.get(cacheKey)
     if (cached !== undefined) {
@@ -572,7 +572,7 @@ class GeminiApiAccountService {
 
       const result = decrypted.toString()
 
-      // 存入缓存（5分钟过期）
+      // 存入Caché（5分钟过期）
       this._decryptCache.set(cacheKey, result, 5 * 60 * 1000)
 
       return result
@@ -582,7 +582,7 @@ class GeminiApiAccountService {
     }
   }
 
-  // 获取加密密钥
+  // ObtenerCifradoClave
   _getEncryptionKey() {
     if (!this._encryptionKeyCache) {
       this._encryptionKeyCache = crypto.scryptSync(
@@ -594,18 +594,18 @@ class GeminiApiAccountService {
     return this._encryptionKeyCache
   }
 
-  // 保存账户到 Redis
+  // 保存Cuenta到 Redis
   async _saveAccount(accountId, accountData) {
     const client = redis.getClientSafe()
     const key = `${this.ACCOUNT_KEY_PREFIX}${accountId}`
 
-    // 保存账户数据
+    // 保存CuentaDatos
     await client.hset(key, accountData)
 
-    // 添加到索引
+    // 添加到Índice
     await redis.addToIndex('gemini_api_account:index', accountId)
 
-    // 添加到共享账户列表
+    // 添加到共享CuentaColumnaTabla
     if (accountData.accountType === 'shared') {
       await client.sadd(this.SHARED_ACCOUNTS_KEY, accountId)
     }

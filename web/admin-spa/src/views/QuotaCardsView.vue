@@ -6,10 +6,10 @@
         <div class="flex items-center justify-between">
           <div>
             <h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-gray-100 sm:mb-2 sm:text-xl">
-              额度卡管理
+              Administración de Tarjetas de Cuota
             </h3>
             <p class="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-              管理额度卡和时间卡，用户可核销增加额度
+              Administra tarjetas de cuota y tiempo, los usuarios pueden canjearlas para aumentar cuota
             </p>
           </div>
           <button
@@ -17,7 +17,7 @@
             @click="showCreateModal = true"
           >
             <i class="fas fa-plus mr-2" />
-            创建卡片
+            Crear Tarjeta
           </button>
         </div>
 
@@ -27,7 +27,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
-                  总卡片数
+                  Total de Tarjetas
                 </p>
                 <p class="text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">
                   {{ stats.total }}
@@ -43,7 +43,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
-                  未使用
+                  Sin Usar
                 </p>
                 <p class="text-xl font-bold text-green-600 dark:text-green-400 sm:text-2xl">
                   {{ stats.unused }}
@@ -59,7 +59,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
-                  已核销
+                  Canjeadas
                 </p>
                 <p class="text-xl font-bold text-purple-600 dark:text-purple-400 sm:text-2xl">
                   {{ stats.redeemed }}
@@ -75,7 +75,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400 sm:text-sm">
-                  已撤销
+                  Revocadas
                 </p>
                 <p class="text-xl font-bold text-red-600 dark:text-red-400 sm:text-2xl">
                   {{ stats.revoked }}
@@ -94,7 +94,7 @@
         >
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">兑换上限保护</span>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Protección de Límite de Canje</span>
               <label class="relative inline-flex cursor-pointer items-center">
                 <input
                   v-model="limitsConfig.enabled"
@@ -108,7 +108,7 @@
               </label>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-400">最大额度</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Cuota Máxima</span>
               <input
                 v-model.number="limitsConfig.maxTotalCostLimit"
                 class="w-24 rounded border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -120,7 +120,7 @@
               <span class="text-sm text-gray-500 dark:text-gray-400">$</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-400">最大有效期</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Validez Máxima</span>
               <input
                 v-model.number="limitsConfig.maxExpiryDays"
                 class="w-20 rounded border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -129,7 +129,7 @@
                 type="number"
                 @change="saveLimitsConfig"
               />
-              <span class="text-sm text-gray-500 dark:text-gray-400">天</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">días</span>
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@
       <!-- Loading -->
       <div v-if="loading" class="flex items-center justify-center py-12">
         <i class="fas fa-spinner fa-spin mr-2 text-blue-500" />
-        <span class="text-gray-500 dark:text-gray-400">加载中...</span>
+        <span class="text-gray-500 dark:text-gray-400">Cargando...</span>
       </div>
 
       <!-- Cards Table -->
@@ -168,20 +168,20 @@
           class="mb-3 flex items-center gap-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20"
         >
           <span class="text-sm text-blue-700 dark:text-blue-300">
-            已选择 {{ selectedCards.length }} 张卡片
+            {{ selectedCards.length }} tarjetas seleccionadas
           </span>
           <button
             class="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600"
             @click="deleteSelectedCards"
           >
             <i class="fas fa-trash mr-1" />
-            批量删除
+            Eliminar en Lote
           </button>
           <button
             class="rounded-lg bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
             @click="selectedCards = []"
           >
-            取消选择
+            Cancelar Selección
           </button>
         </div>
 
@@ -200,37 +200,37 @@
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                卡号
+                Número
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                类型
+                Tipo
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                额度/时间
+                Cuota/Tiempo
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                状态
+                Estado
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                核销用户
+                Usuario de Canje
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                创建时间
+                Fecha de Creación
               </th>
               <th
                 class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                操作
+                Acciones
               </th>
             </tr>
           </thead>
@@ -255,7 +255,7 @@
               <td class="whitespace-nowrap px-4 py-3">
                 <code
                   class="cursor-pointer rounded bg-gray-100 px-2 py-1 font-mono text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                  title="点击复制"
+                  title="Haz clic para copiar"
                   @click="copyText(card.code)"
                 >
                   {{ card.code }}
@@ -273,7 +273,7 @@
                   ]"
                 >
                   {{
-                    card.type === 'quota' ? '额度卡' : card.type === 'time' ? '时间卡' : '组合卡'
+                    card.type === 'quota' ? 'Tarjeta de Cuota' : card.type === 'time' ? 'Tarjeta de Tiempo' : 'Tarjeta Combinada'
                   }}
                 </span>
               </td>
@@ -284,7 +284,7 @@
                 <span v-if="card.type === 'combo'"> + </span>
                 <span v-if="card.type === 'time' || card.type === 'combo'">
                   {{ card.timeAmount }}
-                  {{ card.timeUnit === 'hours' ? '小时' : card.timeUnit === 'days' ? '天' : '月' }}
+                  {{ card.timeUnit === 'hours' ? 'horas' : card.timeUnit === 'days' ? 'días' : 'mes' }}
                 </span>
               </td>
               <td class="whitespace-nowrap px-4 py-3">
@@ -300,10 +300,10 @@
                 >
                   {{
                     card.status === 'unused'
-                      ? '未使用'
+                      ? 'Sin Usar'
                       : card.status === 'redeemed'
-                        ? '已核销'
-                        : '已撤销'
+                        ? 'Canjada'
+                        : 'Revocada'
                   }}
                 </span>
               </td>
@@ -317,7 +317,7 @@
                 <button
                   v-if="card.status === 'unused'"
                   class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                  title="删除"
+                  title="Eliminar"
                   @click="deleteCard(card)"
                 >
                   <i class="fas fa-trash" />
@@ -329,23 +329,23 @@
                 class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
                 colspan="8"
               >
-                暂无卡片数据
+                No hay datos de tarjetas
               </td>
             </tr>
           </tbody>
         </table>
 
-        <!-- 分页 -->
+        <!-- Paginación -->
         <div
           v-if="totalCards > 0"
           class="flex flex-col items-center justify-between gap-3 border-t border-gray-200 px-4 py-3 dark:border-gray-700 sm:flex-row"
         >
           <div class="flex items-center gap-4">
             <span class="text-sm text-gray-600 dark:text-gray-400">
-              共 {{ totalCards }} 条记录
+              Total: {{ totalCards }} registros
             </span>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600 dark:text-gray-400">每页</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Por página</span>
               <select
                 v-model="pageSize"
                 class="rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
@@ -355,7 +355,7 @@
                   {{ size }}
                 </option>
               </select>
-              <span class="text-sm text-gray-600 dark:text-gray-400">条</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">registros</span>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -388,12 +388,12 @@
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                卡号
+                Número
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                用户
+                Usuario
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
@@ -403,22 +403,22 @@
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                增加额度
+                Cuota Añadida
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                状态
+                Estado
               </th>
               <th
                 class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                核销时间
+                Fecha de Canje
               </th>
               <th
                 class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300"
               >
-                操作
+                Acciones
               </th>
             </tr>
           </thead>
@@ -431,7 +431,7 @@
               <td class="whitespace-nowrap px-4 py-3">
                 <code
                   class="cursor-pointer rounded bg-gray-100 px-2 py-1 font-mono text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                  title="点击复制"
+                  title="Haz clic para copiar"
                   @click="copyText(redemption.cardCode)"
                 >
                   {{ redemption.cardCode }}
@@ -440,7 +440,7 @@
               <td class="whitespace-nowrap px-4 py-3">
                 <span
                   class="cursor-pointer text-sm text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400"
-                  title="点击复制"
+                  title="Haz clic para copiar"
                   @click="copyText(redemption.username || redemption.userId)"
                 >
                   {{ redemption.username || redemption.userId }}
@@ -449,7 +449,7 @@
               <td class="whitespace-nowrap px-4 py-3">
                 <span
                   class="cursor-pointer text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-                  title="点击复制"
+                  title="Haz clic para copiar"
                   @click="copyText(redemption.apiKeyName || redemption.apiKeyId)"
                 >
                   {{ redemption.apiKeyName || redemption.apiKeyId }}
@@ -462,10 +462,10 @@
                   {{ redemption.timeAdded }}
                   {{
                     redemption.timeUnit === 'hours'
-                      ? '小时'
+                      ? 'horas'
                       : redemption.timeUnit === 'days'
-                        ? '天'
-                        : '月'
+                        ? 'días'
+                        : 'mes'
                   }}
                 </span>
               </td>
@@ -478,7 +478,7 @@
                       : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                   ]"
                 >
-                  {{ redemption.status === 'active' ? '有效' : '已撤销' }}
+                  {{ redemption.status === 'active' ? 'Válido' : 'Revocado' }}
                 </span>
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
@@ -488,7 +488,7 @@
                 <button
                   v-if="redemption.status === 'active'"
                   class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                  title="撤销核销"
+                  title="Revocar canje"
                   @click="revokeRedemption(redemption)"
                 >
                   <i class="fas fa-undo" />
@@ -500,7 +500,7 @@
                 class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
                 colspan="7"
               >
-                暂无核销记录
+                No hay registros de canje
               </td>
             </tr>
           </tbody>
@@ -523,7 +523,7 @@
               >
                 <i class="fas fa-ticket-alt text-white" />
               </div>
-              <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">创建额度卡</h3>
+              <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Crear Tarjeta de Cuota</h3>
             </div>
             <button
               class="p-1 text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
@@ -537,21 +537,21 @@
           <div class="space-y-4">
             <div>
               <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >卡片类型</label
+                >Tipo de Tarjeta</label
               >
               <select
                 v-model="newCard.type"
                 class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
-                <option value="quota">额度卡</option>
-                <option value="time">时间卡</option>
-                <option value="combo">组合卡</option>
+                <option value="quota">Tarjeta de Cuota</option>
+                <option value="time">Tarjeta de Tiempo</option>
+                <option value="combo">Tarjeta Combinada</option>
               </select>
             </div>
 
             <div v-if="newCard.type === 'quota' || newCard.type === 'combo'">
               <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >额度数量 (美元)</label
+                >Cantidad de Cuota (USD)</label
               >
               <input
                 v-model.number="newCard.quotaAmount"
@@ -564,7 +564,7 @@
 
             <div v-if="newCard.type === 'time' || newCard.type === 'combo'">
               <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >时间数量</label
+                >Cantidad de Tiempo</label
               >
               <div class="flex gap-2">
                 <input
@@ -577,16 +577,16 @@
                   v-model="newCard.timeUnit"
                   class="block rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
-                  <option value="hours">小时</option>
-                  <option value="days">天</option>
-                  <option value="months">月</option>
+                  <option value="hours">Horas</option>
+                  <option value="days">Días</option>
+                  <option value="months">Mes</option>
                 </select>
               </div>
             </div>
 
             <div>
               <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >批量生成数量</label
+                >Cantidad de Generación por Lote</label
               >
               <input
                 v-model.number="newCard.count"
@@ -599,12 +599,12 @@
 
             <div>
               <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >备注（可选）</label
+                >Nota (opcional)</label
               >
               <input
                 v-model="newCard.note"
                 class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                placeholder="例如：新年促销卡"
+                placeholder="Ejemplo: Tarjeta promocional de Año Nuevo"
                 type="text"
               />
             </div>
@@ -617,7 +617,7 @@
               type="button"
               @click="showCreateModal = false"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="flex-1 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-2.5 font-medium text-white shadow-sm transition-colors hover:from-blue-600 hover:to-blue-700 disabled:opacity-50"
@@ -626,7 +626,7 @@
               @click="createCard"
             >
               <i v-if="creating" class="fas fa-spinner fa-spin mr-2" />
-              {{ creating ? '创建中...' : '创建' }}
+              {{ creating ? 'Creando...' : 'Crear' }}
             </button>
           </div>
         </div>
@@ -649,9 +649,9 @@
                 <i class="fas fa-check text-white" />
               </div>
               <div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">创建成功</h3>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Creación Exitosa</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                  已创建 {{ createdCards.length }} 张卡片
+                  {{ createdCards.length }} tarjetas creadas
                 </p>
               </div>
             </div>
@@ -681,7 +681,7 @@
                 <template v-if="card.type === 'combo'"> + </template>
                 <template v-if="card.type === 'time' || card.type === 'combo'">
                   {{ card.timeAmount }}
-                  {{ card.timeUnit === 'hours' ? '小时' : card.timeUnit === 'days' ? '天' : '月' }}
+                  {{ card.timeUnit === 'hours' ? 'horas' : card.timeUnit === 'days' ? 'días' : 'mes' }}
                 </template>
               </span>
             </div>
@@ -694,7 +694,7 @@
             <div class="flex items-start gap-2">
               <i class="fas fa-exclamation-triangle mt-0.5 text-yellow-500" />
               <p class="text-sm text-yellow-700 dark:text-yellow-300">
-                请立即下载或复制卡号，关闭后将无法再次查看完整卡号列表。
+                Descargue o copie los números de tarjeta inmediatamente, no podrá volver a ver la lista completa después de cerrar.
               </p>
             </div>
           </div>
@@ -707,7 +707,7 @@
               @click="downloadCards"
             >
               <i class="fas fa-download mr-2" />
-              下载 TXT
+              Descargar TXT
             </button>
             <button
               class="flex-1 rounded-xl bg-gray-100 px-4 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
@@ -715,7 +715,7 @@
               @click="copyAllCards"
             >
               <i class="fas fa-copy mr-2" />
-              复制全部
+              Copiar Todo
             </button>
           </div>
         </div>
@@ -729,15 +729,15 @@
         @click.self="showRevokeModal = false"
       >
         <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-800">
-          <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">撤销核销</h3>
+          <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Revocar Canje</h3>
           <div class="mb-4">
             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              撤销原因（可选）
+              Motivo de Revocación (opcional)
             </label>
             <input
               v-model="revokeReason"
               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              placeholder="请输入撤销原因"
+              placeholder="Ingrese el motivo de la revocación"
               type="text"
             />
           </div>
@@ -746,13 +746,13 @@
               class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               @click="showRevokeModal = false"
             >
-              取消
+              Cancelar
             </button>
             <button
               class="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
               @click="executeRevoke"
             >
-              确认撤销
+              Confirmar Revocación
             </button>
           </div>
         </div>
@@ -789,8 +789,8 @@ const confirmModalConfig = ref({
   title: '',
   message: '',
   type: 'primary',
-  confirmText: '确认',
-  cancelText: '取消'
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar'
 })
 const confirmResolve = ref(null)
 const createdCards = ref([])
@@ -800,15 +800,15 @@ const revokingRedemption = ref(null)
 const activeTab = ref('cards')
 const selectedCards = ref([])
 
-// 分页相关
+// Relacionado con paginación
 const currentPage = ref(1)
 const pageSize = ref(20)
 const pageSizeOptions = [10, 20, 50, 100]
 const totalCards = ref(0)
 
 const tabs = [
-  { id: 'cards', name: '卡片列表' },
-  { id: 'redemptions', name: '核销记录' }
+  { id: 'cards', name: 'Lista de Tarjetas' },
+  { id: 'redemptions', name: 'Registros de Canje' }
 ]
 
 const stats = ref({
@@ -828,21 +828,21 @@ const limitsConfig = ref({
 const cards = ref([])
 const redemptions = ref([])
 
-// 可选择的卡片（只有未使用的才能选择）
+// Tarjetas seleccionables (solo las no usadas pueden ser seleccionadas)
 const selectableCards = computed(() => cards.value.filter((c) => c.status === 'unused'))
 
-// 是否全选
+// Si todo está seleccionado
 const isAllSelected = computed(
   () =>
     selectableCards.value.length > 0 && selectedCards.value.length === selectableCards.value.length
 )
 
-// 是否部分选中
+// Si parcialmente seleccionado
 const isIndeterminate = computed(
   () => selectedCards.value.length > 0 && selectedCards.value.length < selectableCards.value.length
 )
 
-// 切换全选
+// Alternar seleccionar todo
 const toggleSelectAll = () => {
   if (isAllSelected.value) {
     selectedCards.value = []
@@ -851,7 +851,7 @@ const toggleSelectAll = () => {
   }
 }
 
-// 切换单个选择
+// Alternar selección individual
 const toggleSelectCard = (cardId) => {
   const index = selectedCards.value.indexOf(cardId)
   if (index === -1) {
@@ -873,8 +873,8 @@ const newCard = ref({
 const showConfirm = (
   title,
   message,
-  confirmText = '确认',
-  cancelText = '取消',
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   type = 'primary'
 ) => {
   return new Promise((resolve) => {
@@ -901,7 +901,7 @@ const loadCards = async () => {
     httpApis.getRedemptionsApi()
   ])
 
-  // 单独获取 limits 配置，兼容老后端
+  // Obtener configuración de limits por separado, compatible con backend antiguo
   const limitsData = await httpApis.getQuotaCardLimitsApi().catch(() => ({ data: null }))
 
   cards.value = cardsData.data?.cards || []
@@ -917,21 +917,21 @@ const loadCards = async () => {
 const saveLimitsConfig = async () => {
   const result = await httpApis.updateQuotaCardLimitsApi(limitsConfig.value)
   if (result.success) {
-    showToast('配置已保存', 'success')
+    showToast('Configuración guardada', 'success')
   }
 }
 
-// 分页计算
+// Cálculo de paginación
 const totalPages = computed(() => Math.ceil(totalCards.value / pageSize.value))
 
-// 页码变化
+// Cambio de página
 const changePage = (page) => {
   currentPage.value = page
   selectedCards.value = []
   loadCards()
 }
 
-// 每页条数变化
+// Cambio de elementos por página
 const changePageSize = () => {
   currentPage.value = 1
   selectedCards.value = []
@@ -944,7 +944,7 @@ const createCard = async () => {
   if (result.success) {
     showCreateModal.value = false
 
-    // 处理返回的卡片数据
+    // Procesar datos de tarjetas devueltos
     const data = result.data
     if (Array.isArray(data)) {
       createdCards.value = data
@@ -954,20 +954,20 @@ const createCard = async () => {
       createdCards.value = []
     }
 
-    // 显示结果弹窗
+    // Mostrar ventana de resultados
     if (createdCards.value.length > 0) {
       showResultModal.value = true
     }
 
-    showToast(`成功创建 ${createdCards.value.length} 张卡片`, 'success')
+    showToast(`Éxito al crear ${createdCards.value.length} tarjetas`, 'success')
     loadCards()
   } else {
-    showToast(result.message || '创建卡片失败', 'error')
+    showToast(result.message || 'Error al crear tarjetas', 'error')
   }
   creating.value = false
 }
 
-// 下载卡片
+// Descargar tarjetas
 const downloadCards = () => {
   if (createdCards.value.length === 0) return
 
@@ -1001,10 +1001,10 @@ const downloadCards = () => {
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 
-  showToast('卡片文件已下载', 'success')
+  showToast('Archivo de tarjetas descargado', 'success')
 }
 
-// 复制所有卡号
+// Copiar todos los números de tarjeta
 const copyAllCards = async () => {
   if (createdCards.value.length === 0) return
 
@@ -1012,40 +1012,40 @@ const copyAllCards = async () => {
 
   try {
     await navigator.clipboard.writeText(content)
-    showToast('已复制所有卡号', 'success')
+    showToast('Todos los números de tarjeta copiados', 'success')
   } catch (error) {
     console.error('Failed to copy:', error)
-    showToast('复制失败', 'error')
+    showToast('Error al copiar', 'error')
   }
 }
 
 const deleteCard = async (card) => {
   const confirmed = await showConfirm(
-    '删除卡片',
-    `确定删除卡片 ${card.code}？`,
-    '确定删除',
-    '取消',
+    'Eliminar Tarjeta',
+    `¿Confirmar eliminación de tarjeta ${card.code}?`,
+    'Confirmar Eliminación',
+    'Cancelar',
     'danger'
   )
   if (!confirmed) return
 
   await httpApis.deleteQuotaCardApi(card.id)
-  showToast('卡片已删除', 'success')
+  showToast('Tarjeta eliminada', 'success')
   loadCards()
 }
 
 const deleteSelectedCards = async () => {
   const confirmed = await showConfirm(
-    '批量删除',
-    `确定删除选中的 ${selectedCards.value.length} 张卡片？`,
-    '确定删除',
-    '取消',
+    'Eliminación en Lote',
+    `¿Confirmar eliminación de ${selectedCards.value.length} tarjetas seleccionadas?`,
+    'Confirmar Eliminación',
+    'Cancelar',
     'danger'
   )
   if (!confirmed) return
 
   await Promise.all(selectedCards.value.map((id) => httpApis.deleteQuotaCardApi(id)))
-  showToast(`已删除 ${selectedCards.value.length} 张卡片`, 'success')
+  showToast(`${selectedCards.value.length} tarjetas eliminadas`, 'success')
   selectedCards.value = []
   loadCards()
 }
@@ -1059,7 +1059,7 @@ const revokeRedemption = (redemption) => {
 const executeRevoke = async () => {
   if (!revokingRedemption.value) return
   await httpApis.revokeRedemptionApi(revokingRedemption.value.id, { reason: revokeReason.value })
-  showToast('核销已撤销', 'success')
+  showToast('Canje revocado', 'success')
   showRevokeModal.value = false
   revokingRedemption.value = null
   loadCards()

@@ -54,19 +54,19 @@ router.get('/check-updates', authenticateAdmin, async (_req, res) => {
 
 // ==================== Claude Code Headers Management ====================
 
-// 获取所有 Claude Code headers
+// Obtener所有 Claude Code headers
 router.get('/claude-code-headers', authenticateAdmin, async (req, res) => {
   try {
     const allHeaders = await claudeCodeHeadersService.getAllAccountHeaders()
 
-    // 获取所有 Claude 账号信息
+    // Obtener所有 Claude 账号Información
     const accounts = await claudeAccountService.getAllAccounts()
     const accountMap = {}
     accounts.forEach((account) => {
       accountMap[account.id] = account.name
     })
 
-    // 格式化输出
+    // Formato化输出
     const formattedData = Object.entries(allHeaders).map(([accountId, data]) => ({
       accountId,
       accountName: accountMap[accountId] || 'Unknown',
@@ -108,20 +108,20 @@ router.delete('/claude-code-headers/:accountId', authenticateAdmin, async (req, 
 
 // ... other routes ...
 
-// ==================== OEM 设置管理 ====================
+// ==================== OEM Establecer管理 ====================
 
-// 获取OEM设置（公开接口，用于显示）
-// 注意：这个端点没有 authenticateAdmin 中间件，因为前端登录页也需要访问
+// ObtenerOEMEstablecer（公开Interfaz，用于显示）
+// 注意：这个Endpoint没有 authenticateAdmin Middleware，因为前端登录页也需要访问
 router.get('/oem-settings', async (req, res) => {
   try {
     const client = redis.getClient()
     const oemSettings = await client.get('oem:settings')
 
-    // 默认设置
+    // PredeterminadoEstablecer
     const defaultSettings = {
       siteName: 'Claude Relay Service',
       siteIcon: '',
-      siteIconData: '', // Base64编码的图标数据
+      siteIconData: '', // Base64Codificación的图标Datos
       showAdminButton: true, // 是否显示管理后台按钮
       apiStatsNotice: {
         enabled: false,
@@ -140,7 +140,7 @@ router.get('/oem-settings', async (req, res) => {
       }
     }
 
-    // 添加 LDAP 启用状态到响应中
+    // 添加 LDAP Habilitar状态到Respuesta中
     return res.json({
       success: true,
       data: {
@@ -154,12 +154,12 @@ router.get('/oem-settings', async (req, res) => {
   }
 })
 
-// 更新OEM设置
+// ActualizarOEMEstablecer
 router.put('/oem-settings', authenticateAdmin, async (req, res) => {
   try {
     const { siteName, siteIcon, siteIconData, showAdminButton, apiStatsNotice } = req.body
 
-    // 验证输入
+    // Validar输入
     if (!siteName || typeof siteName !== 'string' || siteName.trim().length === 0) {
       return res.status(400).json({ error: 'Site name is required' })
     }
@@ -168,15 +168,15 @@ router.put('/oem-settings', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Site name must be less than 100 characters' })
     }
 
-    // 验证图标数据大小（如果是base64）
+    // Validar图标Datos大小（如果是base64）
     if (siteIconData && siteIconData.length > 500000) {
       // 约375KB
       return res.status(400).json({ error: 'Icon file must be less than 350KB' })
     }
 
-    // 验证图标URL（如果提供）
+    // Valida URL de ícono (si se proporciona)
     if (siteIcon && !siteIconData) {
-      // 简单验证URL格式
+      // 简单ValidarURLFormato
       try {
         new URL(siteIcon)
       } catch (err) {
@@ -187,8 +187,8 @@ router.put('/oem-settings', authenticateAdmin, async (req, res) => {
     const settings = {
       siteName: siteName.trim(),
       siteIcon: (siteIcon || '').trim(),
-      siteIconData: (siteIconData || '').trim(), // Base64数据
-      showAdminButton: showAdminButton !== false, // 默认为true
+      siteIconData: (siteIconData || '').trim(), // Base64Datos
+      showAdminButton: showAdminButton !== false, // Predeterminado为true
       apiStatsNotice: {
         enabled: apiStatsNotice?.enabled === true,
         title: (apiStatsNotice?.title || '').trim().slice(0, 100),
@@ -213,13 +213,13 @@ router.put('/oem-settings', authenticateAdmin, async (req, res) => {
   }
 })
 
-// ==================== Claude Code 版本管理 ====================
+// ==================== Claude Code Versión管理 ====================
 
 router.get('/claude-code-version', authenticateAdmin, async (req, res) => {
   try {
     const CACHE_KEY = 'claude_code_user_agent:daily'
 
-    // 获取缓存的统一User-Agent
+    // ObtenerCaché的统一User-Agent
     const unifiedUserAgent = await redis.client.get(CACHE_KEY)
     const ttl = unifiedUserAgent ? await redis.client.ttl(CACHE_KEY) : 0
 
@@ -240,12 +240,12 @@ router.get('/claude-code-version', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 🗑️ 清除统一Claude Code User-Agent缓存
+// 🗑️ 清除统一Claude Code User-AgentCaché
 router.post('/claude-code-version/clear', authenticateAdmin, async (req, res) => {
   try {
     const CACHE_KEY = 'claude_code_user_agent:daily'
 
-    // 删除缓存的统一User-Agent
+    // EliminarCaché的统一User-Agent
     await redis.client.del(CACHE_KEY)
 
     logger.info(`🗑️ Admin manually cleared unified Claude Code User-Agent cache`)
@@ -268,7 +268,7 @@ router.post('/claude-code-version/clear', authenticateAdmin, async (req, res) =>
 
 const pricingService = require('../../services/pricingService')
 
-// 获取所有模型价格数据
+// Obtener所有模型价格Datos
 router.get('/models/pricing', authenticateAdmin, async (req, res) => {
   try {
     if (!pricingService.pricingData || Object.keys(pricingService.pricingData).length === 0) {
@@ -285,7 +285,7 @@ router.get('/models/pricing', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 获取价格服务状态
+// Obtener价格Servicio状态
 router.get('/models/pricing/status', authenticateAdmin, async (req, res) => {
   try {
     const status = pricingService.getStatus()
@@ -296,7 +296,7 @@ router.get('/models/pricing/status', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 强制刷新价格数据
+// 强制刷新价格Datos
 router.post('/models/pricing/refresh', authenticateAdmin, async (req, res) => {
   try {
     const result = await pricingService.forceUpdate()

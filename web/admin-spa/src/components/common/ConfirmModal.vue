@@ -63,6 +63,10 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
   show: {
     type: Boolean,
@@ -78,11 +82,17 @@ defineProps({
   },
   confirmText: {
     type: String,
-    default: '继续'
+    default: () => {
+      const { t } = useI18n()
+      return t('modal.continue')
+    }
   },
   cancelText: {
     type: String,
-    default: '取消'
+    default: () => {
+      const { t } = useI18n()
+      return t('action.cancel')
+    }
   },
   type: {
     type: String,

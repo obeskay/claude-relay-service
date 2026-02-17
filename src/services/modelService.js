@@ -1,9 +1,9 @@
 const logger = require('../utils/logger')
 
 /**
- * 模型服务
- * 管理系统支持的 AI 模型列表
- * 与 pricingService 独立，专注于"支持哪些模型"而不是"如何计费"
+ * 模型Servicio
+ * 管理系统Soportar的 AI 模型ColumnaTabla
+ * 与 pricingService 独立，专注于"Soportar哪些模型"而不是"如何计费"
  */
 class ModelService {
   constructor() {
@@ -11,7 +11,7 @@ class ModelService {
   }
 
   /**
-   * 初始化模型服务
+   * Inicializando servicio de modelos
    */
   async initialize() {
     const totalModels = Object.values(this.supportedModels).reduce(
@@ -22,7 +22,7 @@ class ModelService {
   }
 
   /**
-   * 获取支持的模型配置
+   * ObtenerSoportar的模型Configuración
    */
   getDefaultModels() {
     return {
@@ -64,7 +64,7 @@ class ModelService {
   }
 
   /**
-   * 获取所有支持的模型（OpenAI API 格式）
+   * Obtener所有Soportar的模型（OpenAI API Formato）
    */
   getAllModels() {
     const models = []
@@ -82,7 +82,7 @@ class ModelService {
     }
 
     return models.sort((a, b) => {
-      // 先按 provider 排序，再按 model id 排序
+      // 先按 provider Ordenar，再按 model id Ordenar
       if (a.owned_by !== b.owned_by) {
         return a.owned_by.localeCompare(b.owned_by)
       }
@@ -91,7 +91,7 @@ class ModelService {
   }
 
   /**
-   * 按 provider 获取模型
+   * 按 provider Obtener模型
    * @param {string} provider - 'anthropic', 'openai', 'google' 等
    */
   getModelsByProvider(provider) {
@@ -99,7 +99,7 @@ class ModelService {
   }
 
   /**
-   * 检查模型是否被支持
+   * Verificar模型是否被Soportar
    * @param {string} modelId - 模型 ID
    */
   isModelSupported(modelId) {
@@ -110,7 +110,7 @@ class ModelService {
   }
 
   /**
-   * 获取模型的 provider
+   * Obtener模型的 provider
    * @param {string} modelId - 模型 ID
    */
   getModelProvider(modelId) {
@@ -119,7 +119,7 @@ class ModelService {
   }
 
   /**
-   * 获取服务状态
+   * ObtenerServicio状态
    */
   getStatus() {
     const totalModels = Object.values(this.supportedModels).reduce(
@@ -135,7 +135,7 @@ class ModelService {
   }
 
   /**
-   * 清理资源（保留接口兼容性）
+   * Limpiar资源（保留Interfaz兼容性）
    */
   cleanup() {
     logger.debug('📋 Model service cleanup (no-op)')

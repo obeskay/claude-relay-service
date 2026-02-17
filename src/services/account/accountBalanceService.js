@@ -103,7 +103,7 @@ class AccountBalanceService {
           })
           return { ...balance, name: acc.name || '' }
         } catch (error) {
-          this.logger.error(`批量获取余额失败: ${normalizedPlatform}:${acc?.id}`, error)
+          this.logger.error(`批量Obtener余额Falló: ${normalizedPlatform}:${acc?.id}`, error)
           return {
             success: true,
             data: {
@@ -116,7 +116,7 @@ class AccountBalanceService {
               lastRefreshAt: new Date().toISOString(),
               cacheExpiresAt: null,
               status: 'error',
-              error: error.message || '批量查询失败'
+              error: error.message || '批量ConsultaFalló'
             },
             name: acc?.name || ''
           }
@@ -196,11 +196,11 @@ class AccountBalanceService {
   async clearCache(accountId, platform) {
     const normalizedPlatform = this.normalizePlatform(platform)
     if (!normalizedPlatform) {
-      throw new Error('缺少 platform 参数')
+      throw new Error('缺少 platform Parámetro')
     }
 
     await this.redis.deleteAccountBalance(normalizedPlatform, accountId)
-    this.logger.info(`余额缓存已清除: ${normalizedPlatform}:${accountId}`)
+    this.logger.info(`余额Caché已清除: ${normalizedPlatform}:${accountId}`)
   }
 
   async getAccount(accountId, platform) {
@@ -228,8 +228,8 @@ class AccountBalanceService {
 
     const result = await service.getAccount(accountId)
 
-    // 处理不同服务返回格式的差异
-    // Bedrock/CCR/Droid 等服务返回 { success, data } 格式
+    // Procesar不同ServicioRetornarFormato的差异
+    // Bedrock/CCR/Droid 等ServicioRetornar { success, data } Formato
     if (result && typeof result === 'object' && 'success' in result && 'data' in result) {
       return result.success ? result.data : null
     }
@@ -260,7 +260,7 @@ class AccountBalanceService {
       return []
     }
 
-    // Bedrock 特殊：返回 { success, data }
+    // Bedrock 特殊：Retornar { success, data }
     if (platform === 'bedrock' && typeof service.getAllAccounts === 'function') {
       const result = await service.getAllAccounts()
       return result?.success ? result.data || [] : []
@@ -283,12 +283,12 @@ class AccountBalanceService {
 
     const accountId = account?.id
     if (!accountId) {
-      // 如果账户缺少 id，返回空响应而不是抛出错误，避免接口报错和UI错误
-      this.logger.warn('账户缺少 id，返回空余额数据', { account, platform })
+      // 如果Cuenta缺少 id，Retornar空Respuesta而不是抛出Error，避免Interfaz报错和UIError
+      this.logger.warn('Cuenta缺少 id，Retornar空余额Datos', { account, platform })
       return this._buildResponse(
         {
           status: 'error',
-          errorMessage: '账户数据异常',
+          errorMessage: 'CuentaDatos异常',
           balance: null,
           currency: 'USD',
           quota: null,
@@ -303,7 +303,7 @@ class AccountBalanceService {
       )
     }
 
-    // 余额脚本配置状态（用于前端控制"刷新余额"按钮）
+    // 余额脚本Configuración状态（用于前端控制"刷新余额"按钮）
     let scriptConfig = null
     let scriptConfigured = false
     if (typeof this.redis?.getBalanceScriptConfig === 'function') {
@@ -322,13 +322,13 @@ class AccountBalanceService {
 
     const quotaFromLocal = this._buildQuotaFromLocal(account, localStatistics)
 
-    // 安全限制：queryApi=auto 仅用于 Antigravity（gemini + oauthProvider=antigravity）账户
+    // SeguridadLímite：queryApi=auto 仅用于 Antigravity（gemini + oauthProvider=antigravity）Cuenta
     const effectiveQueryMode =
       queryMode === 'auto' && !(platform === 'gemini' && account?.oauthProvider === 'antigravity')
         ? 'local'
         : queryMode
 
-    // local: 仅本地统计/缓存；auto: 优先缓存，无缓存则尝试远程 Provider（并缓存结果）
+    // local: 仅本地Estadística/Caché；auto: 优先Caché，无Caché则尝试远程 Provider（并Caché结果）
     if (effectiveQueryMode !== 'api') {
       if (useCache) {
         const cached = await this.redis.getAccountBalance(platform, accountId)
@@ -372,7 +372,7 @@ class AccountBalanceService {
       }
     }
 
-    // 强制查询：优先脚本（如启用且已配置），否则调用 Provider；失败自动降级到本地统计
+    // 强制Consulta：优先脚本（如Habilitar且已Configuración），否则调用 Provider；Falló自动Degradación到本地Estadística
     let providerResult
 
     if (scriptEnabled && scriptConfigured) {
@@ -383,7 +383,7 @@ class AccountBalanceService {
         return this._buildResponse(
           {
             status: 'error',
-            errorMessage: `不支持的平台: ${platform}`,
+            errorMessage: `不Soportar的平台: ${platform}`,
             balance: quotaFromLocal.balance,
             currency: quotaFromLocal.currency || 'USD',
             quota: quotaFromLocal.quota,
@@ -403,7 +403,7 @@ class AccountBalanceService {
     const isRemoteSuccess =
       providerResult.status === 'success' && ['api', 'script'].includes(providerResult.queryMethod)
 
-    // 仅缓存“真实远程查询成功”的结果，避免把字段/本地降级结果当作 API 结果缓存 1h
+    // 仅Caché“真实远程ConsultaÉxito”的结果，避免把Campo/本地Degradación结果当作 API 结果Caché 1h
     if (isRemoteSuccess) {
       await this.redis.setAccountBalance(
         platform,
@@ -468,7 +468,7 @@ class AccountBalanceService {
         queryMethod: 'api',
         rawData: null,
         lastRefreshAt: new Date().toISOString(),
-        errorMessage: error.message || '脚本执行失败'
+        errorMessage: error.message || '脚本EjecutarFalló'
       }
     }
   }
@@ -495,7 +495,7 @@ class AccountBalanceService {
         queryMethod: 'api',
         rawData: null,
         lastRefreshAt: new Date().toISOString(),
-        errorMessage: error.message || '查询失败'
+        errorMessage: error.message || 'ConsultaFalló'
       }
     }
   }
@@ -541,7 +541,7 @@ class AccountBalanceService {
         monthlyRequests: safeNumber(usageStats?.monthly?.requests || 0)
       }
     } catch (error) {
-      this.logger.debug(`本地统计计算失败: ${accountId}`, error)
+      this.logger.debug(`本地EstadísticaCalcularFalló: ${accountId}`, error)
       return {
         totalCost: 0,
         dailyCost: 0,
@@ -619,7 +619,7 @@ class AccountBalanceService {
 
       return totalCost
     } catch (error) {
-      this.logger.debug(`汇总模型费用失败: ${pattern}`, error)
+      this.logger.debug(`汇总模型费用Falló: ${pattern}`, error)
       return 0
     }
   }
@@ -634,7 +634,7 @@ class AccountBalanceService {
 
     const resetAt = this._computeNextResetAt(account.quotaResetTime || '00:00')
 
-    // 不限制
+    // 不Límite
     if (!Number.isFinite(dailyQuota) || dailyQuota <= 0) {
       return {
         balance: null,

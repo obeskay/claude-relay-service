@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <!-- 触发器按钮 -->
+    <!-- Botón activador -->
     <button
       ref="triggerRef"
       class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-200"
@@ -8,13 +8,13 @@
         isOpen &&
           'border-blue-400 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-900/30 dark:text-blue-400'
       ]"
-      title="更多操作"
+      title="Más acciones"
       @click.stop="toggleDropdown"
     >
       <i class="fas fa-ellipsis-v text-sm"></i>
     </button>
 
-    <!-- 下拉菜单 - 使用 Teleport 避免被父容器裁剪 -->
+    <!-- Menú desplegable - usar Teleport para evitar ser recortado por el contenedor padre -->
     <Teleport to="body">
       <transition
         enter-active-class="transition duration-200 ease-out"
@@ -53,7 +53,7 @@ defineProps({
   actions: {
     type: Array,
     required: true
-    // 格式: [{ key: 'edit', label: '编辑', icon: 'fa-edit', color: 'blue', handler: () => {} }]
+    // formato: [{ key: 'edit', label: 'Editar', icon: 'fa-edit', color: 'blue', handler: () => {} }]
   }
 })
 
@@ -115,8 +115,8 @@ const updateDropdownPosition = () => {
   if (!triggerRef.value || !isOpen.value) return
 
   const trigger = triggerRef.value.getBoundingClientRect()
-  const dropdownHeight = 200 // 预估高度
-  const dropdownWidth = 180 // 预估宽度，略大以减少遮挡
+  const dropdownHeight = 200 // Altura estimada
+  const dropdownWidth = 180 // Ancho estimado, ligeramente mayor para reducir oclusiones
   const gap = 8
   const spaceBelow = window.innerHeight - trigger.bottom
   const spaceAbove = trigger.top
@@ -125,14 +125,14 @@ const updateDropdownPosition = () => {
 
   let top, left
 
-  // 计算垂直位置
+  // Calcular posición vertical
   if (spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove) {
     top = trigger.bottom + gap
   } else {
     top = trigger.top - dropdownHeight - gap
   }
 
-  // 计算水平位置 - 优先向右展开，避免遮挡左侧内容
+  // Calcular posición horizontal - priorizar expansión hacia la derecha para evitar ocultar contenido a la izquierda
   if (spaceRight >= dropdownWidth + gap) {
     left = trigger.right + gap
   } else if (spaceLeft >= dropdownWidth + gap) {
@@ -141,7 +141,7 @@ const updateDropdownPosition = () => {
     left = window.innerWidth - dropdownWidth - 10
   }
 
-  // 确保不超出边界
+  // Asegurar que no exceda los límites
   if (left < 10) left = 10
   if (top < 10) top = 10
 

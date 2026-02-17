@@ -52,7 +52,7 @@ class DroidScheduler {
         try {
           return await droidAccountService.getAccount(memberId)
         } catch (error) {
-          logger.warn(`⚠️ 获取 Droid 分组成员账号失败: ${memberId}`, error)
+          logger.warn(`⚠️ Obtener Droid Agrupar成员账号Falló: ${memberId}`, error)
           return null
         }
       })
@@ -79,7 +79,7 @@ class DroidScheduler {
     try {
       await droidAccountService.touchLastUsedAt(accountId)
     } catch (error) {
-      logger.warn(`⚠️ 更新 Droid 账号最后使用时间失败: ${accountId}`, error)
+      logger.warn(`⚠️ Actualizar Droid 账号最后使用TiempoFalló: ${accountId}`, error)
     }
   }
 
@@ -90,7 +90,7 @@ class DroidScheduler {
     try {
       await redis.deleteSessionAccountMapping(stickyKey)
     } catch (error) {
-      logger.warn(`⚠️ 清理 Droid 粘性会话映射失败: ${stickyKey}`, error)
+      logger.warn(`⚠️ Limpiar Droid 粘性Sesión映射Falló: ${stickyKey}`, error)
     }
   }
 
@@ -106,7 +106,7 @@ class DroidScheduler {
       if (binding.startsWith('group:')) {
         const groupId = binding.substring('group:'.length)
         logger.info(
-          `🤖 API Key ${apiKeyData.name || apiKeyData.id} 绑定 Droid 分组 ${groupId}，按分组调度`
+          `🤖 API Key ${apiKeyData.name || apiKeyData.id} 绑定 Droid Agrupar ${groupId}，按Agrupar调度`
         )
         candidates = await this._loadGroupAccounts(groupId, normalizedEndpoint)
       } else {
@@ -163,7 +163,7 @@ class DroidScheduler {
         if (mappedAccount) {
           await redis.extendSessionAccountMappingTTL(stickyKey)
           logger.info(
-            `🤖 命中 Droid 粘性会话: ${sessionHash} -> ${mappedAccount.name || mappedAccount.id}`
+            `🤖 命中 Droid 粘性Sesión: ${sessionHash} -> ${mappedAccount.name || mappedAccount.id}`
           )
           await this._ensureLastUsedUpdated(mappedAccount.id)
           return mappedAccount

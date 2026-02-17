@@ -3,13 +3,13 @@ const path = require('path')
 const fs = require('fs')
 const { maskToken } = require('./tokenMask')
 
-// 确保日志目录存在
+// 确保RegistroDirectorio存在
 const logDir = path.join(process.cwd(), 'logs')
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true })
 }
 
-// 创建专用的 token 刷新日志记录器
+// Crear专用的 token 刷新RegistroRegistro器
 const tokenRefreshLogger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -20,14 +20,14 @@ const tokenRefreshLogger = winston.createLogger({
     winston.format.printf((info) => JSON.stringify(info, null, 2))
   ),
   transports: [
-    // 文件传输 - 每日轮转
+    // Archivo传输 - 每日轮转
     new winston.transports.File({
       filename: path.join(logDir, 'token-refresh.log'),
       maxsize: 10 * 1024 * 1024, // 10MB
       maxFiles: 30, // 保留30天
       tailable: true
     }),
-    // 错误单独记录
+    // Error单独Registro
     new winston.transports.File({
       filename: path.join(logDir, 'token-refresh-error.log'),
       level: 'error',
@@ -35,11 +35,11 @@ const tokenRefreshLogger = winston.createLogger({
       maxFiles: 30
     })
   ],
-  // 错误处理
+  // ErrorProcesar
   exitOnError: false
 })
 
-// 在开发环境添加控制台输出
+// 在开发环境添加Salida de consola
 if (process.env.NODE_ENV !== 'production') {
   tokenRefreshLogger.add(
     new winston.transports.Console({
@@ -49,7 +49,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /**
- * 记录 token 刷新开始
+ * Registro token 刷新Iniciando
  */
 function logRefreshStart(accountId, accountName, platform = 'claude', reason = '') {
   tokenRefreshLogger.info({
@@ -63,7 +63,7 @@ function logRefreshStart(accountId, accountName, platform = 'claude', reason = '
 }
 
 /**
- * 记录 token 刷新成功
+ * Registro token 刷新Éxito
  */
 function logRefreshSuccess(accountId, accountName, platform = 'claude', tokenData = {}) {
   const maskedTokenData = {
@@ -84,7 +84,7 @@ function logRefreshSuccess(accountId, accountName, platform = 'claude', tokenDat
 }
 
 /**
- * 记录 token 刷新失败
+ * Registro token 刷新Falló
  */
 function logRefreshError(accountId, accountName, platform = 'claude', error, attemptNumber = 1) {
   const errorInfo = {
@@ -106,7 +106,7 @@ function logRefreshError(accountId, accountName, platform = 'claude', error, att
 }
 
 /**
- * 记录 token 刷新跳过（由于并发锁）
+ * Registro token 刷新跳过（由于Concurrencia锁）
  */
 function logRefreshSkipped(accountId, accountName, platform = 'claude', reason = 'locked') {
   tokenRefreshLogger.info({
@@ -120,7 +120,7 @@ function logRefreshSkipped(accountId, accountName, platform = 'claude', reason =
 }
 
 /**
- * 记录 token 使用情况
+ * Registro token 使用情况
  */
 function logTokenUsage(accountId, accountName, platform = 'claude', expiresAt, isExpired) {
   tokenRefreshLogger.debug({
@@ -136,7 +136,7 @@ function logTokenUsage(accountId, accountName, platform = 'claude', expiresAt, i
 }
 
 /**
- * 记录批量刷新任务
+ * Registro批量刷新任务
  */
 function logBatchRefreshStart(totalAccounts, platform = 'all') {
   tokenRefreshLogger.info({
@@ -148,7 +148,7 @@ function logBatchRefreshStart(totalAccounts, platform = 'all') {
 }
 
 /**
- * 记录批量刷新结果
+ * Registro批量刷新结果
  */
 function logBatchRefreshComplete(results) {
   tokenRefreshLogger.info({

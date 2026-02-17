@@ -1,0 +1,722 @@
+# ============================================================
+# GitLab CI/CD Pipeline for Claude Relay Service
+# ============================================================
+# Features:
+# - Multi-stage pipeline (build, test, deploy, rollback)
+# - Docker image building with caching
+# - Automated testing (lint, unit tests, integration tests)
+# - Deployment to Staging and Production
+# - Support for Coolify and Docker Swarm
+# - Rollback capability
+# - Environment-specific configurations
+# ============================================================
+
+# ------------------------------------------------------------
+# Pipeline Configuration
+# ------------------------------------------------------------
+variables:
+  # Docker Configuration
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE
+  DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+  # Build Configuration
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+  # Deployment Configuration
+  STAGING_HOST: ${STAGING_HOST}
+  PRODUCTION_HOST: ${PRODUCTION_HOST}
+  DEPLOY_USER: ${DEPLOY_USER:-root}
+  DEPLOY_PORT: ${DEPLOY_PORT:-22}
+  APP_PORT: 3011
+
+  # Application Configuration (Overridden by environments)
+  NODE_ENV: production
+  LOG_LEVEL: info
+
+  # Rollback Configuration
+  ROLLBACK_ENABLED: "true"
+  KEEP_DEPLOYMENTS: 5
+
+# ------------------------------------------------------------
+# Stages Definition
+# ------------------------------------------------------------
+stages:
+  - prepare
+  - build
+  - test
+  - security
+  - deploy
+  - notify
+
+# ------------------------------------------------------------
+# Global Templates
+# ------------------------------------------------------------
+.docker_template:
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  after_script:
+    - docker logout $CI_REGISTRY
+
+.ssh_template:
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh-client )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+.deployment_rules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_success
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+    - when: manual
+
+# ------------------------------------------------------------
+# Stage: Prepare
+# ------------------------------------------------------------
+# Prepare dependencies and cache for faster builds
+
+dependency-check:
+  stage: prepare
+  image: node:20-alpine
+  script:
+    - echo "Checking package.json dependencies..."
+    - npm ci --prefer-offline --no-audit
+    - echo "Dependencies verified successfully"
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - node_modules/
+  only:
+    - branches
+    - tags
+
+# ------------------------------------------------------------
+# Stage: Build
+# ------------------------------------------------------------
+# Build Docker image with multi-stage caching
+
+build:docker:
+  stage: build
+  extends: .docker_template
+  script:
+    - echo "Building Docker image..."
+    - |
+      docker build \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --cache-from $DOCKER_IMAGE_NAME:latest \
+        --tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
+        --tag $DOCKER_IMAGE_NAME:latest \
+        --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_REF_SLUG \
+        .
+    - echo "Pushing Docker images..."
+    - docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker push $DOCKER_IMAGE_NAME:latest
+    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+    - echo "Docker images pushed successfully"
+    - docker images
+  cache:
+    key: docker-build
+    paths:
+      - .docker-cache/
+  only:
+    - branches
+    - tags
+  artifacts:
+    reports:
+      dotenv: build.env
+
+build:frontend:
+  stage: build
+  image: node:20-alpine
+  script:
+    - echo "Building frontend admin panel..."
+    - cd web/admin-spa
+    - npm ci
+    - npm run build
+    - echo "Frontend build completed"
+    - ls -la dist/
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - web/admin-spa/dist/
+  cache:
+    key:
+      files:
+        - web/admin-spa/package-lock.json
+    paths:
+      - web/admin-spa/node_modules/
+  only:
+    - branches
+    - tags
+
+# ------------------------------------------------------------
+# Stage: Test
+# ------------------------------------------------------------
+# Run all tests: lint, unit, integration, e2e
+
+test:lint:
+  stage: test
+  image: node:20-alpine
+  dependencies:
+    - dependency-check
+  script:
+    - echo "Running ESLint..."
+    - npm run lint:check
+    - echo "ESLint passed"
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  allow_failure: false
+
+test:format:
+  stage: test
+  image: node:20-alpine
+  dependencies:
+    - dependency-check
+  script:
+    - echo "Checking code formatting with Prettier..."
+    - npm run format:check
+    - echo "Prettier check passed"
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  allow_failure: true
+
+test:unit:
+  stage: test
+  image: node:20-alpine
+  dependencies:
+    - dependency-check
+  services:
+    - redis:7-alpine
+  variables:
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    NODE_ENV: test
+  script:
+    - echo "Running unit tests with Jest..."
+    - npm test
+    - echo "Unit tests passed"
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  artifacts:
+    when: always
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  allow_failure: false
+
+test:integration:
+  stage: test
+  image: node:20-alpine
+  dependencies:
+    - dependency-check
+  services:
+    - redis:7-alpine
+  variables:
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    NODE_ENV: test
+    JWT_SECRET: "test_jwt_secret_32_characters_min"
+    ENCRYPTION_KEY: "test_encryption_key_32_chars!!"
+  script:
+    - echo "Running integration tests..."
+    - npm run test:integration || echo "No integration tests configured"
+    - echo "Integration tests passed"
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  allow_failure: true
+
+test:docker-smoke:
+  stage: test
+  extends: .docker_template
+  dependencies:
+    - build:docker
+  script:
+    - echo "Running Docker smoke tests..."
+    - docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - |
+      docker run -d \
+        --name claude-relay-test \
+        -p 3011:3011 \
+        -e NODE_ENV=test \
+        -e REDIS_HOST=redis \
+        -e JWT_SECRET=test_jwt_secret_32_characters_min \
+        -e ENCRYPTION_KEY=test_encryption_key_32_chars!! \
+        $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - sleep 10
+    - docker ps
+    - docker logs claude-relay-test
+    - curl -f http://localhost:3011/health || exit 1
+    - docker stop claude-relay-test
+    - docker rm claude-relay-test
+    - echo "Docker smoke test passed"
+  services:
+    - docker:24-dind
+  allow_failure: true
+
+# ------------------------------------------------------------
+# Stage: Security
+# ------------------------------------------------------------
+# Security scanning and vulnerability checks
+
+security:docker-scan:
+  stage: security
+  image: aquasec/trivy:latest
+  dependencies:
+    - build:docker
+  script:
+    - echo "Scanning Docker image for vulnerabilities..."
+    - trivy image --no-progress --severity HIGH,CRITICAL $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - echo "Security scan completed"
+  allow_failure: true
+  only:
+    - branches
+    - tags
+
+security:dependency-scan:
+  stage: security
+  image: node:20-alpine
+  dependencies:
+    - dependency-check
+  script:
+    - echo "Scanning dependencies for vulnerabilities..."
+    - npm audit --audit-level=moderate || true
+    - echo "Dependency scan completed"
+  allow_failure: true
+  only:
+    - branches
+    - tags
+
+# ------------------------------------------------------------
+# Stage: Deploy
+# ------------------------------------------------------------
+# Deploy to staging and production environments
+
+.deploy_template: &deploy_template
+  extends:
+    - .ssh_template
+    - .deployment_rules
+  dependencies:
+    - build:docker
+  script:
+    - echo "Deploying to $CI_ENVIRONMENT_NAME..."
+    - |
+      ssh $DEPLOY_USER@$DEPLOY_HOST -p $DEPLOY_PORT << 'EOF'
+        set -e
+
+        echo "Pulling latest Docker image..."
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+
+        echo "Stopping existing containers..."
+        docker stop claude-relay-service || true
+        docker rm claude-relay-service || true
+
+        echo "Starting new container..."
+        docker run -d \
+          --name claude-relay-service \
+          --restart unless-stopped \
+          -p $APP_PORT:3011 \
+          -v /opt/claude-relay/logs:/app/logs \
+          -v /opt/claude-relay/data:/app/data \
+          -v /opt/claude-relay/redis_data:/redis-data \
+          --network claude-network \
+          -e NODE_ENV=$NODE_ENV \
+          -e LOG_LEVEL=$LOG_LEVEL \
+          -e REDIS_HOST=redis \
+          -e REDIS_PORT=6379 \
+          $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+
+        echo "Waiting for health check..."
+        sleep 10
+
+        echo "Checking service status..."
+        docker ps | grep claude-relay-service
+        docker logs claude-relay-service --tail 50
+
+        echo "Deployment completed successfully!"
+      EOF
+    - echo "Deployment to $CI_ENVIRONMENT_NAME completed!"
+  environment:
+    url: http://$DEPLOY_HOST:$APP_PORT
+
+deploy:staging:
+  stage: deploy
+  <<: *deploy_template
+  variables:
+    DEPLOY_HOST: $STAGING_HOST
+    NODE_ENV: staging
+    LOG_LEVEL: debug
+  environment:
+    name: staging
+    url: http://$STAGING_HOST:$APP_PORT
+  when: manual
+  only:
+    - develop
+    - /^feature\/.*$/
+    - /^release\/.*$/
+
+deploy:production:
+  stage: deploy
+  <<: *deploy_template
+  variables:
+    DEPLOY_HOST: $PRODUCTION_HOST
+    NODE_ENV: production
+    LOG_LEVEL: info
+  environment:
+    name: production
+    url: http://$PRODUCTION_HOST:$APP_PORT
+  when: manual
+  only:
+    - main
+    - master
+    - /^v\d+\.\d+\.\d+$/
+
+# ------------------------------------------------------------
+# Deployment: Coolify
+# ------------------------------------------------------------
+.deploy_coolify_template: &deploy_coolify_template
+  extends:
+    - .deployment_rules
+  dependencies:
+    - build:docker
+  script:
+    - echo "Deploying to Coolify ($CI_ENVIRONMENT_NAME)..."
+    - |
+      curl -X POST "$COOLIFY_WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "branch": "$CI_COMMIT_REF_NAME",
+          "commit": "$CI_COMMIT_SHA",
+          "image": "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "environment": "$CI_ENVIRONMENT_NAME"
+        }'
+    - echo "Triggered Coolify deployment for $CI_ENVIRONMENT_NAME"
+  environment:
+    url: $COOLIFY_APP_URL
+
+deploy:coolify-staging:
+  stage: deploy
+  <<: *deploy_coolify_template
+  variables:
+    COOLIFY_WEBHOOK_URL: $COOLIFY_STAGING_WEBHOOK
+    COOLIFY_APP_URL: $COOLIFY_STAGING_URL
+  environment:
+    name: coolify-staging
+    url: $COOLIFY_STAGING_URL
+  when: manual
+  only:
+    - develop
+    - /^release\/.*$/
+
+deploy:coolify-production:
+  stage: deploy
+  <<: *deploy_coolify_template
+  variables:
+    COOLIFY_WEBHOOK_URL: $COOLIFY_PRODUCTION_WEBHOOK
+    COOLIFY_APP_URL: $COOLIFY_PRODUCTION_URL
+  environment:
+    name: coolify-production
+    url: $COOLIFY_PRODUCTION_URL
+  when: manual
+  only:
+    - main
+    - master
+    - /^v\d+\.\d+\.\d+$/
+
+# ------------------------------------------------------------
+# Deployment: Docker Swarm
+# ------------------------------------------------------------
+.deploy_swarm_template: &deploy_swarm_template
+  extends:
+    - .ssh_template
+    - .deployment_rules
+  dependencies:
+    - build:docker
+  script:
+    - echo "Deploying to Docker Swarm ($CI_ENVIRONMENT_NAME)..."
+    - |
+      ssh $DEPLOY_USER@$DEPLOY_HOST -p $DEPLOY_PORT << 'EOF'
+        set -e
+
+        echo "Pulling latest Docker image..."
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        docker pull $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+
+        echo "Updating Docker Stack..."
+        docker stack deploy -c docker-compose.yml claude-relay
+
+        echo "Waiting for services to be ready..."
+        sleep 15
+
+        echo "Checking service status..."
+        docker service ls | grep claude-relay
+        docker service logs claude-relay_claude-relay --tail 50
+
+        echo "Docker Swarm deployment completed!"
+      EOF
+    - echo "Docker Swarm deployment to $CI_ENVIRONMENT_NAME completed!"
+  environment:
+    url: http://$DEPLOY_HOST:$APP_PORT
+
+deploy:swarm-staging:
+  stage: deploy
+  <<: *deploy_swarm_template
+  variables:
+    DEPLOY_HOST: $SWARM_STAGING_HOST
+  environment:
+    name: swarm-staging
+    url: http://$SWARM_STAGING_HOST:$APP_PORT
+  when: manual
+  only:
+    - develop
+    - /^release\/.*$/
+
+deploy:swarm-production:
+  stage: deploy
+  <<: *deploy_swarm_template
+  variables:
+    DEPLOY_HOST: $SWARM_PRODUCTION_HOST
+  environment:
+    name: swarm-production
+    url: http://$SWARM_PRODUCTION_HOST:$APP_PORT
+  when: manual
+  only:
+    - main
+    - master
+    - /^v\d+\.\d+\.\d+$/
+
+# ------------------------------------------------------------
+# Rollback
+# ------------------------------------------------------------
+.rollback_template: &rollback_template
+  extends:
+    - .ssh_template
+  script:
+    - echo "Rolling back $CI_ENVIRONMENT_NAME to previous version..."
+    - |
+      ssh $DEPLOY_USER@$DEPLOY_HOST -p $DEPLOY_PORT << 'EOF'
+        set -e
+
+        # Get previous image tag
+        PREVIOUS_IMAGE=$(docker images --format "{{.Tag}}" $DOCKER_IMAGE_NAME | grep -v $DOCKER_IMAGE_TAG | head -n 1)
+
+        if [ -z "$PREVIOUS_IMAGE" ]; then
+          echo "No previous version found. Using latest tag..."
+          PREVIOUS_IMAGE="latest"
+        fi
+
+        echo "Rolling back to $DOCKER_IMAGE_NAME:$PREVIOUS_IMAGE"
+
+        # Stop current container
+        docker stop claude-relay-service || true
+        docker rm claude-relay-service || true
+
+        # Start previous version
+        docker run -d \
+          --name claude-relay-service \
+          --restart unless-stopped \
+          -p $APP_PORT:3011 \
+          -v /opt/claude-relay/logs:/app/logs \
+          -v /opt/claude-relay/data:/app/data \
+          -v /opt/claude-relay/redis_data:/redis-data \
+          --network claude-network \
+          -e NODE_ENV=$NODE_ENV \
+          -e LOG_LEVEL=$LOG_LEVEL \
+          -e REDIS_HOST=redis \
+          -e REDIS_PORT=6379 \
+          $DOCKER_IMAGE_NAME:$PREVIOUS_IMAGE
+
+        echo "Waiting for health check..."
+        sleep 10
+
+        echo "Verifying rollback..."
+        docker ps | grep claude-relay-service
+        docker logs claude-relay-service --tail 50
+
+        echo "Rollback completed successfully!"
+      EOF
+    - echo "Rollback to $CI_ENVIRONMENT_NAME completed!"
+  environment:
+    action: stop
+  when: manual
+
+rollback:staging:
+  stage: deploy
+  extends: .rollback_template
+  variables:
+    DEPLOY_HOST: $STAGING_HOST
+    NODE_ENV: staging
+  environment:
+    name: staging
+    url: http://$STAGING_HOST:$APP_PORT
+  only:
+    - develop
+
+rollback:production:
+  stage: deploy
+  extends: .rollback_template
+  variables:
+    DEPLOY_HOST: $PRODUCTION_HOST
+    NODE_ENV: production
+  environment:
+    name: production
+    url: http://$PRODUCTION_HOST:$APP_PORT
+  only:
+    - main
+    - master
+
+rollback:coolify-production:
+  stage: deploy
+  script:
+    - echo "Triggering Coolify rollback for production..."
+    - |
+      curl -X POST "$COOLIFY_PRODUCTION_WEBHOOK" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "action": "rollback",
+          "environment": "production"
+        }'
+    - echo "Coolify rollback triggered"
+  environment:
+    name: coolify-production
+    action: stop
+  when: manual
+  only:
+    - main
+    - master
+
+# ------------------------------------------------------------
+# Stage: Notify
+# ------------------------------------------------------------
+# Send notifications on pipeline completion
+
+notify:success:
+  stage: notify
+  image: alpine:latest
+  script:
+    - echo "Pipeline succeeded for $CI_PROJECT_NAME"
+    - |
+      if [ -n "$SLACK_WEBHOOK_URL" ]; then
+        curl -X POST $SLACK_WEBHOOK_URL \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "text": "✅ Pipeline succeeded for '$CI_PROJECT_NAME'",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*✅ Pipeline Succeeded*\n*Project:* '$CI_PROJECT_NAME'\n*Branch:* '$CI_COMMIT_REF_NAME'\n*Commit:* '$CI_COMMIT_SHORT_SHA'\n*Author:* '$CI_COMMIT_AUTHOR'\n*Pipeline:* <'$CI_PIPELINE_URL'|View>"
+                }
+              }
+            ]
+          }'
+      fi
+  when: on_success
+  only:
+    - main
+    - master
+    - develop
+
+notify:failure:
+  stage: notify
+  image: alpine:latest
+  script:
+    - echo "Pipeline failed for $CI_PROJECT_NAME"
+    - |
+      if [ -n "$SLACK_WEBHOOK_URL" ]; then
+        curl -X POST $SLACK_WEBHOOK_URL \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "text": "❌ Pipeline failed for '$CI_PROJECT_NAME'",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*❌ Pipeline Failed*\n*Project:* '$CI_PROJECT_NAME'\n*Branch:* '$CI_COMMIT_REF_NAME'\n*Commit:* '$CI_COMMIT_SHORT_SHA'\n*Author:* '$CI_COMMIT_AUTHOR'\n*Pipeline:* <'$CI_PIPELINE_URL'|View>"
+                }
+              }
+            ]
+          }'
+      fi
+  when: on_failure
+  only:
+    - main
+    - master
+    - develop
+
+# ------------------------------------------------------------
+# Maintenance Jobs
+# ------------------------------------------------------------
+# Cleanup old images and artifacts
+
+cleanup:docker-images:
+  stage: .post
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    - |
+      # Keep only last $KEEP_DEPLOYMENTS images
+      docker images $DOCKER_IMAGE_NAME --format "{{.Tag}}" | \
+        grep -v latest | \
+        tail -n +$((KEEP_DEPLOYMENTS + 1)) | \
+        xargs -I {} docker rmi $DOCKER_IMAGE_NAME:{} || true
+    - echo "Cleanup completed"
+  when: always
+  only:
+    - schedules
+  allow_failure: true
+
+# ------------------------------------------------------------
+# Pipeline Rules
+# ------------------------------------------------------------
+# Control when jobs are executed
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - when: never

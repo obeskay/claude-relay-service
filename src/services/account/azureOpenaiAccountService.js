@@ -5,11 +5,11 @@ const config = require('../../../config/config')
 const logger = require('../../utils/logger')
 const upstreamErrorHelper = require('../../utils/upstreamErrorHelper')
 
-// 加密相关常量
+// Cifrado相关常量
 const ALGORITHM = 'aes-256-cbc'
 const IV_LENGTH = 16
 
-// 🚀 安全的加密密钥生成，支持动态salt
+// 🚀 Seguridad的CifradoClaveGenerar，Soportar动态salt
 const ENCRYPTION_SALT = config.security?.azureOpenaiSalt || 'azure-openai-account-default-salt'
 
 class EncryptionKeyManager {
@@ -24,7 +24,7 @@ class EncryptionKeyManager {
       return cached.key
     }
 
-    // 生成新密钥
+    // Generar新Clave
     const key = crypto.scryptSync(config.security.encryptionKey, ENCRYPTION_SALT, 32)
     this.keyCache.set(version, {
       key,
@@ -35,7 +35,7 @@ class EncryptionKeyManager {
     return key
   }
 
-  // 清理过期密钥
+  // Limpiar过期Clave
   cleanup() {
     const now = Date.now()
     for (const [version, cached] of this.keyCache.entries()) {
@@ -48,25 +48,25 @@ class EncryptionKeyManager {
 
 const encryptionKeyManager = new EncryptionKeyManager()
 
-// 定期清理过期密钥
+// 定期Limpiar过期Clave
 setInterval(
   () => {
     encryptionKeyManager.cleanup()
   },
   60 * 60 * 1000
-) // 每小时清理一次
+) // 每小时Limpiar一次
 
-// 生成加密密钥 - 使用安全的密钥管理器
+// GenerarCifradoClave - 使用Seguridad的Clave管理器
 function generateEncryptionKey() {
   return encryptionKeyManager.getKey()
 }
 
-// Azure OpenAI 账户键前缀
+// Azure OpenAI Cuenta键前缀
 const AZURE_OPENAI_ACCOUNT_KEY_PREFIX = 'azure_openai:account:'
 const SHARED_AZURE_OPENAI_ACCOUNTS_KEY = 'shared_azure_openai_accounts'
 const ACCOUNT_SESSION_MAPPING_PREFIX = 'azure_openai_session_account_mapping:'
 
-// 加密函数
+// CifradoFunción
 function encrypt(text) {
   if (!text) {
     return ''
@@ -79,7 +79,7 @@ function encrypt(text) {
   return `${iv.toString('hex')}:${encrypted.toString('hex')}`
 }
 
-// 解密函数 - 移除缓存以提高安全性
+// DescifradoFunción - EliminaciónCaché以提高Seguridad性
 function decrypt(text) {
   if (!text) {
     return ''
@@ -109,7 +109,7 @@ function decrypt(text) {
   }
 }
 
-// 创建账户
+// CrearCuenta
 async function createAccount(accountData) {
   const accountId = uuidv4()
   const now = new Date().toISOString()
@@ -121,21 +121,21 @@ async function createAccount(accountData) {
     accountType: accountData.accountType || 'shared',
     groupId: accountData.groupId || null,
     priority: accountData.priority || 50,
-    // Azure OpenAI 特有字段
+    // Azure OpenAI 特有Campo
     azureEndpoint: accountData.azureEndpoint || '',
-    apiVersion: accountData.apiVersion || '2024-02-01', // 使用稳定版本
-    deploymentName: accountData.deploymentName || 'gpt-4', // 使用默认部署名称
+    apiVersion: accountData.apiVersion || '2024-02-01', // 使用稳定Versión
+    deploymentName: accountData.deploymentName || 'gpt-4', // 使用PredeterminadoDesplegarNombre
     apiKey: encrypt(accountData.apiKey || ''),
-    // 支持的模型
+    // Soportar的模型
     supportedModels: JSON.stringify(
       accountData.supportedModels || ['gpt-4', 'gpt-4-turbo', 'gpt-35-turbo', 'gpt-35-turbo-16k']
     ),
 
-    // ✅ 新增：账户订阅到期时间（业务字段，手动管理）
+    // ✅ Nueva característica：Cuenta订阅到期Tiempo（业务Campo，手动管理）
     // 注意：Azure OpenAI 使用 API Key 认证，没有 OAuth token，因此没有 expiresAt
     subscriptionExpiresAt: accountData.subscriptionExpiresAt || null,
 
-    // 状态字段
+    // 状态Campo
     isActive: accountData.isActive !== false ? 'true' : 'false',
     status: 'active',
     schedulable: accountData.schedulable !== false ? 'true' : 'false',
@@ -147,7 +147,7 @@ async function createAccount(accountData) {
     updatedAt: now
   }
 
-  // 代理配置
+  // ProxyConfiguración
   if (accountData.proxy) {
     account.proxy =
       typeof accountData.proxy === 'string' ? accountData.proxy : JSON.stringify(accountData.proxy)
@@ -157,7 +157,7 @@ async function createAccount(accountData) {
   await client.hset(`${AZURE_OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`, account)
   await redisClient.addToIndex('azure_openai:account:index', accountId)
 
-  // 如果是共享账户，添加到共享账户集合
+  // 如果是共享Cuenta，添加到共享Cuenta集合
   if (account.accountType === 'shared') {
     await client.sadd(SHARED_AZURE_OPENAI_ACCOUNTS_KEY, accountId)
   }
@@ -166,7 +166,7 @@ async function createAccount(accountData) {
   return account
 }
 
-// 获取账户
+// ObtenerCuenta
 async function getAccount(accountId) {
   const client = redisClient.getClientSafe()
   const accountData = await client.hgetall(`${AZURE_OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`)
@@ -175,12 +175,12 @@ async function getAccount(accountId) {
     return null
   }
 
-  // 解密敏感数据（仅用于内部处理，不返回给前端）
+  // Descifrado敏感Datos（仅用于内部Procesar，不Retornar给前端）
   if (accountData.apiKey) {
     accountData.apiKey = decrypt(accountData.apiKey)
   }
 
-  // 解析代理配置
+  // AnalizarProxyConfiguración
   if (accountData.proxy && typeof accountData.proxy === 'string') {
     try {
       accountData.proxy = JSON.parse(accountData.proxy)
@@ -189,7 +189,7 @@ async function getAccount(accountId) {
     }
   }
 
-  // 解析支持的模型
+  // AnalizarSoportar的模型
   if (accountData.supportedModels && typeof accountData.supportedModels === 'string') {
     try {
       accountData.supportedModels = JSON.parse(accountData.supportedModels)
@@ -201,7 +201,7 @@ async function getAccount(accountId) {
   return accountData
 }
 
-// 更新账户
+// ActualizarCuenta
 async function updateAccount(accountId, updates) {
   const existingAccount = await getAccount(accountId)
   if (!existingAccount) {
@@ -210,18 +210,18 @@ async function updateAccount(accountId, updates) {
 
   updates.updatedAt = new Date().toISOString()
 
-  // 加密敏感数据
+  // Cifrado敏感Datos
   if (updates.apiKey) {
     updates.apiKey = encrypt(updates.apiKey)
   }
 
-  // 处理代理配置
+  // ProcesarProxyConfiguración
   if (updates.proxy) {
     updates.proxy =
       typeof updates.proxy === 'string' ? updates.proxy : JSON.stringify(updates.proxy)
   }
 
-  // 处理支持的模型
+  // ProcesarSoportar的模型
   if (updates.supportedModels) {
     updates.supportedModels =
       typeof updates.supportedModels === 'string'
@@ -230,7 +230,7 @@ async function updateAccount(accountId, updates) {
   }
 
   // ✅ 直接保存 subscriptionExpiresAt（如果提供）
-  // Azure OpenAI 使用 API Key，没有 token 刷新逻辑，不会覆盖此字段
+  // Azure OpenAI 使用 API Key，没有 token 刷新逻辑，不会覆盖此Campo
   if (updates.subscriptionExpiresAt !== undefined) {
     // 直接保存，不做任何调整
   }
@@ -243,7 +243,7 @@ async function updateAccount(accountId, updates) {
         : 'false'
   }
 
-  // 更新账户类型时处理共享账户集合
+  // ActualizarCuentaTipo时Procesar共享Cuenta集合
   const client = redisClient.getClientSafe()
   if (updates.accountType && updates.accountType !== existingAccount.accountType) {
     if (updates.accountType === 'shared') {
@@ -257,10 +257,10 @@ async function updateAccount(accountId, updates) {
 
   logger.info(`Updated Azure OpenAI account: ${accountId}`)
 
-  // 合并更新后的账户数据
+  // Combina actualización后的CuentaDatos
   const updatedAccount = { ...existingAccount, ...updates }
 
-  // 返回时解析代理配置
+  // Retornar时AnalizarProxyConfiguración
   if (updatedAccount.proxy && typeof updatedAccount.proxy === 'string') {
     try {
       updatedAccount.proxy = JSON.parse(updatedAccount.proxy)
@@ -272,29 +272,29 @@ async function updateAccount(accountId, updates) {
   return updatedAccount
 }
 
-// 删除账户
+// EliminarCuenta
 async function deleteAccount(accountId) {
-  // 首先从所有分组中移除此账户
+  // 首先从所有Agrupar中Eliminación此Cuenta
   const accountGroupService = require('../accountGroupService')
   await accountGroupService.removeAccountFromAllGroups(accountId)
 
   const client = redisClient.getClientSafe()
   const accountKey = `${AZURE_OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`
 
-  // 从Redis中删除账户数据
+  // 从Redis中EliminarCuentaDatos
   await client.del(accountKey)
 
-  // 从索引中移除
+  // 从Índice中Eliminación
   await redisClient.removeFromIndex('azure_openai:account:index', accountId)
 
-  // 从共享账户集合中移除
+  // 从共享Cuenta集合中Eliminación
   await client.srem(SHARED_AZURE_OPENAI_ACCOUNTS_KEY, accountId)
 
   logger.info(`Deleted Azure OpenAI account: ${accountId}`)
   return true
 }
 
-// 获取所有账户
+// Obtener所有Cuenta
 async function getAllAccounts() {
   const accountIds = await redisClient.getAllIdsByIndex(
     'azure_openai:account:index',
@@ -313,10 +313,10 @@ async function getAllAccounts() {
   for (let i = 0; i < keys.length; i++) {
     const accountData = dataList[i]
     if (accountData && Object.keys(accountData).length > 0) {
-      // 不返回敏感数据给前端
+      // 不Retornar敏感Datos给前端
       delete accountData.apiKey
 
-      // 解析代理配置
+      // AnalizarProxyConfiguración
       if (accountData.proxy && typeof accountData.proxy === 'string') {
         try {
           accountData.proxy = JSON.parse(accountData.proxy)
@@ -325,7 +325,7 @@ async function getAllAccounts() {
         }
       }
 
-      // 解析支持的模型
+      // AnalizarSoportar的模型
       if (accountData.supportedModels && typeof accountData.supportedModels === 'string') {
         try {
           accountData.supportedModels = JSON.parse(accountData.supportedModels)
@@ -339,7 +339,7 @@ async function getAllAccounts() {
         isActive: accountData.isActive === 'true',
         schedulable: accountData.schedulable !== 'false',
 
-        // ✅ 前端显示订阅过期时间（业务字段）
+        // ✅ 前端显示订阅过期Tiempo（业务Campo）
         expiresAt: accountData.subscriptionExpiresAt || null,
         platform: 'azure-openai'
       })
@@ -349,7 +349,7 @@ async function getAllAccounts() {
   return accounts
 }
 
-// 获取共享账户
+// Obtener共享Cuenta
 async function getSharedAccounts() {
   const client = redisClient.getClientSafe()
   const accountIds = await client.smembers(SHARED_AZURE_OPENAI_ACCOUNTS_KEY)
@@ -370,21 +370,21 @@ async function getSharedAccounts() {
 }
 
 /**
- * 检查账户订阅是否过期
- * @param {Object} account - 账户对象
+ * VerificarCuenta订阅是否过期
+ * @param {Object} account - CuentaObjeto
  * @returns {boolean} - true: 已过期, false: 未过期
  */
 function isSubscriptionExpired(account) {
   if (!account.subscriptionExpiresAt) {
-    return false // 未设置视为永不过期
+    return false // 未Establecer视为永不过期
   }
   const expiryDate = new Date(account.subscriptionExpiresAt)
   return expiryDate <= new Date()
 }
 
-// 选择可用账户
+// 选择可用Cuenta
 async function selectAvailableAccount(sessionId = null) {
-  // 如果有会话ID，尝试获取之前分配的账户
+  // 如果有SesiónID，尝试Obtener之前分配的Cuenta
   if (sessionId) {
     const client = redisClient.getClientSafe()
     const mappingKey = `${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionId}`
@@ -405,13 +405,13 @@ async function selectAvailableAccount(sessionId = null) {
     }
   }
 
-  // 获取所有共享账户
+  // Obtener所有共享Cuenta
   const sharedAccounts = await getSharedAccounts()
 
-  // 过滤出可用的账户（异步过滤，包含临时不可用检查）
+  // Filtrar出可用的Cuenta（AsíncronoFiltrar，Incluir临时不可用Verificar）
   const availableAccounts = []
   for (const acc of sharedAccounts) {
-    // 检查账户订阅是否过期
+    // VerificarCuenta订阅是否过期
     if (isSubscriptionExpired(acc)) {
       logger.debug(
         `⏰ Skipping expired Azure OpenAI account: ${acc.name}, expired at ${acc.subscriptionExpiresAt}`
@@ -423,7 +423,7 @@ async function selectAvailableAccount(sessionId = null) {
       continue
     }
 
-    // 检查临时不可用状态
+    // Verificar临时不可用状态
     const isTempUnavail = await upstreamErrorHelper.isTempUnavailable(acc.id, 'azure-openai')
     if (isTempUnavail) {
       logger.debug(`⏱️ Skipping temporarily unavailable Azure OpenAI account: ${acc.name}`)
@@ -437,11 +437,11 @@ async function selectAvailableAccount(sessionId = null) {
     throw new Error('No available Azure OpenAI accounts')
   }
 
-  // 按优先级排序并选择
+  // 按优先级Ordenar并选择
   availableAccounts.sort((a, b) => (b.priority || 50) - (a.priority || 50))
   const selectedAccount = availableAccounts[0]
 
-  // 如果有会话ID，保存映射关系
+  // 如果有SesiónID，保存映射关系
   if (sessionId && selectedAccount) {
     const client = redisClient.getClientSafe()
     const mappingKey = `${ACCOUNT_SESSION_MAPPING_PREFIX}${sessionId}`
@@ -452,19 +452,19 @@ async function selectAvailableAccount(sessionId = null) {
   return selectedAccount
 }
 
-// 更新账户使用量
+// ActualizarCuenta使用量
 async function updateAccountUsage(accountId, tokens) {
   const client = redisClient.getClientSafe()
   const now = new Date().toISOString()
 
-  // 使用 HINCRBY 原子操作更新使用量
+  // 使用 HINCRBY 原子OperaciónActualizar使用量
   await client.hincrby(`${AZURE_OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`, 'totalTokensUsed', tokens)
   await client.hset(`${AZURE_OPENAI_ACCOUNT_KEY_PREFIX}${accountId}`, 'lastUsedAt', now)
 
   logger.debug(`Updated Azure OpenAI account ${accountId} usage: ${tokens} tokens`)
 }
 
-// 健康检查单个账户
+// Verificación de salud单个Cuenta
 async function healthCheckAccount(accountId) {
   try {
     const account = await getAccount(accountId)
@@ -472,7 +472,7 @@ async function healthCheckAccount(accountId) {
       return { id: accountId, status: 'error', message: 'Account not found' }
     }
 
-    // 简单检查配置是否完整
+    // 简单VerificarConfiguración是否完整
     if (!account.azureEndpoint || !account.apiKey || !account.deploymentName) {
       return {
         id: accountId,
@@ -481,8 +481,8 @@ async function healthCheckAccount(accountId) {
       }
     }
 
-    // 可以在这里添加实际的API调用测试
-    // 暂时返回成功状态
+    // 可以在这里添加实际的API调用Probar
+    // 暂时RetornarÉxito状态
     return {
       id: accountId,
       status: 'healthy',
@@ -498,7 +498,7 @@ async function healthCheckAccount(accountId) {
   }
 }
 
-// 批量健康检查
+// 批量Verificación de salud
 async function performHealthChecks() {
   const accounts = await getAllAccounts()
   const results = []
@@ -511,7 +511,7 @@ async function performHealthChecks() {
   return results
 }
 
-// 切换账户的可调度状态
+// 切换Cuenta的可调度状态
 async function toggleSchedulable(accountId) {
   const account = await getAccount(accountId)
   if (!account) {
@@ -527,7 +527,7 @@ async function toggleSchedulable(accountId) {
   }
 }
 
-// 迁移 API Keys 以支持 Azure OpenAI
+// Migración API Keys 以Soportar Azure OpenAI
 async function migrateApiKeysForAzureSupport() {
   const client = redisClient.getClientSafe()
   const apiKeyIds = await client.smembers('api_keys')
@@ -536,7 +536,7 @@ async function migrateApiKeysForAzureSupport() {
   for (const keyId of apiKeyIds) {
     const keyData = await client.hgetall(`api_key:${keyId}`)
     if (keyData && !keyData.azureOpenaiAccountId) {
-      // 添加 Azure OpenAI 账户ID字段（初始为空）
+      // 添加 Azure OpenAI CuentaIDCampo（初始为空）
       await client.hset(`api_key:${keyId}`, 'azureOpenaiAccountId', '')
       migratedCount++
     }
@@ -546,7 +546,7 @@ async function migrateApiKeysForAzureSupport() {
   return migratedCount
 }
 
-// 🔄 重置Azure OpenAI账户所有异常状态
+// 🔄 重置Azure OpenAICuenta所有异常状态
 async function resetAccountStatus(accountId) {
   try {
     const accountData = await getAccount(accountId)
@@ -583,7 +583,7 @@ async function resetAccountStatus(accountId) {
     // 清除临时不可用状态
     await upstreamErrorHelper.clearTempUnavailable(accountId, 'azure-openai').catch(() => {})
 
-    // 异步发送 Webhook 通知（忽略错误）
+    // Asíncrono发送 Webhook 通知（忽略Error）
     try {
       const webhookNotifier = require('../../utils/webhookNotifier')
       await webhookNotifier.sendAccountAnomalyNotification({

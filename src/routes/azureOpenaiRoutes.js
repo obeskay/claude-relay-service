@@ -8,7 +8,7 @@ const apiKeyService = require('../services/apiKeyService')
 const crypto = require('crypto')
 const upstreamErrorHelper = require('../utils/upstreamErrorHelper')
 
-// 支持的模型列表 - 基于真实的 Azure OpenAI 模型
+// Soportar的模型ColumnaTabla - 基于真实的 Azure OpenAI 模型
 const ALLOWED_MODELS = {
   CHAT_MODELS: [
     'gpt-4',
@@ -26,10 +26,10 @@ const ALLOWED_MODELS = {
 
 const ALL_ALLOWED_MODELS = [...ALLOWED_MODELS.CHAT_MODELS, ...ALLOWED_MODELS.EMBEDDING_MODELS]
 
-// Azure OpenAI 稳定 API 版本
+// Azure OpenAI 稳定 API Versión
 // const AZURE_API_VERSION = '2024-02-01' // 当前未使用，保留以备后用
 
-// 原子使用统计报告器
+// 原子使用Estadística报告器
 class AtomicUsageReporter {
   constructor() {
     this.reportedUsage = new Set()
@@ -42,7 +42,7 @@ class AtomicUsageReporter {
       return false
     }
 
-    // 防止并发重复报告
+    // 防止Concurrencia重复报告
     if (this.pendingReports.has(requestId)) {
       return this.pendingReports.get(requestId)
     }
@@ -62,8 +62,8 @@ class AtomicUsageReporter {
       return result
     } finally {
       this.pendingReports.delete(requestId)
-      // 清理过期的已报告记录
-      setTimeout(() => this.reportedUsage.delete(requestId), 60 * 1000) // 1分钟后清理
+      // Limpiar过期的已报告Registro
+      setTimeout(() => this.reportedUsage.delete(requestId), 60 * 1000) // 1分钟后Limpiar
     }
   }
 
@@ -91,7 +91,7 @@ class AtomicUsageReporter {
         'azure-openai'
       )
 
-      // 同步更新 Azure 账户的 lastUsedAt 和累计使用量
+      // SincronizaciónActualizar Azure Cuenta的 lastUsedAt 和累计使用量
       try {
         const totalTokens = inputTokens + outputTokens + cacheCreateTokens + cacheReadTokens
         if (accountId) {
@@ -117,7 +117,7 @@ class AtomicUsageReporter {
 
 const usageReporter = new AtomicUsageReporter()
 
-// 健康检查
+// Verificación de salud
 router.get('/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
@@ -126,7 +126,7 @@ router.get('/health', (req, res) => {
   })
 })
 
-// 获取可用模型列表（兼容 OpenAI API）
+// Obtener可用模型ColumnaTabla（兼容 OpenAI API）
 router.get('/models', authenticateApiKey, async (req, res) => {
   try {
     const models = ALL_ALLOWED_MODELS.map((model) => ({
@@ -146,7 +146,7 @@ router.get('/models', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 处理聊天完成请求
+// Procesar聊天CompletadoSolicitud
 router.post('/chat/completions', authenticateApiKey, async (req, res) => {
   const requestId = `azure_req_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`
   const sessionId = req.sessionId || req.headers['x-session-id'] || null
@@ -160,7 +160,7 @@ router.post('/chat/completions', authenticateApiKey, async (req, res) => {
   })
 
   try {
-    // 获取绑定的 Azure OpenAI 账户
+    // Obtener绑定的 Azure OpenAI Cuenta
     let account = null
     if (req.apiKey?.azureOpenaiAccountId) {
       account = await azureOpenaiAccountService.getAccount(req.apiKey.azureOpenaiAccountId)
@@ -179,12 +179,12 @@ router.post('/chat/completions', authenticateApiKey, async (req, res) => {
       }
     }
 
-    // 如果没有绑定账户或账户不可用，选择一个可用账户
+    // 如果没有绑定Cuenta或Cuenta不可用，选择一个可用Cuenta
     if (!account || account.isActive !== 'true') {
       account = await azureOpenaiAccountService.selectAvailableAccount(sessionId)
     }
 
-    // 发送请求到 Azure OpenAI
+    // 发送Solicitud到 Azure OpenAI
     const response = await azureOpenaiRelayService.handleAzureOpenAIRequest({
       account,
       requestBody: req.body,
@@ -193,7 +193,7 @@ router.post('/chat/completions', authenticateApiKey, async (req, res) => {
       endpoint: 'chat/completions'
     })
 
-    // 检查上游响应状态码（仅对认证/限流/服务端错误暂停，不对 400/404 等客户端错误暂停）
+    // Verificar上游Respuesta状态码（仅对认证/限流/Servicio端Error暂停，不对 400/404 等ClienteError暂停）
     const azureAutoProtectionDisabled =
       account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
     const shouldPause =
@@ -211,7 +211,7 @@ router.post('/chat/completions', authenticateApiKey, async (req, res) => {
         .catch(() => {})
     }
 
-    // 处理流式响应
+    // Procesar流式Respuesta
     if (req.body.stream) {
       await azureOpenaiRelayService.handleStreamResponse(response, res, {
         onEnd: async ({ usageData, actualModel }) => {
@@ -231,7 +231,7 @@ router.post('/chat/completions', authenticateApiKey, async (req, res) => {
         }
       })
     } else {
-      // 处理非流式响应
+      // Procesar非流式Respuesta
       const { usageData, actualModel } = azureOpenaiRelayService.handleNonStreamResponse(
         response,
         res
@@ -267,7 +267,7 @@ router.post('/chat/completions', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 处理响应请求 (gpt-5, gpt-5-mini, codex-mini models)
+// ProcesarRespuestaSolicitud (gpt-5, gpt-5-mini, codex-mini models)
 router.post('/responses', authenticateApiKey, async (req, res) => {
   const requestId = `azure_resp_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`
   const sessionId = req.sessionId || req.headers['x-session-id'] || null
@@ -281,7 +281,7 @@ router.post('/responses', authenticateApiKey, async (req, res) => {
   })
 
   try {
-    // 获取绑定的 Azure OpenAI 账户
+    // Obtener绑定的 Azure OpenAI Cuenta
     let account = null
     if (req.apiKey?.azureOpenaiAccountId) {
       account = await azureOpenaiAccountService.getAccount(req.apiKey.azureOpenaiAccountId)
@@ -300,12 +300,12 @@ router.post('/responses', authenticateApiKey, async (req, res) => {
       }
     }
 
-    // 如果没有绑定账户或账户不可用，选择一个可用账户
+    // 如果没有绑定Cuenta或Cuenta不可用，选择一个可用Cuenta
     if (!account || account.isActive !== 'true') {
       account = await azureOpenaiAccountService.selectAvailableAccount(sessionId)
     }
 
-    // 发送请求到 Azure OpenAI
+    // 发送Solicitud到 Azure OpenAI
     const response = await azureOpenaiRelayService.handleAzureOpenAIRequest({
       account,
       requestBody: req.body,
@@ -314,7 +314,7 @@ router.post('/responses', authenticateApiKey, async (req, res) => {
       endpoint: 'responses'
     })
 
-    // 检查上游响应状态码（仅对认证/限流/服务端错误暂停，不对 400/404 等客户端错误暂停）
+    // Verificar上游Respuesta状态码（仅对认证/限流/Servicio端Error暂停，不对 400/404 等ClienteError暂停）
     const azureAutoProtectionDisabled =
       account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
     const shouldPause =
@@ -332,7 +332,7 @@ router.post('/responses', authenticateApiKey, async (req, res) => {
         .catch(() => {})
     }
 
-    // 处理流式响应
+    // Procesar流式Respuesta
     if (req.body.stream) {
       await azureOpenaiRelayService.handleStreamResponse(response, res, {
         onEnd: async ({ usageData, actualModel }) => {
@@ -352,7 +352,7 @@ router.post('/responses', authenticateApiKey, async (req, res) => {
         }
       })
     } else {
-      // 处理非流式响应
+      // Procesar非流式Respuesta
       const { usageData, actualModel } = azureOpenaiRelayService.handleNonStreamResponse(
         response,
         res
@@ -388,7 +388,7 @@ router.post('/responses', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 处理嵌入请求
+// Procesar嵌入Solicitud
 router.post('/embeddings', authenticateApiKey, async (req, res) => {
   const requestId = `azure_embed_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`
   const sessionId = req.sessionId || req.headers['x-session-id'] || null
@@ -401,7 +401,7 @@ router.post('/embeddings', authenticateApiKey, async (req, res) => {
   })
 
   try {
-    // 获取绑定的 Azure OpenAI 账户
+    // Obtener绑定的 Azure OpenAI Cuenta
     let account = null
     if (req.apiKey?.azureOpenaiAccountId) {
       account = await azureOpenaiAccountService.getAccount(req.apiKey.azureOpenaiAccountId)
@@ -420,12 +420,12 @@ router.post('/embeddings', authenticateApiKey, async (req, res) => {
       }
     }
 
-    // 如果没有绑定账户或账户不可用，选择一个可用账户
+    // 如果没有绑定Cuenta或Cuenta不可用，选择一个可用Cuenta
     if (!account || account.isActive !== 'true') {
       account = await azureOpenaiAccountService.selectAvailableAccount(sessionId)
     }
 
-    // 发送请求到 Azure OpenAI
+    // 发送Solicitud到 Azure OpenAI
     const response = await azureOpenaiRelayService.handleAzureOpenAIRequest({
       account,
       requestBody: req.body,
@@ -434,7 +434,7 @@ router.post('/embeddings', authenticateApiKey, async (req, res) => {
       endpoint: 'embeddings'
     })
 
-    // 检查上游响应状态码（仅对认证/限流/服务端错误暂停，不对 400/404 等客户端错误暂停）
+    // Verificar上游Respuesta状态码（仅对认证/限流/Servicio端Error暂停，不对 400/404 等ClienteError暂停）
     const azureAutoProtectionDisabled =
       account?.disableAutoProtection === true || account?.disableAutoProtection === 'true'
     const shouldPause =
@@ -452,7 +452,7 @@ router.post('/embeddings', authenticateApiKey, async (req, res) => {
         .catch(() => {})
     }
 
-    // 处理响应
+    // ProcesarRespuesta
     const { usageData, actualModel } = azureOpenaiRelayService.handleNonStreamResponse(
       response,
       res
@@ -481,7 +481,7 @@ router.post('/embeddings', authenticateApiKey, async (req, res) => {
   }
 })
 
-// 获取使用统计
+// Obtener使用Estadística
 router.get('/usage', authenticateApiKey, async (req, res) => {
   try {
     const { start_date, end_date } = req.query

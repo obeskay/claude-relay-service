@@ -21,7 +21,7 @@
             <div class="space-y-1">
               <div class="flex flex-wrap items-center gap-2">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 sm:text-xl">
-                  {{ account?.name || account?.email || '账号使用详情' }}
+                  {{ account?.name || account?.email || 'Detalles de uso de cuenta' }}
                 </h3>
                 <span
                   v-if="account?.platform"
@@ -37,9 +37,9 @@
                 </span>
               </div>
               <p class="text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-                近 {{ summary?.days || 30 }} 天内的费用与请求趋势
+                Tendencia de costos y solicitudes en los últimos {{ summary?.days || 30 }} días
                 <span v-if="summary?.actualDaysUsed && summary?.actualDaysUsed < summary?.days">
-                  (日均基于实际使用 {{ summary.actualDaysUsed }} 天)
+                  (Promedio diario basado en {{ summary.actualDaysUsed }} días de uso real)
                 </span>
               </p>
             </div>
@@ -49,7 +49,7 @@
               class="flex items-center gap-2 rounded-full bg-purple-100 px-3 py-2 text-xs font-semibold text-purple-700 transition hover:bg-purple-200 dark:bg-purple-500/10 dark:text-purple-200 dark:hover:bg-purple-500/20"
               @click="goTimeline"
             >
-              <i class="fas fa-clock" /> 请求时间线
+              <i class="fas fa-clock" /> Línea de tiempo de solicitudes
             </button>
             <button
               class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
@@ -96,7 +96,7 @@
               </div>
             </div>
 
-            <!-- 今日与峰值 -->
+            <!-- Hoy与峰值 -->
             <div class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
               <div
                 class="space-y-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 dark:border-blue-500/20 dark:bg-blue-900/20"
@@ -105,19 +105,19 @@
                   class="flex items-center gap-2 text-sm font-semibold text-blue-700 dark:text-blue-300"
                 >
                   <i class="fas fa-sun" />
-                  今日概览
+                  Hoy概览
                 </div>
                 <div
                   class="rounded-xl bg-white/80 p-3 text-sm text-gray-600 shadow-sm ring-1 ring-blue-100 dark:bg-gray-900/80 dark:text-gray-300 dark:ring-blue-500/20"
                 >
                   <div class="flex items-center justify-between">
-                    <span>费用</span>
+                    <span>Costo</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       summary?.today?.costFormatted || '$0.000000'
                     }}</span>
                   </div>
                   <div class="mt-2 flex items-center justify-between">
-                    <span>请求</span>
+                    <span>Solicitud</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       formatNumber(summary?.today?.requests || 0)
                     }}</span>
@@ -138,7 +138,7 @@
                   class="flex items-center gap-2 text-sm font-semibold text-amber-700 dark:text-amber-300"
                 >
                   <i class="fas fa-crown" />
-                  最高费用日
+                  最高Costo日
                 </div>
                 <div
                   class="rounded-xl bg-white/80 p-3 text-sm text-gray-600 shadow-sm ring-1 ring-amber-100 dark:bg-gray-900/80 dark:text-gray-300 dark:ring-amber-500/20"
@@ -150,7 +150,7 @@
                     }}</span>
                   </div>
                   <div class="mt-2 flex items-center justify-between">
-                    <span>费用</span>
+                    <span>Costo</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       summary?.highestCostDay?.formattedCost || '$0.000000'
                     }}</span>
@@ -158,7 +158,7 @@
                   <div
                     class="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
                   >
-                    <span>请求</span>
+                    <span>Solicitud</span>
                     <span>{{
                       formatNumber(findHistoryValue(summary?.highestCostDay?.date, 'requests'))
                     }}</span>
@@ -173,7 +173,7 @@
                   class="flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300"
                 >
                   <i class="fas fa-chart-bar" />
-                  最高请求日
+                  最高Solicitud日
                 </div>
                 <div
                   class="rounded-xl bg-white/80 p-3 text-sm text-gray-600 shadow-sm ring-1 ring-emerald-100 dark:bg-gray-900/80 dark:text-gray-300 dark:ring-emerald-500/20"
@@ -185,7 +185,7 @@
                     }}</span>
                   </div>
                   <div class="mt-2 flex items-center justify-between">
-                    <span>请求</span>
+                    <span>Solicitud</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       formatNumber(summary?.highestRequestDay?.requests || 0)
                     }}</span>
@@ -193,7 +193,7 @@
                   <div
                     class="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
                   >
-                    <span>费用</span>
+                    <span>Costo</span>
                     <span>{{
                       formatCost(findHistoryValue(summary?.highestRequestDay?.date, 'cost'))
                     }}</span>
@@ -202,7 +202,7 @@
               </div>
             </div>
 
-            <!-- 综合统计 -->
+            <!-- 综合Estadísticas -->
             <div class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
               <div
                 class="rounded-2xl border border-gray-100 bg-white/80 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/70"
@@ -214,7 +214,7 @@
                 </h4>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div class="flex items-center justify-between">
-                    <span>30天总计</span>
+                    <span>30天Total</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       formatNumber(totalTokens)
                     }}</span>
@@ -228,7 +228,7 @@
                   <div
                     class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
                   >
-                    <span>输入 / 输出</span>
+                    <span>Entrada / Salida</span>
                     <span
                       >{{ formatNumber(overviewInputTokens) }} /
                       {{ formatNumber(overviewOutputTokens) }}</span
@@ -242,7 +242,7 @@
                 <h4
                   class="mb-3 flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  <i class="fas fa-tachometer-alt mr-2 text-purple-500" /> 平均速率
+                  <i class="fas fa-tachometer-alt mr-2 text-purple-500" /> Promedio速率
                 </h4>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div class="flex items-center justify-between">
@@ -260,7 +260,7 @@
                   <div
                     class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
                   >
-                    <span>日均请求 / Token</span>
+                    <span>日均Solicitud / Token</span>
                     <span
                       >{{
                         formatNumber(
@@ -281,17 +281,17 @@
                 <h4
                   class="mb-3 flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  <i class="fas fa-layer-group mr-2 text-teal-500" /> 最近统计
+                  <i class="fas fa-layer-group mr-2 text-teal-500" /> 最近Estadísticas
                 </h4>
                 <div class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div class="flex items-center justify-between">
-                    <span>今日请求</span>
+                    <span>HoySolicitud</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       formatNumber(overview?.daily?.requests || 0)
                     }}</span>
                   </div>
                   <div class="flex items-center justify-between">
-                    <span>今日 Token</span>
+                    <span>Hoy Token</span>
                     <span class="font-semibold text-gray-900 dark:text-gray-100">{{
                       formatNumber(overview?.daily?.allTokens || 0)
                     }}</span>
@@ -299,7 +299,7 @@
                   <div
                     class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
                   >
-                    <span>今日费用</span>
+                    <span>HoyCosto</span>
                     <span>{{ formatCost(overview?.daily?.cost || 0) }}</span>
                   </div>
                 </div>
@@ -314,10 +314,10 @@
                 <h4
                   class="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  <i class="fas fa-chart-line mr-2 text-blue-500" /> 30天费用与请求趋势
+                  <i class="fas fa-chart-line mr-2 text-blue-500" /> 30天Costo与Solicitud趋势
                 </h4>
                 <span class="text-xs text-gray-400 dark:text-gray-500">
-                  最新更新时间：{{ formatDateTime(generatedAtDisplay) }}
+                  Última actualización: {{ formatDateTime(generatedAtDisplay) }}
                 </span>
               </div>
               <div class="h-[260px] sm:h-[300px]">
@@ -370,7 +370,7 @@ const platformLabelMap = {
   bedrock: 'Claude AWS Bedrock'
 }
 
-const platformLabel = computed(() => platformLabelMap[props.account?.platform] || '未知平台')
+const platformLabel = computed(() => platformLabelMap[props.account?.platform] || 'DesconocidoPlataforma')
 
 const accountTypeLabel = computed(() => {
   if (!props.account?.accountType) return '共享'
@@ -415,7 +415,7 @@ const formatDate = (value) => {
 }
 
 const formatDateTime = (value) => {
-  if (!value) return '暂无'
+  if (!value) return 'Sin'
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
@@ -434,36 +434,36 @@ const generatedAtDisplay = computed(
 const primaryMetrics = computed(() => [
   {
     key: 'totalCost',
-    label: '30天总费用',
+    label: '30天totalCost',
     value: props.summary?.totalCostFormatted || '$0.000000',
-    subtitle: '累计成本',
+    subtitle: '累计Costo',
     icon: 'fa-file-invoice-dollar',
     iconClass: 'text-emerald-500'
   },
   {
     key: 'totalRequests',
-    label: '30天总请求',
+    label: '30天总Solicitud',
     value: formatNumber(props.summary?.totalRequests || 0),
-    subtitle: '调用次数',
+    subtitle: '调用veces数',
     icon: 'fa-paper-plane',
     iconClass: 'text-blue-500'
   },
   {
     key: 'avgCost',
-    label: '日均费用',
+    label: '日均Costo',
     value: props.summary?.avgDailyCostFormatted || formatCost(props.summary?.avgDailyCost || 0),
     subtitle:
       props.summary?.actualDaysUsed && props.summary?.actualDaysUsed < props.summary?.days
         ? `基于 ${props.summary.actualDaysUsed} 天实际使用`
-        : '平均每日成本',
+        : 'Promedio每日Costo',
     icon: 'fa-wave-square',
     iconClass: 'text-purple-500'
   },
   {
     key: 'avgRequests',
-    label: '日均请求',
+    label: '日均Solicitud',
     value: formatNumber(roundToTwo(props.summary?.avgDailyRequests || 0)),
-    subtitle: '平均每日调用',
+    subtitle: 'Promedio每日调用',
     icon: 'fa-chart-line',
     iconClass: 'text-orange-500'
   }
@@ -495,7 +495,7 @@ const renderChart = async () => {
       labels,
       datasets: [
         {
-          label: '费用 (USD)',
+          label: 'Costo (USD)',
           data: costs,
           borderColor: chartColors.value.cost,
           backgroundColor: chartColors.value.costFill,
@@ -504,7 +504,7 @@ const renderChart = async () => {
           yAxisID: 'y'
         },
         {
-          label: '请求次数',
+          label: 'Número de solicitudes',
           data: requests,
           borderColor: chartColors.value.requests,
           backgroundColor: 'transparent',
@@ -529,10 +529,10 @@ const renderChart = async () => {
         tooltip: {
           callbacks: {
             label(context) {
-              if (context.dataset.label === '费用 (USD)') {
+              if (context.dataset.label === 'Costo (USD)') {
                 return `${context.dataset.label}: ${formatCost(context.parsed.y)}`
               }
-              return `${context.dataset.label}: ${formatNumber(context.parsed.y)} 次`
+              return `${context.dataset.label}: ${formatNumber(context.parsed.y)} veces`
             }
           }
         }

@@ -17,9 +17,9 @@ const { extractErrorMessage } = require('../../utils/testPayloadHelper')
 
 const router = express.Router()
 
-// ==================== Droid 账户管理 API ====================
+// ==================== Droid Cuenta管理 API ====================
 
-// 生成 Droid 设备码授权信息
+// Generar Droid 设备码授权Información
 router.post('/droid-accounts/generate-auth-url', authenticateAdmin, async (req, res) => {
   try {
     const { proxy } = req.body || {}
@@ -39,7 +39,7 @@ router.post('/droid-accounts/generate-auth-url', authenticateAdmin, async (req, 
       expiresAt
     })
 
-    logger.success('🤖 生成 Droid 设备码授权信息成功', { sessionId })
+    logger.success('🤖 Generar Droid 设备码授权InformaciónÉxito', { sessionId })
     return res.json({
       success: true,
       data: {
@@ -50,16 +50,16 @@ router.post('/droid-accounts/generate-auth-url', authenticateAdmin, async (req, 
         expiresIn: deviceAuth.expiresIn,
         interval: deviceAuth.interval,
         instructions: [
-          '1. 使用下方验证码进入授权页面并确认访问权限。',
-          '2. 在授权页面登录 Factory / Droid 账户并点击允许。',
-          '3. 回到此处点击"完成授权"完成凭证获取。'
+          '1. 使用下方Validar码进入授权Página并确认访问Permiso。',
+          '2. 在授权Página登录 Factory / Droid Cuenta并点击允许。',
+          '3. 回到此处点击"Completado授权"Completado凭证Obtener。'
         ]
       }
     })
   } catch (error) {
     const message =
-      error instanceof WorkOSDeviceAuthError ? error.message : error.message || '未知错误'
-    logger.error('❌ 生成 Droid 设备码授权失败:', message)
+      error instanceof WorkOSDeviceAuthError ? error.message : error.message || '未知Error'
+    logger.error('❌ Generar Droid 设备码授权Falló:', message)
     return res.status(500).json({ error: 'Failed to start Droid device authorization', message })
   }
 })
@@ -94,7 +94,7 @@ router.post('/droid-accounts/exchange-code', authenticateAdmin, async (req, res)
 
     await redis.deleteOAuthSession(sessionId)
 
-    logger.success('🤖 成功获取 Droid 访问令牌', { sessionId })
+    logger.success('🤖 ÉxitoObtener Droid 访问Token', { sessionId })
     return res.json({ success: true, data: { tokens } })
   } catch (error) {
     if (error instanceof WorkOSDeviceAuthError) {
@@ -124,7 +124,7 @@ router.post('/droid-accounts/exchange-code', authenticateAdmin, async (req, res)
         })
       }
 
-      logger.error('❌ Droid 授权失败:', error.message)
+      logger.error('❌ Droid 授权Falló:', error.message)
       return res.status(500).json({
         error: 'Failed to exchange Droid authorization code',
         message: error.message,
@@ -132,7 +132,7 @@ router.post('/droid-accounts/exchange-code', authenticateAdmin, async (req, res)
       })
     }
 
-    logger.error('❌ 交换 Droid 授权码失败:', error)
+    logger.error('❌ 交换 Droid 授权码Falló:', error)
     return res.status(500).json({
       error: 'Failed to exchange Droid authorization code',
       message: error.message
@@ -140,21 +140,21 @@ router.post('/droid-accounts/exchange-code', authenticateAdmin, async (req, res)
   }
 })
 
-// 获取所有 Droid 账户
+// Obtener所有 Droid Cuenta
 router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
   try {
     const accounts = await droidAccountService.getAllAccounts()
     const accountIds = accounts.map((a) => a.id)
 
-    // 并行获取：轻量 API Keys + 分组信息 + daily cost
+    // 并FilaObtener：轻量 API Keys + AgruparInformación + daily cost
     const [allApiKeys, allGroupInfosMap, dailyCostMap] = await Promise.all([
       apiKeyService.getAllApiKeysLite(),
       accountGroupService.batchGetAccountGroupsByIndex(accountIds, 'droid'),
       redis.batchGetAccountDailyCost(accountIds)
     ])
 
-    // 构建绑定数映射（droid 需要展开 group 绑定）
-    // 1. 先构建 groupId -> accountIds 映射
+    // Construir绑定数映射（droid 需要展开 group 绑定）
+    // 1. 先Construir groupId -> accountIds 映射
     const groupToAccountIds = new Map()
     for (const [accountId, groups] of allGroupInfosMap) {
       for (const group of groups) {
@@ -165,7 +165,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 2. 单次遍历构建绑定数
+    // 2. 单次遍历Construir绑定数
     const directBindingCount = new Map()
     const groupBindingCount = new Map()
     for (const key of allApiKeys) {
@@ -181,7 +181,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 批量获取使用统计
+    // 批量Obtener使用Estadística
     const client = redis.getClientSafe()
     const today = redis.getDateStringInTimezone()
     const tzDate = redis.getDateInTimezone()
@@ -195,7 +195,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
     }
     const statsResults = await statsPipeline.exec()
 
-    // 处理统计数据
+    // ProcesarEstadísticaDatos
     const allUsageStatsMap = new Map()
     const parseUsage = (data) => ({
       requests: parseInt(data?.totalRequests || data?.requests) || 0,
@@ -212,7 +212,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
           (parseInt(data?.totalCacheReadTokens || data?.cacheReadTokens) || 0)
     })
 
-    // 构建 accountId -> createdAt 映射用于计算 averages
+    // Construir accountId -> createdAt 映射用于Calcular averages
     const accountCreatedAtMap = new Map()
     for (const account of accounts) {
       accountCreatedAtMap.set(
@@ -231,7 +231,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
       const totalTokens = totalData.tokens || 0
       const totalRequests = totalData.requests || 0
 
-      // 计算 averages
+      // Calcular averages
       const createdAt = accountCreatedAtMap.get(accountId)
       const now = new Date()
       const daysSinceCreated = Math.max(1, Math.ceil((now - createdAt) / (1000 * 60 * 60 * 24)))
@@ -250,7 +250,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 处理账户数据
+    // ProcesarCuentaDatos
     const accountsWithStats = accounts.map((account) => {
       const groupInfos = allGroupInfosMap.get(account.id) || []
       const usageStats = allUsageStatsMap.get(account.id) || {
@@ -261,7 +261,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
       }
       const dailyCost = dailyCostMap.get(account.id) || 0
 
-      // 计算绑定数：直接绑定 + 通过 group 绑定
+      // Calcular绑定数：直接绑定 + 通过 group 绑定
       let boundApiKeysCount = directBindingCount.get(account.id) || 0
       for (const group of groupInfos) {
         boundApiKeysCount += groupBindingCount.get(group.id) || 0
@@ -289,7 +289,7 @@ router.get('/droid-accounts', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 创建 Droid 账户
+// Crear Droid Cuenta
 router.post('/droid-accounts', authenticateAdmin, async (req, res) => {
   try {
     const { accountType: rawAccountType = 'shared', groupId, groupIds } = req.body
@@ -297,7 +297,7 @@ router.post('/droid-accounts', authenticateAdmin, async (req, res) => {
     const normalizedAccountType = rawAccountType || 'shared'
 
     if (!['shared', 'dedicated', 'group'].includes(normalizedAccountType)) {
-      return res.status(400).json({ error: '账户类型必须是 shared、dedicated 或 group' })
+      return res.status(400).json({ error: 'CuentaTipo必须是 shared、dedicated 或 group' })
     }
 
     const normalizedGroupIds = Array.isArray(groupIds)
@@ -309,7 +309,7 @@ router.post('/droid-accounts', authenticateAdmin, async (req, res) => {
       normalizedGroupIds.length === 0 &&
       (!groupId || typeof groupId !== 'string' || !groupId.trim())
     ) {
-      return res.status(400).json({ error: '分组调度账户必须至少选择一个分组' })
+      return res.status(400).json({ error: 'Agrupar调度Cuenta必须至少选择一个Agrupar' })
     }
 
     const accountPayload = {
@@ -347,19 +347,19 @@ router.post('/droid-accounts', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 更新 Droid 账户
+// Actualizar Droid Cuenta
 router.put('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
     const updates = { ...req.body }
 
-    // ✅ 【新增】映射字段名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
+    // ✅ 【Nueva característica】映射Campo名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
     const mappedUpdates = mapExpiryField(updates, 'Droid', id)
 
     const { accountType: rawAccountType, groupId, groupIds } = mappedUpdates
 
     if (rawAccountType && !['shared', 'dedicated', 'group'].includes(rawAccountType)) {
-      return res.status(400).json({ error: '账户类型必须是 shared、dedicated 或 group' })
+      return res.status(400).json({ error: 'CuentaTipo必须是 shared、dedicated 或 group' })
     }
 
     if (
@@ -367,7 +367,7 @@ router.put('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
       (!groupId || typeof groupId !== 'string' || !groupId.trim()) &&
       (!Array.isArray(groupIds) || groupIds.length === 0)
     ) {
-      return res.status(400).json({ error: '分组调度账户必须至少选择一个分组' })
+      return res.status(400).json({ error: 'Agrupar调度Cuenta必须至少选择一个Agrupar' })
     }
 
     const currentAccount = await droidAccountService.getAccount(id)
@@ -428,7 +428,7 @@ router.put('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 切换 Droid 账户调度状态
+// 切换 Droid Cuenta调度状态
 router.put('/droid-accounts/:id/toggle-schedulable', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -455,7 +455,7 @@ router.put('/droid-accounts/:id/toggle-schedulable', authenticateAdmin, async (r
         platform: 'droid',
         status: 'disabled',
         errorCode: 'DROID_MANUALLY_DISABLED',
-        reason: '账号已被管理员手动禁用调度',
+        reason: '账号已被管理员手动Deshabilitar调度',
         timestamp: new Date().toISOString()
       })
     }
@@ -475,12 +475,12 @@ router.put('/droid-accounts/:id/toggle-schedulable', authenticateAdmin, async (r
   }
 })
 
-// 获取单个 Droid 账户详细信息
+// Obtener单个 Droid Cuenta详细Información
 router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
 
-    // 获取账户基本信息
+    // ObtenerCuenta基本Información
     const account = await droidAccountService.getAccount(id)
     if (!account) {
       return res.status(404).json({
@@ -489,7 +489,7 @@ router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
       })
     }
 
-    // 获取使用统计信息
+    // Obtener使用EstadísticaInformación
     let usageStats
     try {
       usageStats = await redis.getAccountUsageStats(account.id, 'droid')
@@ -502,7 +502,7 @@ router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
       }
     }
 
-    // 获取分组信息
+    // ObtenerAgruparInformación
     let groupInfos = []
     try {
       groupInfos = await accountGroupService.getAccountGroups(account.id)
@@ -511,7 +511,7 @@ router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
       groupInfos = []
     }
 
-    // 获取绑定的 API Key 数量
+    // Obtener绑定的 API Key 数量
     const allApiKeys = await apiKeyService.getAllApiKeysFast()
     const groupIds = groupInfos.map((group) => group.id)
     const boundApiKeysCount = allApiKeys.reduce((count, key) => {
@@ -531,7 +531,7 @@ router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
       return count
     }, 0)
 
-    // 获取解密的 API Keys（用于管理界面）
+    // ObtenerDescifrado的 API Keys（用于管理界面）
     let decryptedApiKeys = []
     try {
       decryptedApiKeys = await droidAccountService.getDecryptedApiKeyEntries(id)
@@ -540,22 +540,22 @@ router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
       decryptedApiKeys = []
     }
 
-    // 返回完整的账户信息，包含实际的 API Keys
+    // Retornar完整的CuentaInformación，Incluir实际的 API Keys
     const accountDetails = {
       ...account,
-      // 映射字段：使用 subscriptionExpiresAt 作为前端显示的 expiresAt
+      // 映射Campo：使用 subscriptionExpiresAt 作为前端显示的 expiresAt
       expiresAt: account.subscriptionExpiresAt || null,
       schedulable: account.schedulable === 'true',
       boundApiKeysCount,
       groupInfos,
-      // 包含实际的 API Keys（用于管理界面）
+      // Incluir实际的 API Keys（用于管理界面）
       apiKeys: decryptedApiKeys.map((entry) => ({
         key: entry.key,
         id: entry.id,
         usageCount: entry.usageCount || 0,
         lastUsedAt: entry.lastUsedAt || null,
-        status: entry.status || 'active', // 使用实际的状态，默认为 active
-        errorMessage: entry.errorMessage || '', // 包含错误信息
+        status: entry.status || 'active', // 使用实际的状态，Predeterminado为 active
+        errorMessage: entry.errorMessage || '', // IncluirErrorInformación
         createdAt: entry.createdAt || null
       })),
       usage: {
@@ -578,7 +578,7 @@ router.get('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 删除 Droid 账户
+// Eliminar Droid Cuenta
 router.delete('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -590,7 +590,7 @@ router.delete('/droid-accounts/:id', authenticateAdmin, async (req, res) => {
   }
 })
 
-// 刷新 Droid 账户 token
+// 刷新 Droid Cuenta token
 router.post('/droid-accounts/:id/refresh-token', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -602,14 +602,14 @@ router.post('/droid-accounts/:id/refresh-token', authenticateAdmin, async (req, 
   }
 })
 
-// 测试 Droid 账户连通性
+// Probar Droid Cuenta连通性
 router.post('/droid-accounts/:accountId/test', authenticateAdmin, async (req, res) => {
   const { accountId } = req.params
   const { model = 'claude-sonnet-4-20250514' } = req.body
   const startTime = Date.now()
 
   try {
-    // 获取账户信息
+    // ObtenerCuentaInformación
     const account = await droidAccountService.getAccount(accountId)
     if (!account) {
       return res.status(404).json({ error: 'Account not found' })
@@ -626,7 +626,7 @@ router.post('/droid-accounts/:accountId/test', authenticateAdmin, async (req, re
 
     const { accessToken } = tokenResult
 
-    // 构造测试请求
+    // 构造ProbarSolicitud
     const axios = require('axios')
     const { getProxyAgent } = require('../../utils/proxyHelper')
 
@@ -645,7 +645,7 @@ router.post('/droid-accounts/:accountId/test', authenticateAdmin, async (req, re
       timeout: 30000
     }
 
-    // 配置代理
+    // ConfiguraciónProxy
     if (account.proxy) {
       const agent = getProxyAgent(account.proxy)
       if (agent) {
@@ -657,7 +657,7 @@ router.post('/droid-accounts/:accountId/test', authenticateAdmin, async (req, re
     const response = await axios.post(apiUrl, payload, requestConfig)
     const latency = Date.now() - startTime
 
-    // 提取响应文本
+    // 提取Respuesta文本
     let responseText = ''
     if (response.data?.content?.[0]?.text) {
       responseText = response.data.content[0].text
@@ -690,7 +690,7 @@ router.post('/droid-accounts/:accountId/test', authenticateAdmin, async (req, re
   }
 })
 
-// 重置 Droid 账户状态
+// 重置 Droid Cuenta状态
 router.post('/:accountId/reset-status', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params

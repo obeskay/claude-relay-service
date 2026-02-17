@@ -7,7 +7,7 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : 0
 }
 
-// keyId 和 accountType 用于计算倍率成本
+// keyId 和 accountType 用于Calcular倍率成本
 async function updateRateLimitCounters(
   rateLimitInfo,
   usageSummary,
@@ -21,7 +21,7 @@ async function updateRateLimitCounters(
 
   const client = redis.getClient()
   if (!client) {
-    throw new Error('Redis 未连接，无法更新限流计数')
+    throw new Error('Redis 未Conexión，无法Actualizar限流计数')
   }
 
   const inputTokens = toNumber(usageSummary.inputTokens)
@@ -50,7 +50,7 @@ async function updateRateLimitCounters(
       totalCost = calculatedCost
     }
   } catch (error) {
-    // 忽略此处错误，后续使用备用计算
+    // 忽略此处Error，后续使用备用Calcular
     totalCost = 0
   }
 
@@ -66,7 +66,7 @@ async function updateRateLimitCounters(
     }
   }
 
-  // 计算倍率成本（用于限流计数）
+  // Calcular倍率成本（用于限流计数）
   let ratedCost = totalCost
   if (totalCost > 0 && keyId) {
     try {
@@ -75,7 +75,7 @@ async function updateRateLimitCounters(
       const service = serviceRatesService.getService(accountType, model)
       ratedCost = await apiKeyService.calculateRatedCost(keyId, service, totalCost)
     } catch (error) {
-      // 倍率计算失败时使用真实成本
+      // 倍率CalcularFalló时使用真实成本
       ratedCost = totalCost
     }
   }

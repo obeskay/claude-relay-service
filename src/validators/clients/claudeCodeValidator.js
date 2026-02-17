@@ -3,42 +3,42 @@ const { CLIENT_DEFINITIONS } = require('../clientDefinitions')
 const { bestSimilarityByTemplates, SYSTEM_PROMPT_THRESHOLD } = require('../../utils/contents')
 
 /**
- * Claude Code CLI 验证器
- * 验证请求是否来自 Claude Code CLI
+ * Claude Code CLI Validar器
+ * ValidarSolicitud是否来自 Claude Code CLI
  */
 class ClaudeCodeValidator {
   /**
-   * 获取客户端ID
+   * ObtenerClienteID
    */
   static getId() {
     return CLIENT_DEFINITIONS.CLAUDE_CODE.id
   }
 
   /**
-   * 获取客户端名称
+   * ObtenerClienteNombre
    */
   static getName() {
     return CLIENT_DEFINITIONS.CLAUDE_CODE.name
   }
 
   /**
-   * 获取客户端描述
+   * ObtenerCliente描述
    */
   static getDescription() {
     return CLIENT_DEFINITIONS.CLAUDE_CODE.description
   }
 
   /**
-   * 获取客户端图标
+   * ObtenerCliente图标
    */
   static getIcon() {
     return CLIENT_DEFINITIONS.CLAUDE_CODE.icon || '🤖'
   }
 
   /**
-   * 检查请求是否包含 Claude Code 系统提示词
-   * @param {Object} body - 请求体
-   * @returns {boolean} 是否包含 Claude Code 系统提示词
+   * VerificarSolicitud是否Incluir Claude Code 系统提示词
+   * @param {Object} body - Solicitud体
+   * @returns {boolean} 是否Incluir Claude Code 系统提示词
    */
   static hasClaudeCodeSystemPrompt(body, customThreshold) {
     if (!body || typeof body !== 'object') {
@@ -80,9 +80,9 @@ class ClaudeCodeValidator {
   }
 
   /**
-   * 判断是否存在 Claude Code 系统提示词（存在即返回 true）
-   * @param {Object} body - 请求体
-   * @param {number} [customThreshold] - 自定义阈值
+   * 判断是否存在 Claude Code 系统提示词（存在即Retornar true）
+   * @param {Object} body - Solicitud体
+   * @param {number} [customThreshold] - 自定义阈Valor
    * @returns {boolean} 是否存在 Claude Code 系统提示词
    */
   static includesClaudeCodeSystemPrompt(body, customThreshold) {
@@ -128,9 +128,9 @@ class ClaudeCodeValidator {
   }
 
   /**
-   * 验证请求是否来自 Claude Code CLI
-   * @param {Object} req - Express 请求对象
-   * @returns {boolean} 验证结果
+   * ValidarSolicitud是否来自 Claude Code CLI
+   * @param {Object} req - Express SolicitudObjeto
+   * @returns {boolean} Validar结果
    */
   static validate(req) {
     try {
@@ -140,24 +140,24 @@ class ClaudeCodeValidator {
       const claudeCodePattern = /^claude-(cli|code)\/\d+\.\d+\.\d+/i
 
       if (!claudeCodePattern.test(userAgent)) {
-        // 不是 Claude Code 的请求，此验证器不处理
+        // 不是 Claude Code 的Solicitud，此Validar器不Procesar
         return false
       }
 
-      // 2. Claude Code 检测到，对于特定路径进行额外的严格验证
+      // 2. Claude Code 检测到，对于特定Ruta进Fila额外的严格Validar
       if (!path.includes('messages')) {
-        // 其他路径，只要 User-Agent 匹配就认为是 Claude Code
+        // 其他Ruta，只要 User-Agent 匹配就认为是 Claude Code
         logger.debug(`Claude Code detected for path: ${path}, allowing access`)
         return true
       }
 
-      // 3. 检查系统提示词是否为 Claude Code 的系统提示词
+      // 3. Verificar系统提示词是否为 Claude Code 的系统提示词
       if (!this.hasClaudeCodeSystemPrompt(req.body)) {
         logger.debug('Claude Code validation failed - missing or invalid Claude Code system prompt')
         return false
       }
 
-      // 4. 检查必需的头部（值不为空即可）
+      // 4. VerificarRequerido的头部（Valor不为空即可）
       const xApp = req.headers['x-app']
       const anthropicBeta = req.headers['anthropic-beta']
       const anthropicVersion = req.headers['anthropic-version']
@@ -181,21 +181,21 @@ class ClaudeCodeValidator {
         `Claude Code headers - x-app: ${xApp}, anthropic-beta: ${anthropicBeta}, anthropic-version: ${anthropicVersion}`
       )
 
-      // 5. 验证 body 中的 metadata.user_id
+      // 5. Validar body 中的 metadata.user_id
       if (!req.body || !req.body.metadata || !req.body.metadata.user_id) {
         logger.debug('Claude Code validation failed - missing metadata.user_id in body')
         return false
       }
 
       const userId = req.body.metadata.user_id
-      // 格式: user_{64位字符串}_account__session_{哈希值}
+      // Formato: user_{64位Cadena}_account__session_{哈希Valor}
       // user_d98385411c93cd074b2cefd5c9831fe77f24a53e4ecdcd1f830bba586fe62cb9_account__session_17cf0fd3-d51b-4b59-977d-b899dafb3022
       const userIdPattern = /^user_[a-fA-F0-9]{64}_account__session_[\w-]+$/
 
       if (!userIdPattern.test(userId)) {
         logger.debug(`Claude Code validation failed - invalid user_id format: ${userId}`)
 
-        // 提供更详细的错误信息
+        // 提供更详细的ErrorInformación
         if (!userId.startsWith('user_')) {
           logger.debug('user_id must start with "user_"')
         } else {
@@ -211,20 +211,20 @@ class ClaudeCodeValidator {
         return false
       }
 
-      // 6. 额外日志记录（用于调试）
+      // 6. 额外RegistroRegistro（用于Depurar）
       logger.debug(`Claude Code validation passed - UA: ${userAgent}, userId: ${userId}`)
 
-      // 所有必要检查通过
+      // 所有必要Verificar通过
       return true
     } catch (error) {
       logger.error('Error in ClaudeCodeValidator:', error)
-      // 验证出错时默认拒绝
+      // Validar出错时Predeterminado拒绝
       return false
     }
   }
 
   /**
-   * 获取验证器信息
+   * ObtenerValidar器Información
    */
   static getInfo() {
     return {

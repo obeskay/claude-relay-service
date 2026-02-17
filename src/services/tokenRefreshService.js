@@ -3,18 +3,18 @@ const logger = require('../utils/logger')
 const { v4: uuidv4 } = require('uuid')
 
 /**
- * Token 刷新锁服务
- * 提供分布式锁机制，避免并发刷新问题
+ * Token 刷新锁Servicio
+ * 提供分布式锁机制，避免Concurrencia刷新问题
  */
 class TokenRefreshService {
   constructor() {
-    this.lockTTL = 60 // 锁的TTL: 60秒（token刷新通常在30秒内完成）
-    this.lockValue = new Map() // 存储每个锁的唯一值
+    this.lockTTL = 60 // 锁的TTL: 60秒（token刷新通常在30秒内Completado）
+    this.lockValue = new Map() // 存储每个锁的唯一Valor
   }
 
   /**
-   * 获取分布式锁
-   * 使用唯一标识符作为值，避免误释放其他进程的锁
+   * Obtener分布式锁
+   * 使用Identificador único作为Valor，避免误释放其他Proceso的锁
    */
   async acquireLock(lockKey) {
     try {
@@ -48,7 +48,7 @@ class TokenRefreshService {
         return
       }
 
-      // Lua 脚本：只有当值匹配时才删除
+      // Lua 脚本：只有当Valor匹配时才Eliminar
       const luaScript = `
         if redis.call("get", KEYS[1]) == ARGV[1] then
           return redis.call("del", KEYS[1])
@@ -71,10 +71,10 @@ class TokenRefreshService {
   }
 
   /**
-   * 获取刷新锁
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型 (claude/gemini)
-   * @returns {Promise<boolean>} 是否成功获取锁
+   * Obtener刷新锁
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo (claude/gemini)
+   * @returns {Promise<boolean>} 是否ÉxitoObtener锁
    */
   async acquireRefreshLock(accountId, platform = 'claude') {
     const lockKey = `token_refresh_lock:${platform}:${accountId}`
@@ -83,8 +83,8 @@ class TokenRefreshService {
 
   /**
    * 释放刷新锁
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型 (claude/gemini)
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo (claude/gemini)
    */
   async releaseRefreshLock(accountId, platform = 'claude') {
     const lockKey = `token_refresh_lock:${platform}:${accountId}`
@@ -92,9 +92,9 @@ class TokenRefreshService {
   }
 
   /**
-   * 检查刷新锁状态
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型 (claude/gemini)
+   * Verificar刷新锁状态
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo (claude/gemini)
    * @returns {Promise<boolean>} 锁是否存在
    */
   async isRefreshLocked(accountId, platform = 'claude') {
@@ -110,10 +110,10 @@ class TokenRefreshService {
   }
 
   /**
-   * 获取锁的剩余TTL
-   * @param {string} accountId - 账户ID
-   * @param {string} platform - 平台类型 (claude/gemini)
-   * @returns {Promise<number>} 剩余秒数，-1表示锁不存在
+   * Obtener锁的剩余TTL
+   * @param {string} accountId - CuentaID
+   * @param {string} platform - 平台Tipo (claude/gemini)
+   * @returns {Promise<number>} 剩余秒数，-1Tabla示锁不存在
    */
   async getLockTTL(accountId, platform = 'claude') {
     const lockKey = `token_refresh_lock:${platform}:${accountId}`
@@ -128,8 +128,8 @@ class TokenRefreshService {
   }
 
   /**
-   * 清理本地锁记录
-   * 在进程退出时调用，避免内存泄漏
+   * Limpiar本地锁Registro
+   * 在Proceso退出时调用，避免内存泄漏
    */
   cleanup() {
     this.lockValue.clear()
@@ -137,7 +137,7 @@ class TokenRefreshService {
   }
 }
 
-// 创建单例实例
+// Crear单例Instancia
 const tokenRefreshService = new TokenRefreshService()
 
 module.exports = tokenRefreshService

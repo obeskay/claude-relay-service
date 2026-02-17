@@ -1,9 +1,9 @@
 /**
  * Request Identity Service
  *
- * 处理 Claude 请求的身份信息规范化：
- * 1. Stainless 指纹管理 - 收集、持久化和应用 x-stainless-* 系列请求头
- * 2. User ID 规范化 - 重写 metadata.user_id，使其与真实账户保持一致
+ * Procesar Claude Solicitud的身份Información规范化：
+ * 1. Stainless 指纹管理 - 收集、持久化和应用 x-stainless-* 系ColumnaSolicitud头
+ * 2. User ID 规范化 - 重写 metadata.user_id，使其与真实Cuenta保持一致
  */
 
 const crypto = require('crypto')
@@ -23,7 +23,7 @@ const STAINLESS_HEADER_KEYS = [
   'x-stainless-runtime-version'
 ]
 
-// 小写 key 到正确大小写格式的映射（用于返回给上游时）
+// 小写 key 到正确大小写Formato的映射（用于Retornar给上游时）
 const STAINLESS_HEADER_CASE_MAP = {
   'x-stainless-retry-count': 'X-Stainless-Retry-Count',
   'x-stainless-timeout': 'X-Stainless-Timeout',
@@ -66,7 +66,7 @@ function safeParseJson(value) {
 
 function getRedisClient() {
   if (!redisService || typeof redisService.getClientSafe !== 'function') {
-    throw new Error('requestIdentityService: Redis 服务未初始化')
+    throw new Error('requestIdentityService: Redis Servicio未Inicializar')
   }
 
   return redisService.getClientSafe()
@@ -147,7 +147,7 @@ function applyFingerprintToHeaders(headers, fingerprint) {
       return
     }
     removeHeaderCaseInsensitive(nextHeaders, key)
-    // 使用正确的大小写格式返回给上游
+    // 使用正确的大小写FormatoRetornar给上游
     const properCaseKey = STAINLESS_HEADER_CASE_MAP[key] || key
     nextHeaders[properCaseKey] = fingerprint[key]
   })
@@ -168,7 +168,7 @@ function persistFingerprint(accountId, fingerprint) {
 
   if (command && typeof command.catch === 'function') {
     command.catch((error) => {
-      logger.error(`requestIdentityService: Redis 持久化指纹失败 (${accountId}): ${error.message}`)
+      logger.error(`requestIdentityService: Redis 持久化指纹Falló (${accountId}): ${error.message}`)
     })
   }
 }
@@ -249,7 +249,7 @@ function rewriteHeaders(headers, accountId) {
 
   if (fieldCount < MIN_FINGERPRINT_FIELDS) {
     logger.warn(
-      `requestIdentityService: 账号 ${accountId} 提供的 Stainless 指纹字段不足，已保持原样`
+      `requestIdentityService: 账号 ${accountId} 提供的 Stainless 指纹Campo不足，已保持原样`
     )
     return { nextHeaders: workingHeaders, changed: false }
   }
@@ -257,12 +257,15 @@ function rewriteHeaders(headers, accountId) {
   try {
     persistFingerprint(accountId, fingerprint)
   } catch (error) {
-    logger.error(`requestIdentityService: 持久化指纹失败 (${accountId}): ${error.message}`)
+    logger.error(`requestIdentityService: 持久化指纹Falló (${accountId}): ${error.message}`)
     return {
       abortResponse: {
         statusCode: 500,
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'fingerprint_persist_failed', message: '指纹信息持久化失败' })
+        body: JSON.stringify({
+          error: 'fingerprint_persist_failed',
+          message: '指纹Información持久化Falló'
+        })
       }
     }
   }
@@ -363,13 +366,13 @@ function rewriteUserId(body, accountId, accountUuid) {
 }
 
 /**
- * 转换请求身份信息
- * @param {Object} payload - 请求载荷
- * @param {Object} payload.body - 请求体
- * @param {Object} payload.headers - 请求头
- * @param {string} payload.accountId - 账户ID
- * @param {Object} payload.account - 账户对象
- * @returns {Object} 转换后的 { body, headers, abortResponse? }
+ * ConvertirSolicitud身份Información
+ * @param {Object} payload - Solicitud载荷
+ * @param {Object} payload.body - Solicitud体
+ * @param {Object} payload.headers - Solicitud头
+ * @param {string} payload.accountId - CuentaID
+ * @param {Object} payload.account - CuentaObjeto
+ * @returns {Object} Convertir后的 { body, headers, abortResponse? }
  */
 function transform(payload = {}) {
   const currentBody = payload.body
@@ -401,7 +404,7 @@ function transform(payload = {}) {
 
 module.exports = {
   transform,
-  // 导出内部函数供测试使用
+  // 导出内部Función供Probar使用
   _internal: {
     formatUuidFromSeed,
     collectFingerprintFromHeaders,

@@ -37,9 +37,9 @@
               />
             </div>
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">账户连通性测试</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Cuenta连通性测试</h3>
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ account?.name || '未知账户' }}
+                {{ account?.name || 'Cuenta desconocida' }}
               </p>
             </div>
           </div>
@@ -54,10 +54,10 @@
 
         <!-- 内容区域 -->
         <div class="px-5 py-4">
-          <!-- 测试信息 -->
+          <!-- 测试Información -->
           <div class="mb-4 space-y-2">
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">平台类型</span>
+              <span class="text-gray-500 dark:text-gray-400">PlataformaTipo</span>
               <span
                 :class="[
                   'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium',
@@ -68,12 +68,12 @@
                 {{ platformLabel }}
               </span>
             </div>
-            <!-- Bedrock 账号类型 -->
+            <!-- Bedrock 账号Tipo -->
             <div
               v-if="props.account?.platform === 'bedrock'"
               class="flex items-center justify-between text-sm"
             >
-              <span class="text-gray-500 dark:text-gray-400">账号类型</span>
+              <span class="text-gray-500 dark:text-gray-400">账号Tipo</span>
               <span
                 :class="[
                   'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium',
@@ -85,7 +85,7 @@
               </span>
             </div>
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">测试模型</span>
+              <span class="text-gray-500 dark:text-gray-400">测试Modelo</span>
               <select
                 v-model="selectedModel"
                 class="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
@@ -96,7 +96,7 @@
             </div>
           </div>
 
-          <!-- 状态指示 -->
+          <!-- Estado指示 -->
           <div :class="['mb-4 rounded-xl border p-4 transition-all duration-300', statusCardClass]">
             <div class="flex items-center gap-3">
               <div
@@ -140,7 +140,7 @@
                 class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
               >
                 <i class="fas fa-circle-notch fa-spin" />
-                等待响应中...
+                等待响应en...
               </p>
               <p
                 v-else-if="testStatus === 'error' && errorMessage"
@@ -161,7 +161,7 @@
           </div>
         </div>
 
-        <!-- 底部操作栏 -->
+        <!-- 底部Operación栏 -->
         <div
           class="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/80 px-5 py-3 dark:border-gray-800 dark:bg-gray-900/50"
         >
@@ -170,7 +170,7 @@
             :disabled="testStatus === 'testing'"
             @click="handleClose"
           >
-            关闭
+            Cerrar
           </button>
           <button
             :class="[
@@ -185,7 +185,7 @@
             <i :class="['fas', testStatus === 'testing' ? 'fa-spinner fa-spin' : 'fa-play']" />
             {{
               testStatus === 'testing'
-                ? '测试中...'
+                ? '测试en...'
                 : testStatus === 'idle'
                   ? '开始测试'
                   : '重新测试'
@@ -214,7 +214,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-// 状态
+// Estado
 const testStatus = ref('idle') // idle, testing, success, error
 const responseText = ref('')
 const errorMessage = ref('')
@@ -223,7 +223,7 @@ const testStartTime = ref(null)
 const eventSource = ref(null)
 const selectedModel = ref('')
 
-// 可用模型列表 - 根据账户类型
+// 可用Modelo列表 - 根据CuentaTipo
 const availableModels = computed(() => {
   if (!props.account) return []
   const platform = props.account.platform
@@ -248,7 +248,7 @@ const availableModels = computed(() => {
   return modelLists[platform] || []
 })
 
-// 默认测试模型
+// 默认测试Modelo
 const defaultModel = computed(() => {
   if (!props.account) return ''
   const platform = props.account.platform
@@ -265,7 +265,7 @@ const defaultModel = computed(() => {
   return models[platform] || ''
 })
 
-// 监听账户变化，重置选中的模型
+// 监听Cuenta变化，Restablecer选enModelo
 watch(
   () => props.account,
   () => {
@@ -282,7 +282,7 @@ const useSSE = computed(() => {
 
 // 计算属性
 const platformLabel = computed(() => {
-  if (!props.account) return '未知'
+  if (!props.account) return 'Desconocido'
   const platform = props.account.platform
   const labels = {
     claude: 'Claude OAuth',
@@ -329,7 +329,7 @@ const platformBadgeClass = computed(() => {
   return classes[platform] || 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
 })
 
-// Bedrock 账号类型相关
+// Bedrock 账号Tipo相关
 const credentialTypeLabel = computed(() => {
   if (!props.account || props.account.platform !== 'bedrock') return ''
   const credentialType = props.account.credentialType
@@ -364,13 +364,13 @@ const statusTitle = computed(() => {
     case 'idle':
       return '准备就绪'
     case 'testing':
-      return '正在测试...'
+      return '正en测试...'
     case 'success':
-      return '测试成功'
+      return '测试Exitoso'
     case 'error':
-      return '测试失败'
+      return '测试Fallido'
     default:
-      return '未知状态'
+      return 'DesconocidoEstado'
   }
 })
 
@@ -378,11 +378,11 @@ const statusDescription = computed(() => {
   const apiName = platformLabel.value || 'API'
   switch (testStatus.value) {
     case 'idle':
-      return '点击下方按钮开始测试账户连通性'
+      return '点击abajo方按钮开始测试Cuenta连通性'
     case 'testing':
-      return '正在发送测试请求并等待响应'
+      return '正en发送测试Solicitud并等待响应'
     case 'success':
-      return `账户可以正常访问 ${apiName}`
+      return `Cuenta可以正常访问 ${apiName}`
     case 'error':
       return errorMessage.value || `无法连接到 ${apiName}`
     default:
@@ -485,14 +485,14 @@ function getTestEndpoint() {
 async function startTest() {
   if (!props.account) return
 
-  // 重置状态
+  // RestablecerEstado
   testStatus.value = 'testing'
   responseText.value = ''
   errorMessage.value = ''
   testDuration.value = 0
   testStartTime.value = Date.now()
 
-  // 关闭之前的连接
+  // Cerrar之anterior连接
   if (eventSource.value) {
     eventSource.value.close()
   }
@@ -500,7 +500,7 @@ async function startTest() {
   const endpoint = getTestEndpoint()
   if (!endpoint) {
     testStatus.value = 'error'
-    errorMessage.value = '不支持的账户类型'
+    errorMessage.value = '不支持CuentaTipo'
     return
   }
 
@@ -508,7 +508,7 @@ async function startTest() {
     // 获取认证token
     const authToken = localStorage.getItem('authToken')
 
-    // 使用fetch发送POST请求
+    // 使用fetch发送POSTSolicitud
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -523,7 +523,7 @@ async function startTest() {
       throw new Error(errorData.message || `HTTP ${response.status}`)
     }
 
-    // 根据账户类型处理响应
+    // 根据CuentaTipo处理响应
     if (useSSE.value) {
       // SSE 流式响应 (Claude/Console)
       const reader = response.body.getReader()
@@ -546,13 +546,13 @@ async function startTest() {
               const data = JSON.parse(line.substring(6))
               handleSSEEvent(data)
             } catch {
-              // 忽略解析错误
+              // 忽略解析Error
             }
           }
         }
       }
     } else {
-      // JSON 响应 (其他平台)
+      // JSON 响应 (OtroPlataforma)
       const data = await response.json()
       testDuration.value = Date.now() - testStartTime.value
 
@@ -566,7 +566,7 @@ async function startTest() {
     }
   } catch (err) {
     testStatus.value = 'error'
-    errorMessage.value = err.message || '连接失败'
+    errorMessage.value = err.message || '连接Fallido'
     testDuration.value = Date.now() - testStartTime.value
   }
 }
@@ -588,12 +588,12 @@ function handleSSEEvent(data) {
         testStatus.value = 'success'
       } else {
         testStatus.value = 'error'
-        errorMessage.value = data.error || '测试失败'
+        errorMessage.value = data.error || '测试Fallido'
       }
       break
     case 'error':
       testStatus.value = 'error'
-      errorMessage.value = data.error || '未知错误'
+      errorMessage.value = data.error || 'Error desconocido'
       testDuration.value = Date.now() - testStartTime.value
       break
   }
@@ -602,13 +602,13 @@ function handleSSEEvent(data) {
 function handleClose() {
   if (testStatus.value === 'testing') return
 
-  // 关闭SSE连接
+  // CerrarSSE连接
   if (eventSource.value) {
     eventSource.value.close()
     eventSource.value = null
   }
 
-  // 重置状态
+  // RestablecerEstado
   testStatus.value = 'idle'
   responseText.value = ''
   errorMessage.value = ''
@@ -617,7 +617,7 @@ function handleClose() {
   emit('close')
 }
 
-// 监听show变化，重置状态并设置测试模型
+// 监听show变化，RestablecerEstado并Configuración测试Modelo
 watch(
   () => props.show,
   (newVal) => {
@@ -627,7 +627,7 @@ watch(
       errorMessage.value = ''
       testDuration.value = 0
 
-      // 根据平台和账号类型设置测试模型
+      // 根据Plataformay账号TipoConfiguración测试Modelo
       if (props.account?.platform === 'bedrock') {
         const credentialType = props.account.credentialType
         if (credentialType === 'bearer_token') {
@@ -638,7 +638,7 @@ watch(
           selectedModel.value = 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
         }
       } else {
-        // 其他平台使用默认模型
+        // OtroPlataforma使用默认Modelo
         selectedModel.value = 'claude-sonnet-4-5-20250929'
       }
     }

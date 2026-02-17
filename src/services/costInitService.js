@@ -2,7 +2,7 @@ const redis = require('../models/redis')
 const CostCalculator = require('../utils/costCalculator')
 const logger = require('../utils/logger')
 
-// HMGET 需要的字段
+// Campos requeridos para HMGET
 const USAGE_FIELDS = [
   'totalInputTokens',
   'inputTokens',
@@ -16,7 +16,7 @@ const USAGE_FIELDS = [
 
 class CostInitService {
   /**
-   * 带并发限制的并行执行
+   * Ejecución paralela con límite de concurrencia
    */
   async parallelLimit(items, fn, concurrency = 20) {
     let index = 0
@@ -38,7 +38,7 @@ class CostInitService {
   }
 
   /**
-   * 使用 SCAN 获取匹配的 keys（带去重）
+   * Obtiene keys coincidentes usando SCAN (con deduplicación)
    */
   async scanKeysWithDedup(client, pattern, count = 500) {
     const seen = new Set()
@@ -61,18 +61,18 @@ class CostInitService {
   }
 
   /**
-   * 初始化所有API Key的费用数据
-   * 扫描历史使用记录并计算费用
+   * Inicializa los datos de costos para todas las API Keys
+   * Escanea registros de uso históricos y calcula costos
    */
   async initializeAllCosts() {
     try {
       logger.info('💰 Starting cost initialization for all API Keys...')
 
-      // 用 scanApiKeyIds 获取 ID，然后过滤已删除的
+      // Obtiene IDs con scanApiKeyIds, luego filtra los eliminados
       const allKeyIds = await redis.scanApiKeyIds()
       const client = redis.getClientSafe()
 
-      // 批量检查 isDeleted 状态，过滤已删除的 key
+      // Verifica estado isDeleted en lote, filtra keys eliminadas
       const FILTER_BATCH = 100
       const apiKeyIds = []
 
@@ -101,7 +101,7 @@ class CostInitService {
       let processedCount = 0
       let errorCount = 0
 
-      // 优化6: 并行处理 + 并发限制
+      // Optimización 6: procesamiento paralelo + límite de concurrencia
       await this.parallelLimit(
         apiKeyIds,
         async (apiKeyId) => {
@@ -117,7 +117,7 @@ class CostInitService {
             logger.error(`❌ Failed to initialize costs for API Key ${apiKeyId}:`, error)
           }
         },
-        20 // 并发数
+        20 // Nivel de concurrencia
       )
 
       logger.success(
@@ -131,17 +131,17 @@ class CostInitService {
   }
 
   /**
-   * 初始化单个API Key的费用数据
+   * Inicializa datos de costos para una API Key individual
    */
   async initializeApiKeyCosts(apiKeyId, client) {
-    // 优化4: 使用 SCAN 获取 keys（带去重）
+    // Optimización 4: usa SCAN para obtener keys (con deduplicación)
     const modelKeys = await this.scanKeysWithDedup(client, `usage:${apiKeyId}:model:*:*:*`)
 
     if (modelKeys.length === 0) {
       return
     }
 
-    // 优化5: 使用 Pipeline + HMGET 批量获取数据
+    // Optimización 5: usa Pipeline + HMGET para obtención masiva de datos
     const BATCH_SIZE = 100
     const allData = []
 
@@ -161,7 +161,7 @@ class CostInitService {
           continue
         }
 
-        // 将数组转换为对象
+        // Convierte array a objeto
         const data = {}
         let hasData = false
         for (let k = 0; k < USAGE_FIELDS.length; k++) {
@@ -177,7 +177,7 @@ class CostInitService {
       }
     }
 
-    // 按日期分组统计
+    // Agrupa estadísticas por fecha
     const dailyCosts = new Map()
     const monthlyCosts = new Map()
     const hourlyCosts = new Map()
@@ -213,34 +213,34 @@ class CostInitService {
       }
     }
 
-    // 使用 SET NX EX 只补缺失的键，不覆盖已存在的
+    // Usa SET NX EX solo para completar keys faltantes, no sobrescribe existentes
     const pipeline = client.pipeline()
 
-    // 写入每日费用（只补缺失）
+    // Escribe costos diarios (solo completa faltantes)
     for (const [date, cost] of dailyCosts) {
       const key = `usage:cost:daily:${apiKeyId}:${date}`
       pipeline.set(key, cost.toString(), 'EX', 86400 * 30, 'NX')
     }
 
-    // 写入每月费用（只补缺失）
+    // Escribe costos mensuales (solo completa faltantes)
     for (const [month, cost] of monthlyCosts) {
       const key = `usage:cost:monthly:${apiKeyId}:${month}`
       pipeline.set(key, cost.toString(), 'EX', 86400 * 90, 'NX')
     }
 
-    // 写入每小时费用（只补缺失）
+    // Escribe costos por hora (solo completa faltantes)
     for (const [hour, cost] of hourlyCosts) {
       const key = `usage:cost:hourly:${apiKeyId}:${hour}`
       pipeline.set(key, cost.toString(), 'EX', 86400 * 7, 'NX')
     }
 
-    // 计算总费用
+    // Calcula costo total
     let totalCost = 0
     for (const cost of dailyCosts.values()) {
       totalCost += cost
     }
 
-    // 写入总费用（只补缺失）
+    // Escribe costo total (solo completa faltantes)
     if (totalCost > 0) {
       const totalKey = `usage:cost:total:${apiKeyId}`
       const existingTotal = await client.get(totalKey)
@@ -266,14 +266,14 @@ class CostInitService {
   }
 
   /**
-   * 检查是否需要初始化费用数据
-   * 使用 SCAN 代替 KEYS，正确处理 cursor
+   * Verifica si se necesita inicializar datos de costos
+   * Usa SCAN en lugar de KEYS, maneja cursor correctamente
    */
   async needsInitialization() {
     try {
       const client = redis.getClientSafe()
 
-      // 正确循环 SCAN 检查是否有任何费用数据
+      // Ciclo SCAN correcto para verificar si hay datos de costos
       let cursor = '0'
       let hasCostData = false
 
@@ -291,7 +291,7 @@ class CostInitService {
         return true
       }
 
-      // 抽样检查使用数据是否有对应的费用数据
+      // Verifica por muestreo si los datos de uso tienen datos de costos correspondientes
       cursor = '0'
       let samplesChecked = 0
       const maxSamples = 10

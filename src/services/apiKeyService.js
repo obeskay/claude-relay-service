@@ -40,18 +40,18 @@ const ACCOUNT_CATEGORY_MAP = {
 }
 
 /**
- * 规范化权限数据，兼容旧格式（字符串）和新格式（数组）
- * @param {string|array} permissions - 权限数据
- * @returns {array} - 权限数组，空数组表示全部服务
+ * 规范化PermisoDatos，兼容旧Formato（Cadena）和新Formato（Arreglo）
+ * @param {string|array} permissions - PermisoDatos
+ * @returns {array} - PermisoArreglo，空ArregloTabla示全部Servicio
  */
 function normalizePermissions(permissions) {
   if (!permissions) {
-    return [] // 空 = 全部服务
+    return [] // 空 = 全部Servicio
   }
   if (Array.isArray(permissions)) {
     return permissions
   }
-  // 尝试解析 JSON 字符串（新格式存储）
+  // 尝试Analizar JSON Cadena（新Formato存储）
   if (typeof permissions === 'string') {
     if (permissions.startsWith('[')) {
       try {
@@ -60,35 +60,35 @@ function normalizePermissions(permissions) {
           return parsed
         }
       } catch (e) {
-        // 解析失败，继续处理为普通字符串
+        // AnalizarFalló，继续Procesar为普通Cadena
       }
     }
-    // 旧格式 'all' 转为空数组
+    // 旧Formato 'all' 转为空Arreglo
     if (permissions === 'all') {
       return []
     }
-    // 兼容逗号分隔格式（修复历史错误数据，如 "claude,openai"）
+    // 兼容逗号分隔Formato（Corrección历史ErrorDatos，如 "claude,openai"）
     if (permissions.includes(',')) {
       return permissions
         .split(',')
         .map((p) => p.trim())
         .filter(Boolean)
     }
-    // 旧单个字符串转为数组
+    // 旧单个Cadena转为Arreglo
     return [permissions]
   }
   return []
 }
 
 /**
- * 检查是否有访问特定服务的权限
- * @param {string|array} permissions - 权限数据
- * @param {string} service - 服务名称（claude/gemini/openai/droid）
- * @returns {boolean} - 是否有权限
+ * Verificar是否有访问特定Servicio的Permiso
+ * @param {string|array} permissions - PermisoDatos
+ * @param {string} service - ServicioNombre（claude/gemini/openai/droid）
+ * @returns {boolean} - 是否有Permiso
  */
 function hasPermission(permissions, service) {
   const perms = normalizePermissions(permissions)
-  return perms.length === 0 || perms.includes(service) // 空数组 = 全部服务
+  return perms.length === 0 || perms.includes(service) // 空Arreglo = 全部Servicio
 }
 
 function normalizeAccountTypeKey(type) {
@@ -129,26 +129,26 @@ class ApiKeyService {
     this.prefix = config.security.apiKeyPrefix
   }
 
-  // 🔑 生成新的API Key
+  // 🔑 Generar新的API Key
   async generateApiKey(options = {}) {
     const {
       name = 'Unnamed Key',
       description = '',
-      tokenLimit = 0, // 默认为0，不再使用token限制
+      tokenLimit = 0, // Predeterminado为0，不再使用tokenLímite
       expiresAt = null,
       claudeAccountId = null,
       claudeConsoleAccountId = null,
       geminiAccountId = null,
       openaiAccountId = null,
       azureOpenaiAccountId = null,
-      bedrockAccountId = null, // 添加 Bedrock cuentaID支持
+      bedrockAccountId = null, // 添加 Bedrock cuentaIDSoportar
       droidAccountId = null,
-      permissions = [], // 数组格式，空数组表示全部服务，如 ['claude', 'gemini']
+      permissions = [], // ArregloFormato，空ArregloTabla示全部Servicio，如 ['claude', 'gemini']
       isActive = true,
       concurrencyLimit = 0,
       rateLimitWindow = null,
       rateLimitRequests = null,
-      rateLimitCost = null, // 新增：速率限制费用字段
+      rateLimitCost = null, // Nueva característica：速率Límite费用Campo
       enableModelRestriction = false,
       restrictedModels = [],
       enableClientRestriction = false,
@@ -160,18 +160,18 @@ class ApiKeyService {
       modelMapping = {},
       tags = [],
       activationDays = 0,
-      activationUnit = 'days', // 新增：激活时间单位 'hours' 或 'days'
-      expirationMode = 'fixed', // 新增：过期模式 'fixed'(固定时间) 或 'activation'(首次使用后激活)
-      icon = '', // 新增：图标（base64编码）
-      serviceRates = {} // API Key 级别服务倍率覆盖
+      activationUnit = 'days', // Nueva característica：激活Tiempo单位 'hours' 或 'days'
+      expirationMode = 'fixed', // Nueva característica：过期模式 'fixed'(固定Tiempo) 或 'activation'(首次使用后激活)
+      icon = '', // Nueva característica：图标（base64Codificación）
+      serviceRates = {} // API Key 级别Servicio倍率覆盖
     } = options
 
-    // 生成简单的API Key (64字符十六进制)
+    // Generar简单的API Key (64字符十六进制)
     const apiKey = `${this.prefix}${this._generateSecretKey()}`
     const keyId = uuidv4()
     const hashedKey = this._hashApiKey(apiKey)
 
-    // 处理 permissions
+    // Procesar permissions
     const _permissionsValue = permissions
 
     const keyData = {
@@ -183,7 +183,7 @@ class ApiKeyService {
       concurrencyLimit: String(concurrencyLimit ?? 0),
       rateLimitWindow: String(rateLimitWindow ?? 0),
       rateLimitRequests: String(rateLimitRequests ?? 0),
-      rateLimitCost: String(rateLimitCost ?? 0), // 新增：速率限制费用字段
+      rateLimitCost: String(rateLimitCost ?? 0), // Nueva característica：速率Límite费用Campo
       isActive: String(isActive),
       claudeAccountId: claudeAccountId || '',
       claudeConsoleAccountId: claudeConsoleAccountId || '',
@@ -203,25 +203,25 @@ class ApiKeyService {
       forcedModel: forcedModel || '',
       modelMapping: JSON.stringify(modelMapping || {}),
       tags: JSON.stringify(tags || []),
-      activationDays: String(activationDays || 0), // 新增：激活后有效天数
-      activationUnit: activationUnit || 'days', // 新增：激活时间单位
-      expirationMode: expirationMode || 'fixed', // 新增：过期模式
+      activationDays: String(activationDays || 0), // Nueva característica：激活后有效天数
+      activationUnit: activationUnit || 'days', // Nueva característica：激活Tiempo单位
+      expirationMode: expirationMode || 'fixed', // Nueva característica：过期模式
       isActivated: expirationMode === 'fixed' ? 'true' : 'false', // 根据模式决定激活状态
-      activatedAt: expirationMode === 'fixed' ? new Date().toISOString() : '', // 激活时间
+      activatedAt: expirationMode === 'fixed' ? new Date().toISOString() : '', // 激活Tiempo
       createdAt: new Date().toISOString(),
       lastUsedAt: '',
-      expiresAt: expirationMode === 'fixed' ? expiresAt || '' : '', // 固定模式才设置过期时间
+      expiresAt: expirationMode === 'fixed' ? expiresAt || '' : '', // 固定模式才Establecer过期Tiempo
       createdBy: options.createdBy || 'admin',
       userId: options.userId || '',
       userUsername: options.userUsername || '',
-      icon: icon || '', // 新增：图标（base64编码）
-      serviceRates: JSON.stringify(serviceRates || {}) // API Key 级别服务倍率
+      icon: icon || '', // Nueva característica：图标（base64Codificación）
+      serviceRates: JSON.stringify(serviceRates || {}) // API Key 级别Servicio倍率
     }
 
-    // 保存API Key数据并建立哈希映射
+    // 保存API KeyDatos并建立哈希映射
     await redis.setApiKey(keyId, keyData, hashedKey)
 
-    // 同步添加到费用排序索引
+    // Sincronización添加到费用OrdenarÍndice
     try {
       const costRankService = require('./costRankService')
       await costRankService.addKeyToIndexes(keyId)
@@ -229,7 +229,7 @@ class ApiKeyService {
       logger.warn(`Failed to add key ${keyId} to cost rank indexes:`, err.message)
     }
 
-    // 同步添加到 API Key 索引（用于分页查询优化）
+    // Sincronización添加到 API Key Índice（用于分页ConsultaOptimización）
     try {
       const apiKeyIndexService = require('./apiKeyIndexService')
       await apiKeyIndexService.addToIndex({
@@ -249,14 +249,14 @@ class ApiKeyService {
 
     return {
       id: keyId,
-      apiKey, // 只在创建时返回完整的key
+      apiKey, // 只在Crear时Retornar完整的key
       name: keyData.name,
       description: keyData.description,
       tokenLimit: parseInt(keyData.tokenLimit),
       concurrencyLimit: parseInt(keyData.concurrencyLimit),
       rateLimitWindow: parseInt(keyData.rateLimitWindow || 0),
       rateLimitRequests: parseInt(keyData.rateLimitRequests || 0),
-      rateLimitCost: parseFloat(keyData.rateLimitCost || 0), // 新增：速率限制费用字段
+      rateLimitCost: parseFloat(keyData.rateLimitCost || 0), // Nueva característica：速率Límite费用Campo
       isActive: keyData.isActive === 'true',
       claudeAccountId: keyData.claudeAccountId,
       claudeConsoleAccountId: keyData.claudeConsoleAccountId,
@@ -288,44 +288,44 @@ class ApiKeyService {
       createdAt: keyData.createdAt,
       expiresAt: keyData.expiresAt,
       createdBy: keyData.createdBy,
-      serviceRates: JSON.parse(keyData.serviceRates || '{}') // API Key 级别服务倍率
+      serviceRates: JSON.parse(keyData.serviceRates || '{}') // API Key 级别Servicio倍率
     }
   }
 
-  // 🔍 验证API Key
+  // 🔍 ValidarAPI Key
   async validateApiKey(apiKey) {
     try {
       if (!apiKey || !apiKey.startsWith(this.prefix)) {
         return { valid: false, error: 'Invalid API key format' }
       }
 
-      // 计算API Key的哈希值
+      // CalcularAPI Key的哈希Valor
       const hashedKey = this._hashApiKey(apiKey)
 
-      // 通过哈希值直接查找API Key（性能优化）
+      // 通过哈希Valor直接查找API Key（RendimientoOptimización）
       const keyData = await redis.findApiKeyByHash(hashedKey)
 
       if (!keyData) {
-        // ⚠️ 警告：Hash map lookup failed, possibly a race condition or corrupted hash map
+        // ⚠️ Advertencia：Hash map lookup failed, possibly a race condition or corrupted hash map
         logger.warn(
           `⚠️ API key not found in hash map: ${hashedKey.substring(0, 16)}... (possible race condition or corrupted hash map)`
         )
         return { valid: false, error: 'API key not found' }
       }
 
-      // 检查是否激活
+      // Verificar是否激活
       if (keyData.isActive !== 'true') {
         return { valid: false, error: 'API key is disabled' }
       }
 
-      // 处理激活逻辑（仅在 activation 模式下）
+      // Procesar激活逻辑（仅在 activation 模式下）
       if (keyData.expirationMode === 'activation' && keyData.isActivated !== 'true') {
         // 首次使用，需要激活
         const now = new Date()
-        const activationPeriod = parseInt(keyData.activationDays || 30) // 默认30
-        const activationUnit = keyData.activationUnit || 'days' // 默认天
+        const activationPeriod = parseInt(keyData.activationDays || 30) // Predeterminado30
+        const activationUnit = keyData.activationUnit || 'days' // Predeterminado天
 
-        // 根据单位计算过期时间
+        // 根据单位Calcular过期Tiempo
         let milliseconds
         if (activationUnit === 'hours') {
           milliseconds = activationPeriod * 60 * 60 * 1000 // 小时转毫秒
@@ -335,7 +335,7 @@ class ApiKeyService {
 
         const expiresAt = new Date(now.getTime() + milliseconds)
 
-        // 更新激活状态和过期时间
+        // Actualizar激活状态和过期Tiempo
         keyData.isActivated = 'true'
         keyData.activatedAt = now.toISOString()
         keyData.expiresAt = expiresAt.toISOString()
@@ -345,17 +345,18 @@ class ApiKeyService {
         await redis.setApiKey(keyData.id, keyData)
 
         logger.success(
-          `🔓 API key activated: ${keyData.id} (${keyData.name
+          `🔓 API key activated: ${keyData.id} (${
+            keyData.name
           }), will expire in ${activationPeriod} ${activationUnit} at ${expiresAt.toISOString()}`
         )
       }
 
-      // 检查是否过期
+      // Verificar是否过期
       if (keyData.expiresAt && new Date() > new Date(keyData.expiresAt)) {
         return { valid: false, error: 'API key has expired' }
       }
 
-      // 如果API Key属于某个用户，检查用户是否被禁用
+      // 如果API Key属于某个Usuario，VerificarUsuario是否被Deshabilitar
       if (keyData.userId) {
         try {
           const userService = require('./userService')
@@ -369,7 +370,7 @@ class ApiKeyService {
         }
       }
 
-      // 按需获取费用统计（仅在有限制时查询，减少 Redis 调用）
+      // 按需Obtener费用Estadística（仅在有Límite时Consulta，减少 Redis 调用）
       const dailyCostLimit = parseFloat(keyData.dailyCostLimit || 0)
       const totalCostLimit = parseFloat(keyData.totalCostLimit || 0)
       const weeklyOpusCostLimit = parseFloat(keyData.weeklyOpusCostLimit || 0)
@@ -390,12 +391,12 @@ class ApiKeyService {
       const costData =
         costQueries.length > 0 ? Object.assign({}, ...(await Promise.all(costQueries))) : {}
 
-      // 更新最后使用时间（优化：只在实际API调用时更新，而不是验证时）
-      // 注意：lastUsedAt的更新已移至recordUsage方法中
+      // Actualizar最后使用Tiempo（Optimización：只在实际API调用时Actualizar，而不是Validar时）
+      // 注意：lastUsedAt的Actualizar已移至recordUsageMétodo中
 
       logger.api(`🔓 API key validated successfully: ${keyData.id}`)
 
-      // 解析限制模型数据
+      // AnalizarLímite模型Datos
       let restrictedModels = []
       try {
         restrictedModels = keyData.restrictedModels ? JSON.parse(keyData.restrictedModels) : []
@@ -403,7 +404,7 @@ class ApiKeyService {
         restrictedModels = []
       }
 
-      // 解析允许的客户端
+      // Analizar允许的Cliente
       let allowedClients = []
       try {
         allowedClients = keyData.allowedClients ? JSON.parse(keyData.allowedClients) : []
@@ -411,7 +412,7 @@ class ApiKeyService {
         allowedClients = []
       }
 
-      // 解析标签
+      // Analizar标签
       let tags = []
       try {
         tags = keyData.tags ? JSON.parse(keyData.tags) : []
@@ -419,12 +420,12 @@ class ApiKeyService {
         tags = []
       }
 
-      // 解析 serviceRates
+      // Analizar serviceRates
       let serviceRates = {}
       try {
         serviceRates = keyData.serviceRates ? JSON.parse(keyData.serviceRates) : {}
       } catch (e) {
-        // 解析失败使用默认值
+        // AnalizarFalló使用PredeterminadoValor
       }
 
       return {
@@ -447,7 +448,7 @@ class ApiKeyService {
           concurrencyLimit: parseInt(keyData.concurrencyLimit || 0),
           rateLimitWindow: parseInt(keyData.rateLimitWindow || 0),
           rateLimitRequests: parseInt(keyData.rateLimitRequests || 0),
-          rateLimitCost: parseFloat(keyData.rateLimitCost || 0), // 新增：速率限制费用字段
+          rateLimitCost: parseFloat(keyData.rateLimitCost || 0), // Nueva característica：速率Límite费用Campo
           enableModelRestriction: keyData.enableModelRestriction === 'true',
           restrictedModels,
           enableClientRestriction: keyData.enableClientRestriction === 'true',
@@ -455,7 +456,7 @@ class ApiKeyService {
           dailyCostLimit,
           totalCostLimit,
           weeklyOpusCostLimit,
-          forcedModel: keyData.forcedModel || '', // 新增：强制路由模型
+          forcedModel: keyData.forcedModel || '', // Nueva característica：强制Ruta模型
           dailyCost: costData.dailyCost || 0,
           totalCost: costData.totalCost || 0,
           weeklyOpusCost: costData.weeklyOpusCost || 0,
@@ -469,32 +470,32 @@ class ApiKeyService {
     }
   }
 
-  // 🔍 验证API Key（仅用于统计查询，不触发激活）
+  // 🔍 ValidarAPI Key（仅用于EstadísticaConsulta，不触发激活）
   async validateApiKeyForStats(apiKey) {
     try {
       if (!apiKey || !apiKey.startsWith(this.prefix)) {
         return { valid: false, error: 'Invalid API key format' }
       }
 
-      // 计算API Key的哈希值
+      // CalcularAPI Key的哈希Valor
       const hashedKey = this._hashApiKey(apiKey)
 
-      // 通过哈希值直接查找API Key（性能优化）
+      // 通过哈希Valor直接查找API Key（RendimientoOptimización）
       const keyData = await redis.findApiKeyByHash(hashedKey)
 
       if (!keyData) {
         return { valid: false, error: 'API key not found' }
       }
 
-      // 检查是否激活
+      // Verificar是否激活
       if (keyData.isActive !== 'true') {
         const keyName = keyData.name || 'Unknown'
         return { valid: false, error: `API Key "${keyName}" ha sido deshabilitada`, keyName }
       }
 
-      // 注意：这里不处理激活逻辑，保持 API Key 的未激活状态
+      // 注意：这里不Procesar激活逻辑，保持 API Key 的未激活状态
 
-      // 检查是否过期（仅对已激活的 Key 检查）
+      // Verificar是否过期（仅对已激活的 Key Verificar）
       if (
         keyData.isActivated === 'true' &&
         keyData.expiresAt &&
@@ -504,7 +505,7 @@ class ApiKeyService {
         return { valid: false, error: `API Key "${keyName}" ha caducado`, keyName }
       }
 
-      // 如果API Key属于某个用户，检查用户是否被禁用
+      // 如果API Key属于某个Usuario，VerificarUsuario是否被Deshabilitar
       if (keyData.userId) {
         try {
           const userService = require('./userService')
@@ -513,21 +514,21 @@ class ApiKeyService {
             return { valid: false, error: 'User account is disabled' }
           }
         } catch (userError) {
-          // 如果用户服务出错，记录但不影响API Key验证
+          // 如果UsuarioServicio出错，Registro但不影响API KeyValidar
           logger.warn(`Failed to check user status for API key ${keyData.id}:`, userError)
         }
       }
 
-      // 获取当日费用
+      // Obtener当日费用
       const [dailyCost, costStats] = await Promise.all([
         redis.getDailyCost(keyData.id),
         redis.getCostStats(keyData.id)
       ])
 
-      // 获取使用统计
+      // Obtener使用Estadística
       const usage = await redis.getUsageStats(keyData.id)
 
-      // 解析限制模型数据
+      // AnalizarLímite模型Datos
       let restrictedModels = []
       try {
         restrictedModels = keyData.restrictedModels ? JSON.parse(keyData.restrictedModels) : []
@@ -535,7 +536,7 @@ class ApiKeyService {
         restrictedModels = []
       }
 
-      // 解析允许的客户端
+      // Analizar允许的Cliente
       let allowedClients = []
       try {
         allowedClients = keyData.allowedClients ? JSON.parse(keyData.allowedClients) : []
@@ -543,7 +544,7 @@ class ApiKeyService {
         allowedClients = []
       }
 
-      // 解析标签
+      // Analizar标签
       let tags = []
       try {
         tags = keyData.tags ? JSON.parse(keyData.tags) : []
@@ -559,7 +560,7 @@ class ApiKeyService {
           description: keyData.description,
           createdAt: keyData.createdAt,
           expiresAt: keyData.expiresAt,
-          // 添加激活相关字段
+          // 添加激活相关Campo
           expirationMode: keyData.expirationMode || 'fixed',
           isActivated: keyData.isActivated === 'true',
           activationDays: parseInt(keyData.activationDays || 0),
@@ -585,7 +586,7 @@ class ApiKeyService {
           dailyCostLimit: parseFloat(keyData.dailyCostLimit || 0),
           totalCostLimit: parseFloat(keyData.totalCostLimit || 0),
           weeklyOpusCostLimit: parseFloat(keyData.weeklyOpusCostLimit || 0),
-          forcedModel: keyData.forcedModel || '', // 新增：强制路由模型
+          forcedModel: keyData.forcedModel || '', // Nueva característica：强制Ruta模型
           dailyCost: dailyCost || 0,
           totalCost: costStats?.total || 0,
           weeklyOpusCost: (await redis.getWeeklyOpusCost(keyData.id)) || 0,
@@ -599,17 +600,17 @@ class ApiKeyService {
     }
   }
 
-  // 🏷️ 获取所有标签（合并索引和全局集合）
+  // 🏷️ Obtener所有标签（合并Índice和全局集合）
   async getAllTags() {
     const indexTags = await redis.scanAllApiKeyTags()
     const globalTags = await redis.getGlobalTags()
-    // 过滤空值和空格
+    // Filtrar空Valor和空格
     return [
       ...new Set([...indexTags, ...globalTags].map((t) => (t ? t.trim() : '')).filter((t) => t))
     ].sort()
   }
 
-  // 🏷️ 创建新标签
+  // 🏷️ Crear新标签
   async createTag(tagName) {
     const existingTags = await this.getAllTags()
     if (existingTags.includes(tagName)) {
@@ -619,12 +620,12 @@ class ApiKeyService {
     return { success: true }
   }
 
-  // 🏷️ 获取标签详情（含使用数量）
+  // 🏷️ Obtener标签详情（含使用数量）
   async getTagsWithCount() {
     const apiKeys = await redis.getAllApiKeys()
     const tagCounts = new Map()
 
-    // 统计 API Key 上的标签（trim 后统计）
+    // Estadística API Key 上的标签（trim 后Estadística）
     for (const key of apiKeys) {
       if (key.isDeleted === 'true') {
         continue
@@ -646,7 +647,7 @@ class ApiKeyService {
       }
     }
 
-    // 直接获取全局标签集合（避免重复扫描）
+    // 直接Obtener全局标签集合（避免重复扫描）
     const globalTags = await redis.getGlobalTags()
     for (const tag of globalTags) {
       const trimmed = tag ? tag.trim() : ''
@@ -660,7 +661,7 @@ class ApiKeyService {
       .sort((a, b) => b.count - a.count)
   }
 
-  // 🏷️ 从所有 API Key 中移除指定标签
+  // 🏷️ 从所有 API Key 中Eliminación指定标签
   async removeTagFromAllKeys(tagName) {
     const normalizedName = (tagName || '').trim()
     if (!normalizedName) {
@@ -682,7 +683,7 @@ class ApiKeyService {
         tags = []
       }
 
-      // 匹配时 trim 比较，过滤非字符串
+      // 匹配时 trim 比较，Filtrar非Cadena
       const strTags = tags.filter((t) => typeof t === 'string')
       if (strTags.some((t) => t.trim() === normalizedName)) {
         const newTags = strTags.filter((t) => t.trim() !== normalizedName)
@@ -691,9 +692,9 @@ class ApiKeyService {
       }
     }
 
-    // 同时从全局标签集合删除
+    // 同时从全局标签集合Eliminar
     await redis.removeTag(normalizedName)
-    await redis.removeTag(tagName) // 也删除原始值（可能带空格）
+    await redis.removeTag(tagName) // 也Eliminar原始Valor（可能带空格）
 
     return { affectedCount }
   }
@@ -701,14 +702,14 @@ class ApiKeyService {
   // 🏷️ 重命名标签
   async renameTag(oldName, newName) {
     if (!newName || !newName.trim()) {
-      return { affectedCount: 0, error: '新标签名不能为空' }
+      return { affectedCount: 0, error: '新标Firma不能为空' }
     }
 
     const normalizedOld = (oldName || '').trim()
     const normalizedNew = newName.trim()
 
     if (!normalizedOld) {
-      return { affectedCount: 0, error: '旧标签名不能为空' }
+      return { affectedCount: 0, error: '旧标Firma不能为空' }
     }
 
     const apiKeys = await redis.getAllApiKeys()
@@ -727,7 +728,7 @@ class ApiKeyService {
         tags = []
       }
 
-      // 匹配时 trim 比较，过滤非字符串
+      // 匹配时 trim 比较，Filtrar非Cadena
       const strTags = tags.filter((t) => typeof t === 'string')
       if (strTags.some((t) => t.trim() === normalizedOld)) {
         foundInKeys = true
@@ -739,7 +740,7 @@ class ApiKeyService {
       }
     }
 
-    // 检查全局集合是否有该标签
+    // Verificar全局集合是否有该标签
     const globalTags = await redis.getGlobalTags()
     const foundInGlobal = globalTags.some(
       (t) => typeof t === 'string' && t.trim() === normalizedOld
@@ -749,31 +750,31 @@ class ApiKeyService {
       return { affectedCount: 0, error: '标签不存在' }
     }
 
-    // 同时更新全局标签集合（删旧加新）
+    // 同时Actualizar全局标签集合（删旧加新）
     await redis.removeTag(normalizedOld)
-    await redis.removeTag(oldName) // 也删除原始值
+    await redis.removeTag(oldName) // 也Eliminar原始Valor
     await redis.addTag(normalizedNew)
 
     return { affectedCount }
   }
 
-  // 📋 获取所有API Keys
+  // 📋 Obtener所有API Keys
   async getAllApiKeys(includeDeleted = false) {
     try {
       let apiKeys = await redis.getAllApiKeys()
       const client = redis.getClientSafe()
       const accountInfoCache = new Map()
 
-      // 默认过滤掉已删除的API Keys
+      // PredeterminadoFiltrar掉已Eliminar的API Keys
       if (!includeDeleted) {
         apiKeys = apiKeys.filter((key) => key.isDeleted !== 'true')
       }
 
-      // 为每个key添加使用统计和当前并发数
+      // 为每个key添加使用Estadística和当前Nivel de concurrencia
       for (const key of apiKeys) {
         key.usage = await redis.getUsageStats(key.id)
         const costStats = await redis.getCostStats(key.id)
-        // 为前端兼容性：把费用信息同步到 usage 对象里
+        // 为前端兼容性：把费用InformaciónSincronización到 usage Objeto里
         if (key.usage && costStats) {
           key.usage.total = key.usage.total || {}
           key.usage.total.cost = costStats.total
@@ -784,7 +785,7 @@ class ApiKeyService {
         key.concurrencyLimit = parseInt(key.concurrencyLimit || 0)
         key.rateLimitWindow = parseInt(key.rateLimitWindow || 0)
         key.rateLimitRequests = parseInt(key.rateLimitRequests || 0)
-        key.rateLimitCost = parseFloat(key.rateLimitCost || 0) // 新增：速率限制费用字段
+        key.rateLimitCost = parseFloat(key.rateLimitCost || 0) // Nueva característica：速率Límite费用Campo
         key.currentConcurrency = await redis.getConcurrency(key.id)
         key.isActive = key.isActive === 'true'
         key.enableModelRestriction = key.enableModelRestriction === 'true'
@@ -793,7 +794,7 @@ class ApiKeyService {
         key.dailyCostLimit = parseFloat(key.dailyCostLimit || 0)
         key.totalCostLimit = parseFloat(key.totalCostLimit || 0)
         key.weeklyOpusCostLimit = parseFloat(key.weeklyOpusCostLimit || 0)
-        key.forcedModel = key.forcedModel || '' // 新增：强制路由模型
+        key.forcedModel = key.forcedModel || '' // Nueva característica：强制Ruta模型
         key.dailyCost = (await redis.getDailyCost(key.id)) || 0
         key.weeklyOpusCost = (await redis.getWeeklyOpusCost(key.id)) || 0
         key.activationDays = parseInt(key.activationDays || 0)
@@ -802,23 +803,23 @@ class ApiKeyService {
         key.isActivated = key.isActivated === 'true'
         key.activatedAt = key.activatedAt || null
 
-        // 获取当前时间窗口的请求次数、Token使用量和费用
+        // Obtener当前Tiempo窗口的Solicitud次数、Token使用量和费用
         if (key.rateLimitWindow > 0) {
           const requestCountKey = `rate_limit:requests:${key.id}`
           const tokenCountKey = `rate_limit:tokens:${key.id}`
-          const costCountKey = `rate_limit:cost:${key.id}` // 新增：费用计数器
+          const costCountKey = `rate_limit:cost:${key.id}` // Nueva característica：费用计数器
           const windowStartKey = `rate_limit:window_start:${key.id}`
 
           key.currentWindowRequests = parseInt((await client.get(requestCountKey)) || '0')
           key.currentWindowTokens = parseInt((await client.get(tokenCountKey)) || '0')
-          key.currentWindowCost = parseFloat((await client.get(costCountKey)) || '0') // 新增：当前窗口费用
+          key.currentWindowCost = parseFloat((await client.get(costCountKey)) || '0') // Nueva característica：当前窗口费用
 
-          // 获取窗口开始时间和计算剩余时间
+          // Obtener窗口IniciandoTiempo和Calcular剩余Tiempo
           const windowStart = await client.get(windowStartKey)
           if (windowStart) {
             const now = Date.now()
             const windowStartTime = parseInt(windowStart)
-            const windowDuration = key.rateLimitWindow * 60 * 1000 // 转换为毫秒
+            const windowDuration = key.rateLimitWindow * 60 * 1000 // Convertir为毫秒
             const windowEndTime = windowStartTime + windowDuration
 
             // 如果窗口还有效
@@ -827,17 +828,17 @@ class ApiKeyService {
               key.windowEndTime = windowEndTime
               key.windowRemainingSeconds = Math.max(0, Math.floor((windowEndTime - now) / 1000))
             } else {
-              // 窗口ha caducado，下次请求会重置
+              // 窗口ha caducado，下次Solicitud会重置
               key.windowStartTime = null
               key.windowEndTime = null
               key.windowRemainingSeconds = 0
               // 重置计数为0，因为窗口ha caducado
               key.currentWindowRequests = 0
               key.currentWindowTokens = 0
-              key.currentWindowCost = 0 // 新增：重置费用
+              key.currentWindowCost = 0 // Nueva característica：重置费用
             }
           } else {
-            // 窗口还未开始（没有任何请求）
+            // 窗口还未Iniciando（没有任何Solicitud）
             key.windowStartTime = null
             key.windowEndTime = null
             key.windowRemainingSeconds = null
@@ -845,7 +846,7 @@ class ApiKeyService {
         } else {
           key.currentWindowRequests = 0
           key.currentWindowTokens = 0
-          key.currentWindowCost = 0 // 新增：重置费用
+          key.currentWindowCost = 0 // Nueva característica：重置费用
           key.windowStartTime = null
           key.windowEndTime = null
           key.windowRemainingSeconds = null
@@ -866,7 +867,7 @@ class ApiKeyService {
         } catch (e) {
           key.tags = []
         }
-        // 不暴露已弃用字段
+        // 不暴露已弃用Campo
         if (Object.prototype.hasOwnProperty.call(key, 'ccrAccountId')) {
           delete key.ccrAccountId
         }
@@ -878,7 +879,7 @@ class ApiKeyService {
             lastUsageRecord = usageRecords[0]
           }
         } catch (error) {
-          logger.debug(`加载 API Key ${key.id} 的使用记录失败:`, error)
+          logger.debug(`加载 API Key ${key.id} 的使用RegistroFalló:`, error)
         }
 
         if (lastUsageRecord && (lastUsageRecord.accountId || lastUsageRecord.accountType)) {
@@ -904,7 +905,7 @@ class ApiKeyService {
               rawAccountId: lastUsageRecord.accountId || null,
               accountType: 'deleted',
               accountCategory: 'deleted',
-              accountName: '已删除',
+              accountName: '已Eliminar',
               recordedAt: lastUsageRecord.timestamp || key.lastUsedAt || null
             }
           }
@@ -912,7 +913,7 @@ class ApiKeyService {
           key.lastUsage = null
         }
 
-        delete key.apiKey // 不返回哈希后的key
+        delete key.apiKey // 不Retornar哈希后的key
       }
 
       return apiKeys
@@ -923,48 +924,48 @@ class ApiKeyService {
   }
 
   /**
-   * 🚀 快速获取所有 API Keys（使用 Pipeline 批量操作，性能优化版）
-   * 适用于 dashboard、usage-costs 等需要大量 API Key 数据的场景
-   * @param {boolean} includeDeleted - 是否包含已删除的 API Keys
-   * @returns {Promise<Array>} API Keys 列表
+   * 🚀 快速Obtener所有 API Keys（使用 Pipeline 批量Operación，RendimientoOptimización版）
+   * 适用于 dashboard、usage-costs 等需要大量 API Key Datos的场景
+   * @param {boolean} includeDeleted - 是否Incluir已Eliminar的 API Keys
+   * @returns {Promise<Array>} API Keys ColumnaTabla
    */
   async getAllApiKeysFast(includeDeleted = false) {
     try {
-      // 1. 使用 SCAN 获取所有 API Key IDs
+      // 1. 使用 SCAN Obtener所有 API Key IDs
       const keyIds = await redis.scanApiKeyIds()
       if (keyIds.length === 0) {
         return []
       }
 
-      // 2. 批量获取基础数据
+      // 2. 批量Obtener基础Datos
       let apiKeys = await redis.batchGetApiKeys(keyIds)
 
-      // 3. 过滤已删除的
+      // 3. Filtrar已Eliminar的
       if (!includeDeleted) {
         apiKeys = apiKeys.filter((key) => !key.isDeleted)
       }
 
-      // 4. 批量获取统计数据（单次 Pipeline）
+      // 4. 批量ObtenerEstadísticaDatos（单次 Pipeline）
       const activeKeyIds = apiKeys.map((k) => k.id)
       const statsMap = await redis.batchGetApiKeyStats(activeKeyIds)
 
-      // 5. 合并数据
+      // 5. 合并Datos
       for (const key of apiKeys) {
         const stats = statsMap.get(key.id) || {}
 
-        // 处理 usage 数据
+        // Procesar usage Datos
         const usageTotal = stats.usageTotal || {}
         const usageDaily = stats.usageDaily || {}
         const usageMonthly = stats.usageMonthly || {}
 
-        // 计算平均 RPM/TPM
+        // Calcular平均 RPM/TPM
         const createdAt = stats.createdAt ? new Date(stats.createdAt) : new Date()
         const daysSinceCreated = Math.max(
           1,
           Math.ceil((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24))
         )
         const totalMinutes = daysSinceCreated * 24 * 60
-        // 兼容旧数据格式：优先读 totalXxx，fallback 到 xxx
+        // 兼容旧DatosFormato：优先读 totalXxx，fallback 到 xxx
         const totalRequests = parseInt(usageTotal.totalRequests || usageTotal.requests) || 0
         const totalTokens = parseInt(usageTotal.totalTokens || usageTotal.tokens) || 0
         let inputTokens = parseInt(usageTotal.totalInputTokens || usageTotal.inputTokens) || 0
@@ -974,7 +975,7 @@ class ApiKeyService {
         let cacheReadTokens =
           parseInt(usageTotal.totalCacheReadTokens || usageTotal.cacheReadTokens) || 0
 
-        // 旧数据兼容：没有 input/output 分离时做 30/70 拆分
+        // 旧Datos兼容：没有 input/output 分离时做 30/70 拆分
         const totalFromSeparate = inputTokens + outputTokens
         if (totalFromSeparate === 0 && totalTokens > 0) {
           inputTokens = Math.round(totalTokens * 0.3)
@@ -983,7 +984,7 @@ class ApiKeyService {
           cacheReadTokens = 0
         }
 
-        // allTokens：优先读存储值，否则计算，最后 fallback 到 totalTokens
+        // allTokens：优先读存储Valor，否则Calcular，最后 fallback 到 totalTokens
         const allTokens =
           parseInt(usageTotal.totalAllTokens || usageTotal.allTokens) ||
           inputTokens + outputTokens + cacheCreateTokens + cacheReadTokens ||
@@ -992,7 +993,7 @@ class ApiKeyService {
         key.usage = {
           total: {
             requests: totalRequests,
-            tokens: allTokens, // 与 getUsageStats 语义一致：包含 cache 的总 tokens
+            tokens: allTokens, // 与 getUsageStats 语义一致：Incluir cache 的总 tokens
             inputTokens,
             outputTokens,
             cacheCreateTokens,
@@ -1015,15 +1016,15 @@ class ApiKeyService {
           totalCost: stats.costStats?.total || 0
         }
 
-        // 费用统计
+        // 费用Estadística
         key.totalCost = stats.costStats?.total || 0
         key.dailyCost = stats.dailyCost || 0
         key.weeklyOpusCost = stats.weeklyOpusCost || 0
 
-        // 并发
+        // Concurrencia
         key.currentConcurrency = stats.concurrency || 0
 
-        // 类型转换
+        // TipoConvertir
         key.tokenLimit = parseInt(key.tokenLimit) || 0
         key.concurrencyLimit = parseInt(key.concurrencyLimit) || 0
         key.rateLimitWindow = parseInt(key.rateLimitWindow) || 0
@@ -1044,7 +1045,7 @@ class ApiKeyService {
         key.expirationMode = key.expirationMode || 'fixed'
         key.activatedAt = key.activatedAt || null
 
-        // Rate limit 窗口数据
+        // Rate limit 窗口Datos
         if (key.rateLimitWindow > 0) {
           const rl = stats.rateLimit || {}
           key.currentWindowRequests = rl.requests || 0
@@ -1082,9 +1083,9 @@ class ApiKeyService {
           key.windowRemainingSeconds = null
         }
 
-        // JSON 字段解析（兼容已解析的数组和未解析的字符串）
+        // JSON CampoAnalizar（兼容已Analizar的Arreglo和未Analizar的Cadena）
         if (Array.isArray(key.restrictedModels)) {
-          // 已解析，保持不变
+          // 已Analizar，保持不变
         } else if (key.restrictedModels) {
           try {
             key.restrictedModels = JSON.parse(key.restrictedModels)
@@ -1095,7 +1096,7 @@ class ApiKeyService {
           key.restrictedModels = []
         }
         if (Array.isArray(key.allowedClients)) {
-          // 已解析，保持不变
+          // 已Analizar，保持不变
         } else if (key.allowedClients) {
           try {
             key.allowedClients = JSON.parse(key.allowedClients)
@@ -1106,7 +1107,7 @@ class ApiKeyService {
           key.allowedClients = []
         }
         if (Array.isArray(key.tags)) {
-          // 已解析，保持不变
+          // 已Analizar，保持不变
         } else if (key.tags) {
           try {
             key.tags = JSON.parse(key.tags)
@@ -1117,14 +1118,14 @@ class ApiKeyService {
           key.tags = []
         }
 
-        // 生成掩码key后再清理敏感字段
+        // Generar掩码key后再Limpiar敏感Campo
         if (key.apiKey) {
           key.maskedKey = `${this.prefix}****${key.apiKey.slice(-4)}`
         }
         delete key.apiKey
         delete key.ccrAccountId
 
-        // 不获取 lastUsage（太慢），设为 null
+        // 不Obtener lastUsage（太慢），设为 null
         key.lastUsage = null
       }
 
@@ -1136,8 +1137,8 @@ class ApiKeyService {
   }
 
   /**
-   * 获取所有 API Keys 的轻量版本（仅绑定字段，用于计算绑定数）
-   * @returns {Promise<Array>} 包含绑定字段的 API Keys 列表
+   * Obtener所有 API Keys 的轻量Versión（仅绑定Campo，用于Calcular绑定数）
+   * @returns {Promise<Array>} Incluir绑定Campo的 API Keys ColumnaTabla
    */
   async getAllApiKeysLite() {
     try {
@@ -1148,7 +1149,7 @@ class ApiKeyService {
         return []
       }
 
-      // Pipeline 只获取绑定相关字段
+      // Pipeline 只Obtener绑定相关Campo
       const pipeline = client.pipeline()
       for (const keyId of keyIds) {
         pipeline.hmget(
@@ -1184,7 +1185,7 @@ class ApiKeyService {
     }
   }
 
-  // 📝 更新API Key
+  // 📝 ActualizarAPI Key
   async updateApiKey(keyId, updates) {
     try {
       const keyData = await redis.getApiKey(keyId)
@@ -1192,7 +1193,7 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 允许更新的字段
+      // 允许Actualizar的Campo
       const allowedUpdates = [
         'name',
         'description',
@@ -1200,7 +1201,7 @@ class ApiKeyService {
         'concurrencyLimit',
         'rateLimitWindow',
         'rateLimitRequests',
-        'rateLimitCost', // 新增：速率限制费用字段
+        'rateLimitCost', // Nueva característica：速率Límite费用Campo
         'isActive',
         'claudeAccountId',
         'claudeConsoleAccountId',
@@ -1211,11 +1212,11 @@ class ApiKeyService {
         'droidAccountId',
         'permissions',
         'expiresAt',
-        'activationDays', // 新增：激活后有效天数
-        'activationUnit', // 新增：激活时间单位
-        'expirationMode', // 新增：过期模式
-        'isActivated', // 新增：是否已激活
-        'activatedAt', // 新增：激活时间
+        'activationDays', // Nueva característica：激活后有效天数
+        'activationUnit', // Nueva característica：激活Tiempo单位
+        'expirationMode', // Nueva característica：过期模式
+        'isActivated', // Nueva característica：是否已激活
+        'activatedAt', // Nueva característica：激活Tiempo
         'enableModelRestriction',
         'restrictedModels',
         'enableClientRestriction',
@@ -1223,12 +1224,12 @@ class ApiKeyService {
         'dailyCostLimit',
         'totalCostLimit',
         'weeklyOpusCostLimit',
-        'forcedModel', // 新增：强制路由模型
+        'forcedModel', // Nueva característica：强制Ruta模型
         'tags',
-        'userId', // 新增：用户ID（所有者变更）
-        'userUsername', // 新增：用户名（所有者变更）
-        'createdBy', // 新增：创建者（所有者变更）
-        'serviceRates' // API Key 级别服务倍率
+        'userId', // Nueva característica：UsuarioID（所有者变更）
+        'userUsername', // Nueva característica：Usuario名（所有者变更）
+        'createdBy', // Nueva característica：Crear者（所有者变更）
+        'serviceRates' // API Key 级别Servicio倍率
       ]
       const updatedData = { ...keyData }
 
@@ -1240,20 +1241,20 @@ class ApiKeyService {
             field === 'tags' ||
             field === 'serviceRates'
           ) {
-            // 特殊处理数组/对象字段
+            // 特殊ProcesarArreglo/ObjetoCampo
             updatedData[field] = JSON.stringify(value || (field === 'serviceRates' ? {} : []))
           } else if (field === 'permissions') {
-            // 权限字段：规范化后JSON序列化，与createApiKey保持一致
+            // PermisoCampo：规范化后JSONSerialización，与createApiKey保持一致
             updatedData[field] = JSON.stringify(normalizePermissions(value))
           } else if (
             field === 'enableModelRestriction' ||
             field === 'enableClientRestriction' ||
             field === 'isActivated'
           ) {
-            // 布尔值转字符串
+            // 布尔Valor转Cadena
             updatedData[field] = String(value)
           } else if (field === 'expiresAt' || field === 'activatedAt') {
-            // 日期字段保持原样，不要toString()
+            // FechaCampo保持原样，不要toString()
             updatedData[field] = value || ''
           } else {
             updatedData[field] = (value !== null && value !== undefined ? value : '').toString()
@@ -1263,11 +1264,11 @@ class ApiKeyService {
 
       updatedData.updatedAt = new Date().toISOString()
 
-      // 传递hashedKey以确保映射表一致性
-      // keyData.apiKey 存储的就是 hashedKey（见generateApiKey第123行）
+      // 传递hashedKey以确保映射Tabla一致性
+      // keyData.apiKey 存储的就是 hashedKey（见generateApiKey第123Fila）
       await redis.setApiKey(keyId, updatedData, keyData.apiKey)
 
-      // 同步更新 API Key 索引
+      // SincronizaciónActualizar API Key Índice
       try {
         const apiKeyIndexService = require('./apiKeyIndexService')
         await apiKeyIndexService.updateIndex(keyId, updates, {
@@ -1289,7 +1290,7 @@ class ApiKeyService {
     }
   }
 
-  // 🗑️ 软删除API Key (保留使用统计)
+  // 🗑️ 软EliminarAPI Key (保留使用Estadística)
   async deleteApiKey(keyId, deletedBy = 'system', deletedByType = 'system') {
     try {
       const keyData = await redis.getApiKey(keyId)
@@ -1297,24 +1298,24 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 标记为已删除，保留所有数据和统计信息
+      // 标记为已Eliminar，保留所有Datos和EstadísticaInformación
       const updatedData = {
         ...keyData,
         isDeleted: 'true',
         deletedAt: new Date().toISOString(),
         deletedBy,
         deletedByType, // 'user', 'admin', 'system'
-        isActive: 'false' // 同时禁用
+        isActive: 'false' // 同时Deshabilitar
       }
 
       await redis.setApiKey(keyId, updatedData)
 
-      // de哈希映射中移除（这样就不能再使用这个key进行API调用）
+      // de哈希映射中Eliminación（这样就不能再使用这个key进FilaAPI调用）
       if (keyData.apiKey) {
         await redis.deleteApiKeyHash(keyData.apiKey)
       }
 
-      // de费用排序索引中移除
+      // de费用OrdenarÍndice中Eliminación
       try {
         const costRankService = require('./costRankService')
         await costRankService.removeKeyFromIndexes(keyId)
@@ -1322,7 +1323,7 @@ class ApiKeyService {
         logger.warn(`Failed to remove key ${keyId} from cost rank indexes:`, err.message)
       }
 
-      // 更新 API Key 索引（标记为已删除）
+      // Actualizar API Key Índice（标记为已Eliminar）
       try {
         const apiKeyIndexService = require('./apiKeyIndexService')
         await apiKeyIndexService.updateIndex(
@@ -1348,7 +1349,7 @@ class ApiKeyService {
     }
   }
 
-  // 🔄 恢复已删除的API Key
+  // 🔄 Restauración已Eliminar的API Key
   async restoreApiKey(keyId, restoredBy = 'system', restoredByType = 'system') {
     try {
       const keyData = await redis.getApiKey(keyId)
@@ -1356,32 +1357,32 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 检查是否确实是已删除的key
+      // Verificar是否确实是已Eliminar的key
       if (keyData.isDeleted !== 'true') {
         throw new Error('API key is not deleted')
       }
 
-      // 准备更新的数据
+      // 准备Actualizar的Datos
       const updatedData = { ...keyData }
       updatedData.isActive = 'true'
       updatedData.restoredAt = new Date().toISOString()
       updatedData.restoredBy = restoredBy
       updatedData.restoredByType = restoredByType
 
-      // de更新的数据中移除删除相关的字段
+      // deActualizar的Datos中EliminaciónEliminar相关的Campo
       delete updatedData.isDeleted
       delete updatedData.deletedAt
       delete updatedData.deletedBy
       delete updatedData.deletedByType
 
-      // 保存更新后的数据
+      // 保存Actualizar后的Datos
       await redis.setApiKey(keyId, updatedData)
 
-      // 使用Redis的hdel命令删除不需要的字段
+      // 使用Redis的hdel命令Eliminar不Campos requeridos
       const keyName = `apikey:${keyId}`
       await redis.client.hdel(keyName, 'isDeleted', 'deletedAt', 'deletedBy', 'deletedByType')
 
-      // 重新建立哈希映射（恢复API Key的使用能力）
+      // 重新建立哈希映射（RestauraciónAPI Key的使用能力）
       if (keyData.apiKey) {
         await redis.setApiKeyHash(keyData.apiKey, {
           id: keyId,
@@ -1390,7 +1391,7 @@ class ApiKeyService {
         })
       }
 
-      // 重新添加到费用排序索引
+      // 重新添加到费用OrdenarÍndice
       try {
         const costRankService = require('./costRankService')
         await costRankService.addKeyToIndexes(keyId)
@@ -1398,7 +1399,7 @@ class ApiKeyService {
         logger.warn(`Failed to add restored key ${keyId} to cost rank indexes:`, err.message)
       }
 
-      // 更新 API Key 索引（恢复为活跃状态）
+      // Actualizar API Key Índice（Restauración为活跃状态）
       try {
         const apiKeyIndexService = require('./apiKeyIndexService')
         await apiKeyIndexService.updateIndex(
@@ -1424,7 +1425,7 @@ class ApiKeyService {
     }
   }
 
-  // 🗑️ 彻底删除API Key（物理删除）
+  // 🗑️ 彻底EliminarAPI Key（物理Eliminar）
   async permanentDeleteApiKey(keyId) {
     try {
       const keyData = await redis.getApiKey(keyId)
@@ -1432,30 +1433,30 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 确保只能彻底删除已经软删除的key
+      // 确保只能彻底Eliminar已经软Eliminar的key
       if (keyData.isDeleted !== 'true') {
-        throw new Error('只能彻底删除已经删除的API Key')
+        throw new Error('只能彻底Eliminar已经Eliminar的API Key')
       }
 
-      // 删除所有相关的使用统计数据
+      // Eliminar所有相关的使用EstadísticaDatos
       const today = new Date().toISOString().split('T')[0]
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
 
-      // 删除每日统计
+      // Eliminar每日Estadística
       await redis.client.del(`usage:daily:${today}:${keyId}`)
       await redis.client.del(`usage:daily:${yesterday}:${keyId}`)
 
-      // 删除月度统计
+      // Eliminar月度Estadística
       const currentMonth = today.substring(0, 7)
       await redis.client.del(`usage:monthly:${currentMonth}:${keyId}`)
 
-      // 删除所有相关的统计键（通过模式匹配）
+      // Eliminar所有相关的Estadística键（通过模式匹配）
       const usageKeys = await redis.scanKeys(`usage:*:${keyId}*`)
       if (usageKeys.length > 0) {
         await redis.batchDelChunked(usageKeys)
       }
 
-      // 从 API Key 索引中移除
+      // 从 API Key Índice中Eliminación
       try {
         const apiKeyIndexService = require('./apiKeyIndexService')
         await apiKeyIndexService.removeFromIndex(keyId, {
@@ -1466,7 +1467,7 @@ class ApiKeyService {
         logger.warn(`Failed to remove key ${keyId} from API Key index:`, err.message)
       }
 
-      // 删除API Key本身
+      // EliminarAPI Key本身
       await redis.deleteApiKey(keyId)
 
       logger.success(`🗑️ Permanently deleted API key: ${keyId}`)
@@ -1478,7 +1479,7 @@ class ApiKeyService {
     }
   }
 
-  // 🧹 清空所有已删除的API Keys
+  // 🧹 清空所有已Eliminar的API Keys
   async clearAllDeletedApiKeys() {
     try {
       const allKeys = await this.getAllApiKeysFast(true)
@@ -1517,7 +1518,7 @@ class ApiKeyService {
     }
   }
 
-  // 📊 记录使用情况（支持缓存token和账户级别统计，应用服务倍率）
+  // 📊 Registro使用情况（SoportarCachétoken和Cuenta级别Estadística，应用Servicio倍率）
   async recordUsage(
     keyId,
     inputTokens = 0,
@@ -1531,7 +1532,7 @@ class ApiKeyService {
     try {
       const totalTokens = inputTokens + outputTokens + cacheCreateTokens + cacheReadTokens
 
-      // 计算费用
+      // Calcular费用
       const CostCalculator = require('../utils/costCalculator')
       const costInfo = CostCalculator.calculateCost(
         {
@@ -1543,14 +1544,14 @@ class ApiKeyService {
         model
       )
 
-      // 检查是否为 1M 上下文请求
+      // Verificar是否为 1M 上下文Solicitud
       let isLongContextRequest = false
       if (model && model.includes('[1m]')) {
         const totalInputTokens = inputTokens + cacheCreateTokens + cacheReadTokens
         isLongContextRequest = totalInputTokens > 200000
       }
 
-      // 计算费用（应用服务倍率）
+      // Calcular费用（应用Servicio倍率）
       const realCost = costInfo.costs.total
       let ratedCost = realCost
       if (realCost > 0) {
@@ -1558,7 +1559,7 @@ class ApiKeyService {
         ratedCost = await this.calculateRatedCost(keyId, service, realCost)
       }
 
-      // 记录API Key级别的使用统计（包含费用）
+      // RegistroAPI Key级别的使用Estadística（Incluir费用）
       await redis.incrementTokenUsage(
         keyId,
         totalTokens,
@@ -1567,43 +1568,43 @@ class ApiKeyService {
         cacheCreateTokens,
         cacheReadTokens,
         model,
-        0, // ephemeral5mTokens - 暂时为0，后续处理
-        0, // ephemeral1hTokens - 暂时为0，后续处理
+        0, // ephemeral5mTokens - 暂时为0，后续Procesar
+        0, // ephemeral1hTokens - 暂时为0，后续Procesar
         isLongContextRequest,
         realCost,
         ratedCost
       )
 
-      // 记录费用统计到每日/每月汇总
+      // Registro费用Estadística到每日/每月汇总
       if (realCost > 0) {
         await redis.incrementDailyCost(keyId, ratedCost, realCost)
         logger.database(
           `💰 Recorded cost for ${keyId}: rated=$${ratedCost.toFixed(6)}, real=$${realCost.toFixed(6)}, model: ${model}`
         )
 
-        // 记录 Opus 周费用（如果适用）
+        // Registro Opus 周费用（如果适用）
         await this.recordOpusCost(keyId, ratedCost, realCost, model, accountType)
       } else {
         logger.debug(`💰 No cost recorded for ${keyId} - zero cost for model: ${model}`)
       }
 
-      // 获取API Key数据以确定关联的账户
+      // ObtenerAPI KeyDatos以确定关联的Cuenta
       const keyData = await redis.getApiKey(keyId)
       if (keyData && Object.keys(keyData).length > 0) {
-        // 更新最后使用时间
+        // Actualizar最后使用Tiempo
         const lastUsedAt = new Date().toISOString()
         keyData.lastUsedAt = lastUsedAt
         await redis.setApiKey(keyId, keyData)
 
-        // 同步更新 lastUsedAt 索引
+        // SincronizaciónActualizar lastUsedAt Índice
         try {
           const apiKeyIndexService = require('./apiKeyIndexService')
           await apiKeyIndexService.updateLastUsedAt(keyId, lastUsedAt)
         } catch (err) {
-          // 索引更新失败不影响主流程
+          // ÍndiceActualizarFalló不影响主流程
         }
 
-        // 记录账户级别的使用统计（只统计实际处理请求的账户）
+        // RegistroCuenta级别的使用Estadística（只Estadística实际ProcesarSolicitud的Cuenta）
         if (accountId) {
           await redis.incrementAccountUsage(
             accountId,
@@ -1625,7 +1626,7 @@ class ApiKeyService {
         }
       }
 
-      // 记录单次请求的使用详情（同时保存真实成本和倍率成本）
+      // Registro单次Solicitud的使用详情（同时保存真实成本和倍率成本）
       await redis.addUsageRecord(keyId, {
         timestamp: new Date().toISOString(),
         model,
@@ -1656,24 +1657,24 @@ class ApiKeyService {
     }
   }
 
-  // 📊 记录 Opus 模型费用（仅限 claude 和 claude-console 账户）
+  // 📊 Registro Opus 模型费用（仅限 claude 和 claude-console Cuenta）
   // ratedCost: 倍率后的成本（用于限额校验）
   // realCost: 真实成本（用于对账），如果不传则等于 ratedCost
   async recordOpusCost(keyId, ratedCost, realCost, model, accountType) {
     try {
-      // 判断是否为 Claude 系列模型（包含 Bedrock 格式等）
+      // 判断是否为 Claude 系Columna模型（Incluir Bedrock Formato等）
       if (!isOpusModel(model)) {
         return
       }
 
-      // 判断是否为 claude-official、claude-console 或 ccr 账户
+      // 判断是否为 claude-official、claude-console 或 ccr Cuenta
       const opusAccountTypes = ['claude-official', 'claude-console', 'ccr']
       if (!accountType || !opusAccountTypes.includes(accountType)) {
         logger.debug(`⚠️ Skipping Opus cost recording for non-Claude account type: ${accountType}`)
-        return // 不是 claude 账户，直接返回
+        return // 不是 claude Cuenta，直接Retornar
       }
 
-      // 记录 Opus 周费用（倍率成本和真实成本）
+      // Registro Opus 周费用（倍率成本和真实成本）
       await redis.incrementWeeklyOpusCost(keyId, ratedCost, realCost)
       logger.database(
         `💰 Recorded Opus weekly cost for ${keyId}: rated=$${ratedCost.toFixed(6)}, real=$${realCost.toFixed(6)}, model: ${model}`
@@ -1683,7 +1684,7 @@ class ApiKeyService {
     }
   }
 
-  // 📊 记录使用情况（新版本，支持详细的缓存类型）
+  // 📊 Registro使用情况（新Versión，Soportar详细的CachéTipo）
   async recordUsageWithDetails(
     keyId,
     usageObject,
@@ -1700,18 +1701,18 @@ class ApiKeyService {
 
       const totalTokens = inputTokens + outputTokens + cacheCreateTokens + cacheReadTokens
 
-      // 计算费用（支持详细的缓存类型）- 添加错误处理
+      // Calcular费用（Soportar详细的CachéTipo）- 添加ErrorProcesar
       let costInfo = { totalCost: 0, ephemeral5mCost: 0, ephemeral1hCost: 0 }
       try {
         const pricingService = require('./pricingService')
-        // 确保 pricingService 已初始化
+        // 确保 pricingService 已Inicializar
         if (!pricingService.pricingData) {
           logger.warn('⚠️ PricingService not initialized, initializing now...')
           await pricingService.initialize()
         }
         costInfo = pricingService.calculateCost(usageObject, model)
 
-        // 验证计算结果
+        // ValidarCalcular结果
         if (!costInfo || typeof costInfo.totalCost !== 'number') {
           logger.error(`❌ Invalid cost calculation result for model ${model}:`, costInfo)
           // 使用 CostCalculator 作为后备
@@ -1752,7 +1753,7 @@ class ApiKeyService {
         }
       }
 
-      // 提取详细的缓存创建数据
+      // 提取详细的CachéCrearDatos
       let ephemeral5mTokens = 0
       let ephemeral1hTokens = 0
 
@@ -1761,7 +1762,7 @@ class ApiKeyService {
         ephemeral1hTokens = usageObject.cache_creation.ephemeral_1h_input_tokens || 0
       }
 
-      // 计算费用（应用服务倍率）- 需要在 incrementTokenUsage 之前计算
+      // Calcular费用（应用Servicio倍率）- 需要在 incrementTokenUsage 之前Calcular
       const realCostWithDetails = costInfo.totalCost || 0
       let ratedCostWithDetails = realCostWithDetails
       if (realCostWithDetails > 0) {
@@ -1769,7 +1770,7 @@ class ApiKeyService {
         ratedCostWithDetails = await this.calculateRatedCost(keyId, service, realCostWithDetails)
       }
 
-      // 记录API Key级别的使用统计（包含费用）
+      // RegistroAPI Key级别的使用Estadística（Incluir费用）
       await redis.incrementTokenUsage(
         keyId,
         totalTokens,
@@ -1785,15 +1786,15 @@ class ApiKeyService {
         ratedCostWithDetails
       )
 
-      // 记录费用到每日/每月汇总
+      // Registro费用到每日/每月汇总
       if (realCostWithDetails > 0) {
-        // 记录倍率成本和真实成本
+        // Registro倍率成本和真实成本
         await redis.incrementDailyCost(keyId, ratedCostWithDetails, realCostWithDetails)
         logger.database(
           `💰 Recorded cost for ${keyId}: rated=$${ratedCostWithDetails.toFixed(6)}, real=$${realCostWithDetails.toFixed(6)}, model: ${model}`
         )
 
-        // 记录 Opus 周费用（如果适用，也应用倍率）
+        // Registro Opus 周费用（如果适用，也应用倍率）
         await this.recordOpusCost(
           keyId,
           ratedCostWithDetails,
@@ -1802,7 +1803,7 @@ class ApiKeyService {
           accountType
         )
 
-        // 记录详细的缓存费用（如果有）
+        // Registro详细的Caché费用（如果有）
         if (costInfo.ephemeral5mCost > 0 || costInfo.ephemeral1hCost > 0) {
           logger.database(
             `💰 Cache costs - 5m: $${costInfo.ephemeral5mCost.toFixed(
@@ -1811,7 +1812,7 @@ class ApiKeyService {
           )
         }
       } else {
-        // 如果有 token 使用但费用为 0，记录警告
+        // 如果有 token 使用但费用为 0，RegistroAdvertencia
         if (totalTokens > 0) {
           logger.warn(
             `⚠️ No cost recorded for ${keyId} - zero cost for model: ${model} (tokens: ${totalTokens})`
@@ -1822,23 +1823,23 @@ class ApiKeyService {
         }
       }
 
-      // 获取API Key数据以确定关联的账户
+      // ObtenerAPI KeyDatos以确定关联的Cuenta
       const keyData = await redis.getApiKey(keyId)
       if (keyData && Object.keys(keyData).length > 0) {
-        // 更新最后使用时间
+        // Actualizar最后使用Tiempo
         const lastUsedAt = new Date().toISOString()
         keyData.lastUsedAt = lastUsedAt
         await redis.setApiKey(keyId, keyData)
 
-        // 同步更新 lastUsedAt 索引
+        // SincronizaciónActualizar lastUsedAt Índice
         try {
           const apiKeyIndexService = require('./apiKeyIndexService')
           await apiKeyIndexService.updateLastUsedAt(keyId, lastUsedAt)
         } catch (err) {
-          // 索引更新失败不影响主流程
+          // ÍndiceActualizarFalló不影响主流程
         }
 
-        // 记录账户级别的使用统计（只统计实际处理请求的账户）
+        // RegistroCuenta级别的使用Estadística（只Estadística实际ProcesarSolicitud的Cuenta）
         if (accountId) {
           await redis.incrementAccountUsage(
             accountId,
@@ -1891,7 +1892,7 @@ class ApiKeyService {
       if (cacheCreateTokens > 0) {
         logParts.push(`Cache Create: ${cacheCreateTokens}`)
 
-        // 如果有详细的缓存创建数据，也记录它们
+        // 如果有详细的CachéCrearDatos，也Registro它们
         if (usageObject.cache_creation) {
           const { ephemeral_5m_input_tokens, ephemeral_1h_input_tokens } =
             usageObject.cache_creation
@@ -1910,7 +1911,7 @@ class ApiKeyService {
 
       logger.database(`📊 Recorded usage: ${keyId} - ${logParts.join(', ')}`)
 
-      // 🔔 发布计费事件到消息队列（异步非阻塞）
+      // 🔔 发布计费Evento到消息Cola（Asíncrono非Bloqueante）
       this._publishBillingEvent({
         keyId,
         keyName: keyData?.name,
@@ -1937,7 +1938,7 @@ class ApiKeyService {
         isLongContext: costInfo.isLongContextRequest || false,
         requestTimestamp: usageRecord.timestamp
       }).catch((err) => {
-        // 发布失败不影响主流程，只记录错误
+        // 发布Falló不影响主流程，只RegistroError
         logger.warn('⚠️ Failed to publish billing event:', err.message)
       })
     } catch (error) {
@@ -2072,18 +2073,18 @@ class ApiKeyService {
     return await this._resolveAccountByUsageRecord(usageRecord, cache, client)
   }
 
-  // 🔔 发布计费事件（内部方法）
+  // 🔔 发布计费Evento（内部Método）
   async _publishBillingEvent(eventData) {
     try {
       const billingEventPublisher = require('./billingEventPublisher')
       await billingEventPublisher.publishBillingEvent(eventData)
     } catch (error) {
-      // 静默失败，不影响主流程
+      // 静默Falló，不影响主流程
       logger.debug('Failed to publish billing event:', error.message)
     }
   }
 
-  // 🔐 生成密钥
+  // 🔐 GenerarClave
   _generateSecretKey() {
     return crypto.randomBytes(32).toString('hex')
   }
@@ -2096,11 +2097,11 @@ class ApiKeyService {
       .digest('hex')
   }
 
-  // 📈 获取使用统计
+  // 📈 Obtener使用Estadística
   async getUsageStats(keyId, options = {}) {
     const usageStats = await redis.getUsageStats(keyId)
 
-    // options 可能是字符串（兼容旧接口），仅当为对象时才解析
+    // options 可能是Cadena（兼容旧Interfaz），仅当为Objeto时才Analizar
     const optionObject =
       options && typeof options === 'object' && !Array.isArray(options) ? options : {}
 
@@ -2127,30 +2128,30 @@ class ApiKeyService {
     }
   }
 
-  // 📊 获取账户使用统计
+  // 📊 ObtenerCuenta使用Estadística
   async getAccountUsageStats(accountId) {
     return await redis.getAccountUsageStats(accountId)
   }
 
-  // 📈 获取所有账户使用统计
+  // 📈 Obtener所有Cuenta使用Estadística
   async getAllAccountsUsageStats() {
     return await redis.getAllAccountsUsageStats()
   }
 
-  // === 用户相关方法 ===
+  // === Usuario相关Método ===
 
-  // 🔑 创建API Key（支持用户）
+  // 🔑 CrearAPI Key（SoportarUsuario）
   async createApiKey(options = {}) {
     return await this.generateApiKey(options)
   }
 
-  // 👤 获取用户的API Keys
+  // 👤 ObtenerUsuario的API Keys
   async getUserApiKeys(userId, includeDeleted = false) {
     try {
       const allKeys = await this.getAllApiKeysFast(includeDeleted)
       let userKeys = allKeys.filter((key) => key.userId === userId)
 
-      // 默认过滤掉已删除的API Keys（Fast版本返回布尔值）
+      // PredeterminadoFiltrar掉已Eliminar的API Keys（FastVersiónRetornar布尔Valor）
       if (!includeDeleted) {
         userKeys = userKeys.filter((key) => !key.isDeleted)
       }
@@ -2166,9 +2167,9 @@ class ApiKeyService {
           id: key.id,
           name: key.name,
           description: key.description,
-          key: key.maskedKey || null, // Fast版本已提供maskedKey
+          key: key.maskedKey || null, // FastVersión已提供maskedKey
           tokenLimit: parseInt(key.tokenLimit || 0),
-          isActive: key.isActive === true, // Fast版本返回布尔值
+          isActive: key.isActive === true, // FastVersiónRetornar布尔Valor
           createdAt: key.createdAt,
           lastUsedAt: key.lastUsedAt,
           expiresAt: key.expiresAt,
@@ -2196,7 +2197,7 @@ class ApiKeyService {
     }
   }
 
-  // 🔍 通过ID获取API Key（检查权限）
+  // 🔍 通过IDObtenerAPI Key（VerificarPermiso）
   async getApiKeyById(keyId, userId = null) {
     try {
       const keyData = await redis.getApiKey(keyId)
@@ -2204,7 +2205,7 @@ class ApiKeyService {
         return null
       }
 
-      // 如果指定了用户ID，检查权限
+      // 如果指定了UsuarioID，VerificarPermiso
       if (userId && keyData.userId !== userId) {
         return null
       }
@@ -2225,7 +2226,7 @@ class ApiKeyService {
         permissions: normalizePermissions(keyData.permissions),
         dailyCostLimit: parseFloat(keyData.dailyCostLimit || 0),
         totalCostLimit: parseFloat(keyData.totalCostLimit || 0),
-        // 所有平台账户绑定字段
+        // 所有平台Cuenta绑定Campo
         claudeAccountId: keyData.claudeAccountId,
         claudeConsoleAccountId: keyData.claudeConsoleAccountId,
         geminiAccountId: keyData.geminiAccountId,
@@ -2241,7 +2242,7 @@ class ApiKeyService {
     }
   }
 
-  // 🔄 重新生成API Key
+  // 🔄 重新GenerarAPI Key
   async regenerateApiKey(keyId) {
     try {
       const existingKey = await redis.getApiKey(keyId)
@@ -2249,22 +2250,22 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 生成新的key
+      // Generar新的key
       const newApiKey = `${this.prefix}${this._generateSecretKey()}`
       const newHashedKey = this._hashApiKey(newApiKey)
 
-      // 删除旧的哈希映射
+      // Eliminar旧的哈希映射
       const oldHashedKey = existingKey.apiKey
       await redis.deleteApiKeyHash(oldHashedKey)
 
-      // 更新key数据
+      // ActualizarkeyDatos
       const updatedKeyData = {
         ...existingKey,
         apiKey: newHashedKey,
         updatedAt: new Date().toISOString()
       }
 
-      // 保存新数据并建立新的哈希映射
+      // 保存新Datos并建立新的哈希映射
       await redis.setApiKey(keyId, updatedKeyData, newHashedKey)
 
       logger.info(`🔄 Regenerated API key: ${existingKey.name} (${keyId})`)
@@ -2272,7 +2273,7 @@ class ApiKeyService {
       return {
         id: keyId,
         name: existingKey.name,
-        key: newApiKey, // 返回完整的新key
+        key: newApiKey, // Retornar完整的新key
         updatedAt: updatedKeyData.updatedAt
       }
     } catch (error) {
@@ -2281,7 +2282,7 @@ class ApiKeyService {
     }
   }
 
-  // 🗑️ 硬删除API Key (完全移除)
+  // 🗑️ 硬EliminarAPI Key (完全Eliminación)
   async hardDeleteApiKey(keyId) {
     try {
       const keyData = await redis.getApiKey(keyId)
@@ -2289,7 +2290,7 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 删除key数据和哈希映射
+      // EliminarkeyDatos和哈希映射
       await redis.deleteApiKey(keyId)
       await redis.deleteApiKeyHash(keyData.apiKey)
 
@@ -2301,7 +2302,7 @@ class ApiKeyService {
     }
   }
 
-  // 🚫 禁用用户的所有API Keys
+  // 🚫 DeshabilitarUsuario的所有API Keys
   async disableUserApiKeys(userId) {
     try {
       const userKeys = await this.getUserApiKeys(userId)
@@ -2322,7 +2323,7 @@ class ApiKeyService {
     }
   }
 
-  // 📊 获取聚合使用统计（支持多个API Key）
+  // 📊 Obtener聚合使用Estadística（Soportar多个API Key）
   async getAggregatedUsageStats(keyIds, options = {}) {
     try {
       if (!Array.isArray(keyIds)) {
@@ -2339,7 +2340,7 @@ class ApiKeyService {
         modelStats: []
       }
 
-      // 汇总所有API Key的统计数据
+      // 汇总所有API Key的EstadísticaDatos
       for (const keyId of keyIds) {
         const keyStats = await redis.getUsageStats(keyId)
         const costStats = await redis.getCostStats(keyId)
@@ -2351,8 +2352,8 @@ class ApiKeyService {
         }
       }
 
-      // TODO: 实现日期范围和模型统计
-      // 这里可以根据需要添加更详细的统计逻辑
+      // TODO: 实现Fecha范围和模型Estadística
+      // 这里可以根据需要添加更详细的Estadística逻辑
 
       return stats
     } catch (error) {
@@ -2371,18 +2372,18 @@ class ApiKeyService {
   // 🔓 解绑cuentade所有API Keys
   async unbindAccountFromAllKeys(accountId, accountType) {
     try {
-      // cuenta类型与字段的映射关系
+      // cuentaTipo与Campo的映射关系
       const fieldMap = {
         claude: 'claudeAccountId',
         'claude-console': 'claudeConsoleAccountId',
         gemini: 'geminiAccountId',
-        'gemini-api': 'geminiAccountId', // 特殊处理，带 api: 前缀
+        'gemini-api': 'geminiAccountId', // 特殊Procesar，带 api: 前缀
         openai: 'openaiAccountId',
-        'openai-responses': 'openaiAccountId', // 特殊处理，带 responses: 前缀
+        'openai-responses': 'openaiAccountId', // 特殊Procesar，带 responses: 前缀
         azure_openai: 'azureOpenaiAccountId',
         bedrock: 'bedrockAccountId',
         droid: 'droidAccountId',
-        ccr: null // CCR cuenta没有对应的 API Key 字段
+        ccr: null // CCR cuenta没有对应的 API Key Campo
       }
 
       const field = fieldMap[accountType]
@@ -2391,19 +2392,19 @@ class ApiKeyService {
         return 0
       }
 
-      // 获取所有API Keys
+      // Obtener所有API Keys
       const allKeys = await this.getAllApiKeysFast()
 
       // 筛选绑定到此cuenta的 API Keys
       let boundKeys = []
       if (accountType === 'openai-responses') {
-        // OpenAI-Responses 特殊处理：查找 openaiAccountId 字段中带 responses: 前缀的
+        // OpenAI-Responses 特殊Procesar：查找 openaiAccountId Campo中带 responses: 前缀的
         boundKeys = allKeys.filter((key) => key.openaiAccountId === `responses:${accountId}`)
       } else if (accountType === 'gemini-api') {
-        // Gemini-API 特殊处理：查找 geminiAccountId 字段中带 api: 前缀的
+        // Gemini-API 特殊Procesar：查找 geminiAccountId Campo中带 api: 前缀的
         boundKeys = allKeys.filter((key) => key.geminiAccountId === `api:${accountId}`)
       } else {
-        // 其他cuenta类型正常匹配
+        // 其他cuentaTipo正常匹配
         boundKeys = allKeys.filter((key) => key[field] === accountId)
       }
 
@@ -2439,7 +2440,7 @@ class ApiKeyService {
     }
   }
 
-  // 🧹 清理过期的API Keys
+  // 🧹 Limpiar过期的API Keys
   async cleanupExpiredKeys() {
     try {
       const apiKeys = await this.getAllApiKeysFast()
@@ -2447,9 +2448,9 @@ class ApiKeyService {
       let cleanedCount = 0
 
       for (const key of apiKeys) {
-        // 检查是否已过期且仍处于激活状态（Fast版本返回布尔值）
+        // Verificar是否已过期且仍处于激活状态（FastVersiónRetornar布尔Valor）
         if (key.expiresAt && new Date(key.expiresAt) < now && key.isActive === true) {
-          // 将过期的 API Key 标记为禁用状态，而不是直接删除
+          // 将过期的 API Key 标记为Deshabilitar状态，而不是直接Eliminar
           await this.updateApiKey(key.id, { isActive: false })
           logger.info(`🔒 API Key ${key.id} (${key.name}) has expired and been disabled`)
           cleanedCount++
@@ -2468,23 +2469,23 @@ class ApiKeyService {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 服务倍率和费用限制相关方法
+  // Servicio倍率和费用Límite相关Método
   // ═══════════════════════════════════════════════════════════════════════════
 
   /**
-   * 计算应用倍率后的费用
+   * Calcular应用倍率后的费用
    * 公式：消费计费 = 真实消费 × 全局倍率 × Key 倍率
    * @param {string} keyId - API Key ID
-   * @param {string} service - 服务类型
+   * @param {string} service - ServicioTipo
    * @param {number} realCost - 真实成本（USD）
    * @returns {Promise<number>} 应用倍率后的费用
    */
   async calculateRatedCost(keyId, service, realCost) {
     try {
-      // 获取全局倍率
+      // Obtener全局倍率
       const globalRate = await serviceRatesService.getServiceRate(service)
 
-      // 获取 Key 倍率
+      // Obtener Key 倍率
       const keyData = await redis.getApiKey(keyId)
       let keyRates = {}
       try {
@@ -2494,17 +2495,17 @@ class ApiKeyService {
       }
       const keyRate = keyRates[service] ?? 1.0
 
-      // 相乘计算
+      // 相乘Calcular
       return realCost * globalRate * keyRate
     } catch (error) {
       logger.error('❌ Failed to calculate rated cost:', error)
-      // 出错时返回原始费用
+      // 出错时Retornar原始费用
       return realCost
     }
   }
 
   /**
-   * 增加 API Key 费用限制（用于核销额度卡）
+   * 增加 API Key 费用Límite（用于核销额度卡）
    * @param {string} keyId - API Key ID
    * @param {number} amount - 要增加的金额（USD）
    * @returns {Promise<Object>} { success: boolean, newTotalCostLimit: number }
@@ -2531,7 +2532,7 @@ class ApiKeyService {
   }
 
   /**
-   * 减少 API Key 费用限制（用于撤销核销）
+   * 减少 API Key 费用Límite（用于撤销核销）
    * @param {string} keyId - API Key ID
    * @param {number} amount - 要减少的金额（USD）
    * @returns {Promise<Object>} { success: boolean, newTotalCostLimit: number, actualDeducted: number }
@@ -2569,10 +2570,10 @@ class ApiKeyService {
   }
 
   /**
-   * 延长 API Key 有效期（用于核销时间卡）
+   * 延长 API Key 有效期（用于核销Tiempo卡）
    * @param {string} keyId - API Key ID
-   * @param {number} amount - 时间数量
-   * @param {string} unit - 时间单位 'hours' | 'days' | 'months'
+   * @param {number} amount - Tiempo数量
+   * @param {string} unit - Tiempo单位 'hours' | 'days' | 'months'
    * @returns {Promise<Object>} { success: boolean, newExpiresAt: string }
    */
   async extendExpiry(keyId, amount, unit = 'days') {
@@ -2582,9 +2583,9 @@ class ApiKeyService {
         throw new Error('API key not found')
       }
 
-      // 计算新的过期时间
+      // Calcular新的过期Tiempo
       let baseDate = keyData.expiresAt ? new Date(keyData.expiresAt) : new Date()
-      // 如果已过期，从当前时间开始计算
+      // 如果已过期，从当前TiempoIniciandoCalcular
       if (baseDate < new Date()) {
         baseDate = new Date()
       }
@@ -2595,7 +2596,7 @@ class ApiKeyService {
           milliseconds = amount * 60 * 60 * 1000
           break
         case 'months':
-          // 简化处理：1个月 = 30天
+          // 简化Procesar：1个月 = 30天
           milliseconds = amount * 30 * 24 * 60 * 60 * 1000
           break
         case 'days':
@@ -2619,13 +2620,13 @@ class ApiKeyService {
   }
 }
 
-// 导出实例和单独的方法
+// 导出Instancia和单独的Método
 const apiKeyService = new ApiKeyService()
 
-// 为了方便其他服务调用，导出 recordUsage 方法
+// 为了方便其他Servicio调用，导出 recordUsage Método
 apiKeyService.recordUsageMetrics = apiKeyService.recordUsage.bind(apiKeyService)
 
-// 导出权限辅助函数供路由使用
+// 导出Permiso辅助Función供Ruta使用
 apiKeyService.hasPermission = hasPermission
 apiKeyService.normalizePermissions = normalizePermissions
 

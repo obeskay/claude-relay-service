@@ -10,18 +10,18 @@ const router = express.Router()
 const ensureValidPlatform = (rawPlatform) => {
   const normalized = accountBalanceService.normalizePlatform(rawPlatform)
   if (!normalized) {
-    return { ok: false, status: 400, error: '缺少 platform 参数' }
+    return { ok: false, status: 400, error: '缺少 platform Parámetro' }
   }
 
   const supported = accountBalanceService.getSupportedPlatforms()
   if (!supported.includes(normalized)) {
-    return { ok: false, status: 400, error: `不支持的平台: ${normalized}` }
+    return { ok: false, status: 400, error: `不Soportar的平台: ${normalized}` }
   }
 
   return { ok: true, platform: normalized }
 }
 
-// 1) 获取账户余额（默认本地统计优先，可选触发 Provider）
+// 1) ObtenerCuenta余额（Predeterminado本地Estadística优先，Opcional触发 Provider）
 // GET /admin/accounts/:accountId/balance?platform=xxx&queryApi=false
 router.get('/accounts/:accountId/balance', authenticateAdmin, async (req, res) => {
   try {
@@ -43,12 +43,12 @@ router.get('/accounts/:accountId/balance', authenticateAdmin, async (req, res) =
 
     return res.json(balance)
   } catch (error) {
-    logger.error('获取账户余额失败', error)
+    logger.error('ObtenerCuenta余额Falló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
 
-// 2) 强制刷新账户余额（强制触发查询：优先脚本；Provider 仅为降级）
+// 2) 强制刷新Cuenta余额（强制触发Consulta：优先脚本；Provider 仅为Degradación）
 // POST /admin/accounts/:accountId/balance/refresh
 // Body: { platform: 'xxx' }
 router.post('/accounts/:accountId/balance/refresh', authenticateAdmin, async (req, res) => {
@@ -70,12 +70,12 @@ router.post('/accounts/:accountId/balance/refresh', authenticateAdmin, async (re
 
     return res.json(balance)
   } catch (error) {
-    logger.error('刷新账户余额失败', error)
+    logger.error('刷新Cuenta余额Falló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
 
-// 3) 批量获取平台所有账户余额
+// 3) 批量Obtener平台所有Cuenta余额
 // GET /admin/accounts/balance/platform/:platform?queryApi=false
 router.get('/accounts/balance/platform/:platform', authenticateAdmin, async (req, res) => {
   try {
@@ -91,24 +91,24 @@ router.get('/accounts/balance/platform/:platform', authenticateAdmin, async (req
 
     return res.json({ success: true, data: balances })
   } catch (error) {
-    logger.error('批量获取余额失败', error)
+    logger.error('批量Obtener余额Falló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
 
-// 4) 获取余额汇总（Dashboard 用）
+// 4) Obtener余额汇总（Dashboard 用）
 // GET /admin/accounts/balance/summary
 router.get('/accounts/balance/summary', authenticateAdmin, async (req, res) => {
   try {
     const summary = await accountBalanceService.getBalanceSummary()
     return res.json({ success: true, data: summary })
   } catch (error) {
-    logger.error('获取余额汇总失败', error)
+    logger.error('Obtener余额汇总Falló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
 
-// 5) 清除缓存
+// 5) 清除Caché
 // DELETE /admin/accounts/:accountId/balance/cache?platform=xxx
 router.delete('/accounts/:accountId/balance/cache', authenticateAdmin, async (req, res) => {
   try {
@@ -122,14 +122,14 @@ router.delete('/accounts/:accountId/balance/cache', authenticateAdmin, async (re
 
     await accountBalanceService.clearCache(accountId, valid.platform)
 
-    return res.json({ success: true, message: '缓存已清除' })
+    return res.json({ success: true, message: 'Caché已清除' })
   } catch (error) {
-    logger.error('清除缓存失败', error)
+    logger.error('清除CachéFalló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
 
-// 6) 获取/保存/测试余额脚本配置（单账户）
+// 6) Obtener/保存/Probar余额脚本Configuración（单Cuenta）
 router.get('/accounts/:accountId/balance/script', authenticateAdmin, async (req, res) => {
   try {
     const { accountId } = req.params
@@ -146,7 +146,7 @@ router.get('/accounts/:accountId/balance/script', authenticateAdmin, async (req,
     )
     return res.json({ success: true, data: config || null })
   } catch (error) {
-    logger.error('获取余额脚本配置失败', error)
+    logger.error('Obtener余额脚本ConfiguraciónFalló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
@@ -164,7 +164,7 @@ router.put('/accounts/:accountId/balance/script', authenticateAdmin, async (req,
     await accountBalanceService.redis.setBalanceScriptConfig(valid.platform, accountId, payload)
     return res.json({ success: true, data: payload })
   } catch (error) {
-    logger.error('保存余额脚本配置失败', error)
+    logger.error('保存余额脚本ConfiguraciónFalló', error)
     return res.status(500).json({ success: false, error: error.message })
   }
 })
@@ -181,7 +181,7 @@ router.post('/accounts/:accountId/balance/script/test', authenticateAdmin, async
     if (!isBalanceScriptEnabled()) {
       return res.status(403).json({
         success: false,
-        error: '余额脚本功能已禁用（可通过 BALANCE_SCRIPT_ENABLED=true 启用）'
+        error: '余额脚本功能已Deshabilitar（可通过 BALANCE_SCRIPT_ENABLED=true Habilitar）'
       })
     }
 
@@ -206,7 +206,7 @@ router.post('/accounts/:accountId/balance/script/test', authenticateAdmin, async
 
     return res.json({ success: true, data: result })
   } catch (error) {
-    logger.error('测试余额脚本失败', error)
+    logger.error('Probar余额脚本Falló', error)
     return res.status(400).json({ success: false, error: error.message })
   }
 })

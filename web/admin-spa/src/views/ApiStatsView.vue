@@ -3,7 +3,7 @@
     class="min-h-screen p-2 sm:p-4 md:p-6"
     :class="isDarkMode ? 'gradient-bg-dark' : 'gradient-bg'"
   >
-    <!-- 顶部导航 -->
+    <!-- Navegación superior -->
     <div
       class="glass-strong mb-4 rounded-2xl p-3 shadow-xl sm:mb-6 sm:rounded-3xl sm:p-4 md:mb-8 md:p-6"
     >
@@ -13,48 +13,48 @@
           :logo-src="oemSettings.siteIconData || oemSettings.siteIcon"
           :subtitle="
             currentTab === 'stats'
-              ? 'API Key 使用统计'
+              ? 'Estadísticas de API Key'
               : currentTab === 'quota'
-                ? '额度卡'
-                : '使用教程'
+                ? 'Tarjetas de Cuota'
+                : 'Tutoriales de Uso'
           "
           :title="oemSettings.siteName"
         />
         <div class="flex items-center gap-2 md:gap-4">
-          <!-- 主题切换按钮 -->
+          <!-- Botón de cambio de tema -->
           <div class="flex items-center">
             <ThemeToggle mode="dropdown" />
           </div>
 
-          <!-- 分隔线 -->
+          <!-- Línea divisoria -->
           <div
             v-if="oemSettings.ldapEnabled || oemSettings.showAdminButton !== false"
             class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent opacity-50 dark:via-gray-600"
           />
 
-          <!-- 用户登录按钮 (仅在 LDAP 启用时显示) -->
+          <!-- Botón de inicio de sesión de usuario (se muestra solo cuando LDAP está habilitado) -->
           <router-link
             v-if="oemSettings.ldapEnabled"
             class="user-login-button flex items-center gap-2 rounded-2xl px-4 py-2 text-white transition-all duration-300 md:px-5 md:py-2.5"
             to="/user-login"
           >
             <i class="fas fa-user text-sm md:text-base" />
-            <span class="text-xs font-semibold tracking-wide md:text-sm">用户登录</span>
+            <span class="text-xs font-semibold tracking-wide md:text-sm">Iniciar Sesión</span>
           </router-link>
-          <!-- 管理后台按钮 -->
+          <!-- Botón del panel de administración -->
           <router-link
             v-if="oemSettings.showAdminButton !== false"
             class="admin-button-refined flex items-center gap-2 rounded-2xl px-4 py-2 transition-all duration-300 md:px-5 md:py-2.5"
             to="/dashboard"
           >
             <i class="fas fa-shield-alt text-sm md:text-base" />
-            <span class="text-xs font-semibold tracking-wide md:text-sm">管理后台</span>
+            <span class="text-xs font-semibold tracking-wide md:text-sm">Panel de Administración</span>
           </router-link>
         </div>
       </div>
     </div>
 
-    <!-- Tab 切换 -->
+    <!-- Cambio de pestañas -->
     <div class="mb-4 sm:mb-6 md:mb-8">
       <div class="flex justify-center">
         <div
@@ -65,32 +65,32 @@
             @click="currentTab = 'stats'"
           >
             <i class="fas fa-chart-line mr-1 md:mr-2" />
-            <span class="text-sm md:text-base">统计查询</span>
+            <span class="text-sm md:text-base">Consulta de Estadísticas</span>
           </button>
           <button
             :class="['tab-pill-button', currentTab === 'quota' ? 'active' : '']"
             @click="switchToQuota"
           >
             <i class="fas fa-ticket-alt mr-1 md:mr-2" />
-            <span class="text-sm md:text-base">额度卡</span>
+            <span class="text-sm md:text-base">Tarjetas de Cuota</span>
           </button>
           <button
             :class="['tab-pill-button', currentTab === 'tutorial' ? 'active' : '']"
             @click="currentTab = 'tutorial'"
           >
             <i class="fas fa-graduation-cap mr-1 md:mr-2" />
-            <span class="text-sm md:text-base">使用教程</span>
+            <span class="text-sm md:text-base">Tutoriales de Uso</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- 统计内容 -->
+    <!-- Contenido de estadísticas -->
     <div v-if="currentTab === 'stats'" class="tab-content">
-      <!-- API Key 输入区域 -->
+      <!-- Área de entrada de API Key -->
       <ApiKeyInput />
 
-      <!-- 错误提示 -->
+      <!-- Mensaje de error -->
       <div v-if="error" class="mb-4 sm:mb-6 md:mb-8">
         <div
           class="rounded-xl border border-red-500/30 bg-red-500/20 p-3 text-sm text-red-800 backdrop-blur-sm dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200 md:p-4 md:text-base"
@@ -100,10 +100,10 @@
         </div>
       </div>
 
-      <!-- 统计数据展示区域 -->
+      <!-- Área de visualización de datos estadísticos -->
       <div v-if="statsData" class="fade-in">
         <div class="glass-strong rounded-2xl p-3 shadow-xl sm:rounded-3xl sm:p-4 md:p-6">
-          <!-- 时间范围选择器 -->
+          <!-- Selector de rango de tiempo -->
           <div
             class="mb-3 border-b border-gray-200 pb-3 dark:border-gray-700 sm:mb-4 sm:pb-4 md:mb-6 md:pb-6"
           >
@@ -113,7 +113,7 @@
               <div class="flex items-center gap-2 md:gap-3">
                 <i class="fas fa-clock text-base text-blue-500 md:text-lg" />
                 <span class="text-base font-medium text-gray-700 dark:text-gray-200 md:text-lg"
-                  >统计时间范围</span
+                  >Rango de tiempo estadístico</span
                 >
               </div>
               <div class="flex w-full items-center gap-2 md:w-auto">
@@ -124,7 +124,7 @@
                   @click="switchPeriod('daily')"
                 >
                   <i class="fas fa-calendar-day text-xs md:text-sm" />
-                  今日
+                  Hoy
                 </button>
                 <button
                   class="flex flex-1 items-center justify-center gap-1 px-4 py-2 text-xs font-medium md:flex-none md:gap-2 md:px-6 md:text-sm"
@@ -133,7 +133,7 @@
                   @click="switchPeriod('monthly')"
                 >
                   <i class="fas fa-calendar-alt text-xs md:text-sm" />
-                  本月
+                  Este Mes
                 </button>
                 <button
                   class="flex flex-1 items-center justify-center gap-1 px-4 py-2 text-xs font-medium md:flex-none md:gap-2 md:px-6 md:text-sm"
@@ -142,9 +142,9 @@
                   @click="switchPeriod('alltime')"
                 >
                   <i class="fas fa-infinity text-xs md:text-sm" />
-                  全部
+                  Todo
                 </button>
-                <!-- 测试按钮下拉菜单 - 仅在单Key模式下显示 -->
+                <!-- Menú desplegable del botón de prueba - se muestra solo en modo de clave única -->
                 <div v-if="!multiKeyMode" class="relative">
                   <button
                     :class="[
@@ -154,16 +154,16 @@
                     :disabled="loading || !hasAnyTestPermission"
                     :title="
                       hasAnyTestPermission
-                        ? '测试 API'
-                        : `当前 Key 可用服务: ${availableServicesText}`
+                        ? 'Probar API'
+                        : `Servicios disponibles de esta Key: ${availableServicesText}`
                     "
                     @click="toggleTestMenu"
                   >
                     <i class="fas fa-vial text-xs md:text-sm" />
-                    测试
+                    Probar
                     <i class="fas fa-chevron-down ml-1 text-xs" />
                   </button>
-                  <!-- 下拉菜单 -->
+                  <!-- Menú desplegable -->
                   <div
                     v-if="showTestMenu"
                     class="absolute right-0 top-full z-50 mt-1 min-w-[140px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
@@ -198,10 +198,10 @@
             </div>
           </div>
 
-          <!-- 基本信息和统计概览 -->
+          <!-- Resumen de información básica y estadísticas -->
           <StatsOverview />
 
-          <!-- Token 分布和限制配置 -->
+          <!-- Distribución de Token y configuración de límites -->
           <div
             class="mb-4 mt-4 grid grid-cols-1 gap-3 sm:mb-6 sm:mt-6 sm:gap-4 md:mb-8 md:mt-8 md:gap-6 xl:grid-cols-2 xl:items-stretch"
           >
@@ -214,10 +214,10 @@
             </template>
           </div>
 
-          <!-- 服务费用统计卡片 -->
+          <!-- Tarjetas de estadísticas de costos de servicios -->
           <ServiceCostCards class="mb-4 sm:mb-6" />
 
-          <!-- 模型使用统计 - 三个时间段 -->
+          <!-- Estadísticas de uso de modelos - tres períodos de tiempo -->
           <div class="space-y-4 sm:space-y-6">
             <ModelUsageStats period="daily" />
             <ModelUsageStats period="monthly" />
@@ -227,17 +227,17 @@
       </div>
     </div>
 
-    <!-- 教程内容 -->
+    <!-- Contenido del tutorial -->
     <div v-if="currentTab === 'tutorial'" class="tab-content">
       <div class="glass-strong rounded-3xl shadow-xl">
         <TutorialView />
       </div>
     </div>
 
-    <!-- 额度卡内容（含二级 tab） -->
+    <!-- Contenido de tarjetas de cuota (con pestañas secundarias) -->
     <div v-if="currentTab === 'quota'" class="tab-content">
       <div class="glass-strong rounded-2xl p-4 shadow-xl sm:rounded-3xl sm:p-6 md:p-8">
-        <!-- 二级 Tab -->
+        <!-- Pestañas secundarias -->
         <div
           class="mb-4 flex gap-2 border-b border-gray-200 pb-4 dark:border-gray-700 md:mb-6 md:pb-6"
         >
@@ -251,7 +251,7 @@
             @click="quotaSubTab = 'redeem'"
           >
             <i class="fas fa-ticket-alt mr-2" />
-            兑换额度卡
+            Canjear Tarjeta de Cuota
           </button>
           <button
             :class="[
@@ -263,44 +263,44 @@
             @click="switchToHistorySubTab"
           >
             <i class="fas fa-history mr-2" />
-            兑换记录
+            Historial de Canjes
           </button>
         </div>
 
-        <!-- 兑换额度卡子内容 -->
+        <!-- Subcontenido de canje de tarjeta de cuota -->
         <div v-if="quotaSubTab === 'redeem'">
-          <!-- 需要先输入 API Key -->
+          <!-- Necesita ingresar API Key primero -->
           <div v-if="!apiId" class="py-8 text-center">
             <div class="mb-4 text-gray-500 dark:text-gray-400">
               <i class="fas fa-key mb-4 block text-4xl opacity-50" />
-              <p>请先在「统计查询」页面输入您的 API Key</p>
+              <p>Primero ingrese su API Key en la página de "Consulta de Estadísticas"</p>
             </div>
             <button
               class="rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-2.5 font-medium text-white transition-all hover:from-blue-600 hover:to-cyan-600"
               @click="currentTab = 'stats'"
             >
-              前往输入 API Key
+              Ir a Ingresar API Key
             </button>
           </div>
 
-          <!-- 兑换表单 -->
+          <!-- Formulario de canje -->
           <div v-else>
             <div class="mb-6 rounded-xl bg-blue-50 p-4 dark:bg-blue-900/20">
               <p class="text-sm text-blue-700 dark:text-blue-300">
                 <i class="fas fa-info-circle mr-2" />
-                当前 API Key: <span class="font-medium">{{ statsData?.name || apiId }}</span>
+                API Key actual: <span class="font-medium">{{ statsData?.name || apiId }}</span>
               </p>
             </div>
 
             <div class="space-y-4">
               <div>
                 <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  额度卡卡号
+                  Número de Tarjeta de Cuota
                 </label>
                 <input
                   v-model="redeemCode"
                   class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
-                  placeholder="请输入额度卡卡号"
+                  placeholder="Ingrese el número de tarjeta de cuota"
                   type="text"
                   @keyup.enter="handleRedeem"
                 />
@@ -313,11 +313,11 @@
               >
                 <i v-if="redeemLoading" class="fas fa-spinner fa-spin mr-2" />
                 <i v-else class="fas fa-check-circle mr-2" />
-                {{ redeemLoading ? '兑换中...' : '立即兑换' }}
+                {{ redeemLoading ? 'Canjeando...' : 'Canjear Ahora' }}
               </button>
             </div>
 
-            <!-- 兑换结果 -->
+            <!-- Resultado del canje -->
             <div v-if="redeemResult" class="mt-6">
               <div
                 :class="[
@@ -345,27 +345,27 @@
                       {{
                         redeemResult.success
                           ? redeemResult.hasWarnings
-                            ? '兑换成功（部分截断）'
-                            : '兑换成功'
-                          : '兑换失败'
+                            ? 'Canje exitoso (parcialmente truncado)'
+                            : 'Canje exitoso'
+                          : 'Canje fallido'
                       }}
                     </p>
                     <p class="mt-1 text-sm opacity-90">{{ redeemResult.message }}</p>
                     <div v-if="redeemResult.success && redeemResult.data" class="mt-2 text-sm">
                       <p v-if="redeemResult.data.quotaAdded">
-                        额度增加:
+                        Cuota aumentada:
                         <span class="font-medium">${{ redeemResult.data.quotaAdded }}</span>
                       </p>
                       <p v-if="redeemResult.data.timeAdded">
-                        有效期延长:
+                        Validez extendida:
                         <span class="font-medium"
                           >{{ redeemResult.data.timeAdded
                           }}{{
                             redeemResult.data.timeUnit === 'days'
-                              ? '天'
+                              ? ' días'
                               : redeemResult.data.timeUnit === 'hours'
-                                ? '小时'
-                                : '月'
+                                ? ' horas'
+                                : ' meses'
                           }}</span
                         >
                       </p>
@@ -377,32 +377,32 @@
           </div>
         </div>
 
-        <!-- 兑换记录子内容 -->
+        <!-- Subcontenido de historial de canjes -->
         <div v-if="quotaSubTab === 'history'">
-          <!-- 需要先输入 API Key -->
+          <!-- Necesita ingresar API Key primero -->
           <div v-if="!apiId" class="py-8 text-center">
             <div class="mb-4 text-gray-500 dark:text-gray-400">
               <i class="fas fa-key mb-4 block text-4xl opacity-50" />
-              <p>请先在「统计查询」页面输入您的 API Key</p>
+              <p>Primero ingrese su API Key en la página de "Consulta de Estadísticas"</p>
             </div>
             <button
               class="rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-2.5 font-medium text-white transition-all hover:from-blue-600 hover:to-cyan-600"
               @click="currentTab = 'stats'"
             >
-              前往输入 API Key
+              Ir a Ingresar API Key
             </button>
           </div>
 
-          <!-- 记录列表 -->
+          <!-- Lista de registros -->
           <div v-else>
             <div v-if="historyLoading" class="py-8 text-center">
               <i class="fas fa-spinner fa-spin text-2xl text-gray-400" />
-              <p class="mt-2 text-gray-500 dark:text-gray-400">加载中...</p>
+              <p class="mt-2 text-gray-500 dark:text-gray-400">Cargando...</p>
             </div>
 
             <div v-else-if="redemptionHistory.length === 0" class="py-8 text-center">
               <i class="fas fa-inbox text-4xl text-gray-300 dark:text-gray-600" />
-              <p class="mt-2 text-gray-500 dark:text-gray-400">暂无兑换记录</p>
+              <p class="mt-2 text-gray-500 dark:text-gray-400">No hay registros de canjes</p>
             </div>
 
             <div v-else class="space-y-3">
@@ -426,30 +426,30 @@
                       >
                         {{
                           record.cardType === 'quota'
-                            ? '额度卡'
+                            ? 'Tarjeta de Cuota'
                             : record.cardType === 'time'
-                              ? '时间卡'
-                              : '组合卡'
+                              ? 'Tarjeta de Tiempo'
+                              : 'Tarjeta Combinada'
                         }}
                       </span>
                       <span
                         v-if="record.status === 'revoked'"
                         class="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300"
                       >
-                        已撤销
+                        Revocado
                       </span>
                     </div>
                     <p class="text-sm text-gray-600 dark:text-gray-300">
-                      <span v-if="record.quotaAdded">额度 +${{ record.quotaAdded }}</span>
+                      <span v-if="record.quotaAdded">Cuota +${{ record.quotaAdded }}</span>
                       <span v-if="record.quotaAdded && record.timeAdded"> · </span>
                       <span v-if="record.timeAdded"
-                        >有效期 +{{ record.timeAmount
+                        >Validez +{{ record.timeAmount
                         }}{{
                           record.timeUnit === 'days'
-                            ? '天'
+                            ? ' días'
                             : record.timeUnit === 'hours'
-                              ? '小时'
-                              : '月'
+                              ? ' horas'
+                              : ' meses'
                         }}</span
                       >
                     </p>
@@ -467,7 +467,7 @@
       </div>
     </div>
 
-    <!-- API Key 测试弹窗 -->
+    <!-- Ventana de prueba de API Key -->
     <ApiKeyTestModal
       :api-key-name="statsData?.name || ''"
       :api-key-value="apiKey"
@@ -476,7 +476,7 @@
       @close="closeTestModal"
     />
 
-    <!-- API Stats 通知弹框 -->
+    <!-- Ventana de notificación de API Stats -->
     <Teleport to="body">
       <Transition name="fade">
         <div
@@ -495,7 +495,7 @@
                 <i class="fas fa-bell" />
               </div>
               <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {{ oemSettings.apiStatsNotice?.title || '通知' }}
+                {{ oemSettings.apiStatsNotice?.title || 'Notificación' }}
               </h3>
             </div>
             <p
@@ -509,13 +509,13 @@
                 class="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                 type="checkbox"
               />
-              <span class="text-sm text-gray-600 dark:text-gray-400">本次会话不再显示</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400">No mostrar de nuevo en esta sesión</span>
             </label>
             <button
               class="w-full rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-2.5 font-medium text-white transition-all hover:from-blue-600 hover:to-cyan-600"
               @click="dismissNotice"
             >
-              知道了
+              Entendido
             </button>
           </div>
         </div>
@@ -548,10 +548,10 @@ const route = useRoute()
 const apiStatsStore = useApiStatsStore()
 const themeStore = useThemeStore()
 
-// 当前标签页
+// Pestaña actual
 const currentTab = ref('stats')
 
-// 主题相关
+// Relacionado con el tema
 const isDarkMode = computed(() => themeStore.isDarkMode)
 
 const {
@@ -576,17 +576,17 @@ const {
   reset
 } = apiStatsStore
 
-// 测试弹窗状态
+// Estado del modal de prueba
 const showTestModal = ref(false)
 const showTestMenu = ref(false)
 const testServiceType = ref('claude')
 
-// 通知弹框状态
+// Estado del modal de notificación
 const showNotice = ref(false)
 const dontShowAgain = ref(false)
 const NOTICE_STORAGE_KEY = 'apiStatsNoticeRead'
 
-// 额度卡兑换相关状态
+// Estado relacionado con el canje de tarjetas de cuota
 const quotaSubTab = ref('redeem')
 const redeemCode = ref('')
 const redeemLoading = ref(false)
@@ -594,7 +594,7 @@ const redeemResult = ref(null)
 const redemptionHistory = ref([])
 const historyLoading = ref(false)
 
-// 兑换额度卡
+// Canjear tarjeta de cuota
 const handleRedeem = async () => {
   if (!redeemCode.value.trim() || !apiId.value) return
 
@@ -613,27 +613,27 @@ const handleRedeem = async () => {
     const hasWarnings = warnings.length > 0
     redeemResult.value = {
       success: true,
-      message: hasWarnings ? warnings.join('；') : '额度卡兑换成功！',
+      message: hasWarnings ? warnings.join('; ') : '¡Tarjeta de cuota canjeada exitosamente!',
       data: res.data,
       hasWarnings
     }
     redeemCode.value = ''
     showToast(
-      hasWarnings ? '兑换成功（部分截断）' : '兑换成功',
+      hasWarnings ? 'Canje exitoso (parcialmente truncado)' : 'Canje exitoso',
       hasWarnings ? 'warning' : 'success'
     )
-    // 刷新统计数据
+    // Refrescar datos estadísticos
     loadStatsWithApiId()
   } else {
     redeemResult.value = {
       success: false,
-      message: res.error || res.message || '兑换失败'
+      message: res.error || res.message || 'Canje fallido'
     }
-    showToast(res.error || res.message || '兑换失败', 'error')
+    showToast(res.error || res.message || 'Canje fallido', 'error')
   }
 }
 
-// 加载兑换记录
+// Cargar historial de canjes
 const loadRedemptionHistory = async () => {
   if (!apiId.value) return
 
@@ -646,22 +646,22 @@ const loadRedemptionHistory = async () => {
   }
 }
 
-// 切换到额度卡 Tab
+// Cambiar a pestaña de tarjetas de cuota
 const switchToQuota = () => {
   currentTab.value = 'quota'
-  // 如果子标签是记录，刷新数据
+  // Si la subpestaña es historial, refrescar datos
   if (quotaSubTab.value === 'history') {
     loadRedemptionHistory()
   }
 }
 
-// 切换到兑换记录子 Tab
+// Cambiar a subpestaña de historial de canjes
 const switchToHistorySubTab = () => {
   quotaSubTab.value = 'history'
   loadRedemptionHistory()
 }
 
-// 解析 permissions（可能是 JSON 字符串或数组）
+// Analizar permisos (puede ser una cadena JSON o un arreglo)
 const parsePermissions = (permissions) => {
   if (!permissions) return []
   if (Array.isArray(permissions)) return permissions
@@ -677,36 +677,36 @@ const parsePermissions = (permissions) => {
   return []
 }
 
-// 检查是否可以测试 Claude（权限包含 claude 或全部）
+// Verificar si se puede probar Claude (permisos incluyen claude o todos)
 const canTestClaude = computed(() => {
   const permissions = parsePermissions(statsData.value?.permissions)
   if (permissions.length === 0) return true
   return permissions.includes('claude')
 })
 
-// 检查是否可以测试 Gemini
+// Verificar si se puede probar Gemini
 const canTestGemini = computed(() => {
   const permissions = parsePermissions(statsData.value?.permissions)
   if (permissions.length === 0) return true
   return permissions.includes('gemini')
 })
 
-// 检查是否可以测试 OpenAI
+// Verificar si se puede probar OpenAI
 const canTestOpenAI = computed(() => {
   const permissions = parsePermissions(statsData.value?.permissions)
   if (permissions.length === 0) return true
   return permissions.includes('openai')
 })
 
-// 检查是否有任何测试权限
+// Verificar si tiene algún permiso de prueba
 const hasAnyTestPermission = computed(() => {
   return canTestClaude.value || canTestGemini.value || canTestOpenAI.value
 })
 
-// 可用服务文本
+// Texto de servicios disponibles
 const availableServicesText = computed(() => {
   const permissions = parsePermissions(statsData.value?.permissions)
-  if (permissions.length === 0) return '全部服务'
+  if (permissions.length === 0) return 'Todos los servicios'
   const serviceNames = {
     claude: 'Claude',
     gemini: 'Gemini',
@@ -716,24 +716,24 @@ const availableServicesText = computed(() => {
   return permissions.map((s) => serviceNames[s] || s).join(', ')
 })
 
-// 切换测试菜单
+// Alternar menú de prueba
 const toggleTestMenu = () => {
   showTestMenu.value = !showTestMenu.value
 }
 
-// 打开测试弹窗
+// Abrir modal de prueba
 const openTestModal = (serviceType = 'claude') => {
   testServiceType.value = serviceType
   showTestMenu.value = false
   showTestModal.value = true
 }
 
-// 关闭测试弹窗
+// Cerrar modal de prueba
 const closeTestModal = () => {
   showTestModal.value = false
 }
 
-// 关闭通知弹框
+// Cerrar modal de notificación
 const dismissNotice = () => {
   showNotice.value = false
   if (dontShowAgain.value) {
@@ -741,7 +741,7 @@ const dismissNotice = () => {
   }
 }
 
-// 检查是否显示通知
+// Verificar si mostrar notificación
 const checkNotice = () => {
   const notice = oemSettings.value?.apiStatsNotice
   if (notice?.enabled && notice?.content && !sessionStorage.getItem(NOTICE_STORAGE_KEY)) {
@@ -749,16 +749,16 @@ const checkNotice = () => {
   }
 }
 
-// 点击外部关闭菜单
+// Hacer clic fuera para cerrar menú
 const handleClickOutside = (event) => {
   if (showTestMenu.value && !event.target.closest('.relative')) {
     showTestMenu.value = false
   }
 }
 
-// 处理键盘快捷键
+// Manejar atajos de teclado
 const handleKeyDown = (event) => {
-  // Ctrl/Cmd + Enter 查询
+  // Ctrl/Cmd + Enter para consultar
   if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
     if (!loading.value && apiKey.value.trim()) {
       queryStats()
@@ -766,24 +766,24 @@ const handleKeyDown = (event) => {
     event.preventDefault()
   }
 
-  // ESC 清除数据
+  // ESC para limpiar datos
   if (event.key === 'Escape') {
     reset()
   }
 }
 
-// 初始化
+// Inicialización
 onMounted(async () => {
   // API Stats Page loaded
 
-  // 初始化主题（因为该页面不在 MainLayout 内）
+  // Inicializar tema (porque esta página no está dentro de MainLayout)
   themeStore.initTheme()
 
-  // 加载 OEM 设置和服务倍率
+  // Cargar configuración OEM y tarifas de servicio
   await Promise.all([loadOemSettings(), loadServiceRates()])
   checkNotice()
 
-  // 检查 URL 参数
+  // Verificar parámetros URL
   const urlApiId = route.query.apiId
   const urlApiKey = route.query.apiKey
 
@@ -791,19 +791,19 @@ onMounted(async () => {
     urlApiId &&
     urlApiId.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i)
   ) {
-    // 如果 URL 中有 apiId，直接使用 apiId 加载数据
+    // Si la URL tiene apiId, usar directamente apiId para cargar datos
     apiId.value = urlApiId
-    // 同时从 localStorage 填充 API Key 到输入框
+    // También llenar API Key desde localStorage en el campo de entrada
     const savedApiKey = loadApiKeyFromStorage()
     if (savedApiKey) {
       apiKey.value = savedApiKey
     }
     loadStatsWithApiId()
   } else if (urlApiKey && urlApiKey.length > 10) {
-    // 向后兼容，支持 apiKey 参数
+    // Compatibilidad con versiones anteriores, soportar parámetro apiKey
     apiKey.value = urlApiKey
   } else {
-    // 没有 URL 参数，检查 localStorage
+    // Sin parámetros URL, verificar localStorage
     const savedApiKey = loadApiKeyFromStorage()
     if (savedApiKey && savedApiKey.length > 10) {
       apiKey.value = savedApiKey
@@ -811,19 +811,19 @@ onMounted(async () => {
     }
   }
 
-  // 添加键盘事件监听
+  // Agregar escucha de eventos de teclado
   document.addEventListener('keydown', handleKeyDown)
-  // 添加点击外部关闭菜单监听
+  // Agregar escucha de clic externo para cerrar menú
   document.addEventListener('click', handleClickOutside)
 })
 
-// 清理
+// Limpieza
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown)
   document.removeEventListener('click', handleClickOutside)
 })
 
-// 监听 API Key 变化
+// Escuchar cambios de API Key
 watch(apiKey, (newValue) => {
   if (!newValue) {
     apiStatsStore.clearData()
@@ -832,7 +832,7 @@ watch(apiKey, (newValue) => {
 </script>
 
 <style scoped>
-/* 渐变背景 */
+/* Fondo degradado */
 .gradient-bg {
   background: linear-gradient(
     135deg,
@@ -845,7 +845,7 @@ watch(apiKey, (newValue) => {
   position: relative;
 }
 
-/* 暗色模式的渐变背景 */
+/* Fondo degradado del modo oscuro */
 .gradient-bg-dark {
   background: linear-gradient(
     135deg,
@@ -873,7 +873,7 @@ watch(apiKey, (newValue) => {
   z-index: 0;
 }
 
-/* 暗色模式的背景覆盖 */
+/* Superposición de fondo del modo oscuro */
 .gradient-bg-dark::before {
   content: '';
   position: fixed;
@@ -889,7 +889,7 @@ watch(apiKey, (newValue) => {
   z-index: 0;
 }
 
-/* 玻璃态效果 - 使用CSS变量 */
+/*/* Efecto de cristal - usando variables CSS */
 .glass-strong {
   background: var(--glass-strong-color);
   backdrop-filter: blur(25px);
@@ -902,7 +902,7 @@ watch(apiKey, (newValue) => {
   z-index: 1;
 }
 
-/* 暗色模式的玻璃态效果 */
+/* Efecto de vidrio del modo oscuro */
 :global(.dark) .glass-strong {
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.7),
@@ -910,7 +910,7 @@ watch(apiKey, (newValue) => {
     inset 0 1px 0 rgba(75, 85, 99, 0.2);
 }
 
-/* 标题渐变 */
+/* Degradado del título */
 .header-title {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   -webkit-background-clip: text;
@@ -920,7 +920,7 @@ watch(apiKey, (newValue) => {
   letter-spacing: -0.025em;
 }
 
-/* 用户登录按钮 */
+/* Botón de inicio de sesión de usuario */
 .user-login-button {
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
   backdrop-filter: blur(20px);
@@ -934,7 +934,7 @@ watch(apiKey, (newValue) => {
   font-weight: 600;
 }
 
-/* 暗色模式下的用户登录按钮 */
+/* Botón de inicio de sesión de usuario en modo oscuro */
 :global(.dark) .user-login-button {
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
   border: 1px solid rgba(52, 211, 153, 0.4);
@@ -968,7 +968,7 @@ watch(apiKey, (newValue) => {
   opacity: 1;
 }
 
-/* 暗色模式下的悬停效果 */
+/* Efecto hover en modo oscuro */
 :global(.dark) .user-login-button:hover {
   box-shadow:
     0 8px 20px rgba(52, 211, 153, 0.4),
@@ -980,14 +980,14 @@ watch(apiKey, (newValue) => {
   transform: translateY(-1px) scale(1);
 }
 
-/* 确保图标和文字在所有模式下都清晰可见 */
+/* Asegurar que los íconos y el texto sean claramente visibles en todos los modos */
 .user-login-button i,
 .user-login-button span {
   position: relative;
   z-index: 1;
 }
 
-/* 管理后台按钮 - 精致版本 */
+/*/* Botón de panel de administración - versión refinada */
 .admin-button-refined {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   backdrop-filter: blur(20px);
@@ -1002,7 +1002,7 @@ watch(apiKey, (newValue) => {
   font-weight: 600;
 }
 
-/* 暗色模式下的管理后台按钮 */
+/* Botón del panel de administración en modo oscuro */
 :global(.dark) .admin-button-refined {
   background: rgba(55, 65, 81, 0.8);
   border: 1px solid rgba(107, 114, 128, 0.4);
@@ -1038,7 +1038,7 @@ watch(apiKey, (newValue) => {
   opacity: 1;
 }
 
-/* 暗色模式下的悬停效果 */
+/* Efecto hover en modo oscuro */
 :global(.dark) .admin-button-refined:hover {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   border-color: rgba(var(--secondary-rgb), 0.4);
@@ -1052,14 +1052,14 @@ watch(apiKey, (newValue) => {
   transform: translateY(-1px) scale(1);
 }
 
-/* 确保图标和文字在所有模式下都清晰可见 */
+/* Asegurar que los íconos y el texto sean claramente visibles en todos los modos */
 .admin-button-refined i,
 .admin-button-refined span {
   position: relative;
   z-index: 1;
 }
 
-/* 时间范围按钮 */
+/* Botón de rango de tiempo */
 .period-btn {
   position: relative;
   overflow: hidden;
@@ -1104,7 +1104,7 @@ watch(apiKey, (newValue) => {
   border-color: rgba(107, 114, 128, 0.8);
 }
 
-/* 测试按钮样式 */
+/* Estilos del botón de prueba */
 .test-btn {
   position: relative;
   overflow: hidden;
@@ -1134,7 +1134,7 @@ watch(apiKey, (newValue) => {
   transform: none;
 }
 
-/* Tab 胶囊按钮样式 */
+/*/* Estilos de botones de pestañas tipo píldora */
 .tab-pill-button {
   padding: 0.5rem 1rem;
   border-radius: 9999px;
@@ -1153,7 +1153,7 @@ watch(apiKey, (newValue) => {
   justify-content: center;
 }
 
-/* 暗夜模式下的Tab按钮基础样式 */
+/* Estilo base del botón de pestaña en modo oscuro */
 :global(html.dark) .tab-pill-button {
   color: rgba(209, 213, 219, 0.8);
 }
@@ -1195,7 +1195,7 @@ watch(apiKey, (newValue) => {
   font-size: 0.875rem;
 }
 
-/* Tab 内容切换动画 */
+/*/* Animación de transición de contenido de pestaña */
 .tab-content {
   animation: tabFadeIn 0.4s ease-out;
 }
@@ -1211,7 +1211,7 @@ watch(apiKey, (newValue) => {
   }
 }
 
-/* 动画效果 */
+/* Efectos de animación */
 .fade-in {
   animation: fadeIn 0.6s ease-out;
 }
@@ -1227,7 +1227,7 @@ watch(apiKey, (newValue) => {
   }
 }
 
-/* 通知弹框动画 */
+/* Animación de ventana emergente de notificación */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

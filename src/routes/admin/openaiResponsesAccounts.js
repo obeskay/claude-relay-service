@@ -1,6 +1,6 @@
 /**
- * Admin Routes - OpenAI-Responses 账户管理
- * 处理 OpenAI-Responses 账户的增删改查和状态管理
+ * Admin Routes - OpenAI-Responses Cuenta管理
+ * Procesar OpenAI-Responses Cuenta的增删改查和状态管理
  */
 
 const express = require('express')
@@ -18,20 +18,20 @@ const { getProxyAgent } = require('../../utils/proxyHelper')
 
 const router = express.Router()
 
-// ==================== OpenAI-Responses 账户管理 API ====================
+// ==================== OpenAI-Responses Cuenta管理 API ====================
 
-// 获取所有 OpenAI-Responses 账户
+// Obtener所有 OpenAI-Responses Cuenta
 router.get('/openai-responses-accounts', authenticateAdmin, async (req, res) => {
   try {
     const { platform, groupId } = req.query
     let accounts = await openaiResponsesAccountService.getAllAccounts(true)
 
-    // 根据查询参数进行筛选
+    // 根据ConsultaParámetro进Fila筛选
     if (platform && platform !== 'openai-responses') {
       accounts = []
     }
 
-    // 根据分组ID筛选
+    // 根据AgruparID筛选
     if (groupId) {
       const group = await accountGroupService.getGroup(groupId)
       if (group && group.platform === 'openai') {
@@ -44,28 +44,28 @@ router.get('/openai-responses-accounts', authenticateAdmin, async (req, res) => 
 
     const accountIds = accounts.map((a) => a.id)
 
-    // 并行获取：轻量 API Keys + 分组信息 + daily cost + 清理限流状态
+    // 并FilaObtener：轻量 API Keys + AgruparInformación + daily cost + Limpiar限流状态
     const [allApiKeys, allGroupInfosMap, dailyCostMap] = await Promise.all([
       apiKeyService.getAllApiKeysLite(),
       accountGroupService.batchGetAccountGroupsByIndex(accountIds, 'openai'),
       redis.batchGetAccountDailyCost(accountIds),
-      // 批量清理限流状态
+      // 批量Limpiar限流状态
       Promise.all(accountIds.map((id) => openaiResponsesAccountService.checkAndClearRateLimit(id)))
     ])
 
-    // 单次遍历构建绑定数映射（只算直连，不算 group）
+    // 单次遍历Construir绑定数映射（只算直连，不算 group）
     const bindingCountMap = new Map()
     for (const key of allApiKeys) {
       const binding = key.openaiAccountId
       if (!binding) {
         continue
       }
-      // 处理 responses: 前缀
+      // Procesar responses: 前缀
       const accountId = binding.startsWith('responses:') ? binding.substring(10) : binding
       bindingCountMap.set(accountId, (bindingCountMap.get(accountId) || 0) + 1)
     }
 
-    // 批量获取使用统计（不含 daily cost，已单独获取）
+    // 批量Obtener使用Estadística（不含 daily cost，已单独Obtener）
     const client = redis.getClientSafe()
     const today = redis.getDateStringInTimezone()
     const tzDate = redis.getDateInTimezone()
@@ -79,7 +79,7 @@ router.get('/openai-responses-accounts', authenticateAdmin, async (req, res) => 
     }
     const statsResults = await statsPipeline.exec()
 
-    // 处理统计数据
+    // ProcesarEstadísticaDatos
     const allUsageStatsMap = new Map()
     for (let i = 0; i < accountIds.length; i++) {
       const accountId = accountIds[i]
@@ -109,7 +109,7 @@ router.get('/openai-responses-accounts', authenticateAdmin, async (req, res) => 
       })
     }
 
-    // 处理额度信息、使用统计和绑定的 API Key 数量
+    // Procesar额度Información、使用Estadística和绑定的 API Key 数量
     const accountsWithStats = accounts.map((account) => {
       const usageStats = allUsageStatsMap.get(account.id) || {
         daily: { requests: 0, tokens: 0, allTokens: 0 },
@@ -141,12 +141,12 @@ router.get('/openai-responses-accounts', authenticateAdmin, async (req, res) => 
   }
 })
 
-// 创建 OpenAI-Responses 账户
+// Crear OpenAI-Responses Cuenta
 router.post('/openai-responses-accounts', authenticateAdmin, async (req, res) => {
   try {
     const accountData = req.body
 
-    // 验证分组类型
+    // ValidarAgruparTipo
     if (
       accountData.accountType === 'group' &&
       !accountData.groupId &&
@@ -160,16 +160,16 @@ router.post('/openai-responses-accounts', authenticateAdmin, async (req, res) =>
 
     const account = await openaiResponsesAccountService.createAccount(accountData)
 
-    // 如果是分组类型，处理分组绑定
+    // 如果是AgruparTipo，ProcesarAgrupar绑定
     if (accountData.accountType === 'group') {
       if (accountData.groupIds && accountData.groupIds.length > 0) {
-        // 多分组模式
+        // 多Agrupar模式
         await accountGroupService.setAccountGroups(account.id, accountData.groupIds, 'openai')
         logger.info(
           `🏢 Added OpenAI-Responses account ${account.id} to groups: ${accountData.groupIds.join(', ')}`
         )
       } else if (accountData.groupId) {
-        // 单分组模式（向后兼容）
+        // 单Agrupar模式（向后兼容）
         await accountGroupService.addAccountToGroup(account.id, accountData.groupId, 'openai')
         logger.info(
           `🏢 Added OpenAI-Responses account ${account.id} to group: ${accountData.groupId}`
@@ -188,13 +188,13 @@ router.post('/openai-responses-accounts', authenticateAdmin, async (req, res) =>
   }
 })
 
-// 更新 OpenAI-Responses 账户
+// Actualizar OpenAI-Responses Cuenta
 router.put('/openai-responses-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
     const updates = req.body
 
-    // 获取当前账户信息
+    // Obtener当前CuentaInformación
     const currentAccount = await openaiResponsesAccountService.getAccount(id)
     if (!currentAccount) {
       return res.status(404).json({
@@ -203,10 +203,10 @@ router.put('/openai-responses-accounts/:id', authenticateAdmin, async (req, res)
       })
     }
 
-    // ✅ 【新增】映射字段名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
+    // ✅ 【Nueva característica】映射Campo名：前端的 expiresAt -> 后端的 subscriptionExpiresAt
     const mappedUpdates = mapExpiryField(updates, 'OpenAI-Responses', id)
 
-    // 验证priority的有效性（1-100）
+    // Validarpriority的有效性（1-100）
     if (mappedUpdates.priority !== undefined) {
       const priority = parseInt(mappedUpdates.priority)
       if (isNaN(priority) || priority < 1 || priority > 100) {
@@ -218,9 +218,9 @@ router.put('/openai-responses-accounts/:id', authenticateAdmin, async (req, res)
       mappedUpdates.priority = priority.toString()
     }
 
-    // 处理分组变更
+    // ProcesarAgrupar变更
     if (mappedUpdates.accountType !== undefined) {
-      // 如果之前是分组类型，需要从所有分组中移除
+      // 如果之前是AgruparTipo，需要从所有Agrupar中Eliminación
       if (currentAccount.accountType === 'group') {
         const oldGroups = await accountGroupService.getAccountGroups(id)
         for (const oldGroup of oldGroups) {
@@ -229,24 +229,24 @@ router.put('/openai-responses-accounts/:id', authenticateAdmin, async (req, res)
         logger.info(`📤 Removed OpenAI-Responses account ${id} from all groups`)
       }
 
-      // 如果新类型是分组，处理多分组支持
+      // 如果新Tipo是Agrupar，Procesar多AgruparSoportar
       if (mappedUpdates.accountType === 'group') {
         if (Object.prototype.hasOwnProperty.call(mappedUpdates, 'groupIds')) {
           if (mappedUpdates.groupIds && mappedUpdates.groupIds.length > 0) {
-            // 设置新的多分组
+            // Establecer新的多Agrupar
             await accountGroupService.setAccountGroups(id, mappedUpdates.groupIds, 'openai')
             logger.info(
               `📥 Added OpenAI-Responses account ${id} to groups: ${mappedUpdates.groupIds.join(', ')}`
             )
           } else {
-            // groupIds 为空数组，从所有分组中移除
+            // groupIds 为空Arreglo，从所有Agrupar中Eliminación
             await accountGroupService.removeAccountFromAllGroups(id)
             logger.info(
               `📤 Removed OpenAI-Responses account ${id} from all groups (empty groupIds)`
             )
           }
         } else if (mappedUpdates.groupId) {
-          // 向后兼容：仅当没有 groupIds 但有 groupId 时使用单分组逻辑
+          // 向后兼容：仅当没有 groupIds 但有 groupId 时使用单Agrupar逻辑
           await accountGroupService.addAccountToGroup(id, mappedUpdates.groupId, 'openai')
           logger.info(`📥 Added OpenAI-Responses account ${id} to group: ${mappedUpdates.groupId}`)
         }
@@ -270,7 +270,7 @@ router.put('/openai-responses-accounts/:id', authenticateAdmin, async (req, res)
   }
 })
 
-// 删除 OpenAI-Responses 账户
+// Eliminar OpenAI-Responses Cuenta
 router.delete('/openai-responses-accounts/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -286,7 +286,7 @@ router.delete('/openai-responses-accounts/:id', authenticateAdmin, async (req, r
     // 自动解绑所有绑定的 API Keys
     const unboundCount = await apiKeyService.unbindAccountFromAllKeys(id, 'openai-responses')
 
-    // 从所有分组中移除此账户
+    // 从所有Agrupar中Eliminación此Cuenta
     if (account.accountType === 'group') {
       await accountGroupService.removeAccountFromAllGroups(id)
       logger.info(`Removed OpenAI-Responses account ${id} from all groups`)
@@ -294,7 +294,7 @@ router.delete('/openai-responses-accounts/:id', authenticateAdmin, async (req, r
 
     const result = await openaiResponsesAccountService.deleteAccount(id)
 
-    let message = 'OpenAI-Responses账号已成功删除'
+    let message = 'OpenAI-Responses账号已ÉxitoEliminar'
     if (unboundCount > 0) {
       message += `，${unboundCount} 个 API Key ha cambiado al modo de piscina compartida`
     }
@@ -316,7 +316,7 @@ router.delete('/openai-responses-accounts/:id', authenticateAdmin, async (req, r
   }
 })
 
-// 切换 OpenAI-Responses 账户调度状态
+// 切换 OpenAI-Responses Cuenta调度状态
 router.put(
   '/openai-responses-accounts/:id/toggle-schedulable',
   authenticateAdmin,
@@ -352,7 +352,7 @@ router.put(
   }
 )
 
-// 切换 OpenAI-Responses 账户激活状态
+// 切换 OpenAI-Responses Cuenta激活状态
 router.put('/openai-responses-accounts/:id/toggle', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -383,7 +383,7 @@ router.put('/openai-responses-accounts/:id/toggle', authenticateAdmin, async (re
   }
 })
 
-// 重置 OpenAI-Responses 账户限流状态
+// 重置 OpenAI-Responses Cuenta限流状态
 router.post(
   '/openai-responses-accounts/:id/reset-rate-limit',
   authenticateAdmin,
@@ -414,7 +414,7 @@ router.post(
   }
 )
 
-// 重置 OpenAI-Responses 账户状态（清除所有异常状态）
+// 重置 OpenAI-Responses Cuenta状态（清除所有异常状态）
 router.post('/openai-responses-accounts/:id/reset-status', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -429,7 +429,7 @@ router.post('/openai-responses-accounts/:id/reset-status', authenticateAdmin, as
   }
 })
 
-// 手动重置 OpenAI-Responses 账户的每日使用量
+// 手动重置 OpenAI-Responses Cuenta的每日使用量
 router.post('/openai-responses-accounts/:id/reset-usage', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params
@@ -455,14 +455,14 @@ router.post('/openai-responses-accounts/:id/reset-usage', authenticateAdmin, asy
   }
 })
 
-// 测试 OpenAI-Responses 账户连通性
+// Probar OpenAI-Responses Cuenta连通性
 router.post('/openai-responses-accounts/:accountId/test', authenticateAdmin, async (req, res) => {
   const { accountId } = req.params
   const { model = 'gpt-4o-mini' } = req.body
   const startTime = Date.now()
 
   try {
-    // 获取账户信息（apiKey 已自动解密）
+    // ObtenerCuentaInformación（apiKey 已自动Descifrado）
     const account = await openaiResponsesAccountService.getAccount(accountId)
     if (!account) {
       return res.status(404).json({ error: 'Account not found' })
@@ -472,7 +472,7 @@ router.post('/openai-responses-accounts/:accountId/test', authenticateAdmin, asy
       return res.status(401).json({ error: 'API Key not found or decryption failed' })
     }
 
-    // 构造测试请求
+    // 构造ProbarSolicitud
     const baseUrl = account.baseApi || 'https://api.openai.com'
     const apiUrl = `${baseUrl}/responses`
     const payload = createOpenAITestPayload(model, { stream: false })
@@ -485,7 +485,7 @@ router.post('/openai-responses-accounts/:accountId/test', authenticateAdmin, asy
       timeout: 30000
     }
 
-    // 配置代理
+    // ConfiguraciónProxy
     if (account.proxy) {
       const agent = getProxyAgent(account.proxy)
       if (agent) {
@@ -497,7 +497,7 @@ router.post('/openai-responses-accounts/:accountId/test', authenticateAdmin, asy
     const response = await axios.post(apiUrl, payload, requestConfig)
     const latency = Date.now() - startTime
 
-    // 提取响应文本（Responses API 格式）
+    // 提取Respuesta文本（Responses API Formato）
     let responseText = ''
     const output = response.data?.output
     if (Array.isArray(output)) {

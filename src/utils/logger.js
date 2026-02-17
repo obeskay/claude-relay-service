@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const os = require('os')
 
-// 安全的 JSON 序列化函数，处理循环引用和特殊字符
+// Función segura de serialización JSON, maneja referencias circulares y caracteres especiales
 const safeStringify = (obj, maxDepth = Infinity) => {
   const seen = new WeakSet()
 
@@ -15,16 +15,16 @@ const safeStringify = (obj, maxDepth = Infinity) => {
       return '[Max Depth Reached]'
     }
 
-    // 处理字符串值，清理可能导致JSON解析错误的特殊字符
+    // Procesa valores de cadena, limpia caracteres especiales que podrían causar errores de análisis JSON
     if (typeof value === 'string') {
       try {
-        // 移除或转义可能导致JSON解析错误的字符
+        // Elimina o escapa caracteres que podrían causar errores de análisis JSON
         const cleanValue = value
           // eslint-disable-next-line no-control-regex
-          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '') // 移除控制字符
-          .replace(/[\uD800-\uDFFF]/g, '') // 移除孤立的代理对字符
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '') // Elimina caracteres de control
+          .replace(/[\uD800-\uDFFF]/g, '') // Elimina caracteres de pares sustitutos aislados
           // eslint-disable-next-line no-control-regex
-          .replace(/\u0000/g, '') // 移除NUL字节
+          .replace(/\u0000/g, '') // Elimina bytes NUL
 
         return cleanValue
       } catch (error) {
@@ -38,7 +38,7 @@ const safeStringify = (obj, maxDepth = Infinity) => {
       }
       seen.add(value)
 
-      // 过滤掉常见的循环引用对象
+      // Filtra objetos comunes con referencias circulares
       if (value.constructor) {
         const constructorName = value.constructor.name
         if (
@@ -50,13 +50,13 @@ const safeStringify = (obj, maxDepth = Infinity) => {
         }
       }
 
-      // 递归处理对象属性
+      // Procesa propiedades de objeto recursivamente
       if (Array.isArray(value)) {
         return value.map((item, index) => replacer(index, item, depth + 1))
       } else {
         const result = {}
         for (const [k, v] of Object.entries(value)) {
-          // 确保键名也是安全的
+          // Asegura que los nombres de clave también sean seguros
           // eslint-disable-next-line no-control-regex
           const safeKey = typeof k === 'string' ? k.replace(/[\u0000-\u001F\u007F]/g, '') : k
           result[safeKey] = replacer(safeKey, v, depth + 1)
@@ -71,10 +71,10 @@ const safeStringify = (obj, maxDepth = Infinity) => {
   try {
     const processed = replacer('', obj)
     const result = JSON.stringify(processed)
-    // 体积保护: 超过 50KB 时对大字段做截断，保留顶层结构
+    // Protección de tamaño: trunca campos grandes cuando excede 50KB, conserva estructura de nivel superior
     if (result.length > 50000 && processed && typeof processed === 'object') {
       const truncated = { ...processed, _truncated: true, _totalChars: result.length }
-      // 第一轮: 截断单个大字段
+      // Primera ronda: trunca campos grandes individuales
       for (const [k, v] of Object.entries(truncated)) {
         if (k.startsWith('_')) {
           continue
@@ -84,7 +84,7 @@ const safeStringify = (obj, maxDepth = Infinity) => {
           truncated[k] = `${fieldStr.substring(0, 10000)}...[truncated]`
         }
       }
-      // 第二轮: 如果总长度仍超 50KB，逐字段缩减到 2KB
+      // Segunda ronda: si longitud total aún excede 50KB, reduce cada campo a 2KB
       let secondResult = JSON.stringify(truncated)
       if (secondResult.length > 50000) {
         for (const [k, v] of Object.entries(truncated)) {
@@ -102,7 +102,7 @@ const safeStringify = (obj, maxDepth = Infinity) => {
     }
     return result
   } catch (error) {
-    // 如果JSON.stringify仍然失败，使用更保守的方法
+    // Si JSON.stringify aún falla, usa método más conservador
     try {
       return JSON.stringify({
         error: 'Failed to serialize object',
@@ -116,22 +116,22 @@ const safeStringify = (obj, maxDepth = Infinity) => {
   }
 }
 
-// 控制台不显示的 metadata 字段（已在 message 中或低价值）
+// Campos de metadata no mostrados en consola (ya en message o de bajo valor)
 const CONSOLE_SKIP_KEYS = new Set(['type', 'level', 'message', 'timestamp', 'stack'])
 
-// 控制台格式: 树形展示 metadata
+// Formato de consola: muestra metadata en árbol
 const createConsoleFormat = () =>
   winston.format.combine(
     winston.format.timestamp({ format: () => formatDateWithTimezone(new Date(), false) }),
     winston.format.errors({ stack: true }),
     winston.format.colorize(),
     winston.format.printf(({ level: _level, message, timestamp, stack, ...rest }) => {
-      // 时间戳只取时分秒
+      // Timestamp solo toma hora:minuto:segundo
       const shortTime = timestamp ? timestamp.split(' ').pop() : ''
 
       let logMessage = `${shortTime} ${message}`
 
-      // 收集要显示的 metadata
+      // Recopila metadata a mostrar
       const entries = Object.entries(rest).filter(([k]) => !CONSOLE_SKIP_KEYS.has(k))
 
       if (entries.length > 0) {
@@ -152,14 +152,14 @@ const createConsoleFormat = () =>
     })
   )
 
-// 文件格式: NDJSON（完整结构化数据）
+// Formato de archivo: NDJSON (datos estructurados completos)
 const createFileFormat = () =>
   winston.format.combine(
     winston.format.timestamp({ format: () => formatDateWithTimezone(new Date(), false) }),
     winston.format.errors({ stack: true }),
     winston.format.printf(({ level, message, timestamp, stack, ...rest }) => {
       const entry = { ts: timestamp, lvl: level, msg: message }
-      // 合并所有 metadata
+      // Combina toda la metadata
       for (const [k, v] of Object.entries(rest)) {
         if (k !== 'level' && k !== 'message' && k !== 'timestamp' && k !== 'stack') {
           entry[k] = v
@@ -176,12 +176,12 @@ const fileFormat = createFileFormat()
 const consoleFormat = createConsoleFormat()
 const isTestEnv = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID
 
-// 📁 确保日志目录存在并设置权限
+// 📁 Asegura que el directorio de logs exista y establece permisos
 if (!fs.existsSync(config.logging.dirname)) {
   fs.mkdirSync(config.logging.dirname, { recursive: true, mode: 0o755 })
 }
 
-// 🔄 增强的日志轮转配置
+// 🔄 Configuración mejorada de rotación de logs
 const createRotateTransport = (filename, level = null) => {
   const transport = new DailyRotateFile({
     filename: path.join(config.logging.dirname, filename),
@@ -197,7 +197,7 @@ const createRotateTransport = (filename, level = null) => {
     transport.level = level
   }
 
-  // 监听轮转事件（测试环境关闭以避免 Jest 退出后输出）
+  // Escucha eventos de rotación (deshabilitado en entorno de prueba para evitar salida después de salir de Jest)
   if (!isTestEnv) {
     transport.on('rotate', (oldFilename, newFilename) => {
       console.log(`📦 Log rotated: ${oldFilename} -> ${newFilename}`)
@@ -218,7 +218,7 @@ const createRotateTransport = (filename, level = null) => {
 const dailyRotateFileTransport = createRotateTransport('claude-relay-%DATE%.log')
 const errorFileTransport = createRotateTransport('claude-relay-error-%DATE%.log', 'error')
 
-// 🔒 创建专门的安全日志记录器
+// 🔒 Crea logger de seguridad dedicado
 const securityLogger = winston.createLogger({
   level: 'warn',
   format: fileFormat,
@@ -226,13 +226,13 @@ const securityLogger = winston.createLogger({
   silent: false
 })
 
-// 🔐 创建专门的认证详细日志记录器（记录完整的认证响应）
+// 🔐 Crea logger detallado de autenticación dedicado (registra respuestas de autenticación completas)
 const authDetailLogger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
     winston.format.timestamp({ format: () => formatDateWithTimezone(new Date(), false) }),
     winston.format.printf(({ level, message, timestamp, data }) => {
-      // 使用更深的深度和格式化的JSON输出
+      // Usa mayor profundidad y salida JSON formateada
       const jsonData = data ? JSON.stringify(data, null, 2) : '{}'
       return `[${timestamp}] ${level.toUpperCase()}: ${message}\n${jsonData}\n${'='.repeat(80)}`
     })
@@ -241,16 +241,16 @@ const authDetailLogger = winston.createLogger({
   silent: false
 })
 
-// 🌟 增强的 Winston logger
+// 🌟 Logger Winston mejorado
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || config.logging.level,
   format: fileFormat,
   transports: [
-    // 📄 文件输出
+    // 📄 Salida de archivo
     dailyRotateFileTransport,
     errorFileTransport,
 
-    // 🖥️ 控制台输出
+    // 🖥️ Salida de consola
     new winston.transports.Console({
       format: consoleFormat,
       handleExceptions: false,
@@ -258,7 +258,7 @@ const logger = winston.createLogger({
     })
   ],
 
-  // 🚨 异常处理
+  // 🚨 Manejo de excepciones
   exceptionHandlers: [
     new winston.transports.File({
       filename: path.join(config.logging.dirname, 'exceptions.log'),
@@ -271,7 +271,7 @@ const logger = winston.createLogger({
     })
   ],
 
-  // 🔄 未捕获异常处理
+  // 🔄 未捕获Manejo de excepciones
   rejectionHandlers: [
     new winston.transports.File({
       filename: path.join(config.logging.dirname, 'rejections.log'),
@@ -284,11 +284,11 @@ const logger = winston.createLogger({
     })
   ],
 
-  // 防止进程退出
+  // Previene salida de proceso
   exitOnError: false
 })
 
-// 🎯 增强的自定义方法
+// 🎯 Métodos personalizados mejorados
 logger.success = (message, metadata = {}) => {
   logger.info(`✅ ${message}`, { type: 'success', ...metadata })
 }
@@ -324,14 +324,14 @@ logger.security = (message, metadata = {}) => {
     ...metadata
   }
 
-  // 记录到主日志
+  // Registro到主Registro
   logger.warn(`🔒 ${message}`, securityData)
 
-  // 记录到专门的安全日志文件
+  // Registro到专门的SeguridadRegistroArchivo
   try {
     securityLogger.warn(`🔒 ${message}`, securityData)
   } catch (error) {
-    // 如果安全日志文件不可用，只记录到主日志
+    // 如果SeguridadRegistroArchivo不可用，只Registro到主Registro
     console.warn('Security logger not available:', error.message)
   }
 }
@@ -353,7 +353,7 @@ logger.audit = (message, metadata = {}) => {
   })
 }
 
-// 🔧 性能监控方法
+// 🔧 Métodos de monitoreo de rendimiento
 logger.timer = (label) => {
   const start = Date.now()
   return {
@@ -365,14 +365,14 @@ logger.timer = (label) => {
   }
 }
 
-// 📊 日志统计
+// 📊 Estadísticas de logs
 logger.stats = {
   requests: 0,
   errors: 0,
   warnings: 0
 }
 
-// 重写原始方法以统计
+// Sobrescribe métodos originales para estadísticas
 const originalError = logger.error
 const originalWarn = logger.warn
 const originalInfo = logger.info
@@ -388,24 +388,24 @@ logger.warn = function (message, ...args) {
 }
 
 logger.info = function (message, ...args) {
-  // 检查是否是请求类型的日志
+  // Verifica si es un log de tipo solicitud
   if (args.length > 0 && typeof args[0] === 'object' && args[0].type === 'request') {
     logger.stats.requests++
   }
   return originalInfo.call(this, message, ...args)
 }
 
-// 📈 获取日志统计
+// 📈 ObtenerEstadísticas de logs
 logger.getStats = () => ({ ...logger.stats })
 
-// 🧹 清理统计
+// 🧹 Limpia estadísticas
 logger.resetStats = () => {
   logger.stats.requests = 0
   logger.stats.errors = 0
   logger.stats.warnings = 0
 }
 
-// 📡 健康检查
+// 📡 Verificación de salud
 logger.healthCheck = () => {
   try {
     const testMessage = 'Logger health check'
@@ -416,10 +416,10 @@ logger.healthCheck = () => {
   }
 }
 
-// 🔐 记录认证详细信息的方法
+// 🔐 Método para registrar detalles de autenticación
 logger.authDetail = (message, data = {}) => {
   try {
-    // 记录到主日志（简化版）
+    // Registra en log principal (versión simplificada)
     logger.info(`🔐 ${message}`, {
       type: 'auth-detail',
       summary: {
@@ -431,14 +431,14 @@ logger.authDetail = (message, data = {}) => {
       }
     })
 
-    // 记录到专门的认证详细日志文件（完整数据）
+    // Registra en archivo de log detallado de autenticación dedicado (datos completos)
     authDetailLogger.info(message, { data })
   } catch (error) {
     logger.error('Failed to log auth detail:', error)
   }
 }
 
-// 🎬 启动日志记录系统
+// 🎬 Inicia sistema de registro de logs
 logger.start('Logger initialized', {
   level: process.env.LOG_LEVEL || config.logging.level,
   directory: config.logging.dirname,

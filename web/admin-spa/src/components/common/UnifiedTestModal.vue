@@ -8,7 +8,7 @@
       <div
         class="relative z-10 mx-3 flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-gray-200/70 bg-white/95 shadow-2xl ring-1 ring-black/5 transition-all dark:border-gray-700/60 dark:bg-gray-900/95 dark:ring-white/10 sm:mx-4"
       >
-        <!-- 顶部栏 -->
+        <!-- Barra superior -->
         <div
           class="flex items-center justify-between border-b border-gray-100 bg-white/80 px-5 py-4 backdrop-blur dark:border-gray-800 dark:bg-gray-900/80"
         >
@@ -50,9 +50,9 @@
           </button>
         </div>
 
-        <!-- 内容区域 -->
+        <!-- Área de contenido -->
         <div class="max-h-[70vh] overflow-y-auto px-5 py-4">
-          <!-- [apikey] API Key 显示 -->
+          <!-- [apikey] Mostrar API Key -->
           <div v-if="mode === 'apikey'" class="mb-4">
             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               API Key
@@ -70,11 +70,11 @@
             </div>
           </div>
 
-          <!-- 测试信息 -->
+          <!-- Test information -->
           <div class="mb-4 space-y-2">
-            <!-- [account] 平台类型 -->
+            <!-- [account] Platform type -->
             <div v-if="mode === 'account'" class="flex items-center justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">平台类型</span>
+              <span class="text-gray-500 dark:text-gray-400">Tipo de plataforma</span>
               <span
                 :class="[
                   'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium',
@@ -85,12 +85,12 @@
                 {{ platformLabel }}
               </span>
             </div>
-            <!-- [account+bedrock] 凭证类型 -->
+            <!-- [account+bedrock] Credential type -->
             <div
               v-if="mode === 'account' && account?.platform === 'bedrock'"
               class="flex items-center justify-between text-sm"
             >
-              <span class="text-gray-500 dark:text-gray-400">账号类型</span>
+              <span class="text-gray-500 dark:text-gray-400">Tipo de cuenta</span>
               <span
                 :class="[
                   'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium',
@@ -101,9 +101,9 @@
                 {{ credentialTypeLabel }}
               </span>
             </div>
-            <!-- [apikey] 测试端点 -->
+            <!-- [apikey] Test endpoint -->
             <div v-if="mode === 'apikey'" class="flex items-center justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">测试端点</span>
+              <span class="text-gray-500 dark:text-gray-400">Endpoint de prueba</span>
               <span
                 class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
               >
@@ -111,10 +111,10 @@
                 {{ apikeyServiceConfig.displayEndpoint }}
               </span>
             </div>
-            <!-- 测试模型（两种模式都有） -->
+            <!-- Test model (both modes) -->
             <div class="text-sm">
               <div class="mb-1 flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">测试模型</span>
+                <span class="text-gray-500 dark:text-gray-400">Modelo de prueba</span>
                 <ModelSelector
                   v-model="selectedModel"
                   :disabled="state.testStatus.value === 'testing'"
@@ -125,10 +125,10 @@
                 {{ selectedModel }}
               </div>
             </div>
-            <!-- [apikey] 最大输出 Token -->
+            <!-- [apikey] Max output tokens -->
             <div v-if="mode === 'apikey'" class="text-sm">
               <div class="mb-1 flex items-center justify-between">
-                <span class="text-gray-500 dark:text-gray-400">最大输出 Token</span>
+                <span class="text-gray-500 dark:text-gray-400">Tokens máximos de salida</span>
                 <select
                   v-model="maxTokens"
                   class="rounded-lg border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
@@ -139,29 +139,29 @@
                 </select>
               </div>
             </div>
-            <!-- [apikey] 测试服务 -->
+            <!-- [apikey] Test service -->
             <div v-if="mode === 'apikey'" class="flex items-center justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">测试服务</span>
+              <span class="text-gray-500 dark:text-gray-400">Servicio de prueba</span>
               <span class="font-medium text-gray-700 dark:text-gray-300">
                 {{ apikeyServiceConfig.name }}
               </span>
             </div>
           </div>
 
-          <!-- [apikey] 提示词输入 -->
+          <!-- [apikey] Prompt input -->
           <div v-if="mode === 'apikey'" class="mb-4">
             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              提示词
+              Prompt
             </label>
             <textarea
               v-model="testPrompt"
               class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-              placeholder="输入测试提示词..."
+              placeholder="Ingrese el prompt de prueba..."
               rows="2"
             />
           </div>
 
-          <!-- 状态指示 -->
+          <!-- Status indicator -->
           <div
             :class="[
               'mb-4 rounded-xl border p-4 transition-all duration-300',
@@ -186,7 +186,7 @@
             </div>
           </div>
 
-          <!-- 响应内容区域 -->
+          <!-- Área de contenido de respuesta -->
           <div
             v-if="state.testStatus.value !== 'idle'"
             class="mb-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50"
@@ -194,12 +194,12 @@
             <div
               class="flex items-center justify-between border-b border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
             >
-              <span class="text-xs font-medium text-gray-600 dark:text-gray-400">AI 响应</span>
+              <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Respuesta de IA</span>
               <span
                 v-if="state.responseText.value"
                 class="text-xs text-gray-500 dark:text-gray-500"
               >
-                {{ state.responseText.value.length }} 字符
+                {{ state.responseText.value.length }} caracteres
               </span>
             </div>
             <div class="max-h-40 overflow-y-auto p-3">
@@ -218,7 +218,7 @@
                 class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
               >
                 <i class="fas fa-circle-notch fa-spin" />
-                等待响应中...
+                Esperando respuesta...
               </p>
               <p
                 v-else-if="state.testStatus.value === 'error' && state.errorMessage.value"
@@ -229,17 +229,17 @@
             </div>
           </div>
 
-          <!-- 测试时间 -->
+          <!-- Tiempo de prueba -->
           <div
             v-if="state.testDuration.value > 0"
             class="mb-4 flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400"
           >
             <i class="fas fa-clock" />
-            <span>耗时 {{ (state.testDuration.value / 1000).toFixed(2) }} 秒</span>
+            <span>Tiempo: {{ (state.testDuration.value / 1000).toFixed(2) }} segundos</span>
           </div>
         </div>
 
-        <!-- 底部操作栏 -->
+        <!-- Barra de acciones inferior -->
         <div
           class="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/80 px-5 py-3 dark:border-gray-800 dark:bg-gray-900/50"
         >
@@ -248,7 +248,7 @@
             :disabled="state.testStatus.value === 'testing'"
             @click="handleClose"
           >
-            关闭
+            Cerrar
           </button>
           <button
             :class="[
@@ -268,10 +268,10 @@
             />
             {{
               state.testStatus.value === 'testing'
-                ? '测试中...'
+                ? 'Probando...'
                 : state.testStatus.value === 'idle'
-                  ? '开始测试'
-                  : '重新测试'
+                  ? 'Iniciar prueba'
+                  : 'Volver a probar'
             }}
           </button>
         </div>
@@ -290,9 +290,9 @@ import ModelSelector from '@/components/common/ModelSelector.vue'
 const props = defineProps({
   show: { type: Boolean, default: false },
   mode: { type: String, default: 'account' }, // 'account' | 'apikey'
-  // account 模式
+  // Modo cuenta
   account: { type: Object, default: null },
-  // apikey 模式
+  // modo apikey
   apiKeyValue: { type: String, default: '' },
   apiKeyName: { type: String, default: '' },
   serviceType: { type: String, default: 'claude' }
@@ -301,7 +301,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 const state = useTestState()
 
-// ========== 模型相关 ==========
+// ========== Relacionado con modelos ==========
 const selectedModel = ref('')
 const modelsFromApi = ref({ claude: [], gemini: [], openai: [], platforms: {} })
 
@@ -318,17 +318,17 @@ const availableModels = computed(() => {
   if (props.mode === 'account') {
     const platform = props.account?.platform
     if (!platform) return []
-    // azure-openai 使用 deploymentName
+    // azure-openai usa deploymentName
     if (platform === 'azure-openai') {
       return [{ value: props.account.deploymentName, label: props.account.deploymentName }]
     }
     return modelsFromApi.value.platforms?.[platform] || []
   }
-  // apikey 模式
+  // modo apikey
   return modelsFromApi.value[props.serviceType] || []
 })
 
-// 各平台回退默认模型（模型列表未加载时使用）
+// Modelos de respaldo predeterminados para cada plataforma (se usan cuando la lista de modelos no está cargada)
 const platformFallbackModels = {
   claude: 'claude-sonnet-4-5-20250929',
   'claude-console': 'claude-sonnet-4-5-20250929',
@@ -343,7 +343,7 @@ const defaultModel = computed(() => {
   if (props.mode === 'account') {
     const platform = props.account?.platform
     if (platform === 'azure-openai') return props.account?.deploymentName
-    // bedrock 优先用列表，列表为空时按凭证类型回退
+    // bedrock prioriza lista, lista vacía por tipo de credencial
     if (platform === 'bedrock') {
       const models = availableModels.value
       if (models.length > 0) return models[0].value
@@ -355,13 +355,13 @@ const defaultModel = computed(() => {
     if (models.length > 0) return models[0].value
     return platformFallbackModels[platform] || platformFallbackModels.claude
   }
-  // apikey 模式: 优先用列表，回退用 serviceConfig 的 defaultModel
+  // modo apikey: prioriza lista, fallback defaultModel de serviceConfig
   const models = availableModels.value
   if (models.length > 0) return models[0].value
   return apikeyServiceConfig.value.defaultModel
 })
 
-// ========== apikey 模式专用 ==========
+// ========== Específico para modo apikey ==========
 const testPrompt = ref('hi')
 const maxTokens = ref(1000)
 const maxTokensOptions = [
@@ -406,7 +406,7 @@ const maskedApiKey = computed(() => {
 
 const disableTest = computed(() => props.mode === 'apikey' && !props.apiKeyValue)
 
-// ========== account 模式 - 平台信息 ==========
+// ========== modo account - información de plataforma ==========
 const platformConfigs = {
   claude: {
     label: 'Claude OAuth',
@@ -458,7 +458,7 @@ const platformConfigs = {
 const platformConfig = computed(
   () =>
     platformConfigs[props.account?.platform] || {
-      label: '未知',
+      label: 'Desconocido',
       icon: 'fas fa-question',
       badge: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
     }
@@ -487,13 +487,13 @@ const credentialTypeBadgeClass = computed(() => {
   return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
 })
 
-// ========== 通用计算属性 ==========
+// ========== Propiedades computadas generales ==========
 const modalTitle = computed(() =>
-  props.mode === 'account' ? '账户连通性测试' : 'API Key 端点测试'
+  props.mode === 'account' ? 'Prueba de conectividad de cuenta' : 'Prueba de endpoint de API Key'
 )
 const modalSubtitle = computed(() => {
-  if (props.mode === 'account') return props.account?.name || '未知账户'
-  return props.apiKeyName || '当前 API Key'
+  if (props.mode === 'account') return props.account?.name || 'Cuenta desconocida'
+  return props.apiKeyName || 'API Key actual'
 })
 
 const headerIconBgClass = computed(() => {
@@ -508,16 +508,16 @@ const statusDescription = computed(() => {
   const apiName = props.mode === 'account' ? platformLabel.value : apikeyServiceConfig.value.name
   if (s === 'idle')
     return props.mode === 'account'
-      ? '点击下方按钮开始测试账户连通性'
-      : '点击下方按钮开始测试 API Key 连通性'
-  if (s === 'testing') return '正在发送测试请求并等待响应'
+      ? 'Haga clic en el botón de abajo para comenzar a probar la conectividad de la cuenta'
+      : 'Haga clic en el botón de abajo para comenzar a probar la conectividad de la API Key'
+  if (s === 'testing') return 'Enviando solicitud de prueba y esperando respuesta'
   if (s === 'success')
-    return props.mode === 'account' ? `账户可以正常访问 ${apiName}` : 'API Key 可以正常访问服务'
-  if (s === 'error') return state.errorMessage.value || `无法连接到 ${apiName}`
+    return props.mode === 'account' ? `La cuenta puede acceder normalmente a ${apiName}` : 'La API Key puede acceder al servicio normalmente'
+  if (s === 'error') return state.errorMessage.value || `No se puede conectar a ${apiName}`
   return ''
 })
 
-// ========== 测试逻辑 ==========
+// ========== Lógica de prueba ==========
 const getAccountEndpoint = () => {
   if (!props.account) return ''
   const platform = props.account.platform
@@ -573,7 +573,7 @@ const handleClose = () => {
   emit('close')
 }
 
-// ========== 监听 ==========
+// ========== Escucha ==========
 watch(
   () => props.show,
   (newVal) => {

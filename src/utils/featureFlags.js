@@ -1,7 +1,7 @@
 let config = {}
 try {
   // config/config.js 可能在某些环境不存在（例如仅拷贝了 config.example.js）
-  // 为保证可运行，这里做容错处理
+  // 为保证可运Fila，这里做容错Procesar
   // eslint-disable-next-line global-require
   config = require('../../config/config')
 } catch (error) {
@@ -20,9 +20,9 @@ const parseBooleanEnv = (value) => {
 }
 
 /**
- * 是否允许执行"余额脚本"（安全开关）
- * ⚠️ 安全警告：vm模块非安全沙箱，默认禁用。如需启用请显式设置 BALANCE_SCRIPT_ENABLED=true
- * 仅在完全信任管理员且了解RCE风险时才启用此功能
+ * 是否允许Ejecutar"余额脚本"（Seguridad开关）
+ * ⚠️ SeguridadAdvertencia：vmMódulo非Seguridad沙箱，PredeterminadoDeshabilitar。如需Habilitar请显式Establecer BALANCE_SCRIPT_ENABLED=true
+ * 仅在完全信任管理员且了解RCE风险时才Habilitar此功能
  */
 const isBalanceScriptEnabled = () => {
   if (
@@ -37,7 +37,7 @@ const isBalanceScriptEnabled = () => {
     config?.features?.balanceScriptEnabled ??
     config?.security?.enableBalanceScript
 
-  // 默认禁用，需显式启用
+  // PredeterminadoDeshabilitar，需显式Habilitar
   return typeof fromConfig === 'boolean' ? fromConfig : false
 }
 

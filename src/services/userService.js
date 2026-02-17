@@ -10,17 +10,17 @@ class UserService {
     this.userSessionPrefix = 'user_session:'
   }
 
-  // 🔑 生成用户ID
+  // 🔑 GenerarUsuarioID
   generateUserId() {
     return crypto.randomBytes(16).toString('hex')
   }
 
-  // 🔑 生成会话Token
+  // 🔑 GenerarSesiónToken
   generateSessionToken() {
     return crypto.randomBytes(32).toString('hex')
   }
 
-  // 👤 创建或更新用户
+  // 👤 Crear或ActualizarUsuario
   async createOrUpdateUser(userData) {
     try {
       const {
@@ -33,7 +33,7 @@ class UserService {
         isActive = true
       } = userData
 
-      // 检查用户是否已存在
+      // VerificarUsuario是否已存在
       let user = await this.getUserByUsername(username)
       const isNewUser = !user
 
@@ -60,7 +60,7 @@ class UserService {
           }
         }
       } else {
-        // 更新现有用户信息
+        // Actualizar现有UsuarioInformación
         user = {
           ...user,
           email,
@@ -71,12 +71,12 @@ class UserService {
         }
       }
 
-      // 保存用户信息
+      // 保存UsuarioInformación
       await redis.set(`${this.userPrefix}${user.id}`, JSON.stringify(user))
       await redis.set(`${this.usernamePrefix}${username}`, user.id)
       await redis.addToIndex('user:index', user.id)
 
-      // 如果是新用户，尝试转移匹配的API Keys
+      // 如果是新Usuario，尝试转移匹配的API Keys
       if (isNewUser) {
         await this.transferMatchingApiKeys(user)
       }
@@ -89,7 +89,7 @@ class UserService {
     }
   }
 
-  // 👤 通过用户名获取用户
+  // 👤 通过Usuario名ObtenerUsuario
   async getUserByUsername(username) {
     try {
       const userId = await redis.get(`${this.usernamePrefix}${username}`)
@@ -105,7 +105,7 @@ class UserService {
     }
   }
 
-  // 👤 通过ID获取用户
+  // 👤 通过IDObtenerUsuario
   async getUserById(userId, calculateUsage = true) {
     try {
       const userData = await redis.get(`${this.userPrefix}${userId}`)
@@ -141,7 +141,7 @@ class UserService {
     }
   }
 
-  // 📊 计算用户使用统计（通过聚合API Keys）
+  // 📊 CalcularUsuario使用Estadística（通过聚合API Keys）
   async calculateUserUsageStats(userId) {
     try {
       // Use the existing apiKeyService method which already includes usage stats
@@ -168,7 +168,7 @@ class UserService {
         `📊 Calculated user ${userId} usage: ${totalUsage.requests} requests, ${totalUsage.inputTokens} input tokens, $${totalUsage.totalCost.toFixed(4)} total cost from ${userApiKeys.length} API keys`
       )
 
-      // Count only non-deleted API keys for the user's active count（布尔值比较）
+      // Count only non-deleted API keys for the user's active count（布尔Valor比较）
       const activeApiKeyCount = userApiKeys.filter((key) => !key.isDeleted).length
 
       return {
@@ -189,7 +189,7 @@ class UserService {
     }
   }
 
-  // 📋 获取所有用户列表（管理员功能）
+  // 📋 Obtener所有UsuarioColumnaTabla（管理员功能）
   async getAllUsers(options = {}) {
     try {
       const { page = 1, limit = 20, role, isActive } = options
@@ -207,7 +207,7 @@ class UserService {
         if (userData) {
           const user = JSON.parse(userData)
 
-          // 应用过滤条件
+          // 应用FiltrarCondición
           if (role && user.role !== role) {
             continue
           }
@@ -236,7 +236,7 @@ class UserService {
         }
       }
 
-      // 排序和分页
+      // Ordenar和分页
       users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       const startIndex = (page - 1) * limit
       const endIndex = startIndex + limit
@@ -255,7 +255,7 @@ class UserService {
     }
   }
 
-  // 🔄 更新用户状态
+  // 🔄 ActualizarUsuario状态
   async updateUserStatus(userId, isActive) {
     try {
       const user = await this.getUserById(userId, false) // Skip usage calculation
@@ -269,7 +269,7 @@ class UserService {
       await redis.set(`${this.userPrefix}${userId}`, JSON.stringify(user))
       logger.info(`🔄 Updated user status: ${user.username} -> ${isActive ? 'active' : 'disabled'}`)
 
-      // 如果禁用用户，删除所有会话并禁用其所有API Keys
+      // 如果DeshabilitarUsuario，Eliminar所有Sesión并Deshabilitar其所有API Keys
       if (!isActive) {
         await this.invalidateUserSessions(userId)
 
@@ -290,7 +290,7 @@ class UserService {
     }
   }
 
-  // 🔄 更新用户角色
+  // 🔄 ActualizarUsuarioRol
   async updateUserRole(userId, role) {
     try {
       const user = await this.getUserById(userId, false) // Skip usage calculation
@@ -311,7 +311,7 @@ class UserService {
     }
   }
 
-  // 📊 更新用户API Key数量 (已废弃，现在通过聚合计算)
+  // 📊 ActualizarUsuarioAPI Key数量 (已废弃，现在通过聚合Calcular)
   async updateUserApiKeyCount(userId, _count) {
     // This method is deprecated since apiKeyCount is now calculated dynamically
     // in getUserById by aggregating the user's API keys
@@ -320,7 +320,7 @@ class UserService {
     )
   }
 
-  // 📝 记录用户登录
+  // 📝 RegistroUsuario登录
   async recordUserLogin(userId) {
     try {
       const user = await this.getUserById(userId, false) // Skip usage calculation
@@ -335,7 +335,7 @@ class UserService {
     }
   }
 
-  // 🎫 创建用户会话
+  // 🎫 CrearUsuarioSesión
   async createUserSession(userId, sessionData = {}) {
     try {
       const sessionToken = this.generateSessionToken()
@@ -358,7 +358,7 @@ class UserService {
     }
   }
 
-  // 🎫 验证用户会话
+  // 🎫 ValidarUsuarioSesión
   async validateUserSession(sessionToken) {
     try {
       const sessionData = await redis.get(`${this.userSessionPrefix}${sessionToken}`)
@@ -368,13 +368,13 @@ class UserService {
 
       const session = JSON.parse(sessionData)
 
-      // 检查会话是否过期
+      // VerificarSesión是否过期
       if (new Date() > new Date(session.expiresAt)) {
         await this.invalidateUserSession(sessionToken)
         return null
       }
 
-      // 获取用户信息
+      // ObtenerUsuarioInformación
       const user = await this.getUserById(session.userId, false) // Skip usage calculation for validation
       if (!user || !user.isActive) {
         await this.invalidateUserSession(sessionToken)
@@ -388,7 +388,7 @@ class UserService {
     }
   }
 
-  // 🚫 使用户会话失效
+  // 🚫 使UsuarioSesión失效
   async invalidateUserSession(sessionToken) {
     try {
       await redis.del(`${this.userSessionPrefix}${sessionToken}`)
@@ -398,7 +398,7 @@ class UserService {
     }
   }
 
-  // 🚫 使用户所有会话失效
+  // 🚫 使Usuario所有Sesión失效
   async invalidateUserSessions(userId) {
     try {
       const client = redis.getClientSafe()
@@ -422,7 +422,7 @@ class UserService {
     }
   }
 
-  // 🗑️ 删除用户（软删除，标记为不活跃）
+  // 🗑️ EliminarUsuario（软Eliminar，标记为不活跃）
   async deleteUser(userId) {
     try {
       const user = await this.getUserById(userId, false) // Skip usage calculation
@@ -430,14 +430,14 @@ class UserService {
         throw new Error('User not found')
       }
 
-      // 软删除：标记为不活跃并添加删除时间戳
+      // 软Eliminar：标记为不活跃并添加EliminarTiempo戳
       user.isActive = false
       user.deletedAt = new Date().toISOString()
       user.updatedAt = new Date().toISOString()
 
       await redis.set(`${this.userPrefix}${userId}`, JSON.stringify(user))
 
-      // 删除所有会话
+      // Eliminar所有Sesión
       await this.invalidateUserSessions(userId)
 
       // Disable all user's API keys when user is deleted
@@ -457,7 +457,7 @@ class UserService {
     }
   }
 
-  // 📊 获取用户统计信息
+  // 📊 ObtenerUsuarioEstadísticaInformación
   async getUserStats() {
     try {
       const userIds = await redis.getAllIdsByIndex(
@@ -525,16 +525,16 @@ class UserService {
     }
   }
 
-  // 🔄 转移匹配的API Keys给新用户
+  // 🔄 转移匹配的API Keys给新Usuario
   async transferMatchingApiKeys(user) {
     try {
       const apiKeyService = require('./apiKeyService')
       const { displayName, username, email } = user
 
-      // 获取所有API Keys
+      // Obtener所有API Keys
       const allApiKeys = await apiKeyService.getAllApiKeysFast()
 
-      // 找到没有用户ID的API Keys（即由Admin创建的）
+      // 找到没有UsuarioID的API Keys（即由AdminCrear的）
       const unownedApiKeys = allApiKeys.filter((key) => !key.userId || key.userId === '')
 
       if (unownedApiKeys.length === 0) {
@@ -542,7 +542,7 @@ class UserService {
         return
       }
 
-      // 构建匹配字符串数组（只考虑displayName、username、email，去除空值和重复值）
+      // Construir匹配CadenaArreglo（只考虑displayName、username、email，去除空Valor和重复Valor）
       const matchStrings = new Set()
       if (displayName) {
         matchStrings.add(displayName.toLowerCase().trim())
@@ -556,15 +556,15 @@ class UserService {
 
       const matchingKeys = []
 
-      // 查找名称匹配的API Keys（只进行完全匹配）
+      // 查找Nombre匹配的API Keys（只进Fila完全匹配）
       for (const apiKey of unownedApiKeys) {
         const keyName = apiKey.name ? apiKey.name.toLowerCase().trim() : ''
 
-        // 检查API Key名称是否与用户信息完全匹配
+        // VerificarAPI KeyNombre是否与UsuarioInformación完全匹配
         for (const matchString of matchStrings) {
           if (keyName === matchString) {
             matchingKeys.push(apiKey)
-            break // 找到匹配后跳出内层循环
+            break // 找到匹配后跳出内层Bucle
           }
         }
       }

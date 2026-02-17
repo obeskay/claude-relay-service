@@ -1,8 +1,8 @@
 const logger = require('../utils/logger')
 
 /**
- * 浏览器/Chrome插件兜底中间件
- * 专门处理第三方插件的兼容性问题
+ * Navegador/ChromeComplemento兜底Middleware
+ * 专门Procesar第三方Complemento的兼容性问题
  */
 const browserFallbackMiddleware = (req, res, next) => {
   const userAgent = req.headers['user-agent'] || ''
@@ -35,20 +35,20 @@ const browserFallbackMiddleware = (req, res, next) => {
     extractHeader(req.headers['x-api-key']) || extractHeader(req.headers['x-goog-api-key'])
   const normalizedKey = extractHeader(req.headers['authorization']) || apiKeyHeader
 
-  // 检查是否为Chrome插件或浏览器请求
+  // Verificar是否为ChromeComplemento或NavegadorSolicitud
   const isChromeExtension = origin.startsWith('chrome-extension://')
   const isBrowserRequest = userAgent.includes('Mozilla/') && userAgent.includes('Chrome/')
-  const hasApiKey = normalizedKey.startsWith('cr_') // 我们的API Key格式
+  const hasApiKey = normalizedKey.startsWith('cr_') // 我们的API KeyFormato
 
   if ((isChromeExtension || isBrowserRequest) && hasApiKey) {
-    // 为Chrome插件请求添加特殊标记
+    // 为ChromeComplementoSolicitud添加特殊标记
     req.isBrowserFallback = true
     req.originalUserAgent = userAgent
 
-    // 🆕 关键修改：伪装成claude-cli请求以绕过客户端限制
+    // 🆕 关键修改：伪装成claude-cliSolicitud以绕过ClienteLímite
     req.headers['user-agent'] = 'claude-cli/1.0.110 (external, cli, browser-fallback)'
 
-    // 确保设置正确的认证头
+    // 确保Establecer正确的认证头
     if (!req.headers['authorization'] && apiKeyHeader) {
       req.headers['authorization'] = `Bearer ${apiKeyHeader}`
     }

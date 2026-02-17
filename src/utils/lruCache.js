@@ -1,6 +1,6 @@
 /**
- * LRU (Least Recently Used) 缓存实现
- * 用于缓存解密结果，提高性能同时控制内存使用
+ * LRU (Least Recently Used) Caché实现
+ * 用于CachéDescifrado结果，提高Rendimiento同时控制内存使用
  */
 class LRUCache {
   constructor(maxSize = 500) {
@@ -10,16 +10,16 @@ class LRUCache {
     this.misses = 0
     this.evictions = 0
     this.lastCleanup = Date.now()
-    this.cleanupInterval = 5 * 60 * 1000 // 5分钟清理一次过期项
+    this.cleanupInterval = 5 * 60 * 1000 // 5分钟Limpiar一次过期项
   }
 
   /**
-   * 获取缓存值
-   * @param {string} key - 缓存键
-   * @returns {*} 缓存的值，如果不存在则返回 undefined
+   * ObtenerCachéValor
+   * @param {string} key - Caché键
+   * @returns {*} Caché的Valor，如果不存在则Retornar undefined
    */
   get(key) {
-    // 定期清理
+    // 定期Limpiar
     if (Date.now() - this.lastCleanup > this.cleanupInterval) {
       this.cleanup()
     }
@@ -30,14 +30,14 @@ class LRUCache {
       return undefined
     }
 
-    // 检查是否过期
+    // Verificar是否过期
     if (item.expiry && Date.now() > item.expiry) {
       this.cache.delete(key)
       this.misses++
       return undefined
     }
 
-    // 更新访问时间，将元素移到最后（最近使用）
+    // Actualizar访问Tiempo，将元素移到最后（最近使用）
     this.cache.delete(key)
     this.cache.set(key, {
       ...item,
@@ -49,13 +49,13 @@ class LRUCache {
   }
 
   /**
-   * 设置缓存值
-   * @param {string} key - 缓存键
-   * @param {*} value - 要缓存的值
-   * @param {number} ttl - 生存时间（毫秒），默认5分钟
+   * EstablecerCachéValor
+   * @param {string} key - Caché键
+   * @param {*} value - 要Caché的Valor
+   * @param {number} ttl - 生存Tiempo（毫秒），Predeterminado5分钟
    */
   set(key, value, ttl = 5 * 60 * 1000) {
-    // 如果缓存已满，删除最少使用的项
+    // 如果Caché已满，Eliminar最少使用的项
     if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
       const firstKey = this.cache.keys().next().value
       this.cache.delete(firstKey)
@@ -71,7 +71,7 @@ class LRUCache {
   }
 
   /**
-   * 清理过期项
+   * Limpiar过期项
    */
   cleanup() {
     const now = Date.now()
@@ -91,7 +91,7 @@ class LRUCache {
   }
 
   /**
-   * 清空缓存
+   * 清空Caché
    */
   clear() {
     const { size } = this.cache
@@ -103,7 +103,7 @@ class LRUCache {
   }
 
   /**
-   * 获取缓存统计信息
+   * ObtenerCachéEstadísticaInformación
    */
   getStats() {
     const total = this.hits + this.misses
@@ -121,7 +121,7 @@ class LRUCache {
   }
 
   /**
-   * 打印缓存统计信息
+   * 打印CachéEstadísticaInformación
    */
   printStats() {
     const stats = this.getStats()

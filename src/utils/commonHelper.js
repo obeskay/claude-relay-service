@@ -1,21 +1,21 @@
-// 通用工具函数集合
-// 抽取自各服务的重复代码，统一管理
+// 通用工具Función集合
+// 抽取自各Servicio的重复代码，统一管理
 
 const crypto = require('crypto')
 const config = require('../../config/config')
 const LRUCache = require('./lruCache')
 
 // ============================================
-// 加密相关 - 工厂模式支持不同 salt
+// Cifrado相关 - 工厂模式Soportar不同 salt
 // ============================================
 
 const ALGORITHM = 'aes-256-cbc'
 const IV_LENGTH = 16
 
-// 缓存不同 salt 的加密实例
+// Caché不同 salt 的CifradoInstancia
 const _encryptorCache = new Map()
 
-// 创建加密器实例（每个 salt 独立缓存）
+// CrearCifrado器Instancia（每个 salt 独立Caché）
 const createEncryptor = (salt) => {
   if (_encryptorCache.has(salt)) {
     return _encryptorCache.get(salt)
@@ -85,7 +85,7 @@ const createEncryptor = (salt) => {
   return instance
 }
 
-// 默认加密器（向后兼容）
+// PredeterminadoCifrado器（向后兼容）
 const defaultEncryptor = createEncryptor('claude-relay-salt')
 const { encrypt } = defaultEncryptor
 const { decrypt } = defaultEncryptor
@@ -94,25 +94,25 @@ const clearDecryptCache = defaultEncryptor.clearCache
 const getDecryptCacheStats = defaultEncryptor.getStats
 
 // ============================================
-// 布尔值处理
+// 布尔ValorProcesar
 // ============================================
 
-// 转换为布尔值（宽松模式）
+// Convertir为布尔Valor（宽松模式）
 const toBoolean = (value) =>
   value === true ||
   value === 'true' ||
   (typeof value === 'string' && value.toLowerCase() === 'true')
 
-// 检查是否为真值（null/undefined 返回 false）
+// Verificar是否为真Valor（null/undefined Retornar false）
 const isTruthy = (value) => value !== null && value !== undefined && toBoolean(value)
 
-// 检查是否可调度（默认 true，只有明确 false 才返回 false）
+// Verificar是否可调度（Predeterminado true，只有明确 false 才Retornar false）
 const isSchedulable = (value) => value !== false && value !== 'false'
 
-// 检查是否激活
+// Verificar是否激活
 const isActive = (value) => value === true || value === 'true'
 
-// 检查账户是否健康（激活且状态正常）
+// VerificarCuenta是否健康（激活且状态正常）
 const isAccountHealthy = (account) => {
   if (!account) {
     return false
@@ -125,10 +125,10 @@ const isAccountHealthy = (account) => {
 }
 
 // ============================================
-// JSON 处理
+// JSON Procesar
 // ============================================
 
-// 安全解析 JSON
+// SeguridadAnalizar JSON
 const safeParseJson = (value, fallback = null) => {
   if (!value || typeof value !== 'string') {
     return fallback
@@ -140,23 +140,23 @@ const safeParseJson = (value, fallback = null) => {
   }
 }
 
-// 安全解析 JSON 为对象
+// SeguridadAnalizar JSON 为Objeto
 const safeParseJsonObject = (value, fallback = null) => {
   const parsed = safeParseJson(value, fallback)
   return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : fallback
 }
 
-// 安全解析 JSON 为数组
+// SeguridadAnalizar JSON 为Arreglo
 const safeParseJsonArray = (value, fallback = []) => {
   const parsed = safeParseJson(value, fallback)
   return Array.isArray(parsed) ? parsed : fallback
 }
 
 // ============================================
-// 模型名称处理
+// 模型NombreProcesar
 // ============================================
 
-// 规范化模型名称（用于统计聚合）
+// 规范化模型Nombre（用于Estadística聚合）
 const normalizeModelName = (model) => {
   if (!model || model === 'unknown') {
     return model
@@ -171,7 +171,7 @@ const normalizeModelName = (model) => {
   return model.replace(/-v\d+:\d+$|:latest$/, '')
 }
 
-// 规范化端点类型
+// 规范化EndpointTipo
 const normalizeEndpointType = (endpointType) => {
   if (!endpointType) {
     return 'anthropic'
@@ -180,7 +180,7 @@ const normalizeEndpointType = (endpointType) => {
   return ['openai', 'comm', 'anthropic'].includes(normalized) ? normalized : 'anthropic'
 }
 
-// 检查模型是否在映射表中
+// Verificar模型是否在映射Tabla中
 const isModelInMapping = (modelMapping, requestedModel) => {
   if (!modelMapping || Object.keys(modelMapping).length === 0) {
     return true
@@ -192,7 +192,7 @@ const isModelInMapping = (modelMapping, requestedModel) => {
   return Object.keys(modelMapping).some((k) => k.toLowerCase() === lower)
 }
 
-// 获取映射后的模型名称
+// Obtener映射后的模型Nombre
 const getMappedModelName = (modelMapping, requestedModel) => {
   if (!modelMapping || Object.keys(modelMapping).length === 0) {
     return requestedModel
@@ -210,10 +210,10 @@ const getMappedModelName = (modelMapping, requestedModel) => {
 }
 
 // ============================================
-// 账户调度相关
+// Cuenta调度相关
 // ============================================
 
-// 按优先级和最后使用时间排序账户
+// 按优先级和最后使用TiempoOrdenarCuenta
 const sortAccountsByPriority = (accounts) =>
   [...accounts].sort((a, b) => {
     const priorityA = parseInt(a.priority, 10) || 50
@@ -231,7 +231,7 @@ const sortAccountsByPriority = (accounts) =>
     return createdA - createdB
   })
 
-// 生成粘性会话 Key
+// Generar粘性Sesión Key
 const composeStickySessionKey = (prefix, sessionHash, apiKeyId = null) => {
   if (!sessionHash) {
     return null
@@ -239,15 +239,15 @@ const composeStickySessionKey = (prefix, sessionHash, apiKeyId = null) => {
   return `sticky:${prefix}:${apiKeyId || 'default'}:${sessionHash}`
 }
 
-// 过滤可用账户（激活 + 健康 + 可调度）
+// Filtrar可用Cuenta（激活 + 健康 + 可调度）
 const filterAvailableAccounts = (accounts) =>
   accounts.filter((acc) => acc && isAccountHealthy(acc) && isSchedulable(acc.schedulable))
 
 // ============================================
-// 字符串处理
+// CadenaProcesar
 // ============================================
 
-// 截断字符串
+// 截断Cadena
 const truncate = (str, maxLen = 100, suffix = '...') => {
   if (!str || str.length <= maxLen) {
     return str
@@ -255,7 +255,7 @@ const truncate = (str, maxLen = 100, suffix = '...') => {
   return str.slice(0, maxLen - suffix.length) + suffix
 }
 
-// 掩码敏感信息（保留前后几位）
+// 掩码敏感Información（保留前后几位）
 const maskSensitive = (str, keepStart = 4, keepEnd = 4, maskChar = '*') => {
   if (!str || str.length <= keepStart + keepEnd) {
     return str
@@ -265,39 +265,39 @@ const maskSensitive = (str, keepStart = 4, keepEnd = 4, maskChar = '*') => {
 }
 
 // ============================================
-// 数值处理
+// 数ValorProcesar
 // ============================================
 
-// 安全解析整数
+// SeguridadAnalizar整数
 const safeParseInt = (value, fallback = 0) => {
   const parsed = parseInt(value, 10)
   return isNaN(parsed) ? fallback : parsed
 }
 
-// 安全解析浮点数
+// SeguridadAnalizar浮点数
 const safeParseFloat = (value, fallback = 0) => {
   const parsed = parseFloat(value)
   return isNaN(parsed) ? fallback : parsed
 }
 
-// 限制数值范围
+// Límite数Valor范围
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 
 // ============================================
-// 时间处理
+// TiempoProcesar
 // ============================================
 
-// 获取时区偏移后的日期
+// ObtenerZona horaria偏移后的Fecha
 const getDateInTimezone = (date = new Date(), offset = config.system?.timezoneOffset || 8) =>
   new Date(date.getTime() + offset * 3600000)
 
-// 获取时区日期字符串 YYYY-MM-DD
+// ObtenerZona horariaFechaCadena YYYY-MM-DD
 const getDateStringInTimezone = (date = new Date()) => {
   const d = getDateInTimezone(date)
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`
 }
 
-// 检查是否过期
+// Verificar是否过期
 const isExpired = (expiresAt) => {
   if (!expiresAt) {
     return false
@@ -305,7 +305,7 @@ const isExpired = (expiresAt) => {
   return new Date(expiresAt).getTime() < Date.now()
 }
 
-// 计算剩余时间（秒）
+// Calcular剩余Tiempo（秒）
 const getTimeRemaining = (expiresAt) => {
   if (!expiresAt) {
     return Infinity
@@ -314,13 +314,13 @@ const getTimeRemaining = (expiresAt) => {
 }
 
 // ============================================
-// 版本处理
+// VersiónProcesar
 // ============================================
 
 const fs = require('fs')
 const path = require('path')
 
-// 获取应用版本号
+// Obtener应用Versión号
 const getAppVersion = () => {
   if (process.env.APP_VERSION) {
     return process.env.APP_VERSION
@@ -344,7 +344,7 @@ const getAppVersion = () => {
   return '1.0.0'
 }
 
-// 版本比较: a > b
+// Versión比较: a > b
 const versionGt = (a, b) => {
   const pa = a.split('.').map(Number)
   const pb = b.split('.').map(Number)
@@ -359,18 +359,18 @@ const versionGt = (a, b) => {
   return false
 }
 
-// 版本比较: a >= b
+// Versión比较: a >= b
 const versionGte = (a, b) => a === b || versionGt(a, b)
 
 module.exports = {
-  // 加密
+  // Cifrado
   createEncryptor,
   encrypt,
   decrypt,
   getEncryptionKey,
   clearDecryptCache,
   getDecryptCacheStats,
-  // 布尔值
+  // 布尔Valor
   toBoolean,
   isTruthy,
   isSchedulable,
@@ -389,19 +389,19 @@ module.exports = {
   sortAccountsByPriority,
   composeStickySessionKey,
   filterAvailableAccounts,
-  // 字符串
+  // Cadena
   truncate,
   maskSensitive,
-  // 数值
+  // 数Valor
   safeParseInt,
   safeParseFloat,
   clamp,
-  // 时间
+  // Tiempo
   getDateInTimezone,
   getDateStringInTimezone,
   isExpired,
   getTimeRemaining,
-  // 版本
+  // Versión
   getAppVersion,
   versionGt,
   versionGte

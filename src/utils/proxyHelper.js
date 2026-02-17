@@ -4,19 +4,19 @@ const logger = require('./logger')
 const config = require('../../config/config')
 
 /**
- * 统一的代理创建工具
- * 支持 SOCKS5 和 HTTP/HTTPS 代理，可配置 IPv4/IPv6
+ * 统一的ProxyCrear工具
+ * Soportar SOCKS5 和 HTTP/HTTPS Proxy，可Configuración IPv4/IPv6
  */
 class ProxyHelper {
-  // 缓存代理 Agent，避免重复创建浪费连接
+  // CachéProxy Agent，避免重复Crear浪费Conexión
   static _agentCache = new Map()
 
   /**
-   * 创建代理 Agent
-   * @param {object|string|null} proxyConfig - 代理配置对象或 JSON 字符串
+   * CrearProxy Agent
+   * @param {object|string|null} proxyConfig - ProxyConfiguraciónObjeto或 JSON Cadena
    * @param {object} options - 额外选项
    * @param {boolean|number} options.useIPv4 - 是否使用 IPv4 (true=IPv4, false=IPv6, undefined=auto)
-   * @returns {Agent|null} 代理 Agent 实例或 null
+   * @returns {Agent|null} Proxy Agent Instancia或 null
    */
   static createProxyAgent(proxyConfig, options = {}) {
     if (!proxyConfig) {
@@ -24,19 +24,19 @@ class ProxyHelper {
     }
 
     try {
-      // 解析代理配置
+      // AnalizarProxyConfiguración
       const proxy = typeof proxyConfig === 'string' ? JSON.parse(proxyConfig) : proxyConfig
 
-      // 验证必要字段
+      // Validar必要Campo
       if (!proxy.type || !proxy.host || !proxy.port) {
         logger.warn('⚠️ Invalid proxy configuration: missing required fields (type, host, port)')
         return null
       }
 
-      // 获取 IPv4/IPv6 配置
+      // Obtener IPv4/IPv6 Configuración
       const useIPv4 = ProxyHelper._getIPFamilyPreference(options.useIPv4)
 
-      // 配置连接池与 Keep-Alive
+      // ConfiguraciónConexión池与 Keep-Alive
       const proxySettings = config.proxy || {}
       const agentCommonOptions = {}
 
@@ -68,7 +68,7 @@ class ProxyHelper {
         agentCommonOptions.timeout = proxySettings.timeout
       }
 
-      // 缓存键：保证相同配置的代理可复用
+      // Caché键：保证相同Configuración的Proxy可复用
       const cacheKey = JSON.stringify({
         type: proxy.type,
         host: proxy.host,
@@ -86,16 +86,16 @@ class ProxyHelper {
         return ProxyHelper._agentCache.get(cacheKey)
       }
 
-      // 构建认证信息
+      // Construir认证Información
       const auth = proxy.username && proxy.password ? `${proxy.username}:${proxy.password}@` : ''
       let agent = null
 
-      // 根据代理类型创建 Agent
+      // 根据ProxyTipoCrear Agent
       if (proxy.type === 'socks5') {
         const socksUrl = `socks5h://${auth}${proxy.host}:${proxy.port}`
         const socksOptions = { ...agentCommonOptions }
 
-        // 设置 IP 协议族（如果指定）
+        // Establecer IP Protocolo族（如果指定）
         if (useIPv4 !== null) {
           socksOptions.family = useIPv4 ? 4 : 6
         }
@@ -105,7 +105,7 @@ class ProxyHelper {
         const proxyUrl = `${proxy.type}://${auth}${proxy.host}:${proxy.port}`
         const httpOptions = { ...agentCommonOptions }
 
-        // HttpsProxyAgent 支持 family 参数（通过底层的 agent-base）
+        // HttpsProxyAgent Soportar family Parámetro（通过底层的 agent-base）
         if (useIPv4 !== null) {
           httpOptions.family = useIPv4 ? 4 : 6
         }
@@ -128,24 +128,24 @@ class ProxyHelper {
   }
 
   /**
-   * 获取 IP 协议族偏好设置
-   * @param {boolean|number|string} preference - 用户偏好设置
+   * Obtener IP Protocolo族偏好Establecer
+   * @param {boolean|number|string} preference - Usuario偏好Establecer
    * @returns {boolean|null} true=IPv4, false=IPv6, null=auto
    * @private
    */
   static _getIPFamilyPreference(preference) {
-    // 如果没有指定偏好，使用配置文件或默认值
+    // 如果没有指定偏好，使用ConfiguraciónArchivo或PredeterminadoValor
     if (preference === undefined) {
-      // 从配置文件读取默认设置，默认使用 IPv4
+      // 从ConfiguraciónArchivoLeerPredeterminadoEstablecer，Predeterminado使用 IPv4
       const defaultUseIPv4 = config.proxy?.useIPv4
       if (defaultUseIPv4 !== undefined) {
         return defaultUseIPv4
       }
-      // 默认值：IPv4（兼容性更好）
+      // PredeterminadoValor：IPv4（兼容性更好）
       return true
     }
 
-    // 处理各种输入格式
+    // Procesar各种输入Formato
     if (typeof preference === 'boolean') {
       return preference
     }
@@ -165,13 +165,13 @@ class ProxyHelper {
       }
     }
 
-    // 无法识别的值，返回默认（IPv4）
+    // 无法识别的Valor，RetornarPredeterminado（IPv4）
     return true
   }
 
   /**
-   * 验证代理配置
-   * @param {object|string} proxyConfig - 代理配置
+   * ValidarProxyConfiguración
+   * @param {object|string} proxyConfig - ProxyConfiguración
    * @returns {boolean} 是否有效
    */
   static validateProxyConfig(proxyConfig) {
@@ -182,17 +182,17 @@ class ProxyHelper {
     try {
       const proxy = typeof proxyConfig === 'string' ? JSON.parse(proxyConfig) : proxyConfig
 
-      // 检查必要字段
+      // Verificar必要Campo
       if (!proxy.type || !proxy.host || !proxy.port) {
         return false
       }
 
-      // 检查支持的类型
+      // VerificarSoportar的Tipo
       if (!['socks5', 'http', 'https'].includes(proxy.type)) {
         return false
       }
 
-      // 检查端口范围
+      // Verificar端口范围
       const port = parseInt(proxy.port)
       if (isNaN(port) || port < 1 || port > 65535) {
         return false
@@ -205,9 +205,9 @@ class ProxyHelper {
   }
 
   /**
-   * 获取代理配置的描述信息
-   * @param {object|string} proxyConfig - 代理配置
-   * @returns {string} 代理描述
+   * ObtenerProxyConfiguración的描述Información
+   * @param {object|string} proxyConfig - ProxyConfiguración
+   * @returns {string} Proxy描述
    */
   static getProxyDescription(proxyConfig) {
     if (!proxyConfig) {
@@ -224,9 +224,9 @@ class ProxyHelper {
   }
 
   /**
-   * 脱敏代理配置信息用于日志记录
-   * @param {object|string} proxyConfig - 代理配置
-   * @returns {string} 脱敏后的代理信息
+   * 脱敏ProxyConfiguraciónInformación用于RegistroRegistro
+   * @param {object|string} proxyConfig - ProxyConfiguración
+   * @returns {string} 脱敏后的ProxyInformación
    */
   static maskProxyInfo(proxyConfig) {
     if (!proxyConfig) {
@@ -238,7 +238,7 @@ class ProxyHelper {
 
       let proxyDesc = `${proxy.type}://${proxy.host}:${proxy.port}`
 
-      // 如果有认证信息，进行脱敏处理
+      // 如果有认证Información，进Fila脱敏Procesar
       if (proxy.username && proxy.password) {
         const maskedUsername =
           proxy.username.length <= 2
@@ -257,10 +257,10 @@ class ProxyHelper {
   }
 
   /**
-   * 创建代理 Agent（兼容旧的函数接口）
-   * @param {object|string|null} proxyConfig - 代理配置
+   * CrearProxy Agent（兼容旧的FunciónInterfaz）
+   * @param {object|string|null} proxyConfig - ProxyConfiguración
    * @param {boolean} useIPv4 - 是否使用 IPv4
-   * @returns {Agent|null} 代理 Agent 实例或 null
+   * @returns {Agent|null} Proxy Agent Instancia或 null
    * @deprecated 使用 createProxyAgent 替代
    */
   static createProxy(proxyConfig, useIPv4 = true) {

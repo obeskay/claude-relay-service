@@ -35,19 +35,19 @@ class UnifiedGeminiScheduler {
     return `${this.SESSION_MAPPING_PREFIX}${normalized}:${sessionHash}`
   }
 
-  // 🔧 辅助方法：检查账户是否可调度（兼容字符串和布尔值）
+  // 🔧 辅助Método：VerificarCuenta是否可调度（兼容Cadena和布尔Valor）
   _isSchedulable(schedulable) {
-    // 如果是 undefined 或 null，默认为可调度
+    // 如果是 undefined 或 null，Predeterminado为可调度
     if (schedulable === undefined || schedulable === null) {
       return true
     }
-    // 明确设置为 false（布尔值）或 'false'（字符串）时不可调度
+    // 明确Establecer为 false（布尔Valor）或 'false'（Cadena）时不可调度
     return schedulable !== false && schedulable !== 'false'
   }
 
-  // 🔧 辅助方法：检查账户是否激活（兼容字符串和布尔值）
+  // 🔧 辅助Método：VerificarCuenta是否激活（兼容Cadena和布尔Valor）
   _isActive(activeValue) {
-    // 兼容布尔值 true 和字符串 'true'
+    // 兼容布尔Valor true 和Cadena 'true'
     return activeValue === true || activeValue === 'true'
   }
 
@@ -62,9 +62,9 @@ class UnifiedGeminiScheduler {
     const normalizedOauthProvider = oauthProvider ? normalizeOauthProvider(oauthProvider) : null
 
     try {
-      // 如果API Key绑定了专属账户或分组，优先使用
+      // 如果API Key绑定了专属Cuenta或Agrupar，优先使用
       if (apiKeyData.geminiAccountId) {
-        // 检查是否是 Gemini API 账户（api: 前缀）
+        // Verificar是否是 Gemini API Cuenta（api: 前缀）
         if (apiKeyData.geminiAccountId.startsWith('api:')) {
           const accountId = apiKeyData.geminiAccountId.replace('api:', '')
           const boundAccount = await geminiApiAccountService.getAccount(accountId)
@@ -72,7 +72,7 @@ class UnifiedGeminiScheduler {
             logger.info(
               `🎯 Using bound Gemini-API account: ${boundAccount.name} (${accountId}) for API key ${apiKeyData.name}`
             )
-            // 更新账户的最后使用时间
+            // ActualizarCuenta的最后使用Tiempo
             await geminiApiAccountService.markAccountUsed(accountId)
             return {
               accountId,
@@ -90,7 +90,7 @@ class UnifiedGeminiScheduler {
             )
           }
         }
-        // 检查是否是分组
+        // Verificar是否是Agrupar
         else if (apiKeyData.geminiAccountId.startsWith('group:')) {
           const groupId = apiKeyData.geminiAccountId.replace('group:', '')
           logger.info(
@@ -98,7 +98,7 @@ class UnifiedGeminiScheduler {
           )
           return await this.selectAccountFromGroup(groupId, sessionHash, requestedModel, apiKeyData)
         }
-        // 普通 Gemini OAuth 专属账户
+        // 普通 Gemini OAuth 专属Cuenta
         else {
           const boundAccount = await geminiAccountService.getAccount(apiKeyData.geminiAccountId)
           if (
@@ -117,7 +117,7 @@ class UnifiedGeminiScheduler {
               logger.info(
                 `🎯 Using bound dedicated Gemini account: ${boundAccount.name} (${apiKeyData.geminiAccountId}) for API key ${apiKeyData.name}`
               )
-              // 更新账户的最后使用时间
+              // ActualizarCuenta的最后使用Tiempo
               await geminiAccountService.markAccountUsed(apiKeyData.geminiAccountId)
               return {
                 accountId: apiKeyData.geminiAccountId,
@@ -132,22 +132,22 @@ class UnifiedGeminiScheduler {
         }
       }
 
-      // 如果有会话哈希，检查是否有已映射的账户
+      // 如果有Sesión哈希，Verificar是否有已映射的Cuenta
       if (sessionHash) {
         const mappedAccount = await this._getSessionMapping(sessionHash, normalizedOauthProvider)
         if (mappedAccount) {
-          // 验证映射的账户是否仍然可用
+          // Validar映射的Cuenta是否仍然可用
           const isAvailable = await this._isAccountAvailable(
             mappedAccount.accountId,
             mappedAccount.accountType
           )
           if (isAvailable) {
-            // 🚀 智能会话续期（续期 unified 映射键，按配置）
+            // 🚀 智能Sesión续期（续期 unified 映射键，按Configuración）
             await this._extendSessionMappingTTL(sessionHash, normalizedOauthProvider)
             logger.info(
               `🎯 Using sticky session account: ${mappedAccount.accountId} (${mappedAccount.accountType}) for session ${sessionHash}`
             )
-            // 更新账户的最后使用时间（根据账户类型调用正确的服务）
+            // ActualizarCuenta的最后使用Tiempo（根据CuentaTipo调用正确的Servicio）
             if (mappedAccount.accountType === 'gemini-api') {
               await geminiApiAccountService.markAccountUsed(mappedAccount.accountId)
             } else {
@@ -163,14 +163,14 @@ class UnifiedGeminiScheduler {
         }
       }
 
-      // 获取所有可用账户
+      // Obtener所有可用Cuenta
       const availableAccounts = await this._getAllAvailableAccounts(apiKeyData, requestedModel, {
         allowApiAccounts,
         oauthProvider: normalizedOauthProvider
       })
 
       if (availableAccounts.length === 0) {
-        // 提供更详细的错误信息
+        // 提供更详细的ErrorInformación
         if (requestedModel) {
           throw new Error(
             `No available Gemini accounts support the requested model: ${requestedModel}`
@@ -180,13 +180,13 @@ class UnifiedGeminiScheduler {
         }
       }
 
-      // 按优先级和最后使用时间排序
+      // 按优先级和最后使用TiempoOrdenar
       const sortedAccounts = sortAccountsByPriority(availableAccounts)
 
-      // 选择第一个账户
+      // 选择第一个Cuenta
       const selectedAccount = sortedAccounts[0]
 
-      // 如果有会话哈希，建立新的映射
+      // 如果有Sesión哈希，建立新的映射
       if (sessionHash) {
         await this._setSessionMapping(
           sessionHash,
@@ -203,7 +203,7 @@ class UnifiedGeminiScheduler {
         `🎯 Selected account: ${selectedAccount.name} (${selectedAccount.accountId}, ${selectedAccount.accountType}) with priority ${selectedAccount.priority} for API key ${apiKeyData.name}`
       )
 
-      // 更新账户的最后使用时间（根据账户类型调用正确的服务）
+      // ActualizarCuenta的最后使用Tiempo（根据CuentaTipo调用正确的Servicio）
       if (selectedAccount.accountType === 'gemini-api') {
         await geminiApiAccountService.markAccountUsed(selectedAccount.accountId)
       } else {
@@ -220,7 +220,7 @@ class UnifiedGeminiScheduler {
     }
   }
 
-  // 📋 获取所有可用账户
+  // 📋 Obtener所有可用Cuenta
   async _getAllAvailableAccounts(
     apiKeyData,
     requestedModel = null,
@@ -235,9 +235,9 @@ class UnifiedGeminiScheduler {
 
     const availableAccounts = []
 
-    // 如果API Key绑定了专属账户，优先返回
+    // 如果API Key绑定了专属Cuenta，优先Retornar
     if (apiKeyData.geminiAccountId) {
-      // 检查是否是 Gemini API 账户（api: 前缀）
+      // Verificar是否是 Gemini API Cuenta（api: 前缀）
       if (apiKeyData.geminiAccountId.startsWith('api:')) {
         const accountId = apiKeyData.geminiAccountId.replace('api:', '')
         const boundAccount = await geminiApiAccountService.getAccount(accountId)
@@ -253,7 +253,7 @@ class UnifiedGeminiScheduler {
           }
           const isRateLimited = await this.isAccountRateLimited(accountId)
           if (!isRateLimited && !isTempUnavailable) {
-            // 检查模型支持
+            // Verificar模型Soportar
             if (
               requestedModel &&
               boundAccount.supportedModels &&
@@ -294,7 +294,7 @@ class UnifiedGeminiScheduler {
           )
         }
       }
-      // 普通 Gemini OAuth 账户
+      // 普通 Gemini OAuth Cuenta
       else if (!apiKeyData.geminiAccountId.startsWith('group:')) {
         const boundAccount = await geminiAccountService.getAccount(apiKeyData.geminiAccountId)
         if (
@@ -319,13 +319,13 @@ class UnifiedGeminiScheduler {
           }
           const isRateLimited = await this.isAccountRateLimited(boundAccount.id)
           if (!isRateLimited && !isTempUnavailable) {
-            // 检查模型支持
+            // Verificar模型Soportar
             if (
               requestedModel &&
               boundAccount.supportedModels &&
               boundAccount.supportedModels.length > 0
             ) {
-              // 处理可能带有 models/ 前缀的模型名
+              // Procesar可能带有 models/ 前缀的模型名
               const normalizedModel = requestedModel.replace('models/', '')
               const modelSupported = boundAccount.supportedModels.some(
                 (model) => model.replace('models/', '') === normalizedModel
@@ -357,13 +357,13 @@ class UnifiedGeminiScheduler {
       }
     }
 
-    // 获取所有Gemini OAuth账户（共享池）
+    // Obtener所有Gemini OAuthCuenta（共享池）
     const geminiAccounts = await geminiAccountService.getAllAccounts()
     for (const account of geminiAccounts) {
       if (
         isActive(account.isActive) &&
         account.status !== 'error' &&
-        (account.accountType === 'shared' || !account.accountType) && // 兼容旧数据
+        (account.accountType === 'shared' || !account.accountType) && // 兼容旧Datos
         isSchedulable(account.schedulable)
       ) {
         if (
@@ -372,9 +372,9 @@ class UnifiedGeminiScheduler {
         ) {
           continue
         }
-        // 检查是否可调度
+        // Verificar是否可调度
 
-        // 检查token是否过期
+        // Verificartoken是否过期
         const isExpired = geminiAccountService.isTokenExpired(account)
         if (isExpired && !account.refreshToken) {
           logger.warn(
@@ -383,16 +383,16 @@ class UnifiedGeminiScheduler {
           continue
         }
 
-        // 检查临时不可用
+        // Verificar临时不可用
         const isTempUnavailable = await upstreamErrorHelper.isTempUnavailable(account.id, 'gemini')
         if (isTempUnavailable) {
           logger.debug(`⏭️ Skipping Gemini account ${account.name} - temporarily unavailable`)
           continue
         }
 
-        // 检查模型支持
+        // Verificar模型Soportar
         if (requestedModel && account.supportedModels && account.supportedModels.length > 0) {
-          // 处理可能带有 models/ 前缀的模型名
+          // Procesar可能带有 models/ 前缀的模型名
           const normalizedModel = requestedModel.replace('models/', '')
           const modelSupported = account.supportedModels.some(
             (model) => model.replace('models/', '') === normalizedModel
@@ -405,21 +405,21 @@ class UnifiedGeminiScheduler {
           }
         }
 
-        // 检查是否被限流
+        // Verificar是否被限流
         const isRateLimited = await this.isAccountRateLimited(account.id)
         if (!isRateLimited) {
           availableAccounts.push({
             ...account,
             accountId: account.id,
             accountType: 'gemini',
-            priority: parseInt(account.priority) || 50, // 默认优先级50
+            priority: parseInt(account.priority) || 50, // Predeterminado优先级50
             lastUsedAt: account.lastUsedAt || '0'
           })
         }
       }
     }
 
-    // 如果允许调度 Gemini API 账户，则添加到可用列表
+    // 如果允许调度 Gemini API Cuenta，则添加到可用ColumnaTabla
     if (allowApiAccounts) {
       const geminiApiAccounts = await geminiApiAccountService.getAllAccounts()
       for (const account of geminiApiAccounts) {
@@ -429,7 +429,7 @@ class UnifiedGeminiScheduler {
           (account.accountType === 'shared' || !account.accountType) &&
           isSchedulable(account.schedulable)
         ) {
-          // 检查模型支持
+          // Verificar模型Soportar
           if (requestedModel && account.supportedModels && account.supportedModels.length > 0) {
             const normalizedModel = requestedModel.replace('models/', '')
             const modelSupported = account.supportedModels.some(
@@ -443,7 +443,7 @@ class UnifiedGeminiScheduler {
             }
           }
 
-          // 检查临时不可用
+          // Verificar临时不可用
           const isTempUnavailable = await upstreamErrorHelper.isTempUnavailable(
             account.id,
             'gemini-api'
@@ -453,7 +453,7 @@ class UnifiedGeminiScheduler {
             continue
           }
 
-          // 检查是否被限流
+          // Verificar是否被限流
           const isRateLimited = await this.isAccountRateLimited(account.id)
           if (!isRateLimited) {
             availableAccounts.push({
@@ -474,7 +474,7 @@ class UnifiedGeminiScheduler {
     return availableAccounts
   }
 
-  // 🔍 检查账户是否可用
+  // 🔍 VerificarCuenta是否可用
   async _isAccountAvailable(accountId, accountType) {
     try {
       if (accountType === 'gemini') {
@@ -482,7 +482,7 @@ class UnifiedGeminiScheduler {
         if (!account || !isActive(account.isActive) || account.status === 'error') {
           return false
         }
-        // 检查是否可调度
+        // Verificar是否可调度
         if (!isSchedulable(account.schedulable)) {
           logger.info(`🚫 Gemini account ${accountId} is not schedulable`)
           return false
@@ -501,7 +501,7 @@ class UnifiedGeminiScheduler {
         if (!account || !isActive(account.isActive) || account.status === 'error') {
           return false
         }
-        // 检查是否可调度
+        // Verificar是否可调度
         if (!isSchedulable(account.schedulable)) {
           logger.info(`🚫 Gemini-API account ${accountId} is not schedulable`)
           return false
@@ -523,7 +523,7 @@ class UnifiedGeminiScheduler {
     }
   }
 
-  // 🔗 获取会话映射
+  // 🔗 ObtenerSesión映射
   async _getSessionMapping(sessionHash, oauthProvider = null) {
     const client = redis.getClientSafe()
     const key = this._getSessionMappingKey(sessionHash, oauthProvider)
@@ -541,11 +541,11 @@ class UnifiedGeminiScheduler {
     return null
   }
 
-  // 💾 设置会话映射
+  // 💾 EstablecerSesión映射
   async _setSessionMapping(sessionHash, accountId, accountType, oauthProvider = null) {
     const client = redis.getClientSafe()
     const mappingData = JSON.stringify({ accountId, accountType })
-    // 依据配置设置TTL（小时）
+    // 依据ConfiguraciónEstablecerTTL（小时）
     const appConfig = require('../../../config/config')
     const ttlHours = appConfig.session?.stickyTtlHours || 1
     const ttlSeconds = Math.max(1, Math.floor(ttlHours * 60 * 60))
@@ -556,7 +556,7 @@ class UnifiedGeminiScheduler {
     await client.setex(key, ttlSeconds, mappingData)
   }
 
-  // 🗑️ 删除会话映射
+  // 🗑️ EliminarSesión映射
   async _deleteSessionMapping(sessionHash) {
     const client = redis.getClientSafe()
     if (!sessionHash) {
@@ -570,7 +570,7 @@ class UnifiedGeminiScheduler {
     await client.del(keys.filter(Boolean))
   }
 
-  // 🔁 续期统一调度会话映射TTL（针对 unified_gemini_session_mapping:* 键），遵循会话配置
+  // 🔁 续期统一调度Sesión映射TTL（针对 unified_gemini_session_mapping:* 键），遵循SesiónConfiguración
   async _extendSessionMappingTTL(sessionHash, oauthProvider = null) {
     try {
       const client = redis.getClientSafe()
@@ -614,7 +614,7 @@ class UnifiedGeminiScheduler {
     }
   }
 
-  // 🚫 标记账户为限流状态
+  // 🚫 标记Cuenta为限流状态
   async markAccountRateLimited(accountId, accountType, sessionHash = null) {
     try {
       if (accountType === 'gemini') {
@@ -623,7 +623,7 @@ class UnifiedGeminiScheduler {
         await geminiApiAccountService.setAccountRateLimited(accountId, true)
       }
 
-      // 删除会话映射
+      // EliminarSesión映射
       if (sessionHash) {
         await this._deleteSessionMapping(sessionHash)
       }
@@ -638,7 +638,7 @@ class UnifiedGeminiScheduler {
     }
   }
 
-  // ✅ 移除账户的限流状态
+  // ✅ EliminaciónCuenta的限流状态
   async removeAccountRateLimit(accountId, accountType) {
     try {
       if (accountType === 'gemini') {
@@ -657,18 +657,18 @@ class UnifiedGeminiScheduler {
     }
   }
 
-  // 🔍 检查账户是否处于限流状态
+  // 🔍 VerificarCuenta是否处于限流状态
   async isAccountRateLimited(accountId, accountType = null) {
     try {
       let account = null
 
-      // 如果指定了账户类型，直接使用对应服务
+      // 如果指定了CuentaTipo，直接使用对应Servicio
       if (accountType === 'gemini-api') {
         account = await geminiApiAccountService.getAccount(accountId)
       } else if (accountType === 'gemini') {
         account = await geminiAccountService.getAccount(accountId)
       } else {
-        // 未指定类型，先尝试 gemini，再尝试 gemini-api
+        // 未指定Tipo，先尝试 gemini，再尝试 gemini-api
         account = await geminiAccountService.getAccount(accountId)
         if (!account) {
           account = await geminiApiAccountService.getAccount(accountId)
@@ -682,7 +682,7 @@ class UnifiedGeminiScheduler {
       if (account.rateLimitStatus === 'limited' && account.rateLimitedAt) {
         const limitedAt = new Date(account.rateLimitedAt).getTime()
         const now = Date.now()
-        // 使用账户配置的限流时长，默认1小时
+        // 使用CuentaConfiguración的限流时长，Predeterminado1小时
         const rateLimitDuration = parseInt(account.rateLimitDuration) || 60
         const limitDuration = rateLimitDuration * 60 * 1000
 
@@ -695,10 +695,10 @@ class UnifiedGeminiScheduler {
     }
   }
 
-  // 👥 从分组中选择账户（支持 Gemini OAuth 和 Gemini API 两种账户类型）
+  // 👥 从Agrupar中选择Cuenta（Soportar Gemini OAuth 和 Gemini API 两种CuentaTipo）
   async selectAccountFromGroup(groupId, sessionHash = null, requestedModel = null) {
     try {
-      // 获取分组信息
+      // ObtenerAgruparInformación
       const group = await accountGroupService.getGroup(groupId)
       if (!group) {
         throw new Error(`Group ${groupId} not found`)
@@ -710,11 +710,11 @@ class UnifiedGeminiScheduler {
 
       logger.info(`👥 Selecting account from Gemini group: ${group.name}`)
 
-      // 如果有会话哈希，检查是否有已映射的账户
+      // 如果有Sesión哈希，Verificar是否有已映射的Cuenta
       if (sessionHash) {
         const mappedAccount = await this._getSessionMapping(sessionHash)
         if (mappedAccount) {
-          // 验证映射的账户是否属于这个分组
+          // Validar映射的Cuenta是否属于这个Agrupar
           const memberIds = await accountGroupService.getGroupMembers(groupId)
           if (memberIds.includes(mappedAccount.accountId)) {
             const isAvailable = await this._isAccountAvailable(
@@ -722,12 +722,12 @@ class UnifiedGeminiScheduler {
               mappedAccount.accountType
             )
             if (isAvailable) {
-              // 🚀 智能会话续期（续期 unified 映射键，按配置）
+              // 🚀 智能Sesión续期（续期 unified 映射键，按Configuración）
               await this._extendSessionMappingTTL(sessionHash)
               logger.info(
                 `🎯 Using sticky session account from group: ${mappedAccount.accountId} (${mappedAccount.accountType}) for session ${sessionHash}`
               )
-              // 更新账户的最后使用时间（根据账户类型调用正确的服务）
+              // ActualizarCuenta的最后使用Tiempo（根据CuentaTipo调用正确的Servicio）
               if (mappedAccount.accountType === 'gemini-api') {
                 await geminiApiAccountService.markAccountUsed(mappedAccount.accountId)
               } else {
@@ -736,12 +736,12 @@ class UnifiedGeminiScheduler {
               return mappedAccount
             }
           }
-          // 如果映射的账户不可用或不在分组中，删除映射
+          // 如果映射的Cuenta不可用或不在Agrupar中，Eliminar映射
           await this._deleteSessionMapping(sessionHash)
         }
       }
 
-      // 获取分组内的所有账户
+      // ObtenerAgrupar内的所有Cuenta
       const memberIds = await accountGroupService.getGroupMembers(groupId)
       if (memberIds.length === 0) {
         throw new Error(`Group ${group.name} has no members`)
@@ -749,13 +749,13 @@ class UnifiedGeminiScheduler {
 
       const availableAccounts = []
 
-      // 获取所有成员账户的详细信息（支持 Gemini OAuth 和 Gemini API 两种类型）
+      // Obtener所有成员Cuenta的详细Información（Soportar Gemini OAuth 和 Gemini API 两种Tipo）
       for (const memberId of memberIds) {
-        // 首先尝试从 Gemini OAuth 账户服务获取
+        // 首先尝试从 Gemini OAuth CuentaServicioObtener
         let account = await geminiAccountService.getAccount(memberId)
         let accountType = 'gemini'
 
-        // 如果 Gemini OAuth 账户不存在，尝试从 Gemini API 账户服务获取
+        // 如果 Gemini OAuth Cuenta不存在，尝试从 Gemini API CuentaServicioObtener
         if (!account) {
           account = await geminiApiAccountService.getAccount(memberId)
           accountType = 'gemini-api'
@@ -766,13 +766,13 @@ class UnifiedGeminiScheduler {
           continue
         }
 
-        // 检查账户是否可用
+        // VerificarCuenta是否可用
         if (
           isActive(account.isActive) &&
           account.status !== 'error' &&
           isSchedulable(account.schedulable)
         ) {
-          // 对于 Gemini OAuth 账户，检查 token 是否过期
+          // 对于 Gemini OAuth Cuenta，Verificar token 是否过期
           if (accountType === 'gemini') {
             const isExpired = geminiAccountService.isTokenExpired(account)
             if (isExpired && !account.refreshToken) {
@@ -783,9 +783,9 @@ class UnifiedGeminiScheduler {
             }
           }
 
-          // 检查模型支持
+          // Verificar模型Soportar
           if (requestedModel && account.supportedModels && account.supportedModels.length > 0) {
-            // 处理可能带有 models/ 前缀的模型名
+            // Procesar可能带有 models/ 前缀的模型名
             const normalizedModel = requestedModel.replace('models/', '')
             const modelSupported = account.supportedModels.some(
               (model) => model.replace('models/', '') === normalizedModel
@@ -798,7 +798,7 @@ class UnifiedGeminiScheduler {
             }
           }
 
-          // 检查是否被限流
+          // Verificar是否被限流
           const isRateLimited = await this.isAccountRateLimited(account.id, accountType)
           if (!isRateLimited) {
             const isTempUnavailable = await upstreamErrorHelper.isTempUnavailable(
@@ -824,13 +824,13 @@ class UnifiedGeminiScheduler {
         throw new Error(`No available accounts in Gemini group ${group.name}`)
       }
 
-      // 使用现有的优先级排序逻辑
+      // 使用现有的优先级Ordenar逻辑
       const sortedAccounts = sortAccountsByPriority(availableAccounts)
 
-      // 选择第一个账户
+      // 选择第一个Cuenta
       const selectedAccount = sortedAccounts[0]
 
-      // 如果有会话哈希，建立新的映射
+      // 如果有Sesión哈希，建立新的映射
       if (sessionHash) {
         await this._setSessionMapping(
           sessionHash,
@@ -846,7 +846,7 @@ class UnifiedGeminiScheduler {
         `🎯 Selected account from Gemini group ${group.name}: ${selectedAccount.name} (${selectedAccount.accountId}, ${selectedAccount.accountType}) with priority ${selectedAccount.priority}`
       )
 
-      // 更新账户的最后使用时间（根据账户类型调用正确的服务）
+      // ActualizarCuenta的最后使用Tiempo（根据CuentaTipo调用正确的Servicio）
       if (selectedAccount.accountType === 'gemini-api') {
         await geminiApiAccountService.markAccountUsed(selectedAccount.accountId)
       } else {

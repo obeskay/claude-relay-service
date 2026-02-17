@@ -1,6 +1,6 @@
 /**
- * OpenAI 到 Claude 格式转换服务
- * 处理 OpenAI API 格式与 Claude API 格式之间的转换
+ * OpenAI 到 Claude FormatoConvertirServicio
+ * Procesar OpenAI API Formato与 Claude API Formato之间的Convertir
  */
 
 const logger = require('../utils/logger')
@@ -17,13 +17,13 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 将 OpenAI 请求格式转换为 Claude 格式
-   * @param {Object} openaiRequest - OpenAI 格式的请求
-   * @returns {Object} Claude 格式的请求
+   * 将 OpenAI SolicitudFormatoConvertir为 Claude Formato
+   * @param {Object} openaiRequest - OpenAI Formato的Solicitud
+   * @returns {Object} Claude Formato的Solicitud
    */
   convertRequest(openaiRequest) {
     const claudeRequest = {
-      model: openaiRequest.model, // 直接使用提供的模型名，不进行映射
+      model: openaiRequest.model, // 直接使用提供的模型名，不进Fila映射
       messages: this._convertMessages(openaiRequest.messages),
       max_tokens: openaiRequest.max_tokens || 4096,
       temperature: openaiRequest.temperature,
@@ -31,10 +31,10 @@ class OpenAIToClaudeConverter {
       stream: openaiRequest.stream || false
     }
 
-    // 定义 Claude Code 的默认系统提示词
+    // 定义 Claude Code 的Predeterminado系统提示词
     const claudeCodeSystemMessage = "You are Claude Code, Anthropic's official CLI for Claude."
 
-    // 如果 OpenAI 请求中包含系统消息,提取并检查
+    // 如果 OpenAI Solicitud中Incluir系统消息,提取并Verificar
     const systemMessage = this._extractSystemMessage(openaiRequest.messages)
     if (systemMessage && systemMessage.includes('You are currently in Xcode')) {
       // Xcode 系统提示词
@@ -44,21 +44,21 @@ class OpenAIToClaudeConverter {
       )
       logger.debug(`📋 System prompt preview: ${systemMessage.substring(0, 150)}...`)
     } else {
-      // 使用 Claude Code 默认系统提示词
+      // 使用 Claude Code Predeterminado系统提示词
       claudeRequest.system = claudeCodeSystemMessage
       logger.debug(
         `📋 Using Claude Code default system prompt${systemMessage ? ' (ignored custom prompt)' : ''}`
       )
     }
 
-    // 处理停止序列
+    // Procesar停止序Columna
     if (openaiRequest.stop) {
       claudeRequest.stop_sequences = Array.isArray(openaiRequest.stop)
         ? openaiRequest.stop
         : [openaiRequest.stop]
     }
 
-    // 处理工具调用
+    // Procesar工具调用
     if (openaiRequest.tools) {
       claudeRequest.tools = this._convertTools(openaiRequest.tools)
       if (openaiRequest.tool_choice) {
@@ -66,7 +66,7 @@ class OpenAIToClaudeConverter {
       }
     }
 
-    // OpenAI 特有的参数已在转换过程中被忽略
+    // OpenAI 特有的Parámetro已在Convertir过程中被忽略
     // 包括: n, presence_penalty, frequency_penalty, logit_bias, user
 
     logger.debug('📝 Converted OpenAI request to Claude format:', {
@@ -80,10 +80,10 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 将 Claude 响应格式转换为 OpenAI 格式
-   * @param {Object} claudeResponse - Claude 格式的响应
-   * @param {String} requestModel - 原始请求的模型名
-   * @returns {Object} OpenAI 格式的响应
+   * 将 Claude RespuestaFormatoConvertir为 OpenAI Formato
+   * @param {Object} claudeResponse - Claude Formato的Respuesta
+   * @param {String} requestModel - 原始Solicitud的模型名
+   * @returns {Object} OpenAI Formato的Respuesta
    */
   convertResponse(claudeResponse, requestModel) {
     const timestamp = Math.floor(Date.now() / 1000)
@@ -113,18 +113,18 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换流式响应的单个数据块
-   * @param {String} chunk - Claude SSE 数据块
-   * @param {String} requestModel - 原始请求的模型名
-   * @param {String} sessionId - 会话ID
-   * @returns {String} OpenAI 格式的 SSE 数据块
+   * Convertir流式Respuesta的单个Datos块
+   * @param {String} chunk - Claude SSE Datos块
+   * @param {String} requestModel - 原始Solicitud的模型名
+   * @param {String} sessionId - SesiónID
+   * @returns {String} OpenAI Formato的 SSE Datos块
    */
   convertStreamChunk(chunk, requestModel, sessionId) {
     if (!chunk || chunk.trim() === '') {
       return ''
     }
 
-    // 解析 SSE 数据
+    // Analizar SSE Datos
     const lines = chunk.split('\n')
     const convertedChunks = []
     let hasMessageStop = false
@@ -140,7 +140,7 @@ class OpenAIToClaudeConverter {
         try {
           const claudeEvent = JSON.parse(data)
 
-          // 检查是否是 message_stop 事件
+          // Verificar是否是 message_stop Evento
           if (claudeEvent.type === 'message_stop') {
             hasMessageStop = true
           }
@@ -150,14 +150,14 @@ class OpenAIToClaudeConverter {
             convertedChunks.push(`data: ${JSON.stringify(openaiChunk)}\n\n`)
           }
         } catch (e) {
-          // 跳过无法解析的数据，不传递非JSON格式的行
+          // 跳过无法Analizar的Datos，不传递非JSONFormato的Fila
           continue
         }
       }
-      // 忽略 event: 行和空行，OpenAI 格式不包含这些
+      // 忽略 event: Fila和空Fila，OpenAI Formato不Incluir这些
     }
 
-    // 如果收到 message_stop 事件，添加 [DONE] 标记
+    // 如果收到 message_stop Evento，添加 [DONE] 标记
     if (hasMessageStop) {
       convertedChunks.push('data: [DONE]\n\n')
     }
@@ -179,28 +179,28 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换消息格式
+   * Convertir消息Formato
    */
   _convertMessages(messages) {
     const claudeMessages = []
 
     for (const msg of messages) {
-      // 跳过系统消息（已经在 system 字段处理）
+      // 跳过系统消息（已经在 system CampoProcesar）
       if (msg.role === 'system') {
         continue
       }
 
-      // 转换角色名称
+      // ConvertirRolNombre
       const role = msg.role === 'user' ? 'user' : 'assistant'
 
-      // 转换消息内容
+      // Convertir消息内容
       const { content: rawContent } = msg
       let content
 
       if (typeof rawContent === 'string') {
         content = rawContent
       } else if (Array.isArray(rawContent)) {
-        // 处理多模态内容
+        // Procesar多模态内容
         content = this._convertMultimodalContent(rawContent)
       } else {
         content = JSON.stringify(rawContent)
@@ -211,12 +211,12 @@ class OpenAIToClaudeConverter {
         content
       }
 
-      // 处理工具调用
+      // Procesar工具调用
       if (msg.tool_calls) {
         claudeMsg.content = this._convertToolCalls(msg.tool_calls)
       }
 
-      // 处理工具响应
+      // Procesar工具Respuesta
       if (msg.role === 'tool') {
         claudeMsg.role = 'user'
         claudeMsg.content = [
@@ -235,7 +235,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换多模态内容
+   * Convertir多模态内容
    */
   _convertMultimodalContent(content) {
     return content.map((item) => {
@@ -247,9 +247,9 @@ class OpenAIToClaudeConverter {
       } else if (item.type === 'image_url') {
         const imageUrl = item.image_url.url
 
-        // 检查是否是 base64 格式的图片
+        // Verificar是否是 base64 Formato的图片
         if (imageUrl.startsWith('data:')) {
-          // 解析 data URL: data:image/jpeg;base64,/9j/4AAQ...
+          // Analizar data URL: data:image/jpeg;base64,/9j/4AAQ...
           const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/)
           if (matches) {
             const mediaType = matches[1] // e.g., 'image/jpeg', 'image/png'
@@ -264,7 +264,7 @@ class OpenAIToClaudeConverter {
               }
             }
           } else {
-            // 如果格式不正确，尝试使用默认处理
+            // 如果Formato不正确，尝试使用PredeterminadoProcesar
             logger.warn('⚠️ Invalid base64 image format, using default parsing')
             return {
               type: 'image',
@@ -276,7 +276,7 @@ class OpenAIToClaudeConverter {
             }
           }
         } else {
-          // 如果是 URL 格式的图片，Claude 不支持直接 URL，需要报错
+          // 如果是 URL Formato的图片，Claude 不Soportar直接 URL，需要报错
           logger.error(
             '❌ URL images are not supported by Claude API, only base64 format is accepted'
           )
@@ -290,7 +290,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换工具定义
+   * Convertir工具定义
    */
   _convertTools(tools) {
     return tools.map((tool) => {
@@ -306,7 +306,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换工具选择
+   * Convertir工具选择
    */
   _convertToolChoice(toolChoice) {
     if (toolChoice === 'none') {
@@ -328,7 +328,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换工具调用
+   * Convertir工具调用
    */
   _convertToolCalls(toolCalls) {
     return toolCalls.map((tc) => ({
@@ -340,7 +340,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换 Claude 消息为 OpenAI 格式
+   * Convertir Claude 消息为 OpenAI Formato
    */
   _convertClaudeMessage(claudeResponse) {
     const message = {
@@ -348,7 +348,7 @@ class OpenAIToClaudeConverter {
       content: null
     }
 
-    // 处理内容
+    // Procesar内容
     if (claudeResponse.content) {
       if (typeof claudeResponse.content === 'string') {
         message.content = claudeResponse.content
@@ -383,14 +383,14 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换停止原因
+   * Convertir停止原因
    */
   _mapStopReason(claudeReason) {
     return this.stopReasonMapping[claudeReason] || 'stop'
   }
 
   /**
-   * 转换使用统计
+   * Convertir使用Estadística
    */
   _convertUsage(claudeUsage) {
     if (!claudeUsage) {
@@ -405,7 +405,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 转换流式事件
+   * Convertir流式Evento
    */
   _convertStreamEvent(event, requestModel, sessionId) {
     const timestamp = Math.floor(Date.now() / 1000)
@@ -423,16 +423,16 @@ class OpenAIToClaudeConverter {
       ]
     }
 
-    // 根据事件类型处理
+    // 根据EventoTipoProcesar
     if (event.type === 'message_start') {
-      // 处理消息开始事件，发送角色信息
+      // Procesar消息IniciandoEvento，发送RolInformación
       baseChunk.choices[0].delta.role = 'assistant'
       return baseChunk
     } else if (event.type === 'content_block_start' && event.content_block) {
       if (event.content_block.type === 'text') {
         baseChunk.choices[0].delta.content = event.content_block.text || ''
       } else if (event.content_block.type === 'tool_use') {
-        // 开始工具调用
+        // Iniciando工具调用
         baseChunk.choices[0].delta.tool_calls = [
           {
             index: event.index || 0,
@@ -449,7 +449,7 @@ class OpenAIToClaudeConverter {
       if (event.delta.type === 'text_delta') {
         baseChunk.choices[0].delta.content = event.delta.text || ''
       } else if (event.delta.type === 'input_json_delta') {
-        // 工具调用参数的增量更新
+        // 工具调用Parámetro的增量Actualizar
         baseChunk.choices[0].delta.tool_calls = [
           {
             index: event.index || 0,
@@ -467,10 +467,10 @@ class OpenAIToClaudeConverter {
         baseChunk.usage = this._convertUsage(event.usage)
       }
     } else if (event.type === 'message_stop') {
-      // message_stop 事件不需要返回 chunk，[DONE] 标记会在 convertStreamChunk 中添加
+      // message_stop Evento不需要Retornar chunk，[DONE] 标记会在 convertStreamChunk 中添加
       return null
     } else {
-      // 忽略其他类型的事件
+      // 忽略其他Tipo的Evento
       return null
     }
 
@@ -478,7 +478,7 @@ class OpenAIToClaudeConverter {
   }
 
   /**
-   * 生成随机 ID
+   * Generar随机 ID
    */
   _generateId() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
