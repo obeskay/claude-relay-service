@@ -47,7 +47,9 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
       concurrentRequestQueueEnabled,
       concurrentRequestQueueMaxSize,
       concurrentRequestQueueMaxSizeMultiplier,
-      concurrentRequestQueueTimeoutMs
+      concurrentRequestQueueTimeoutMs,
+      globalForcedModel,
+      globalModelMapping
     } = req.body
 
     // Validar输入
@@ -162,6 +164,34 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
       }
     }
 
+    // Validar globalForcedModel (opcional, solo si se proporciona)
+    if (globalForcedModel !== undefined) {
+      if (typeof globalForcedModel !== 'string') {
+        return res.status(400).json({ error: 'globalForcedModel must be a string' })
+      }
+      // Validar formato de modelo: debe ser claude-xxx-o-yyy
+      if (globalForcedModel && !/^claude-[a-z0-9-]+$/.test(globalForcedModel)) {
+        return res.status(400).json({
+          error: 'globalForcedModel must be a valid Claude model name (e.g., claude-3-5-haiku-20241022)'
+        })
+      }
+    }
+
+    // Validar globalModelMapping (opcional, debe ser objeto si se proporciona)
+    if (globalModelMapping !== undefined) {
+      if (typeof globalModelMapping !== 'object' || globalModelMapping === null || Array.isArray(globalModelMapping)) {
+        return res.status(400).json({ error: 'globalModelMapping must be an object' })
+      }
+      // Validar que cada valor sea string
+      for (const [key, value] of Object.entries(globalModelMapping)) {
+        if (typeof value !== 'string') {
+          return res.status(400).json({
+            error: `globalModelMapping["${key}"] must be a string (model name)`
+          })
+        }
+      }
+    }
+
     const updateData = {}
     if (claudeCodeOnlyEnabled !== undefined) {
       updateData.claudeCodeOnlyEnabled = claudeCodeOnlyEnabled
@@ -195,6 +225,12 @@ router.put('/claude-relay-config', authenticateAdmin, async (req, res) => {
     }
     if (concurrentRequestQueueTimeoutMs !== undefined) {
       updateData.concurrentRequestQueueTimeoutMs = concurrentRequestQueueTimeoutMs
+    }
+    if (globalForcedModel !== undefined) {
+      updateData.globalForcedModel = globalForcedModel
+    }
+    if (globalModelMapping !== undefined) {
+      updateData.globalModelMapping = globalModelMapping
     }
 
     const updatedConfig = await claudeRelayConfigService.updateConfig(
